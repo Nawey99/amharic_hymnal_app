@@ -4,10 +4,15 @@ This document defines the planned backend split for Wudase. The Flutter app rema
 
 ## Recommended Split
 
-Use two separately deployable backend services:
+Use two separately deployable backend service types:
 
 1. Content Backend
 2. User/App Backend
+
+Deploy the content backend against separate content databases where the data lifecycle should stay isolated:
+
+- SDA Hymnal content database: old and new Amharic SDA hymnal editions together
+- Hagerigna content database: Hagerigna songs only
 
 Keep the Flutter app independent enough to work offline for lyrics and previously cached media.
 
@@ -43,7 +48,7 @@ Responsibilities:
 Data owned by this backend:
 
 - Languages: Amharic, future Afaan Oromo, future Ethiopian languages
-- Books: SDA Hymnal, Hagerigna, future books
+- Books: SDA Hymnal in the SDA database, Hagerigna in the Hagerigna database, future books in their own database when that isolation helps
 - Hymns/songs
 - Categories
 - Sheet music references
@@ -151,19 +156,22 @@ Current source files:
 - `assets/data/database/SDA_Hymnal.json`
 - `assets/data/database/HagerignaData.json`
 
-The generated content seed is:
+The generated content seeds are:
 
-- `backend/content/seed_from_current_json.sql`
+- `backend/content/seed_sda_hymnal.sql`
+- `backend/content/seed_hagerigna.sql`
 
-The seed creates:
+The seeds create:
 
-- 325 SDA new hymnal entries
-- 294 SDA old hymnal entries
-- 121 Hagerigna entries
+- 325 SDA new hymnal entries in the SDA database
+- 294 SDA old hymnal entries in the SDA database
+- 121 Hagerigna entries in the Hagerigna database
 
 Sheet music and audio are not created from the JSON because the JSON does not contain reliable media metadata. Add them later as `media_assets`, then connect them through `media_links`.
 
-Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, which returns `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
+Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, which returns `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
+
+The SDA importer reuses a `works` row when either the normalized English title or normalized Amharic title matches across old and new editions. This prevents the same song from becoming two rows only because it appears in both editions.
 
 The importer also writes `content_import_issues` rows when a song has only a new number or only an old number. This keeps migration quality reviewable without blocking valid one-edition songs.
 

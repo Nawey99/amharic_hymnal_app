@@ -36,6 +36,8 @@ migrate_working_dir/
 /android/build/
 node_modules/
 backend/*/node_modules/
+.tmp_*/
+.tmp_*.log
 
 # Symbolication related
 app.*.symbols

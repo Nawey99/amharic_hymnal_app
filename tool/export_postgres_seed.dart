@@ -3,16 +3,39 @@
 import 'dart:convert';
 import 'dart:io';
 
+class _SdaRow {
+  final int index;
+  final int number;
+  final String title;
+  final String? englishTitle;
+  final String? lyrics;
+  final String editionPrefix;
+
+  const _SdaRow({
+    required this.index,
+    required this.number,
+    required this.title,
+    required this.englishTitle,
+    required this.lyrics,
+    required this.editionPrefix,
+  });
+
+  String get normalizedEnglish => _normalize(englishTitle ?? '');
+  String get normalizedAmharic => _normalize(title);
+}
+
 Future<void> main(List<String> args) async {
-  final outputPath =
-      args.isNotEmpty ? args[0] : 'backend/content/seed_from_current_json.sql';
+  final outputDir = args.isNotEmpty ? args[0] : 'backend/content';
 
   final sda = _loadResourceArrays('assets/data/database/SDA_Hymnal.json');
   final hagerigna =
       _loadResourceArrays('assets/data/database/HagerignaData.json');
 
-  final buffer = StringBuffer()
+  final outputDirectory = Directory(outputDir)..createSync(recursive: true);
+
+  final sdaBuffer = StringBuffer()
     ..writeln('-- Generated from current Flutter JSON assets.')
+    ..writeln('-- SDA Hymnal content database seed.')
     ..writeln('-- Run after backend/content/schema.sql.')
     ..writeln('begin;')
     ..writeln()
@@ -40,7 +63,25 @@ Future<void> main(List<String> args) async {
       editionType: 'old',
       sortOrder: 20,
       sourceNote: 'old_title_forbookmark and old_song arrays',
-    ))
+    ));
+
+  _appendSdaEntries(sdaBuffer, sda);
+
+  sdaBuffer
+    ..writeln()
+    ..writeln('commit;');
+
+  final sdaOutputFile = File('${outputDirectory.path}/seed_sda_hymnal.sql');
+  sdaOutputFile.writeAsStringSync(sdaBuffer.toString());
+
+  final hagerignaBuffer = StringBuffer()
+    ..writeln('-- Generated from current Flutter JSON assets.')
+    ..writeln('-- Hagerigna content database seed.')
+    ..writeln('-- Run after backend/content/schema.sql.')
+    ..writeln('begin;')
+    ..writeln()
+    ..writeln(_insertLanguage())
+    ..writeln()
     ..writeln(_insertBook(
       slug: 'am-hagerigna',
       languageCode: 'am',
@@ -57,18 +98,18 @@ Future<void> main(List<String> args) async {
       sourceNote: 'song_title_text, song_text, and song_author_text arrays',
     ));
 
-  _appendSdaEntries(buffer, sda);
-  _appendHagerignaEntries(buffer, hagerigna);
+  _appendHagerignaEntries(hagerignaBuffer, hagerigna);
 
-  buffer
+  hagerignaBuffer
     ..writeln()
     ..writeln('commit;');
 
-  final outputFile = File(outputPath);
-  outputFile.parent.createSync(recursive: true);
-  outputFile.writeAsStringSync(buffer.toString());
+  final hagerignaOutputFile =
+      File('${outputDirectory.path}/seed_hagerigna.sql');
+  hagerignaOutputFile.writeAsStringSync(hagerignaBuffer.toString());
 
-  print('Wrote PostgreSQL seed to $outputPath');
+  print('Wrote SDA Hymnal seed to ${sdaOutputFile.path}');
+  print('Wrote Hagerigna seed to ${hagerignaOutputFile.path}');
 }
 
 Map<String, List<String>> _loadResourceArrays(String path) {
@@ -103,66 +144,88 @@ void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
   final oldLyrics = data['old_song'] ?? const [];
   final newEnglishTitles = data['new_title_en'] ?? const [];
   final oldEnglishTitles = data['old_title_en'] ?? const [];
-  final newNumbersByKey = <String, int>{};
-  final oldNumbersByKey = <String, int>{};
+  final newRows = <_SdaRow>[];
+  final oldRows = <_SdaRow>[];
+  final newKeyCounts = <String, int>{};
+  final oldKeyCounts = <String, int>{};
 
   for (var index = 0; index < newTitles.length; index++) {
     final number = index + 1;
-    final title = _fallbackTitle(newTitles[index], 'SDA Hymn $number');
-    final englishTitle = _valueAt(newEnglishTitles, index);
-    final canonicalKey = _sdaCanonicalKey(
-      title: title,
-      englishTitle: englishTitle,
-      fallbackNumber: number,
-      fallbackPrefix: 'new',
+    final row = _SdaRow(
+      index: index,
+      number: number,
+      title: _fallbackTitle(newTitles[index], 'SDA Hymn $number'),
+      englishTitle: _valueAt(newEnglishTitles, index),
+      lyrics: _valueAt(newLyrics, index),
+      editionPrefix: 'new',
     );
-    newNumbersByKey[canonicalKey] = number;
+    newRows.add(row);
+    _countSdaMatchKeys(newKeyCounts, row);
   }
 
   for (var index = 0; index < oldTitles.length; index++) {
     final number = index + 1;
-    final title = _fallbackTitle(oldTitles[index], 'SDA Old Hymn $number');
-    final englishTitle = _valueAt(oldEnglishTitles, index);
-    final canonicalKey = _sdaCanonicalKey(
-      title: title,
-      englishTitle: englishTitle,
-      fallbackNumber: number,
-      fallbackPrefix: 'old',
+    final row = _SdaRow(
+      index: index,
+      number: number,
+      title: _fallbackTitle(oldTitles[index], 'SDA Old Hymn $number'),
+      englishTitle: _valueAt(oldEnglishTitles, index),
+      lyrics: _valueAt(oldLyrics, index),
+      editionPrefix: 'old',
     );
-    oldNumbersByKey[canonicalKey] = number;
+    oldRows.add(row);
+    _countSdaMatchKeys(oldKeyCounts, row);
+  }
+
+  final newCanonicalKeys = <int, String>{};
+  final oldCanonicalKeys = <int, String>{};
+  final newNumbersByKey = <String, int>{};
+  final oldNumbersByKey = <String, int>{};
+
+  for (final row in newRows) {
+    final canonicalKey = _sdaCanonicalKey(
+      row: row,
+      ownKeyCounts: newKeyCounts,
+      oppositeKeyCounts: oldKeyCounts,
+    );
+    newCanonicalKeys[row.index] = canonicalKey;
+    newNumbersByKey[canonicalKey] = row.number;
+  }
+
+  for (final row in oldRows) {
+    final canonicalKey = _sdaCanonicalKey(
+      row: row,
+      ownKeyCounts: oldKeyCounts,
+      oppositeKeyCounts: newKeyCounts,
+    );
+    oldCanonicalKeys[row.index] = canonicalKey;
+    oldNumbersByKey[canonicalKey] = row.number;
   }
 
   buffer.writeln(_clearImportIssues('sda_hymnal_json'));
 
-  for (var index = 0; index < newTitles.length; index++) {
-    final number = index + 1;
-    final title = _fallbackTitle(newTitles[index], 'SDA Hymn $number');
-    final englishTitle = _valueAt(newEnglishTitles, index);
-    final canonicalKey = _sdaCanonicalKey(
-      title: title,
-      englishTitle: englishTitle,
-      fallbackNumber: number,
-      fallbackPrefix: 'new',
-    );
+  for (final row in newRows) {
+    final canonicalKey = newCanonicalKeys[row.index]!;
+    newNumbersByKey[canonicalKey] = row.number;
 
     buffer
       ..writeln(_insertWork(
         canonicalKey: canonicalKey,
-        defaultTitle: title,
-        defaultEnglishTitle: englishTitle,
-        notes: 'Imported from SDA new hymnal row $number.',
+        defaultTitle: row.title,
+        defaultEnglishTitle: row.englishTitle,
+        notes: 'Imported from SDA new hymnal row ${row.number}.',
       ))
       ..writeln(_insertEntry(
         editionSlug: 'am-sda-hymnal-new',
         canonicalKey: canonicalKey,
-        number: number,
-        title: title,
-        englishTitle: englishTitle,
-        lyrics: _valueAt(newLyrics, index) ?? '',
+        number: row.number,
+        title: row.title,
+        englishTitle: row.englishTitle,
+        lyrics: row.lyrics ?? '',
         sourceKey: 'sda_new',
-        sourceIndex: index,
+        sourceIndex: row.index,
         metadata: {
-          'new_hymnal_number': number,
+          'new_hymnal_number': row.number,
           'old_hymnal_number': oldNumbersByKey[canonicalKey],
           'match_status': oldNumbersByKey.containsKey(canonicalKey)
               ? 'matched'
@@ -171,36 +234,28 @@ void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
       ));
   }
 
-  for (var index = 0; index < oldTitles.length; index++) {
-    final number = index + 1;
-    final title = _fallbackTitle(oldTitles[index], 'SDA Old Hymn $number');
-    final englishTitle = _valueAt(oldEnglishTitles, index);
-    final canonicalKey = _sdaCanonicalKey(
-      title: title,
-      englishTitle: englishTitle,
-      fallbackNumber: number,
-      fallbackPrefix: 'old',
-    );
+  for (final row in oldRows) {
+    final canonicalKey = oldCanonicalKeys[row.index]!;
 
     buffer
       ..writeln(_insertWork(
         canonicalKey: canonicalKey,
-        defaultTitle: title,
-        defaultEnglishTitle: englishTitle,
-        notes: 'Imported from SDA old hymnal row $number.',
+        defaultTitle: row.title,
+        defaultEnglishTitle: row.englishTitle,
+        notes: 'Imported from SDA old hymnal row ${row.number}.',
       ))
       ..writeln(_insertEntry(
         editionSlug: 'am-sda-hymnal-old',
         canonicalKey: canonicalKey,
-        number: number,
-        title: title,
-        englishTitle: englishTitle,
-        lyrics: _valueAt(oldLyrics, index) ?? '',
+        number: row.number,
+        title: row.title,
+        englishTitle: row.englishTitle,
+        lyrics: row.lyrics ?? '',
         sourceKey: 'sda_old',
-        sourceIndex: index,
+        sourceIndex: row.index,
         metadata: {
           'new_hymnal_number': newNumbersByKey[canonicalKey],
-          'old_hymnal_number': number,
+          'old_hymnal_number': row.number,
           'match_status': newNumbersByKey.containsKey(canonicalKey)
               ? 'matched'
               : 'missing_new',
@@ -461,23 +516,48 @@ on conflict (source_name, issue_key) do update set
   updated_at = now();''';
 }
 
+void _countSdaMatchKeys(Map<String, int> counts, _SdaRow row) {
+  if (row.normalizedEnglish.isNotEmpty) {
+    counts['en:${row.normalizedEnglish}'] =
+        (counts['en:${row.normalizedEnglish}'] ?? 0) + 1;
+  }
+  if (row.normalizedAmharic.isNotEmpty) {
+    counts['am:${row.normalizedAmharic}'] =
+        (counts['am:${row.normalizedAmharic}'] ?? 0) + 1;
+  }
+}
+
 String _sdaCanonicalKey({
-  required String title,
-  required String? englishTitle,
-  required int fallbackNumber,
-  required String fallbackPrefix,
+  required _SdaRow row,
+  required Map<String, int> ownKeyCounts,
+  required Map<String, int> oppositeKeyCounts,
 }) {
-  final english = _normalize(englishTitle ?? '');
+  final english = row.normalizedEnglish;
+  final amharic = row.normalizedAmharic;
+  final englishKey = english.isEmpty ? null : 'en:$english';
+  final amharicKey = amharic.isEmpty ? null : 'am:$amharic';
+
+  if (englishKey != null &&
+      ownKeyCounts[englishKey] == 1 &&
+      oppositeKeyCounts.containsKey(englishKey)) {
+    return 'am-sda-en-$english';
+  }
+
+  if (amharicKey != null &&
+      ownKeyCounts[amharicKey] == 1 &&
+      oppositeKeyCounts.containsKey(amharicKey)) {
+    return 'am-sda-am-$amharic';
+  }
+
   if (english.isNotEmpty) {
     return 'am-sda-en-$english';
   }
 
-  final amharic = _normalize(title);
   if (amharic.isNotEmpty) {
     return 'am-sda-am-$amharic';
   }
 
-  return 'am-sda-$fallbackPrefix-${fallbackNumber.toString().padLeft(3, '0')}';
+  return 'am-sda-${row.editionPrefix}-${row.number.toString().padLeft(3, '0')}';
 }
 
 String _fallbackTitle(String value, String fallback) {
