@@ -95,4 +95,6 @@ When a song exists in one SDA edition but cannot be matched to the other edition
 
 Those rows are review warnings, not fatal migration failures, because the current source data may legitimately contain songs that exist only in one edition.
 
+In Prisma Studio, inspect `SdaHymnalSong` for the unique merged SDA song list. `BookEntry` intentionally contains separate old/new edition rows, so its count is higher.
+
 Hagerigna uses its own content database. It does not share `works` rows with SDA unless a future import process explicitly links cross-book songs.

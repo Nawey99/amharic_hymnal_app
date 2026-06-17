@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -198,4 +199,20 @@ model ContentImportIssue {
   @@unique([sourceName, issueKey])
   @@index([severity, issueType, resolvedAt])
   @@map("content_import_issues")
+}
+
+view SdaHymnalSong {
+  workId          String  @unique @map("work_id") @db.Uuid
+  canonicalKey    String  @map("canonical_key")
+  title           String
+  englishTitle    String? @map("english_title")
+  newEntryId      String? @map("new_entry_id") @db.Uuid
+  newHymnalNumber Int?    @map("new_hymnal_number")
+  newLyrics       String? @map("new_lyrics")
+  oldEntryId      String? @map("old_entry_id") @db.Uuid
+  oldHymnalNumber Int?    @map("old_hymnal_number")
+  oldLyrics       String? @map("old_lyrics")
+  matchStatus     String  @map("match_status")
+
+  @@map("sda_hymnal_songs")
 }
