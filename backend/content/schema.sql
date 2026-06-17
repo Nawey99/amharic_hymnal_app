@@ -139,6 +139,20 @@ create table if not exists content_releases (
   created_at timestamptz not null default now()
 );
 
+create table if not exists content_import_issues (
+  id uuid primary key default gen_random_uuid(),
+  source_name text not null,
+  issue_key text not null,
+  severity text not null check (severity in ('info', 'warning', 'error')),
+  issue_type text not null,
+  message text not null,
+  metadata jsonb not null default '{}'::jsonb,
+  resolved_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (source_name, issue_key)
+);
+
 create index if not exists idx_books_language on books(language_code);
 create index if not exists idx_book_editions_book on book_editions(book_id);
 create index if not exists idx_book_entries_edition_number on book_entries(edition_id, entry_number);
@@ -148,6 +162,8 @@ create index if not exists idx_works_language on works(primary_language_code);
 create index if not exists idx_media_assets_type on media_assets(media_type);
 create index if not exists idx_media_links_work on media_links(work_id);
 create index if not exists idx_media_links_book_entry on media_links(book_entry_id);
+create index if not exists idx_content_import_issues_status
+  on content_import_issues(severity, issue_type, resolved_at);
 
 create or replace view catalog_entries as
 select
@@ -172,3 +188,21 @@ join languages l on l.code = b.language_code
 join works w on w.id = e.work_id
 left join categories c on c.id = e.category_id;
 
+create or replace view sda_hymnal_number_map as
+select
+  w.id as work_id,
+  w.canonical_key,
+  w.default_title,
+  w.default_english_title,
+  max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-new') as new_hymnal_number,
+  max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-old') as old_hymnal_number,
+  case
+    when max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-new') is null then 'missing_new'
+    when max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-old') is null then 'missing_old'
+    else 'matched'
+  end as match_status
+from works w
+join book_entries e on e.work_id = w.id
+join book_editions be on be.id = e.edition_id
+where be.slug in ('am-sda-hymnal-new', 'am-sda-hymnal-old')
+group by w.id, w.canonical_key, w.default_title, w.default_english_title;

@@ -51,3 +51,25 @@ The current Flutter JSON files are column-based resource arrays. The exporter re
 - Hagerigna: 121 book entries
 
 The exporter does not invent media rows. Sheet music and audio should be added as real `media_assets` and linked through `media_links`.
+
+## Old/New SDA Hymnal Numbers
+
+SDA old and new hymnal numbers are stored as version-specific `book_entries`.
+
+For API/read convenience, `backend/content/schema.sql` also defines:
+
+- `sda_hymnal_number_map`
+
+That view exposes one row per reusable work with:
+
+- `new_hymnal_number`
+- `old_hymnal_number`
+- `match_status`
+
+The seed exporter also writes both numbers into SDA entry metadata when known.
+
+When a song exists in one SDA edition but cannot be matched to the other edition, the exporter writes a row to:
+
+- `content_import_issues`
+
+Those rows are review warnings, not fatal migration failures, because the current source data may legitimately contain songs that exist only in one edition.

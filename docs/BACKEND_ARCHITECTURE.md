@@ -163,6 +163,10 @@ The seed creates:
 
 Sheet music and audio are not created from the JSON because the JSON does not contain reliable media metadata. Add them later as `media_assets`, then connect them through `media_links`.
 
+Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, which returns `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
+
+The importer also writes `content_import_issues` rows when a song has only a new number or only an old number. This keeps migration quality reviewable without blocking valid one-edition songs.
+
 ## Deployment Shape
 
 ```mermaid

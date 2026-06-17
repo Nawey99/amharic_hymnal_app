@@ -182,3 +182,20 @@ model ContentRelease {
 
   @@map("content_releases")
 }
+
+model ContentImportIssue {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceName String   @map("source_name")
+  issueKey   String   @map("issue_key")
+  severity   String
+  issueType  String   @map("issue_type")
+  message    String
+  metadata   Json     @default("{}")
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([sourceName, issueKey])
+  @@index([severity, issueType, resolvedAt])
+  @@map("content_import_issues")
+}

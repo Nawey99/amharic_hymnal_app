@@ -56,6 +56,8 @@ on conflict (slug) do update set
   sort_order = excluded.sort_order,
   source_note = excluded.source_note,
   updated_at = now();
+delete from content_import_issues
+where source_name = 'sda_hymnal_json';
 insert into works (
   canonical_key,
   primary_language_code,
@@ -101,7 +103,7 @@ select
 ',
   'sda_new',
   0,
-  '{}'::jsonb
+  '{"new_hymnal_number":1,"old_hymnal_number":1,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-god-form-whom-all-blessing-flow'
 where be.slug = 'am-sda-hymnal-new'
@@ -163,7 +165,7 @@ select
 ',
   'sda_new',
   1,
-  '{}'::jsonb
+  '{"new_hymnal_number":2,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
 where be.slug = 'am-sda-hymnal-new'
@@ -230,7 +232,7 @@ select
 ',
   'sda_new',
   2,
-  '{}'::jsonb
+  '{"new_hymnal_number":3,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
 where be.slug = 'am-sda-hymnal-new'
@@ -294,7 +296,7 @@ select
 ',
   'sda_new',
   3,
-  '{}'::jsonb
+  '{"new_hymnal_number":4,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-this-is-the-day'
 where be.slug = 'am-sda-hymnal-new'
@@ -366,7 +368,7 @@ select
 ',
   'sda_new',
   4,
-  '{}'::jsonb
+  '{"new_hymnal_number":5,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-hail-the-power-of-jseus-name'
 where be.slug = 'am-sda-hymnal-new'
@@ -438,7 +440,7 @@ select
 ',
   'sda_new',
   5,
-  '{}'::jsonb
+  '{"new_hymnal_number":6,"old_hymnal_number":6,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-to-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -516,7 +518,7 @@ select
 ',
   'sda_new',
   6,
-  '{}'::jsonb
+  '{"new_hymnal_number":7,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-majestic-sweetness-sits-enthroned'
 where be.slug = 'am-sda-hymnal-new'
@@ -590,7 +592,7 @@ select
 ',
   'sda_new',
   7,
-  '{}'::jsonb
+  '{"new_hymnal_number":8,"old_hymnal_number":8,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-me-that-old-old-story'
 where be.slug = 'am-sda-hymnal-new'
@@ -670,7 +672,7 @@ select
 ',
   'sda_new',
   8,
-  '{}'::jsonb
+  '{"new_hymnal_number":9,"old_hymnal_number":9,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-redeemer'
 where be.slug = 'am-sda-hymnal-new'
@@ -738,7 +740,7 @@ select
 ',
   'sda_new',
   9,
-  '{}'::jsonb
+  '{"new_hymnal_number":10,"old_hymnal_number":10,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-maker-and-my-king'
 where be.slug = 'am-sda-hymnal-new'
@@ -805,7 +807,7 @@ select
 ',
   'sda_new',
   10,
-  '{}'::jsonb
+  '{"new_hymnal_number":11,"old_hymnal_number":11,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-mighty-fortress-is-our-god'
 where be.slug = 'am-sda-hymnal-new'
@@ -881,7 +883,7 @@ select
 ',
   'sda_new',
   11,
-  '{}'::jsonb
+  '{"new_hymnal_number":12,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-to-god-be-the-glory'
 where be.slug = 'am-sda-hymnal-new'
@@ -952,7 +954,7 @@ select
 ',
   'sda_new',
   12,
-  '{}'::jsonb
+  '{"new_hymnal_number":13,"old_hymnal_number":12,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-did-he-do'
 where be.slug = 'am-sda-hymnal-new'
@@ -1012,7 +1014,7 @@ select
 ',
   'sda_new',
   13,
-  '{}'::jsonb
+  '{"new_hymnal_number":14,"old_hymnal_number":250,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-thank-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -1080,7 +1082,7 @@ select
 ',
   'sda_new',
   14,
-  '{}'::jsonb
+  '{"new_hymnal_number":15,"old_hymnal_number":15,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-worthy-worthy-is-the-lamb'
 where be.slug = 'am-sda-hymnal-new'
@@ -1148,7 +1150,7 @@ select
 ',
   'sda_new',
   15,
-  '{}'::jsonb
+  '{"new_hymnal_number":16,"old_hymnal_number":16,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-to-the-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -1231,7 +1233,7 @@ select
 ',
   'sda_new',
   16,
-  '{}'::jsonb
+  '{"new_hymnal_number":17,"old_hymnal_number":17,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-is-what-the-angels-sing'
 where be.slug = 'am-sda-hymnal-new'
@@ -1316,7 +1318,7 @@ select
 ',
   'sda_new',
   17,
-  '{}'::jsonb
+  '{"new_hymnal_number":18,"old_hymnal_number":19,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-count-your-blessing'
 where be.slug = 'am-sda-hymnal-new'
@@ -1394,7 +1396,7 @@ select
 ',
   'sda_new',
   18,
-  '{}'::jsonb
+  '{"new_hymnal_number":19,"old_hymnal_number":26,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-revive-us-again'
 where be.slug = 'am-sda-hymnal-new'
@@ -1467,7 +1469,7 @@ select
 ',
   'sda_new',
   19,
-  '{}'::jsonb
+  '{"new_hymnal_number":20,"old_hymnal_number":22,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-thou-in-whose-presence'
 where be.slug = 'am-sda-hymnal-new'
@@ -1545,7 +1547,7 @@ select
 ',
   'sda_new',
   20,
-  '{}'::jsonb
+  '{"new_hymnal_number":21,"old_hymnal_number":21,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-sing-the-wondrous-story'
 where be.slug = 'am-sda-hymnal-new'
@@ -1613,7 +1615,7 @@ select
 ',
   'sda_new',
   21,
-  '{}'::jsonb
+  '{"new_hymnal_number":22,"old_hymnal_number":18,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-the-very-thought-of-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -1690,7 +1692,7 @@ select
 ',
   'sda_new',
   22,
-  '{}'::jsonb
+  '{"new_hymnal_number":23,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-christ-receiveth-sinful-men'
 where be.slug = 'am-sda-hymnal-new'
@@ -1781,7 +1783,7 @@ select
 ',
   'sda_new',
   23,
-  '{}'::jsonb
+  '{"new_hymnal_number":24,"old_hymnal_number":23,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-redeemed'
 where be.slug = 'am-sda-hymnal-new'
@@ -1855,7 +1857,7 @@ select
 ',
   'sda_new',
   24,
-  '{}'::jsonb
+  '{"new_hymnal_number":25,"old_hymnal_number":27,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-be-silent-be-silent'
 where be.slug = 'am-sda-hymnal-new'
@@ -1926,7 +1928,7 @@ select
 ',
   'sda_new',
   25,
-  '{}'::jsonb
+  '{"new_hymnal_number":26,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sweet-sweet-spirit'
 where be.slug = 'am-sda-hymnal-new'
@@ -1996,7 +1998,7 @@ select
 ',
   'sda_new',
   26,
-  '{}'::jsonb
+  '{"new_hymnal_number":27,"old_hymnal_number":28,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-would-draw-nearer-to-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -2064,7 +2066,7 @@ select
 ',
   'sda_new',
   27,
-  '{}'::jsonb
+  '{"new_hymnal_number":28,"old_hymnal_number":29,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-we-come-to-hear-his-word'
 where be.slug = 'am-sda-hymnal-new'
@@ -2136,7 +2138,7 @@ select
 ',
   'sda_new',
   28,
-  '{}'::jsonb
+  '{"new_hymnal_number":29,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-watchmen-on-the-walls-of-zion'
 where be.slug = 'am-sda-hymnal-new'
@@ -2200,7 +2202,7 @@ select
 ',
   'sda_new',
   29,
-  '{}'::jsonb
+  '{"new_hymnal_number":30,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-fairest-lord-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -2268,7 +2270,7 @@ select
 ',
   'sda_new',
   30,
-  '{}'::jsonb
+  '{"new_hymnal_number":31,"old_hymnal_number":32,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-ye-watchers-and-ye-holy-ones'
 where be.slug = 'am-sda-hymnal-new'
@@ -2323,7 +2325,7 @@ select
 ግን በሩን ክፈቱለት',
   'sda_new',
   31,
-  '{}'::jsonb
+  '{"new_hymnal_number":32,"old_hymnal_number":249,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-you-must-open-the-door'
 where be.slug = 'am-sda-hymnal-new'
@@ -2397,7 +2399,7 @@ select
 ',
   'sda_new',
   32,
-  '{}'::jsonb
+  '{"new_hymnal_number":33,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-takae-the-name-of-jesus-with-you'
 where be.slug = 'am-sda-hymnal-new'
@@ -2470,7 +2472,7 @@ select
 ',
   'sda_new',
   33,
-  '{}'::jsonb
+  '{"new_hymnal_number":34,"old_hymnal_number":34,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-every-day-and-every-hour'
 where be.slug = 'am-sda-hymnal-new'
@@ -2552,7 +2554,7 @@ select
 ',
   'sda_new',
   34,
-  '{}'::jsonb
+  '{"new_hymnal_number":35,"old_hymnal_number":35,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-no-other-name-like-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -2619,7 +2621,7 @@ select
 ',
   'sda_new',
   35,
-  '{}'::jsonb
+  '{"new_hymnal_number":36,"old_hymnal_number":36,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-spirit-faithful-guide'
 where be.slug = 'am-sda-hymnal-new'
@@ -2691,7 +2693,7 @@ select
 ',
   'sda_new',
   36,
-  '{}'::jsonb
+  '{"new_hymnal_number":37,"old_hymnal_number":37,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-abide-with-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -2775,7 +2777,7 @@ select
 ',
   'sda_new',
   37,
-  '{}'::jsonb
+  '{"new_hymnal_number":38,"old_hymnal_number":38,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-day-is-dying-in-the-west'
 where be.slug = 'am-sda-hymnal-new'
@@ -2853,7 +2855,7 @@ select
 ',
   'sda_new',
   38,
-  '{}'::jsonb
+  '{"new_hymnal_number":39,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-shall-be-shower-of-blessing'
 where be.slug = 'am-sda-hymnal-new'
@@ -2926,7 +2928,7 @@ select
 ',
   'sda_new',
   39,
-  '{}'::jsonb
+  '{"new_hymnal_number":40,"old_hymnal_number":40,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-worship-the-king'
 where be.slug = 'am-sda-hymnal-new'
@@ -3010,7 +3012,7 @@ select
 ',
   'sda_new',
   40,
-  '{}'::jsonb
+  '{"new_hymnal_number":41,"old_hymnal_number":41,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-how-great-thou-art'
 where be.slug = 'am-sda-hymnal-new'
@@ -3077,7 +3079,7 @@ select
 ',
   'sda_new',
   41,
-  '{}'::jsonb
+  '{"new_hymnal_number":42,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-want-jesus-to-walk-with-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -3155,7 +3157,7 @@ select
 ',
   'sda_new',
   42,
-  '{}'::jsonb
+  '{"new_hymnal_number":43,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lord-jesus-i-long-to-be-perfectly-whole'
 where be.slug = 'am-sda-hymnal-new'
@@ -3229,7 +3231,7 @@ select
 ',
   'sda_new',
   43,
-  '{}'::jsonb
+  '{"new_hymnal_number":44,"old_hymnal_number":42,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-tenderly-calling'
 where be.slug = 'am-sda-hymnal-new'
@@ -3296,7 +3298,7 @@ select
 ',
   'sda_new',
   44,
-  '{}'::jsonb
+  '{"new_hymnal_number":45,"old_hymnal_number":45,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-just-as-i-am'
 where be.slug = 'am-sda-hymnal-new'
@@ -3357,7 +3359,7 @@ select
 ',
   'sda_new',
   45,
-  '{}'::jsonb
+  '{"new_hymnal_number":46,"old_hymnal_number":46,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-comes-to-us'
 where be.slug = 'am-sda-hymnal-new'
@@ -3430,7 +3432,7 @@ select
 ',
   'sda_new',
   46,
-  '{}'::jsonb
+  '{"new_hymnal_number":47,"old_hymnal_number":47,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lord-i-m-coming-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -3497,7 +3499,7 @@ select
 ',
   'sda_new',
   47,
-  '{}'::jsonb
+  '{"new_hymnal_number":48,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-heard-the-voice-of-jesus-say'
 where be.slug = 'am-sda-hymnal-new'
@@ -3569,7 +3571,7 @@ select
 ',
   'sda_new',
   48,
-  '{}'::jsonb
+  '{"new_hymnal_number":49,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-a-strange-at-the-door'
 where be.slug = 'am-sda-hymnal-new'
@@ -3643,7 +3645,7 @@ select
 ',
   'sda_new',
   49,
-  '{}'::jsonb
+  '{"new_hymnal_number":50,"old_hymnal_number":50,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-to-jesus-i-surrender'
 where be.slug = 'am-sda-hymnal-new'
@@ -3716,7 +3718,7 @@ select
 ',
   'sda_new',
   50,
-  '{}'::jsonb
+  '{"new_hymnal_number":51,"old_hymnal_number":51,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-pass-me-not-o-gentle-saviour'
 where be.slug = 'am-sda-hymnal-new'
@@ -3800,7 +3802,7 @@ select
 ',
   'sda_new',
   51,
-  '{}'::jsonb
+  '{"new_hymnal_number":52,"old_hymnal_number":52,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-power-in-the-blood'
 where be.slug = 'am-sda-hymnal-new'
@@ -3874,7 +3876,7 @@ select
 ',
   'sda_new',
   52,
-  '{}'::jsonb
+  '{"new_hymnal_number":53,"old_hymnal_number":53,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-am-coming-to-the-cross'
 where be.slug = 'am-sda-hymnal-new'
@@ -3941,7 +3943,7 @@ select
 ',
   'sda_new',
   53,
-  '{}'::jsonb
+  '{"new_hymnal_number":54,"old_hymnal_number":54,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brightly-beams-our-father-s-mercy'
 where be.slug = 'am-sda-hymnal-new'
@@ -4017,7 +4019,7 @@ select
 ',
   'sda_new',
   54,
-  '{}'::jsonb
+  '{"new_hymnal_number":55,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-of-best-to-the-master'
 where be.slug = 'am-sda-hymnal-new'
@@ -4087,7 +4089,7 @@ select
 ',
   'sda_new',
   55,
-  '{}'::jsonb
+  '{"new_hymnal_number":56,"old_hymnal_number":55,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-though-your-sins-be-as-scarlet'
 where be.slug = 'am-sda-hymnal-new'
@@ -4159,7 +4161,7 @@ select
 ',
   'sda_new',
   56,
-  '{}'::jsonb
+  '{"new_hymnal_number":57,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-saved-me-by-his-blood'
 where be.slug = 'am-sda-hymnal-new'
@@ -4233,7 +4235,7 @@ select
 ',
   'sda_new',
   57,
-  '{}'::jsonb
+  '{"new_hymnal_number":58,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-paid-it-all'
 where be.slug = 'am-sda-hymnal-new'
@@ -4305,7 +4307,7 @@ select
 ',
   'sda_new',
   58,
-  '{}'::jsonb
+  '{"new_hymnal_number":59,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-break-thou-the-bread'
 where be.slug = 'am-sda-hymnal-new'
@@ -4377,7 +4379,7 @@ select
 ',
   'sda_new',
   59,
-  '{}'::jsonb
+  '{"new_hymnal_number":60,"old_hymnal_number":60,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-beautiful-garden-of-prayer'
 where be.slug = 'am-sda-hymnal-new'
@@ -4447,7 +4449,7 @@ select
 ',
   'sda_new',
   60,
-  '{}'::jsonb
+  '{"new_hymnal_number":61,"old_hymnal_number":61,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-nearer-still-nearer'
 where be.slug = 'am-sda-hymnal-new'
@@ -4525,7 +4527,7 @@ select
 ',
   'sda_new',
   61,
-  '{}'::jsonb
+  '{"new_hymnal_number":62,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-the-blessed-of-prayer'
 where be.slug = 'am-sda-hymnal-new'
@@ -4592,7 +4594,7 @@ select
 ',
   'sda_new',
   62,
-  '{}'::jsonb
+  '{"new_hymnal_number":63,"old_hymnal_number":58,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sweet-hour-of-prayer'
 where be.slug = 'am-sda-hymnal-new'
@@ -4664,7 +4666,7 @@ select
 ',
   'sda_new',
   63,
-  '{}'::jsonb
+  '{"new_hymnal_number":64,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-have-thine-own-way-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -4728,7 +4730,7 @@ select
 ',
   'sda_new',
   64,
-  '{}'::jsonb
+  '{"new_hymnal_number":65,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-amazing-grace'
 where be.slug = 'am-sda-hymnal-new'
@@ -4784,7 +4786,7 @@ select
 ',
   'sda_new',
   65,
-  '{}'::jsonb
+  '{"new_hymnal_number":66,"old_hymnal_number":2,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hear-our-prayer-o-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -4868,7 +4870,7 @@ select
 ',
   'sda_new',
   66,
-  '{}'::jsonb
+  '{"new_hymnal_number":67,"old_hymnal_number":68,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-am-thine-o-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -4946,7 +4948,7 @@ select
 ',
   'sda_new',
   67,
-  '{}'::jsonb
+  '{"new_hymnal_number":68,"old_hymnal_number":69,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-nearer-my-god-to-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -5013,7 +5015,7 @@ select
 ',
   'sda_new',
   68,
-  '{}'::jsonb
+  '{"new_hymnal_number":69,"old_hymnal_number":70,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-the-hour-of-trial'
 where be.slug = 'am-sda-hymnal-new'
@@ -5090,7 +5092,7 @@ select
 ',
   'sda_new',
   69,
-  '{}'::jsonb
+  '{"new_hymnal_number":70,"old_hymnal_number":71,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-speak-to-my-soul'
 where be.slug = 'am-sda-hymnal-new'
@@ -5152,7 +5154,7 @@ select
 ',
   'sda_new',
   70,
-  '{}'::jsonb
+  '{"new_hymnal_number":71,"old_hymnal_number":72,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-now-spread-thy-wings-of-love'
 where be.slug = 'am-sda-hymnal-new'
@@ -5225,7 +5227,7 @@ select
 ',
   'sda_new',
   71,
-  '{}'::jsonb
+  '{"new_hymnal_number":72,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-lord-in-your-mercy'
 where be.slug = 'am-sda-hymnal-new'
@@ -5281,7 +5283,7 @@ select
 ',
   'sda_new',
   72,
-  '{}'::jsonb
+  '{"new_hymnal_number":73,"old_hymnal_number":74,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-give-thee-but-thine-own'
 where be.slug = 'am-sda-hymnal-new'
@@ -5341,7 +5343,7 @@ select
 ',
   'sda_new',
   73,
-  '{}'::jsonb
+  '{"new_hymnal_number":74,"old_hymnal_number":67,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-with-thy-spirit-fill-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -5414,7 +5416,7 @@ select
 ',
   'sda_new',
   74,
-  '{}'::jsonb
+  '{"new_hymnal_number":75,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-majestic-sweetness-sits-enthroned'
 where be.slug = 'am-sda-hymnal-new'
@@ -5487,7 +5489,7 @@ select
 ',
   'sda_new',
   75,
-  '{}'::jsonb
+  '{"new_hymnal_number":76,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-fill-my-cup-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -5545,7 +5547,7 @@ select
 ',
   'sda_new',
   76,
-  '{}'::jsonb
+  '{"new_hymnal_number":77,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-blessing'
 where be.slug = 'am-sda-hymnal-new'
@@ -5612,7 +5614,7 @@ select
 ',
   'sda_new',
   77,
-  '{}'::jsonb
+  '{"new_hymnal_number":78,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-time-to-be-holy'
 where be.slug = 'am-sda-hymnal-new'
@@ -5689,7 +5691,7 @@ select
 ',
   'sda_new',
   78,
-  '{}'::jsonb
+  '{"new_hymnal_number":79,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lord-i-want-to-be-christian'
 where be.slug = 'am-sda-hymnal-new'
@@ -5748,7 +5750,7 @@ select
 ',
   'sda_new',
   79,
-  '{}'::jsonb
+  '{"new_hymnal_number":80,"old_hymnal_number":266,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-trun-your-eyes-upon-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -5827,7 +5829,7 @@ select
 ',
   'sda_new',
   80,
-  '{}'::jsonb
+  '{"new_hymnal_number":81,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-lord-i-m-fired'
 where be.slug = 'am-sda-hymnal-new'
@@ -5900,7 +5902,7 @@ select
 ',
   'sda_new',
   81,
-  '{}'::jsonb
+  '{"new_hymnal_number":82,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-must-tell-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -5963,7 +5965,7 @@ select
 ',
   'sda_new',
   82,
-  '{}'::jsonb
+  '{"new_hymnal_number":83,"old_hymnal_number":256,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-into-my-heart'
 where be.slug = 'am-sda-hymnal-new'
@@ -6026,7 +6028,7 @@ select
 ',
   'sda_new',
   83,
-  '{}'::jsonb
+  '{"new_hymnal_number":84,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-an-we-come-to-you-in-prayer'
 where be.slug = 'am-sda-hymnal-new'
@@ -6100,7 +6102,7 @@ select
 ',
   'sda_new',
   84,
-  '{}'::jsonb
+  '{"new_hymnal_number":85,"old_hymnal_number":85,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-safe-in-the-arms-of-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -6173,7 +6175,7 @@ select
 ',
   'sda_new',
   85,
-  '{}'::jsonb
+  '{"new_hymnal_number":86,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-love-of-my-soul'
 where be.slug = 'am-sda-hymnal-new'
@@ -6247,7 +6249,7 @@ select
 ',
   'sda_new',
   86,
-  '{}'::jsonb
+  '{"new_hymnal_number":87,"old_hymnal_number":87,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-any-where-with-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -6319,7 +6321,7 @@ select
 ',
   'sda_new',
   87,
-  '{}'::jsonb
+  '{"new_hymnal_number":88,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-dilligence'
 where be.slug = 'am-sda-hymnal-new'
@@ -6393,7 +6395,7 @@ select
 ',
   'sda_new',
   88,
-  '{}'::jsonb
+  '{"new_hymnal_number":89,"old_hymnal_number":90,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-let-me-walk-with-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -6470,7 +6472,7 @@ select
 ',
   'sda_new',
   89,
-  '{}'::jsonb
+  '{"new_hymnal_number":90,"old_hymnal_number":89,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-if-i-gained-the-world'
 where be.slug = 'am-sda-hymnal-new'
@@ -6549,7 +6551,7 @@ select
 ',
   'sda_new',
   90,
-  '{}'::jsonb
+  '{"new_hymnal_number":91,"old_hymnal_number":77,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-re-marching-to-zion'
 where be.slug = 'am-sda-hymnal-new'
@@ -6626,7 +6628,7 @@ select
 ',
   'sda_new',
   91,
-  '{}'::jsonb
+  '{"new_hymnal_number":92,"old_hymnal_number":78,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-saviour-with-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -6694,7 +6696,7 @@ select
 ',
   'sda_new',
   92,
-  '{}'::jsonb
+  '{"new_hymnal_number":93,"old_hymnal_number":93,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-call-to-jesus-in-trouble'
 where be.slug = 'am-sda-hymnal-new'
@@ -6768,7 +6770,7 @@ select
 ',
   'sda_new',
   93,
-  '{}'::jsonb
+  '{"new_hymnal_number":94,"old_hymnal_number":94,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-m-pressing-on-the-upward-way'
 where be.slug = 'am-sda-hymnal-new'
@@ -6837,7 +6839,7 @@ select
 ',
   'sda_new',
   94,
-  '{}'::jsonb
+  '{"new_hymnal_number":95,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-pays-to-serve-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -6905,7 +6907,7 @@ select
 ',
   'sda_new',
   95,
-  '{}'::jsonb
+  '{"new_hymnal_number":96,"old_hymnal_number":96,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-leadeth-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -6977,7 +6979,7 @@ select
 ',
   'sda_new',
   96,
-  '{}'::jsonb
+  '{"new_hymnal_number":97,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-come-to-the-garden-alone'
 where be.slug = 'am-sda-hymnal-new'
@@ -7050,7 +7052,7 @@ select
 ',
   'sda_new',
   97,
-  '{}'::jsonb
+  '{"new_hymnal_number":98,"old_hymnal_number":98,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-blessed-lord-how-i-need-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -7124,7 +7126,7 @@ select
 ',
   'sda_new',
   98,
-  '{}'::jsonb
+  '{"new_hymnal_number":99,"old_hymnal_number":100,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hold-the-fort'
 where be.slug = 'am-sda-hymnal-new'
@@ -7197,7 +7199,7 @@ select
 ',
   'sda_new',
   99,
-  '{}'::jsonb
+  '{"new_hymnal_number":100,"old_hymnal_number":99,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brighten-the-way-with-a-smile'
 where be.slug = 'am-sda-hymnal-new'
@@ -7276,7 +7278,7 @@ select
 ',
   'sda_new',
   100,
-  '{}'::jsonb
+  '{"new_hymnal_number":101,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-just-when-i-need-hime-most'
 where be.slug = 'am-sda-hymnal-new'
@@ -7349,7 +7351,7 @@ select
 ',
   'sda_new',
   101,
-  '{}'::jsonb
+  '{"new_hymnal_number":102,"old_hymnal_number":102,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-belong-to-the-king'
 where be.slug = 'am-sda-hymnal-new'
@@ -7423,7 +7425,7 @@ select
 ',
   'sda_new',
   102,
-  '{}'::jsonb
+  '{"new_hymnal_number":103,"old_hymnal_number":103,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-leaning-on-the-everlasting-arms'
 where be.slug = 'am-sda-hymnal-new'
@@ -7490,7 +7492,7 @@ select
 ',
   'sda_new',
   103,
-  '{}'::jsonb
+  '{"new_hymnal_number":104,"old_hymnal_number":104,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-i-my-cross-have-taken'
 where be.slug = 'am-sda-hymnal-new'
@@ -7563,7 +7565,7 @@ select
 ',
   'sda_new',
   104,
-  '{}'::jsonb
+  '{"new_hymnal_number":105,"old_hymnal_number":106,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lead-me-to-calvary'
 where be.slug = 'am-sda-hymnal-new'
@@ -7646,7 +7648,7 @@ select
 ',
   'sda_new',
   105,
-  '{}'::jsonb
+  '{"new_hymnal_number":106,"old_hymnal_number":105,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-living-for-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -7721,7 +7723,7 @@ select
 ',
   'sda_new',
   106,
-  '{}'::jsonb
+  '{"new_hymnal_number":107,"old_hymnal_number":79,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-yield-not-to-temptation'
 where be.slug = 'am-sda-hymnal-new'
@@ -7793,7 +7795,7 @@ select
 ',
   'sda_new',
   107,
-  '{}'::jsonb
+  '{"new_hymnal_number":108,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-all-the-world-to-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -7872,7 +7874,7 @@ select
 ',
   'sda_new',
   108,
-  '{}'::jsonb
+  '{"new_hymnal_number":109,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-it-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -7944,7 +7946,7 @@ select
 ',
   'sda_new',
   109,
-  '{}'::jsonb
+  '{"new_hymnal_number":110,"old_hymnal_number":82,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ve-found-a-friend'
 where be.slug = 'am-sda-hymnal-new'
@@ -8028,7 +8030,7 @@ select
 ',
   'sda_new',
   110,
-  '{}'::jsonb
+  '{"new_hymnal_number":111,"old_hymnal_number":83,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-does-jesus-care'
 where be.slug = 'am-sda-hymnal-new'
@@ -8096,7 +8098,7 @@ select
 ',
   'sda_new',
   111,
-  '{}'::jsonb
+  '{"new_hymnal_number":112,"old_hymnal_number":84,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-a-friend-we-have-in-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -8167,7 +8169,7 @@ select
 ',
   'sda_new',
   112,
-  '{}'::jsonb
+  '{"new_hymnal_number":113,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-like-a-river-glorious'
 where be.slug = 'am-sda-hymnal-new'
@@ -8239,7 +8241,7 @@ select
 ',
   'sda_new',
   113,
-  '{}'::jsonb
+  '{"new_hymnal_number":114,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-d-rather-have-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -8306,7 +8308,7 @@ select
 ',
   'sda_new',
   114,
-  '{}'::jsonb
+  '{"new_hymnal_number":115,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-child-of-the-king'
 where be.slug = 'am-sda-hymnal-new'
@@ -8382,7 +8384,7 @@ select
 ',
   'sda_new',
   115,
-  '{}'::jsonb
+  '{"new_hymnal_number":116,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-heavenly-sunlight'
 where be.slug = 'am-sda-hymnal-new'
@@ -8446,7 +8448,7 @@ select
 ',
   'sda_new',
   116,
-  '{}'::jsonb
+  '{"new_hymnal_number":117,"old_hymnal_number":57,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-my-life-and-let-it-be'
 where be.slug = 'am-sda-hymnal-new'
@@ -8520,7 +8522,7 @@ select
 ',
   'sda_new',
   117,
-  '{}'::jsonb
+  '{"new_hymnal_number":118,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-away-from-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -8587,7 +8589,7 @@ select
 ',
   'sda_new',
   118,
-  '{}'::jsonb
+  '{"new_hymnal_number":119,"old_hymnal_number":150,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-do-thy-work-lovingly'
 where be.slug = 'am-sda-hymnal-new'
@@ -8660,7 +8662,7 @@ select
 ',
   'sda_new',
   119,
-  '{}'::jsonb
+  '{"new_hymnal_number":120,"old_hymnal_number":151,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hark-the-voice-of-jesus-calling'
 where be.slug = 'am-sda-hymnal-new'
@@ -8727,7 +8729,7 @@ select
 ',
   'sda_new',
   120,
-  '{}'::jsonb
+  '{"new_hymnal_number":121,"old_hymnal_number":152,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-work-for-the-night-is-coming'
 where be.slug = 'am-sda-hymnal-new'
@@ -8805,7 +8807,7 @@ select
 ',
   'sda_new',
   121,
-  '{}'::jsonb
+  '{"new_hymnal_number":122,"old_hymnal_number":207,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-is-vanity'
 where be.slug = 'am-sda-hymnal-new'
@@ -8883,7 +8885,7 @@ select
 ',
   'sda_new',
   122,
-  '{}'::jsonb
+  '{"new_hymnal_number":123,"old_hymnal_number":269,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-follow-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -8951,7 +8953,7 @@ select
 ',
   'sda_new',
   123,
-  '{}'::jsonb
+  '{"new_hymnal_number":124,"old_hymnal_number":126,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wholly-thine'
 where be.slug = 'am-sda-hymnal-new'
@@ -9031,7 +9033,7 @@ select
 ',
   'sda_new',
   124,
-  '{}'::jsonb
+  '{"new_hymnal_number":125,"old_hymnal_number":124,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-brother-be-faithful'
 where be.slug = 'am-sda-hymnal-new'
@@ -9104,7 +9106,7 @@ select
 ',
   'sda_new',
   125,
-  '{}'::jsonb
+  '{"new_hymnal_number":126,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-belived-you'
 where be.slug = 'am-sda-hymnal-new'
@@ -9177,7 +9179,7 @@ select
 ',
   'sda_new',
   126,
-  '{}'::jsonb
+  '{"new_hymnal_number":127,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-have-a-friend-so-precious'
 where be.slug = 'am-sda-hymnal-new'
@@ -9247,7 +9249,7 @@ select
 ',
   'sda_new',
   127,
-  '{}'::jsonb
+  '{"new_hymnal_number":128,"old_hymnal_number":128,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-faith-of-our-fathers'
 where be.slug = 'am-sda-hymnal-new'
@@ -9330,7 +9332,7 @@ select
 ',
   'sda_new',
   128,
-  '{}'::jsonb
+  '{"new_hymnal_number":129,"old_hymnal_number":131,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-hope-is-built'
 where be.slug = 'am-sda-hymnal-new'
@@ -9398,7 +9400,7 @@ select
 ',
   'sda_new',
   129,
-  '{}'::jsonb
+  '{"new_hymnal_number":130,"old_hymnal_number":132,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-lift-me-up'
 where be.slug = 'am-sda-hymnal-new'
@@ -9473,7 +9475,7 @@ select
 ',
   'sda_new',
   130,
-  '{}'::jsonb
+  '{"new_hymnal_number":131,"old_hymnal_number":129,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-longing'
 where be.slug = 'am-sda-hymnal-new'
@@ -9537,7 +9539,7 @@ select
 ',
   'sda_new',
   131,
-  '{}'::jsonb
+  '{"new_hymnal_number":132,"old_hymnal_number":130,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-longing-to-be-with-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -9621,7 +9623,7 @@ select
 ',
   'sda_new',
   132,
-  '{}'::jsonb
+  '{"new_hymnal_number":133,"old_hymnal_number":133,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-will-take-care-of-you'
 where be.slug = 'am-sda-hymnal-new'
@@ -9694,7 +9696,7 @@ select
 ',
   'sda_new',
   133,
-  '{}'::jsonb
+  '{"new_hymnal_number":134,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-be-thou-my-vision'
 where be.slug = 'am-sda-hymnal-new'
@@ -9764,7 +9766,7 @@ select
 ',
   'sda_new',
   134,
-  '{}'::jsonb
+  '{"new_hymnal_number":135,"old_hymnal_number":135,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-happy-day-that-fixed-my-choice'
 where be.slug = 'am-sda-hymnal-new'
@@ -9833,7 +9835,7 @@ select
 ',
   'sda_new',
   135,
-  '{}'::jsonb
+  '{"new_hymnal_number":136,"old_hymnal_number":136,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-my-heart-there-rings-a-melody'
 where be.slug = 'am-sda-hymnal-new'
@@ -9906,7 +9908,7 @@ select
 ',
   'sda_new',
   136,
-  '{}'::jsonb
+  '{"new_hymnal_number":137,"old_hymnal_number":134,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-blessed-assurance'
 where be.slug = 'am-sda-hymnal-new'
@@ -9967,7 +9969,7 @@ select
 ',
   'sda_new',
   137,
-  '{}'::jsonb
+  '{"new_hymnal_number":138,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-rejoice-in-the-lord-always'
 where be.slug = 'am-sda-hymnal-new'
@@ -10042,7 +10044,7 @@ select
 ',
   'sda_new',
   138,
-  '{}'::jsonb
+  '{"new_hymnal_number":139,"old_hymnal_number":137,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-sunshine-in-my-soul-today'
 where be.slug = 'am-sda-hymnal-new'
@@ -10117,7 +10119,7 @@ select
 ',
   'sda_new',
   139,
-  '{}'::jsonb
+  '{"new_hymnal_number":140,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-you-may-have-the-joy-bells'
 where be.slug = 'am-sda-hymnal-new'
@@ -10189,7 +10191,7 @@ select
 ',
   'sda_new',
   140,
-  '{}'::jsonb
+  '{"new_hymnal_number":141,"old_hymnal_number":141,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-me-your-peace'
 where be.slug = 'am-sda-hymnal-new'
@@ -10266,7 +10268,7 @@ select
 ',
   'sda_new',
   141,
-  '{}'::jsonb
+  '{"new_hymnal_number":142,"old_hymnal_number":140,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-peace-like-a-river'
 where be.slug = 'am-sda-hymnal-new'
@@ -10350,7 +10352,7 @@ select
 ',
   'sda_new',
   142,
-  '{}'::jsonb
+  '{"new_hymnal_number":143,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-wonderful-saviour-is-jesus-my-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -10429,7 +10431,7 @@ select
 ',
   'sda_new',
   143,
-  '{}'::jsonb
+  '{"new_hymnal_number":144,"old_hymnal_number":138,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-is-your-all-on-the-altar'
 where be.slug = 'am-sda-hymnal-new'
@@ -10515,7 +10517,7 @@ select
 ',
   'sda_new',
   144,
-  '{}'::jsonb
+  '{"new_hymnal_number":145,"old_hymnal_number":139,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-peace'
 where be.slug = 'am-sda-hymnal-new'
@@ -10585,7 +10587,7 @@ select
 ',
   'sda_new',
   145,
-  '{}'::jsonb
+  '{"new_hymnal_number":146,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-peace-like-a-river'
 where be.slug = 'am-sda-hymnal-new'
@@ -10657,7 +10659,7 @@ select
 ',
   'sda_new',
   146,
-  '{}'::jsonb
+  '{"new_hymnal_number":147,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-joyful-joyful-we-adore-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -10730,7 +10732,7 @@ select
 ',
   'sda_new',
   147,
-  '{}'::jsonb
+  '{"new_hymnal_number":148,"old_hymnal_number":148,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-know-i-love-thee-better-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -10798,7 +10800,7 @@ select
 ',
   'sda_new',
   148,
-  '{}'::jsonb
+  '{"new_hymnal_number":149,"old_hymnal_number":149,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-love-to-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -10871,7 +10873,7 @@ select
 ',
   'sda_new',
   149,
-  '{}'::jsonb
+  '{"new_hymnal_number":150,"old_hymnal_number":143,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-ll-love-to-the-end'
 where be.slug = 'am-sda-hymnal-new'
@@ -10944,7 +10946,7 @@ select
 ',
   'sda_new',
   150,
-  '{}'::jsonb
+  '{"new_hymnal_number":151,"old_hymnal_number":145,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-jesus-i-love-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -11011,7 +11013,7 @@ select
 ',
   'sda_new',
   151,
-  '{}'::jsonb
+  '{"new_hymnal_number":152,"old_hymnal_number":146,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-love-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -11094,7 +11096,7 @@ select
 ',
   'sda_new',
   152,
-  '{}'::jsonb
+  '{"new_hymnal_number":153,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-sing-of-jesus-s-love'
 where be.slug = 'am-sda-hymnal-new'
@@ -11167,7 +11169,7 @@ select
 ',
   'sda_new',
   153,
-  '{}'::jsonb
+  '{"new_hymnal_number":154,"old_hymnal_number":147,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-like-as-a-father'
 where be.slug = 'am-sda-hymnal-new'
@@ -11238,7 +11240,7 @@ select
 ',
   'sda_new',
   154,
-  '{}'::jsonb
+  '{"new_hymnal_number":155,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-love'
 where be.slug = 'am-sda-hymnal-new'
@@ -11314,7 +11316,7 @@ select
 ',
   'sda_new',
   155,
-  '{}'::jsonb
+  '{"new_hymnal_number":156,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-and-can-it-be'
 where be.slug = 'am-sda-hymnal-new'
@@ -11391,7 +11393,7 @@ select
 ',
   'sda_new',
   156,
-  '{}'::jsonb
+  '{"new_hymnal_number":157,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-love-lifted-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -11451,7 +11453,7 @@ select
 ',
   'sda_new',
   157,
-  '{}'::jsonb
+  '{"new_hymnal_number":158,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-behold-what-manner-of-love'
 where be.slug = 'am-sda-hymnal-new'
@@ -11512,7 +11514,7 @@ select
 ',
   'sda_new',
   158,
-  '{}'::jsonb
+  '{"new_hymnal_number":159,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wide-wide-as-the-ocen'
 where be.slug = 'am-sda-hymnal-new'
@@ -11580,7 +11582,7 @@ select
 ',
   'sda_new',
   159,
-  '{}'::jsonb
+  '{"new_hymnal_number":160,"old_hymnal_number":160,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-to-jesus-he-ll-teach-the-way'
 where be.slug = 'am-sda-hymnal-new'
@@ -11658,7 +11660,7 @@ select
 ',
   'sda_new',
   160,
-  '{}'::jsonb
+  '{"new_hymnal_number":161,"old_hymnal_number":161,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-the-world-but-give-me-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -11725,7 +11727,7 @@ select
 ',
   'sda_new',
   161,
-  '{}'::jsonb
+  '{"new_hymnal_number":162,"old_hymnal_number":162,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-close-to-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -11798,7 +11800,7 @@ select
 ',
   'sda_new',
   162,
-  '{}'::jsonb
+  '{"new_hymnal_number":163,"old_hymnal_number":153,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-about-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -11895,7 +11897,7 @@ select
 ',
   'sda_new',
   163,
-  '{}'::jsonb
+  '{"new_hymnal_number":164,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-nothing-but-the-blood-of-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -11969,7 +11971,7 @@ select
 ',
   'sda_new',
   164,
-  '{}'::jsonb
+  '{"new_hymnal_number":165,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-ev-ry-soul-by-sin-oppressed'
 where be.slug = 'am-sda-hymnal-new'
@@ -12036,7 +12038,7 @@ select
 ',
   'sda_new',
   165,
-  '{}'::jsonb
+  '{"new_hymnal_number":166,"old_hymnal_number":166,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-give-my-life-for-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -12114,7 +12116,7 @@ select
 ',
   'sda_new',
   166,
-  '{}'::jsonb
+  '{"new_hymnal_number":167,"old_hymnal_number":167,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-the-pearly-gates-will-open'
 where be.slug = 'am-sda-hymnal-new'
@@ -12186,7 +12188,7 @@ select
 ',
   'sda_new',
   167,
-  '{}'::jsonb
+  '{"new_hymnal_number":168,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saviour-like-a-shephered-lead-us'
 where be.slug = 'am-sda-hymnal-new'
@@ -12260,7 +12262,7 @@ select
 ',
   'sda_new',
   168,
-  '{}'::jsonb
+  '{"new_hymnal_number":169,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-gate-that-stand-ajar'
 where be.slug = 'am-sda-hymnal-new'
@@ -12334,7 +12336,7 @@ select
 ',
   'sda_new',
   169,
-  '{}'::jsonb
+  '{"new_hymnal_number":170,"old_hymnal_number":156,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-have-a-song-i-love-to-sing'
 where be.slug = 'am-sda-hymnal-new'
@@ -12413,7 +12415,7 @@ select
 ',
   'sda_new',
   170,
-  '{}'::jsonb
+  '{"new_hymnal_number":171,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-then-jesus-came'
 where be.slug = 'am-sda-hymnal-new'
@@ -12486,7 +12488,7 @@ select
 ',
   'sda_new',
   171,
-  '{}'::jsonb
+  '{"new_hymnal_number":172,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-bis-us-come'
 where be.slug = 'am-sda-hymnal-new'
@@ -12559,7 +12561,7 @@ select
 ',
   'sda_new',
   172,
-  '{}'::jsonb
+  '{"new_hymnal_number":173,"old_hymnal_number":159,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-now-i-ve-found-a-jewel'
 where be.slug = 'am-sda-hymnal-new'
@@ -12626,7 +12628,7 @@ select
 ',
   'sda_new',
   173,
-  '{}'::jsonb
+  '{"new_hymnal_number":174,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-day-by-day'
 where be.slug = 'am-sda-hymnal-new'
@@ -12704,7 +12706,7 @@ select
 ',
   'sda_new',
   174,
-  '{}'::jsonb
+  '{"new_hymnal_number":175,"old_hymnal_number":170,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-great-physician-now-is-near'
 where be.slug = 'am-sda-hymnal-new'
@@ -12769,7 +12771,7 @@ select
 ',
   'sda_new',
   175,
-  '{}'::jsonb
+  '{"new_hymnal_number":176,"old_hymnal_number":263,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful'
 where be.slug = 'am-sda-hymnal-new'
@@ -12858,7 +12860,7 @@ select
 ',
   'sda_new',
   176,
-  '{}'::jsonb
+  '{"new_hymnal_number":177,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-since-jesus-came-into-my-heart'
 where be.slug = 'am-sda-hymnal-new'
@@ -12926,7 +12928,7 @@ select
 ',
   'sda_new',
   177,
-  '{}'::jsonb
+  '{"new_hymnal_number":178,"old_hymnal_number":178,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-thou-fount-of-every-blessing'
 where be.slug = 'am-sda-hymnal-new'
@@ -12990,7 +12992,7 @@ select
 ',
   'sda_new',
   178,
-  '{}'::jsonb
+  '{"new_hymnal_number":179,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-i-survey-the-wondrous-cross'
 where be.slug = 'am-sda-hymnal-new'
@@ -13064,7 +13066,7 @@ select
 ',
   'sda_new',
   179,
-  '{}'::jsonb
+  '{"new_hymnal_number":180,"old_hymnal_number":181,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-keep-me-near-the-cross'
 where be.slug = 'am-sda-hymnal-new'
@@ -13146,7 +13148,7 @@ select
 ',
   'sda_new',
   180,
-  '{}'::jsonb
+  '{"new_hymnal_number":181,"old_hymnal_number":182,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-glory-to-his-name'
 where be.slug = 'am-sda-hymnal-new'
@@ -13225,7 +13227,7 @@ select
 ',
   'sda_new',
   181,
-  '{}'::jsonb
+  '{"new_hymnal_number":182,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-old-rugged-cross'
 where be.slug = 'am-sda-hymnal-new'
@@ -13289,7 +13291,7 @@ select
 ',
   'sda_new',
   182,
-  '{}'::jsonb
+  '{"new_hymnal_number":183,"old_hymnal_number":172,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-go-to-dark-gethesemane'
 where be.slug = 'am-sda-hymnal-new'
@@ -13358,7 +13360,7 @@ select
 ',
   'sda_new',
   183,
-  '{}'::jsonb
+  '{"new_hymnal_number":184,"old_hymnal_number":176,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-at-the-cross'
 where be.slug = 'am-sda-hymnal-new'
@@ -13431,7 +13433,7 @@ select
 ',
   'sda_new',
   184,
-  '{}'::jsonb
+  '{"new_hymnal_number":185,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-bought-us-by-his-blood'
 where be.slug = 'am-sda-hymnal-new'
@@ -13505,7 +13507,7 @@ select
 ',
   'sda_new',
   185,
-  '{}'::jsonb
+  '{"new_hymnal_number":186,"old_hymnal_number":175,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-way-of-the-cross-leads-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -13573,7 +13575,7 @@ select
 ',
   'sda_new',
   186,
-  '{}'::jsonb
+  '{"new_hymnal_number":187,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-burdens-are-lifted-at-calvary'
 where be.slug = 'am-sda-hymnal-new'
@@ -13641,7 +13643,7 @@ select
 ',
   'sda_new',
   187,
-  '{}'::jsonb
+  '{"new_hymnal_number":188,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-sacred-head-now-wonded'
 where be.slug = 'am-sda-hymnal-new'
@@ -13718,7 +13720,7 @@ select
 ',
   'sda_new',
   188,
-  '{}'::jsonb
+  '{"new_hymnal_number":189,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-remember'
 where be.slug = 'am-sda-hymnal-new'
@@ -13782,7 +13784,7 @@ select
 ',
   'sda_new',
   189,
-  '{}'::jsonb
+  '{"new_hymnal_number":190,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-friend-of-children'
 where be.slug = 'am-sda-hymnal-new'
@@ -13855,7 +13857,7 @@ select
 ',
   'sda_new',
   190,
-  '{}'::jsonb
+  '{"new_hymnal_number":191,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-blessed-redeemer'
 where be.slug = 'am-sda-hymnal-new'
@@ -13915,7 +13917,7 @@ select
 ',
   'sda_new',
   191,
-  '{}'::jsonb
+  '{"new_hymnal_number":192,"old_hymnal_number":259,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-for-god-so-loved-the-world'
 where be.slug = 'am-sda-hymnal-new'
@@ -13982,7 +13984,7 @@ select
 ',
   'sda_new',
   192,
-  '{}'::jsonb
+  '{"new_hymnal_number":193,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ll-not-forget-gethesemane'
 where be.slug = 'am-sda-hymnal-new'
@@ -14052,7 +14054,7 @@ select
 ',
   'sda_new',
   193,
-  '{}'::jsonb
+  '{"new_hymnal_number":194,"old_hymnal_number":194,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-day-jehovah-s-rest'
 where be.slug = 'am-sda-hymnal-new'
@@ -14119,7 +14121,7 @@ select
 ',
   'sda_new',
   194,
-  '{}'::jsonb
+  '{"new_hymnal_number":195,"old_hymnal_number":195,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-day-of-rest-and-gladness'
 where be.slug = 'am-sda-hymnal-new'
@@ -14191,7 +14193,7 @@ select
 ',
   'sda_new',
   195,
-  '{}'::jsonb
+  '{"new_hymnal_number":196,"old_hymnal_number":193,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-don-t-forget-the-sabbath'
 where be.slug = 'am-sda-hymnal-new'
@@ -14260,7 +14262,7 @@ select
 ',
   'sda_new',
   196,
-  '{}'::jsonb
+  '{"new_hymnal_number":197,"old_hymnal_number":197,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-sabbath-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -14323,7 +14325,7 @@ select
 ',
   'sda_new',
   197,
-  '{}'::jsonb
+  '{"new_hymnal_number":198,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-this-is-my-commendment'
 where be.slug = 'am-sda-hymnal-new'
@@ -14393,7 +14395,7 @@ select
 ',
   'sda_new',
   198,
-  '{}'::jsonb
+  '{"new_hymnal_number":199,"old_hymnal_number":198,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-may-thy-words-fill-our-hearts'
 where be.slug = 'am-sda-hymnal-new'
@@ -14470,7 +14472,7 @@ select
 ',
   'sda_new',
   199,
-  '{}'::jsonb
+  '{"new_hymnal_number":200,"old_hymnal_number":199,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-me-the-bible'
 where be.slug = 'am-sda-hymnal-new'
@@ -14545,7 +14547,7 @@ select
 ',
   'sda_new',
   200,
-  '{}'::jsonb
+  '{"new_hymnal_number":201,"old_hymnal_number":201,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-me-the-story-of-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -14616,7 +14618,7 @@ select
 ',
   'sda_new',
   201,
-  '{}'::jsonb
+  '{"new_hymnal_number":202,"old_hymnal_number":202,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-words-of-life'
 where be.slug = 'am-sda-hymnal-new'
@@ -14697,7 +14699,7 @@ select
 ',
   'sda_new',
   202,
-  '{}'::jsonb
+  '{"new_hymnal_number":203,"old_hymnal_number":203,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-onward-christian-soldiers'
 where be.slug = 'am-sda-hymnal-new'
@@ -14770,7 +14772,7 @@ select
 ',
   'sda_new',
   203,
-  '{}'::jsonb
+  '{"new_hymnal_number":204,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sound-the-battle-cry'
 where be.slug = 'am-sda-hymnal-new'
@@ -14843,7 +14845,7 @@ select
 ',
   'sda_new',
   204,
-  '{}'::jsonb
+  '{"new_hymnal_number":205,"old_hymnal_number":205,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-stand-up-stand-up-for-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -14911,7 +14913,7 @@ select
 ',
   'sda_new',
   205,
-  '{}'::jsonb
+  '{"new_hymnal_number":206,"old_hymnal_number":206,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-soldiers-of-christ-arise'
 where be.slug = 'am-sda-hymnal-new'
@@ -14994,7 +14996,7 @@ select
 ',
   'sda_new',
   206,
-  '{}'::jsonb
+  '{"new_hymnal_number":207,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-jesus-shall-gather-the-nation'
 where be.slug = 'am-sda-hymnal-new'
@@ -15066,7 +15068,7 @@ select
 ',
   'sda_new',
   207,
-  '{}'::jsonb
+  '{"new_hymnal_number":208,"old_hymnal_number":209,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-is-my-name-written-there'
 where be.slug = 'am-sda-hymnal-new'
@@ -15140,7 +15142,7 @@ select
 ',
   'sda_new',
   208,
-  '{}'::jsonb
+  '{"new_hymnal_number":209,"old_hymnal_number":211,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-coming-king-is-at-the-door'
 where be.slug = 'am-sda-hymnal-new'
@@ -15215,7 +15217,7 @@ select
 ',
   'sda_new',
   209,
-  '{}'::jsonb
+  '{"new_hymnal_number":210,"old_hymnal_number":210,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-almost-time-for-the-lord-to-come'
 where be.slug = 'am-sda-hymnal-new'
@@ -15283,7 +15285,7 @@ select
 ',
   'sda_new',
   210,
-  '{}'::jsonb
+  '{"new_hymnal_number":211,"old_hymnal_number":251,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-have-this-hope'
 where be.slug = 'am-sda-hymnal-new'
@@ -15355,7 +15357,7 @@ select
 ',
   'sda_new',
   211,
-  '{}'::jsonb
+  '{"new_hymnal_number":212,"old_hymnal_number":212,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-may-be-at-morn'
 where be.slug = 'am-sda-hymnal-new'
@@ -15434,7 +15436,7 @@ select
 ',
   'sda_new',
   212,
-  '{}'::jsonb
+  '{"new_hymnal_number":213,"old_hymnal_number":213,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lo-he-comes'
 where be.slug = 'am-sda-hymnal-new'
@@ -15512,7 +15514,7 @@ select
 ',
   'sda_new',
   213,
-  '{}'::jsonb
+  '{"new_hymnal_number":214,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-if-were-today'
 where be.slug = 'am-sda-hymnal-new'
@@ -15573,7 +15575,7 @@ select
 ',
   'sda_new',
   214,
-  '{}'::jsonb
+  '{"new_hymnal_number":215,"old_hymnal_number":262,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-want-to-be-ready'
 where be.slug = 'am-sda-hymnal-new'
@@ -15661,7 +15663,7 @@ select
 ',
   'sda_new',
   215,
-  '{}'::jsonb
+  '{"new_hymnal_number":216,"old_hymnal_number":217,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lift-up-the-trumpet'
 where be.slug = 'am-sda-hymnal-new'
@@ -15738,7 +15740,7 @@ select
 ',
   'sda_new',
   216,
-  '{}'::jsonb
+  '{"new_hymnal_number":217,"old_hymnal_number":216,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-know-not-the-hour'
 where be.slug = 'am-sda-hymnal-new'
@@ -15799,7 +15801,7 @@ select
 ',
   'sda_new',
   217,
-  '{}'::jsonb
+  '{"new_hymnal_number":218,"old_hymnal_number":223,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-m-on-my-way-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -15872,7 +15874,7 @@ select
 ',
   'sda_new',
   218,
-  '{}'::jsonb
+  '{"new_hymnal_number":219,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-coming-soon'
 where be.slug = 'am-sda-hymnal-new'
@@ -15932,7 +15934,7 @@ select
 ',
   'sda_new',
   219,
-  '{}'::jsonb
+  '{"new_hymnal_number":220,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-halleluja'
 where be.slug = 'am-sda-hymnal-new'
@@ -16005,7 +16007,7 @@ select
 ',
   'sda_new',
   220,
-  '{}'::jsonb
+  '{"new_hymnal_number":221,"old_hymnal_number":221,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-a-land-that-is-fairer-than-day'
 where be.slug = 'am-sda-hymnal-new'
@@ -16082,7 +16084,7 @@ select
 ',
   'sda_new',
   221,
-  '{}'::jsonb
+  '{"new_hymnal_number":222,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-will-there-be-any-stars'
 where be.slug = 'am-sda-hymnal-new'
@@ -16166,7 +16168,7 @@ select
 ',
   'sda_new',
   222,
-  '{}'::jsonb
+  '{"new_hymnal_number":223,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-weall-get-to-heaven'
 where be.slug = 'am-sda-hymnal-new'
@@ -16257,7 +16259,7 @@ select
 ',
   'sda_new',
   223,
-  '{}'::jsonb
+  '{"new_hymnal_number":224,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sweeping-through-the-gates'
 where be.slug = 'am-sda-hymnal-new'
@@ -16329,7 +16331,7 @@ select
 ',
   'sda_new',
   224,
-  '{}'::jsonb
+  '{"new_hymnal_number":225,"old_hymnal_number":224,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-the-roll-is-called-up-younder'
 where be.slug = 'am-sda-hymnal-new'
@@ -16403,7 +16405,7 @@ select
 ',
   'sda_new',
   225,
-  '{}'::jsonb
+  '{"new_hymnal_number":226,"old_hymnal_number":226,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-few-more-years-shall-roll'
 where be.slug = 'am-sda-hymnal-new'
@@ -16473,7 +16475,7 @@ select
 ',
   'sda_new',
   226,
-  '{}'::jsonb
+  '{"new_hymnal_number":227,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-beautiful-valley-of-eden'
 where be.slug = 'am-sda-hymnal-new'
@@ -16542,7 +16544,7 @@ select
 ',
   'sda_new',
   227,
-  '{}'::jsonb
+  '{"new_hymnal_number":228,"old_hymnal_number":228,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-far-beyond-the-sun'
 where be.slug = 'am-sda-hymnal-new'
@@ -16620,7 +16622,7 @@ select
 ',
   'sda_new',
   228,
-  '{}'::jsonb
+  '{"new_hymnal_number":229,"old_hymnal_number":229,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-face-to-face'
 where be.slug = 'am-sda-hymnal-new'
@@ -16699,7 +16701,7 @@ select
 ',
   'sda_new',
   229,
-  '{}'::jsonb
+  '{"new_hymnal_number":230,"old_hymnal_number":230,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-never-grow-old'
 where be.slug = 'am-sda-hymnal-new'
@@ -16766,7 +16768,7 @@ select
 ',
   'sda_new',
   230,
-  '{}'::jsonb
+  '{"new_hymnal_number":231,"old_hymnal_number":219,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-land-of-pure-delight'
 where be.slug = 'am-sda-hymnal-new'
@@ -16841,7 +16843,7 @@ select
 ',
   'sda_new',
   231,
-  '{}'::jsonb
+  '{"new_hymnal_number":232,"old_hymnal_number":220,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-on-jordan-s-stromy-banks'
 where be.slug = 'am-sda-hymnal-new'
@@ -16915,7 +16917,7 @@ select
 ',
   'sda_new',
   232,
-  '{}'::jsonb
+  '{"new_hymnal_number":233,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-when-shall-i-see-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -16982,7 +16984,7 @@ select
 ',
   'sda_new',
   233,
-  '{}'::jsonb
+  '{"new_hymnal_number":234,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-soon-and-very-soon'
 where be.slug = 'am-sda-hymnal-new'
@@ -17057,7 +17059,7 @@ select
 ',
   'sda_new',
   234,
-  '{}'::jsonb
+  '{"new_hymnal_number":235,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-look-you-saints-the-sight-is-glorious'
 where be.slug = 'am-sda-hymnal-new'
@@ -17124,7 +17126,7 @@ select
 ',
   'sda_new',
   235,
-  '{}'::jsonb
+  '{"new_hymnal_number":236,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-do-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -17205,7 +17207,7 @@ select
 ',
   'sda_new',
   236,
-  '{}'::jsonb
+  '{"new_hymnal_number":237,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lo-what-a-glorious-sight-appears'
 where be.slug = 'am-sda-hymnal-new'
@@ -17280,7 +17282,7 @@ select
 ',
   'sda_new',
   237,
-  '{}'::jsonb
+  '{"new_hymnal_number":238,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-song-of-heaven-and-homeland'
 where be.slug = 'am-sda-hymnal-new'
@@ -17350,7 +17352,7 @@ select
 ',
   'sda_new',
   238,
-  '{}'::jsonb
+  '{"new_hymnal_number":239,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-over-younder'
 where be.slug = 'am-sda-hymnal-new'
@@ -17410,7 +17412,7 @@ select
 ',
   'sda_new',
   239,
-  '{}'::jsonb
+  '{"new_hymnal_number":240,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-king-is-coming'
 where be.slug = 'am-sda-hymnal-new'
@@ -17479,7 +17481,7 @@ select
 ',
   'sda_new',
   240,
-  '{}'::jsonb
+  '{"new_hymnal_number":241,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-no-night-there'
 where be.slug = 'am-sda-hymnal-new'
@@ -17543,7 +17545,7 @@ select
 ',
   'sda_new',
   241,
-  '{}'::jsonb
+  '{"new_hymnal_number":242,"old_hymnal_number":243,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sing-and-smile-and-pray'
 where be.slug = 'am-sda-hymnal-new'
@@ -17627,7 +17629,7 @@ select
 ',
   'sda_new',
   242,
-  '{}'::jsonb
+  '{"new_hymnal_number":243,"old_hymnal_number":242,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saviour-lead-me-lest-i-stray'
 where be.slug = 'am-sda-hymnal-new'
@@ -17710,7 +17712,7 @@ select
 ',
   'sda_new',
   243,
-  '{}'::jsonb
+  '{"new_hymnal_number":244,"old_hymnal_number":244,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-child-of-the-king'
 where be.slug = 'am-sda-hymnal-new'
@@ -17785,7 +17787,7 @@ select
 ',
   'sda_new',
   244,
-  '{}'::jsonb
+  '{"new_hymnal_number":245,"old_hymnal_number":245,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-lord-and-i'
 where be.slug = 'am-sda-hymnal-new'
@@ -17853,7 +17855,7 @@ select
 ',
   'sda_new',
   245,
-  '{}'::jsonb
+  '{"new_hymnal_number":246,"old_hymnal_number":231,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-lord-our-saviour'
 where be.slug = 'am-sda-hymnal-new'
@@ -17930,7 +17932,7 @@ select
 ',
   'sda_new',
   246,
-  '{}'::jsonb
+  '{"new_hymnal_number":247,"old_hymnal_number":246,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-surely-goodness-and-mercy'
 where be.slug = 'am-sda-hymnal-new'
@@ -18004,7 +18006,7 @@ select
 ',
   'sda_new',
   247,
-  '{}'::jsonb
+  '{"new_hymnal_number":248,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-dare-to-be-daniel'
 where be.slug = 'am-sda-hymnal-new'
@@ -18074,7 +18076,7 @@ select
 ',
   'sda_new',
   248,
-  '{}'::jsonb
+  '{"new_hymnal_number":249,"old_hymnal_number":234,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-would-be-true'
 where be.slug = 'am-sda-hymnal-new'
@@ -18158,7 +18160,7 @@ select
 ',
   'sda_new',
   249,
-  '{}'::jsonb
+  '{"new_hymnal_number":250,"old_hymnal_number":233,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-grace-of-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -18237,7 +18239,7 @@ select
 ',
   'sda_new',
   250,
-  '{}'::jsonb
+  '{"new_hymnal_number":251,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-a-little-while-we-ve-going-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -18310,7 +18312,7 @@ select
 ',
   'sda_new',
   251,
-  '{}'::jsonb
+  '{"new_hymnal_number":252,"old_hymnal_number":236,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brighten-the-corner-where-you-are'
 where be.slug = 'am-sda-hymnal-new'
@@ -18371,7 +18373,7 @@ select
 ',
   'sda_new',
   252,
-  '{}'::jsonb
+  '{"new_hymnal_number":253,"old_hymnal_number":254,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-the-world-needs-is-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -18432,7 +18434,7 @@ select
 ',
   'sda_new',
   253,
-  '{}'::jsonb
+  '{"new_hymnal_number":254,"old_hymnal_number":255,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sing-along'
 where be.slug = 'am-sda-hymnal-new'
@@ -18506,7 +18508,7 @@ select
 ',
   'sda_new',
   254,
-  '{}'::jsonb
+  '{"new_hymnal_number":255,"old_hymnal_number":237,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-the-heart-of-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -18566,7 +18568,7 @@ select
 ',
   'sda_new',
   255,
-  '{}'::jsonb
+  '{"new_hymnal_number":256,"old_hymnal_number":258,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-see-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -18643,7 +18645,7 @@ select
 ',
   'sda_new',
   256,
-  '{}'::jsonb
+  '{"new_hymnal_number":257,"old_hymnal_number":238,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-is-morning-in-my-heart'
 where be.slug = 'am-sda-hymnal-new'
@@ -18705,7 +18707,7 @@ select
 ',
   'sda_new',
   257,
-  '{}'::jsonb
+  '{"new_hymnal_number":258,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-father-i-adore-you'
 where be.slug = 'am-sda-hymnal-new'
@@ -18780,7 +18782,7 @@ select
 ',
   'sda_new',
   258,
-  '{}'::jsonb
+  '{"new_hymnal_number":259,"old_hymnal_number":239,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-missionary-volunteers'
 where be.slug = 'am-sda-hymnal-new'
@@ -18853,7 +18855,7 @@ select
 ',
   'sda_new',
   259,
-  '{}'::jsonb
+  '{"new_hymnal_number":260,"old_hymnal_number":155,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-saves'
 where be.slug = 'am-sda-hymnal-new'
@@ -18912,7 +18914,7 @@ select
 ',
   'sda_new',
   260,
-  '{}'::jsonb
+  '{"new_hymnal_number":261,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-let-it-shaine'
 where be.slug = 'am-sda-hymnal-new'
@@ -18988,7 +18990,7 @@ select
 ',
   'sda_new',
   261,
-  '{}'::jsonb
+  '{"new_hymnal_number":262,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-christ-is-my-friend'
 where be.slug = 'am-sda-hymnal-new'
@@ -19068,7 +19070,7 @@ select
 ',
   'sda_new',
   262,
-  '{}'::jsonb
+  '{"new_hymnal_number":263,"old_hymnal_number":240,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-where-the-gates-swing-outward-never'
 where be.slug = 'am-sda-hymnal-new'
@@ -19152,7 +19154,7 @@ select
 ',
   'sda_new',
   263,
-  '{}'::jsonb
+  '{"new_hymnal_number":264,"old_hymnal_number":241,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-shall-we-gather-at-the-river'
 where be.slug = 'am-sda-hymnal-new'
@@ -19220,7 +19222,7 @@ select
 ',
   'sda_new',
   264,
-  '{}'::jsonb
+  '{"new_hymnal_number":265,"old_hymnal_number":278,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-this-is-my-father-s-world'
 where be.slug = 'am-sda-hymnal-new'
@@ -19287,7 +19289,7 @@ select
 ',
   'sda_new',
   265,
-  '{}'::jsonb
+  '{"new_hymnal_number":266,"old_hymnal_number":279,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-sing-the-mighty-power-of-god'
 where be.slug = 'am-sda-hymnal-new'
@@ -19369,7 +19371,7 @@ select
 ',
   'sda_new',
   266,
-  '{}'::jsonb
+  '{"new_hymnal_number":267,"old_hymnal_number":277,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-s-children-have-a-firm-foundation'
 where be.slug = 'am-sda-hymnal-new'
@@ -19447,7 +19449,7 @@ select
 ',
   'sda_new',
   267,
-  '{}'::jsonb
+  '{"new_hymnal_number":268,"old_hymnal_number":268,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-loves-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -19515,7 +19517,7 @@ select
 ',
   'sda_new',
   268,
-  '{}'::jsonb
+  '{"new_hymnal_number":269,"old_hymnal_number":269,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-follow-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -19588,7 +19590,7 @@ select
 ',
   'sda_new',
   269,
-  '{}'::jsonb
+  '{"new_hymnal_number":270,"old_hymnal_number":270,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-he-cometh'
 where be.slug = 'am-sda-hymnal-new'
@@ -19660,7 +19662,7 @@ select
 ',
   'sda_new',
   270,
-  '{}'::jsonb
+  '{"new_hymnal_number":271,"old_hymnal_number":276,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-like-a-little-candle'
 where be.slug = 'am-sda-hymnal-new'
@@ -19734,7 +19736,7 @@ select
 ',
   'sda_new',
   271,
-  '{}'::jsonb
+  '{"new_hymnal_number":272,"old_hymnal_number":273,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ll-be-a-sunbeam'
 where be.slug = 'am-sda-hymnal-new'
@@ -19801,7 +19803,7 @@ select
 ',
   'sda_new',
   272,
-  '{}'::jsonb
+  '{"new_hymnal_number":273,"old_hymnal_number":272,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-let-the-little-ones-come'
 where be.slug = 'am-sda-hymnal-new'
@@ -19869,7 +19871,7 @@ select
 ',
   'sda_new',
   273,
-  '{}'::jsonb
+  '{"new_hymnal_number":274,"old_hymnal_number":274,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-master-hast-thou-work-for-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -19942,7 +19944,7 @@ select
 ',
   'sda_new',
   274,
-  '{}'::jsonb
+  '{"new_hymnal_number":275,"old_hymnal_number":275,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-toiling-for-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -20009,7 +20011,7 @@ select
 ',
   'sda_new',
   275,
-  '{}'::jsonb
+  '{"new_hymnal_number":276,"old_hymnal_number":267,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-perfect-love'
 where be.slug = 'am-sda-hymnal-new'
@@ -20083,7 +20085,7 @@ select
 ',
   'sda_new',
   276,
-  '{}'::jsonb
+  '{"new_hymnal_number":277,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-love-at-home'
 where be.slug = 'am-sda-hymnal-new'
@@ -20145,7 +20147,7 @@ select
 ',
   'sda_new',
   277,
-  '{}'::jsonb
+  '{"new_hymnal_number":278,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-away-in-manger'
 where be.slug = 'am-sda-hymnal-new'
@@ -20209,7 +20211,7 @@ select
 ',
   'sda_new',
   278,
-  '{}'::jsonb
+  '{"new_hymnal_number":279,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-child-is-this'
 where be.slug = 'am-sda-hymnal-new'
@@ -20291,7 +20293,7 @@ select
 ',
   'sda_new',
   279,
-  '{}'::jsonb
+  '{"new_hymnal_number":280,"old_hymnal_number":280,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-holy-night'
 where be.slug = 'am-sda-hymnal-new'
@@ -20364,7 +20366,7 @@ select
 ',
   'sda_new',
   280,
-  '{}'::jsonb
+  '{"new_hymnal_number":281,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-little-town-of-bethlehem'
 where be.slug = 'am-sda-hymnal-new'
@@ -20438,7 +20440,7 @@ select
 ',
   'sda_new',
   281,
-  '{}'::jsonb
+  '{"new_hymnal_number":282,"old_hymnal_number":282,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-shining-still'
 where be.slug = 'am-sda-hymnal-new'
@@ -20510,7 +20512,7 @@ select
 ',
   'sda_new',
   282,
-  '{}'::jsonb
+  '{"new_hymnal_number":283,"old_hymnal_number":283,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-come-all-ye-faithful'
 where be.slug = 'am-sda-hymnal-new'
@@ -20578,7 +20580,7 @@ select
 ',
   'sda_new',
   283,
-  '{}'::jsonb
+  '{"new_hymnal_number":284,"old_hymnal_number":284,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-christmas-song'
 where be.slug = 'am-sda-hymnal-new'
@@ -20645,7 +20647,7 @@ select
 ',
   'sda_new',
   284,
-  '{}'::jsonb
+  '{"new_hymnal_number":285,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hark-the-herald-angel-sing'
 where be.slug = 'am-sda-hymnal-new'
@@ -20709,7 +20711,7 @@ select
 ',
   'sda_new',
   285,
-  '{}'::jsonb
+  '{"new_hymnal_number":286,"old_hymnal_number":286,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-silent-night-holy-night'
 where be.slug = 'am-sda-hymnal-new'
@@ -20773,7 +20775,7 @@ select
 ',
   'sda_new',
   286,
-  '{}'::jsonb
+  '{"new_hymnal_number":287,"old_hymnal_number":287,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-christmas-morning'
 where be.slug = 'am-sda-hymnal-new'
@@ -20850,7 +20852,7 @@ select
 ',
   'sda_new',
   287,
-  '{}'::jsonb
+  '{"new_hymnal_number":288,"old_hymnal_number":289,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-joy-to-the-world'
 where be.slug = 'am-sda-hymnal-new'
@@ -20924,7 +20926,7 @@ select
 ',
   'sda_new',
   288,
-  '{}'::jsonb
+  '{"new_hymnal_number":289,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-angels-we-have-heard-on-hign'
 where be.slug = 'am-sda-hymnal-new'
@@ -20997,7 +20999,7 @@ select
 ',
   'sda_new',
   289,
-  '{}'::jsonb
+  '{"new_hymnal_number":290,"old_hymnal_number":290,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-as-with-gladness-men-of-old'
 where be.slug = 'am-sda-hymnal-new'
@@ -21070,7 +21072,7 @@ select
 ',
   'sda_new',
   290,
-  '{}'::jsonb
+  '{"new_hymnal_number":291,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-come-upon-the-midnight-clear'
 where be.slug = 'am-sda-hymnal-new'
@@ -21144,7 +21146,7 @@ select
 ',
   'sda_new',
   291,
-  '{}'::jsonb
+  '{"new_hymnal_number":292,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-three-kings-of-orient-are'
 where be.slug = 'am-sda-hymnal-new'
@@ -21216,7 +21218,7 @@ select
 ',
   'sda_new',
   292,
-  '{}'::jsonb
+  '{"new_hymnal_number":293,"old_hymnal_number":107,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-under-his-wings'
 where be.slug = 'am-sda-hymnal-new'
@@ -21285,7 +21287,7 @@ select
 ',
   'sda_new',
   293,
-  '{}'::jsonb
+  '{"new_hymnal_number":294,"old_hymnal_number":120,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-never-fails'
 where be.slug = 'am-sda-hymnal-new'
@@ -21353,7 +21355,7 @@ select
 ',
   'sda_new',
   294,
-  '{}'::jsonb
+  '{"new_hymnal_number":295,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-place-of-quiet-rest'
 where be.slug = 'am-sda-hymnal-new'
@@ -21418,7 +21420,7 @@ select
 ',
   'sda_new',
   295,
-  '{}'::jsonb
+  '{"new_hymnal_number":296,"old_hymnal_number":109,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-faith-looks-up-to-thee'
 where be.slug = 'am-sda-hymnal-new'
@@ -21496,7 +21498,7 @@ select
 ',
   'sda_new',
   296,
-  '{}'::jsonb
+  '{"new_hymnal_number":297,"old_hymnal_number":110,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-will-your-anchor-hold'
 where be.slug = 'am-sda-hymnal-new'
@@ -21580,7 +21582,7 @@ select
 ',
   'sda_new',
   297,
-  '{}'::jsonb
+  '{"new_hymnal_number":298,"old_hymnal_number":111,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-so-sweet-to-trust-in-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -21653,7 +21655,7 @@ select
 ',
   'sda_new',
   298,
-  '{}'::jsonb
+  '{"new_hymnal_number":299,"old_hymnal_number":112,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-need-thee-every-hour'
 where be.slug = 'am-sda-hymnal-new'
@@ -21729,7 +21731,7 @@ select
 ',
   'sda_new',
   299,
-  '{}'::jsonb
+  '{"new_hymnal_number":300,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-know-whom-i-have-belived'
 where be.slug = 'am-sda-hymnal-new'
@@ -21797,7 +21799,7 @@ select
 ',
   'sda_new',
   300,
-  '{}'::jsonb
+  '{"new_hymnal_number":301,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-rememr-the-calvary'
 where be.slug = 'am-sda-hymnal-new'
@@ -21876,7 +21878,7 @@ select
 ',
   'sda_new',
   301,
-  '{}'::jsonb
+  '{"new_hymnal_number":302,"old_hymnal_number":114,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-standing-on-the-promises'
 where be.slug = 'am-sda-hymnal-new'
@@ -21944,7 +21946,7 @@ select
 ',
   'sda_new',
   302,
-  '{}'::jsonb
+  '{"new_hymnal_number":303,"old_hymnal_number":116,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-ll-build-on-the-rock'
 where be.slug = 'am-sda-hymnal-new'
@@ -22015,7 +22017,7 @@ select
 ',
   'sda_new',
   303,
-  '{}'::jsonb
+  '{"new_hymnal_number":304,"old_hymnal_number":119,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-the-way-my-saviour-leads-me'
 where be.slug = 'am-sda-hymnal-new'
@@ -22090,7 +22092,7 @@ select
 ',
   'sda_new',
   304,
-  '{}'::jsonb
+  '{"new_hymnal_number":305,"old_hymnal_number":121,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-don-t-know-about-tomorrow'
 where be.slug = 'am-sda-hymnal-new'
@@ -22173,7 +22175,7 @@ select
 ',
   'sda_new',
   305,
-  '{}'::jsonb
+  '{"new_hymnal_number":306,"old_hymnal_number":118,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-we-walk-with-the-lord'
 where be.slug = 'am-sda-hymnal-new'
@@ -22241,7 +22243,7 @@ select
 ',
   'sda_new',
   306,
-  '{}'::jsonb
+  '{"new_hymnal_number":307,"old_hymnal_number":122,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-lord-s-our-rock'
 where be.slug = 'am-sda-hymnal-new'
@@ -22313,7 +22315,7 @@ select
 ',
   'sda_new',
   307,
-  '{}'::jsonb
+  '{"new_hymnal_number":308,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-farher-along'
 where be.slug = 'am-sda-hymnal-new'
@@ -22375,7 +22377,7 @@ select
 ',
   'sda_new',
   308,
-  '{}'::jsonb
+  '{"new_hymnal_number":309,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-seek-ye-first'
 where be.slug = 'am-sda-hymnal-new'
@@ -22442,7 +22444,7 @@ select
 ',
   'sda_new',
   309,
-  '{}'::jsonb
+  '{"new_hymnal_number":310,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-have-decided-to-follow-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -22516,7 +22518,7 @@ select
 ',
   'sda_new',
   310,
-  '{}'::jsonb
+  '{"new_hymnal_number":311,"old_hymnal_number":184,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-now-i-see-the-crimson-wave'
 where be.slug = 'am-sda-hymnal-new'
@@ -22590,7 +22592,7 @@ select
 ',
   'sda_new',
   311,
-  '{}'::jsonb
+  '{"new_hymnal_number":312,"old_hymnal_number":185,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-hear-thy-welcome-voice'
 where be.slug = 'am-sda-hymnal-new'
@@ -22664,7 +22666,7 @@ select
 ',
   'sda_new',
   312,
-  '{}'::jsonb
+  '{"new_hymnal_number":313,"old_hymnal_number":186,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-fountain'
 where be.slug = 'am-sda-hymnal-new'
@@ -22733,7 +22735,7 @@ select
 ',
   'sda_new',
   313,
-  '{}'::jsonb
+  '{"new_hymnal_number":314,"old_hymnal_number":187,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-rock-of-age'
 where be.slug = 'am-sda-hymnal-new'
@@ -22801,7 +22803,7 @@ select
 ',
   'sda_new',
   314,
-  '{}'::jsonb
+  '{"new_hymnal_number":315,"old_hymnal_number":190,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-beyond-the-sunset'
 where be.slug = 'am-sda-hymnal-new'
@@ -22874,7 +22876,7 @@ select
 ',
   'sda_new',
   315,
-  '{}'::jsonb
+  '{"new_hymnal_number":316,"old_hymnal_number":188,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-christ-is-risen-today'
 where be.slug = 'am-sda-hymnal-new'
@@ -22950,7 +22952,7 @@ select
 ',
   'sda_new',
   316,
-  '{}'::jsonb
+  '{"new_hymnal_number":317,"old_hymnal_number":189,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-lives'
 where be.slug = 'am-sda-hymnal-new'
@@ -23019,7 +23021,7 @@ select
 ',
   'sda_new',
   317,
-  '{}'::jsonb
+  '{"new_hymnal_number":318,"old_hymnal_number":191,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-christ-arose'
 where be.slug = 'am-sda-hymnal-new'
@@ -23087,7 +23089,7 @@ select
 ',
   'sda_new',
   318,
-  '{}'::jsonb
+  '{"new_hymnal_number":319,"old_hymnal_number":192,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lift-your-glad-voice'
 where be.slug = 'am-sda-hymnal-new'
@@ -23154,7 +23156,7 @@ select
 ',
   'sda_new',
   319,
-  '{}'::jsonb
+  '{"new_hymnal_number":320,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-alleluia-sing-to-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -23222,7 +23224,7 @@ select
 ',
   'sda_new',
   320,
-  '{}'::jsonb
+  '{"new_hymnal_number":321,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-eden-our-trouble-will-end'
 where be.slug = 'am-sda-hymnal-new'
@@ -23297,7 +23299,7 @@ select
 ',
   'sda_new',
   321,
-  '{}'::jsonb
+  '{"new_hymnal_number":322,"old_hymnal_number":169,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-be-with-you'
 where be.slug = 'am-sda-hymnal-new'
@@ -23375,7 +23377,7 @@ select
 ',
   'sda_new',
   322,
-  '{}'::jsonb
+  '{"new_hymnal_number":323,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-some-day-the-silver-core-will-break'
 where be.slug = 'am-sda-hymnal-new'
@@ -23447,7 +23449,7 @@ select
 ',
   'sda_new',
   323,
-  '{}'::jsonb
+  '{"new_hymnal_number":324,"old_hymnal_number":293,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-never-part-again'
 where be.slug = 'am-sda-hymnal-new'
@@ -23513,7 +23515,7 @@ select
 ',
   'sda_new',
   324,
-  '{}'::jsonb
+  '{"new_hymnal_number":325,"old_hymnal_number":294,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-asleep-in-jesus'
 where be.slug = 'am-sda-hymnal-new'
@@ -23573,7 +23575,7 @@ select
 ',
   'sda_old',
   0,
-  '{}'::jsonb
+  '{"new_hymnal_number":1,"old_hymnal_number":1,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-god-form-whom-all-blessing-flow'
 where be.slug = 'am-sda-hymnal-old'
@@ -23629,7 +23631,7 @@ select
 ',
   'sda_old',
   1,
-  '{}'::jsonb
+  '{"new_hymnal_number":66,"old_hymnal_number":2,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hear-our-prayer-o-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -23696,7 +23698,7 @@ select
 ',
   'sda_old',
   2,
-  '{}'::jsonb
+  '{"new_hymnal_number":3,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
 where be.slug = 'am-sda-hymnal-old'
@@ -23768,7 +23770,7 @@ select
 ',
   'sda_old',
   3,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":4,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-before-jehovah-s-awful-throne'
 where be.slug = 'am-sda-hymnal-old'
@@ -23841,7 +23843,7 @@ select
 ',
   'sda_old',
   4,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":5,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-hail-the-power-of-jesus-name'
 where be.slug = 'am-sda-hymnal-old'
@@ -23914,7 +23916,7 @@ select
 ',
   'sda_old',
   5,
-  '{}'::jsonb
+  '{"new_hymnal_number":6,"old_hymnal_number":6,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-to-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -23981,7 +23983,7 @@ select
 ',
   'sda_old',
   6,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":7,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-on-the-mountain-temple'
 where be.slug = 'am-sda-hymnal-old'
@@ -24055,7 +24057,7 @@ select
 ',
   'sda_old',
   7,
-  '{}'::jsonb
+  '{"new_hymnal_number":8,"old_hymnal_number":8,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-me-that-old-old-story'
 where be.slug = 'am-sda-hymnal-old'
@@ -24135,7 +24137,7 @@ select
 ',
   'sda_old',
   8,
-  '{}'::jsonb
+  '{"new_hymnal_number":9,"old_hymnal_number":9,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-redeemer'
 where be.slug = 'am-sda-hymnal-old'
@@ -24203,7 +24205,7 @@ select
 ',
   'sda_old',
   9,
-  '{}'::jsonb
+  '{"new_hymnal_number":10,"old_hymnal_number":10,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-maker-and-my-king'
 where be.slug = 'am-sda-hymnal-old'
@@ -24270,7 +24272,7 @@ select
 ',
   'sda_old',
   10,
-  '{}'::jsonb
+  '{"new_hymnal_number":11,"old_hymnal_number":11,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-mighty-fortress-is-our-god'
 where be.slug = 'am-sda-hymnal-old'
@@ -24341,7 +24343,7 @@ select
 ',
   'sda_old',
   11,
-  '{}'::jsonb
+  '{"new_hymnal_number":13,"old_hymnal_number":12,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-did-he-do'
 where be.slug = 'am-sda-hymnal-old'
@@ -24417,7 +24419,7 @@ select
 ',
   'sda_old',
   12,
-  '{}'::jsonb
+  '{"new_hymnal_number":14,"old_hymnal_number":13,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-thank-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -24481,7 +24483,7 @@ select
 ',
   'sda_old',
   13,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":14,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-preaise-ye-the-father'
 where be.slug = 'am-sda-hymnal-old'
@@ -24549,7 +24551,7 @@ select
 ',
   'sda_old',
   14,
-  '{}'::jsonb
+  '{"new_hymnal_number":15,"old_hymnal_number":15,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-worthy-worthy-is-the-lamb'
 where be.slug = 'am-sda-hymnal-old'
@@ -24617,7 +24619,7 @@ select
 ',
   'sda_old',
   15,
-  '{}'::jsonb
+  '{"new_hymnal_number":16,"old_hymnal_number":16,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-to-the-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -24701,7 +24703,7 @@ select
 ',
   'sda_old',
   16,
-  '{}'::jsonb
+  '{"new_hymnal_number":17,"old_hymnal_number":17,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-is-what-the-angels-sing'
 where be.slug = 'am-sda-hymnal-old'
@@ -24769,7 +24771,7 @@ select
 ',
   'sda_old',
   17,
-  '{}'::jsonb
+  '{"new_hymnal_number":22,"old_hymnal_number":18,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-the-very-thought-of-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -24854,7 +24856,7 @@ select
 ',
   'sda_old',
   18,
-  '{}'::jsonb
+  '{"new_hymnal_number":18,"old_hymnal_number":19,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-count-your-blessing'
 where be.slug = 'am-sda-hymnal-old'
@@ -24918,7 +24920,7 @@ select
 ',
   'sda_old',
   19,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":20,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-praise-god-who-saved-the-lost'
 where be.slug = 'am-sda-hymnal-old'
@@ -24996,7 +24998,7 @@ select
 ',
   'sda_old',
   20,
-  '{}'::jsonb
+  '{"new_hymnal_number":21,"old_hymnal_number":21,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-sing-the-wondrous-story'
 where be.slug = 'am-sda-hymnal-old'
@@ -25069,7 +25071,7 @@ select
 ',
   'sda_old',
   21,
-  '{}'::jsonb
+  '{"new_hymnal_number":20,"old_hymnal_number":22,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-thou-in-whose-presence'
 where be.slug = 'am-sda-hymnal-old'
@@ -25160,7 +25162,7 @@ select
 ',
   'sda_old',
   22,
-  '{}'::jsonb
+  '{"new_hymnal_number":24,"old_hymnal_number":23,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-redeemed'
 where be.slug = 'am-sda-hymnal-old'
@@ -25237,7 +25239,7 @@ select
 ',
   'sda_old',
   23,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":24,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-majestic-sweetness-slits-enthroned-no-1'
 where be.slug = 'am-sda-hymnal-old'
@@ -25314,7 +25316,7 @@ select
 ',
   'sda_old',
   24,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":25,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-christ-recievthe-sinful-men'
 where be.slug = 'am-sda-hymnal-old'
@@ -25392,7 +25394,7 @@ select
 ',
   'sda_old',
   25,
-  '{}'::jsonb
+  '{"new_hymnal_number":19,"old_hymnal_number":26,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-revive-us-again'
 where be.slug = 'am-sda-hymnal-old'
@@ -25466,7 +25468,7 @@ select
 ',
   'sda_old',
   26,
-  '{}'::jsonb
+  '{"new_hymnal_number":25,"old_hymnal_number":27,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-be-silent-be-silent'
 where be.slug = 'am-sda-hymnal-old'
@@ -25536,7 +25538,7 @@ select
 ',
   'sda_old',
   27,
-  '{}'::jsonb
+  '{"new_hymnal_number":27,"old_hymnal_number":28,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-would-draw-nearer-to-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -25604,7 +25606,7 @@ select
 ',
   'sda_old',
   28,
-  '{}'::jsonb
+  '{"new_hymnal_number":28,"old_hymnal_number":29,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-we-come-to-hear-his-word'
 where be.slug = 'am-sda-hymnal-old'
@@ -25676,7 +25678,7 @@ select
 ',
   'sda_old',
   29,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":30,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-watch-men-on-the-walls-zion'
 where be.slug = 'am-sda-hymnal-old'
@@ -25740,7 +25742,7 @@ select
 ',
   'sda_old',
   30,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":31,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-fairest-lord-jesu'
 where be.slug = 'am-sda-hymnal-old'
@@ -25808,7 +25810,7 @@ select
 ',
   'sda_old',
   31,
-  '{}'::jsonb
+  '{"new_hymnal_number":31,"old_hymnal_number":32,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-ye-watchers-and-ye-holy-ones'
 where be.slug = 'am-sda-hymnal-old'
@@ -25882,7 +25884,7 @@ select
 ',
   'sda_old',
   32,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":33,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-the-name-of-jesus-with-you'
 where be.slug = 'am-sda-hymnal-old'
@@ -25955,7 +25957,7 @@ select
 ',
   'sda_old',
   33,
-  '{}'::jsonb
+  '{"new_hymnal_number":34,"old_hymnal_number":34,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-every-day-and-every-hour'
 where be.slug = 'am-sda-hymnal-old'
@@ -26037,7 +26039,7 @@ select
 ',
   'sda_old',
   34,
-  '{}'::jsonb
+  '{"new_hymnal_number":35,"old_hymnal_number":35,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-no-other-name-like-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -26104,7 +26106,7 @@ select
 ',
   'sda_old',
   35,
-  '{}'::jsonb
+  '{"new_hymnal_number":36,"old_hymnal_number":36,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-spirit-faithful-guide'
 where be.slug = 'am-sda-hymnal-old'
@@ -26176,7 +26178,7 @@ select
 ',
   'sda_old',
   36,
-  '{}'::jsonb
+  '{"new_hymnal_number":37,"old_hymnal_number":37,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-abide-with-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -26260,7 +26262,7 @@ select
 ',
   'sda_old',
   37,
-  '{}'::jsonb
+  '{"new_hymnal_number":38,"old_hymnal_number":38,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-day-is-dying-in-the-west'
 where be.slug = 'am-sda-hymnal-old'
@@ -26338,7 +26340,7 @@ select
 ',
   'sda_old',
   38,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":39,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-shall-be-showers-of-blessing'
 where be.slug = 'am-sda-hymnal-old'
@@ -26411,7 +26413,7 @@ select
 ',
   'sda_old',
   39,
-  '{}'::jsonb
+  '{"new_hymnal_number":40,"old_hymnal_number":40,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-worship-the-king'
 where be.slug = 'am-sda-hymnal-old'
@@ -26495,7 +26497,7 @@ select
 ',
   'sda_old',
   40,
-  '{}'::jsonb
+  '{"new_hymnal_number":41,"old_hymnal_number":41,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-how-great-thou-art'
 where be.slug = 'am-sda-hymnal-old'
@@ -26569,7 +26571,7 @@ select
 ',
   'sda_old',
   41,
-  '{}'::jsonb
+  '{"new_hymnal_number":44,"old_hymnal_number":42,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-tenderly-calling'
 where be.slug = 'am-sda-hymnal-old'
@@ -26647,7 +26649,7 @@ select
 ',
   'sda_old',
   42,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":43,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lord-jesus-i-long-to-be-perfe'
 where be.slug = 'am-sda-hymnal-old'
@@ -26723,7 +26725,7 @@ select
 ',
   'sda_old',
   43,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":44,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-of-your-best-to-the-master'
 where be.slug = 'am-sda-hymnal-old'
@@ -26790,7 +26792,7 @@ select
 ',
   'sda_old',
   44,
-  '{}'::jsonb
+  '{"new_hymnal_number":45,"old_hymnal_number":45,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-just-as-i-am'
 where be.slug = 'am-sda-hymnal-old'
@@ -26851,7 +26853,7 @@ select
 ',
   'sda_old',
   45,
-  '{}'::jsonb
+  '{"new_hymnal_number":46,"old_hymnal_number":46,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-comes-to-us'
 where be.slug = 'am-sda-hymnal-old'
@@ -26924,7 +26926,7 @@ select
 ',
   'sda_old',
   46,
-  '{}'::jsonb
+  '{"new_hymnal_number":47,"old_hymnal_number":47,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lord-i-m-coming-home'
 where be.slug = 'am-sda-hymnal-old'
@@ -26991,7 +26993,7 @@ select
 ',
   'sda_old',
   47,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":48,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-heard-the-voice-jesus-say'
 where be.slug = 'am-sda-hymnal-old'
@@ -27063,7 +27065,7 @@ select
 ',
   'sda_old',
   48,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":49,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-stranger-at-the-door'
 where be.slug = 'am-sda-hymnal-old'
@@ -27137,7 +27139,7 @@ select
 ',
   'sda_old',
   49,
-  '{}'::jsonb
+  '{"new_hymnal_number":50,"old_hymnal_number":50,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-to-jesus-i-surrender'
 where be.slug = 'am-sda-hymnal-old'
@@ -27210,7 +27212,7 @@ select
 ',
   'sda_old',
   50,
-  '{}'::jsonb
+  '{"new_hymnal_number":51,"old_hymnal_number":51,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-pass-me-not-o-gentle-saviour'
 where be.slug = 'am-sda-hymnal-old'
@@ -27294,7 +27296,7 @@ select
 ',
   'sda_old',
   51,
-  '{}'::jsonb
+  '{"new_hymnal_number":52,"old_hymnal_number":52,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-power-in-the-blood'
 where be.slug = 'am-sda-hymnal-old'
@@ -27368,7 +27370,7 @@ select
 ',
   'sda_old',
   52,
-  '{}'::jsonb
+  '{"new_hymnal_number":53,"old_hymnal_number":53,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-am-coming-to-the-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -27435,7 +27437,7 @@ select
 ',
   'sda_old',
   53,
-  '{}'::jsonb
+  '{"new_hymnal_number":54,"old_hymnal_number":54,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brightly-beams-our-father-s-mercy'
 where be.slug = 'am-sda-hymnal-old'
@@ -27505,7 +27507,7 @@ select
 ',
   'sda_old',
   54,
-  '{}'::jsonb
+  '{"new_hymnal_number":56,"old_hymnal_number":55,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-though-your-sins-be-as-scarlet'
 where be.slug = 'am-sda-hymnal-old'
@@ -27572,7 +27574,7 @@ select
 ',
   'sda_old',
   55,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":56,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-not-i-but-christ'
 where be.slug = 'am-sda-hymnal-old'
@@ -27636,7 +27638,7 @@ select
 ',
   'sda_old',
   56,
-  '{}'::jsonb
+  '{"new_hymnal_number":117,"old_hymnal_number":57,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-my-life-and-let-it-be'
 where be.slug = 'am-sda-hymnal-old'
@@ -27703,7 +27705,7 @@ select
 ',
   'sda_old',
   57,
-  '{}'::jsonb
+  '{"new_hymnal_number":63,"old_hymnal_number":58,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sweet-hour-of-prayer'
 where be.slug = 'am-sda-hymnal-old'
@@ -27776,7 +27778,7 @@ select
 ',
   'sda_old',
   58,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":59,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-break-thou-the-bread-of-life'
 where be.slug = 'am-sda-hymnal-old'
@@ -27848,7 +27850,7 @@ select
 ',
   'sda_old',
   59,
-  '{}'::jsonb
+  '{"new_hymnal_number":60,"old_hymnal_number":60,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-beautiful-garden-of-prayer'
 where be.slug = 'am-sda-hymnal-old'
@@ -27919,7 +27921,7 @@ select
 ',
   'sda_old',
   60,
-  '{}'::jsonb
+  '{"new_hymnal_number":61,"old_hymnal_number":61,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-nearer-still-nearer'
 where be.slug = 'am-sda-hymnal-old'
@@ -27997,7 +27999,7 @@ select
 ',
   'sda_old',
   61,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":62,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-the-blessed-hour-of-prayer'
 where be.slug = 'am-sda-hymnal-old'
@@ -28074,7 +28076,7 @@ select
 ',
   'sda_old',
   62,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":63,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-majestic-sweetness-sits-enthoroned-no-2'
 where be.slug = 'am-sda-hymnal-old'
@@ -28142,7 +28144,7 @@ select
 ',
   'sda_old',
   63,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":64,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-eden-our-troubles-will-end'
 where be.slug = 'am-sda-hymnal-old'
@@ -28214,7 +28216,7 @@ select
 ',
   'sda_old',
   64,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":65,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-have-thin-own-way-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -28281,7 +28283,7 @@ select
 ',
   'sda_old',
   65,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":66,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hear-my-prayer'
 where be.slug = 'am-sda-hymnal-old'
@@ -28341,7 +28343,7 @@ select
 ',
   'sda_old',
   66,
-  '{}'::jsonb
+  '{"new_hymnal_number":74,"old_hymnal_number":67,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-with-thy-spirit-fill-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -28425,7 +28427,7 @@ select
 ',
   'sda_old',
   67,
-  '{}'::jsonb
+  '{"new_hymnal_number":67,"old_hymnal_number":68,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-am-thine-o-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -28503,7 +28505,7 @@ select
 ',
   'sda_old',
   68,
-  '{}'::jsonb
+  '{"new_hymnal_number":68,"old_hymnal_number":69,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-nearer-my-god-to-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -28570,7 +28572,7 @@ select
 ',
   'sda_old',
   69,
-  '{}'::jsonb
+  '{"new_hymnal_number":69,"old_hymnal_number":70,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-the-hour-of-trial'
 where be.slug = 'am-sda-hymnal-old'
@@ -28647,7 +28649,7 @@ select
 ',
   'sda_old',
   70,
-  '{}'::jsonb
+  '{"new_hymnal_number":70,"old_hymnal_number":71,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-speak-to-my-soul'
 where be.slug = 'am-sda-hymnal-old'
@@ -28709,7 +28711,7 @@ select
 ',
   'sda_old',
   71,
-  '{}'::jsonb
+  '{"new_hymnal_number":71,"old_hymnal_number":72,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-now-spread-thy-wings-of-love'
 where be.slug = 'am-sda-hymnal-old'
@@ -28782,7 +28784,7 @@ select
 ',
   'sda_old',
   72,
-  '{}'::jsonb
+  '{"new_hymnal_number":65,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-amazing-grace'
 where be.slug = 'am-sda-hymnal-old'
@@ -28838,7 +28840,7 @@ select
 ',
   'sda_old',
   73,
-  '{}'::jsonb
+  '{"new_hymnal_number":73,"old_hymnal_number":74,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-give-thee-but-thine-own'
 where be.slug = 'am-sda-hymnal-old'
@@ -28900,7 +28902,7 @@ select
 ',
   'sda_old',
   74,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":75,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-lord-be-with-us'
 where be.slug = 'am-sda-hymnal-old'
@@ -28973,7 +28975,7 @@ select
 ',
   'sda_old',
   75,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":76,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-majestic-sweetness-sits-enthroned-no-3'
 where be.slug = 'am-sda-hymnal-old'
@@ -29052,7 +29054,7 @@ select
 ',
   'sda_old',
   76,
-  '{}'::jsonb
+  '{"new_hymnal_number":91,"old_hymnal_number":77,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-re-marching-to-zion'
 where be.slug = 'am-sda-hymnal-old'
@@ -29129,7 +29131,7 @@ select
 ',
   'sda_old',
   77,
-  '{}'::jsonb
+  '{"new_hymnal_number":92,"old_hymnal_number":78,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-saviour-with-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -29204,7 +29206,7 @@ select
 ',
   'sda_old',
   78,
-  '{}'::jsonb
+  '{"new_hymnal_number":107,"old_hymnal_number":79,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-yield-not-to-temptation'
 where be.slug = 'am-sda-hymnal-old'
@@ -29276,7 +29278,7 @@ select
 ',
   'sda_old',
   79,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":80,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-all-world-to-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -29355,7 +29357,7 @@ select
 ',
   'sda_old',
   80,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":81,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-it-to-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -29427,7 +29429,7 @@ select
 ',
   'sda_old',
   81,
-  '{}'::jsonb
+  '{"new_hymnal_number":110,"old_hymnal_number":82,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ve-found-a-friend'
 where be.slug = 'am-sda-hymnal-old'
@@ -29511,7 +29513,7 @@ select
 ',
   'sda_old',
   82,
-  '{}'::jsonb
+  '{"new_hymnal_number":111,"old_hymnal_number":83,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-does-jesus-care'
 where be.slug = 'am-sda-hymnal-old'
@@ -29579,7 +29581,7 @@ select
 ',
   'sda_old',
   83,
-  '{}'::jsonb
+  '{"new_hymnal_number":112,"old_hymnal_number":84,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-a-friend-we-have-in-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -29653,7 +29655,7 @@ select
 ',
   'sda_old',
   84,
-  '{}'::jsonb
+  '{"new_hymnal_number":85,"old_hymnal_number":85,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-safe-in-the-arms-of-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -29726,7 +29728,7 @@ select
 ',
   'sda_old',
   85,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":86,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-lover-of-my-soul'
 where be.slug = 'am-sda-hymnal-old'
@@ -29800,7 +29802,7 @@ select
 ',
   'sda_old',
   86,
-  '{}'::jsonb
+  '{"new_hymnal_number":87,"old_hymnal_number":87,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-any-where-with-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -29872,7 +29874,7 @@ select
 ',
   'sda_old',
   87,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":88,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-diligence'
 where be.slug = 'am-sda-hymnal-old'
@@ -29949,7 +29951,7 @@ select
 ',
   'sda_old',
   88,
-  '{}'::jsonb
+  '{"new_hymnal_number":90,"old_hymnal_number":89,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-if-i-gained-the-world'
 where be.slug = 'am-sda-hymnal-old'
@@ -30023,7 +30025,7 @@ select
 ',
   'sda_old',
   89,
-  '{}'::jsonb
+  '{"new_hymnal_number":89,"old_hymnal_number":90,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-let-me-walk-with-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -30099,7 +30101,7 @@ select
 ',
   'sda_old',
   90,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":91,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-the-way-is-long-and-weary'
 where be.slug = 'am-sda-hymnal-old'
@@ -30168,7 +30170,7 @@ select
 ',
   'sda_old',
   91,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":92,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tarry-by-the-living-waters'
 where be.slug = 'am-sda-hymnal-old'
@@ -30236,7 +30238,7 @@ select
 ',
   'sda_old',
   92,
-  '{}'::jsonb
+  '{"new_hymnal_number":93,"old_hymnal_number":93,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-call-to-jesus-in-trouble'
 where be.slug = 'am-sda-hymnal-old'
@@ -30310,7 +30312,7 @@ select
 ',
   'sda_old',
   93,
-  '{}'::jsonb
+  '{"new_hymnal_number":94,"old_hymnal_number":94,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-m-pressing-on-the-upward-way'
 where be.slug = 'am-sda-hymnal-old'
@@ -30379,7 +30381,7 @@ select
 ',
   'sda_old',
   94,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":95,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-paves-to-serve-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -30447,7 +30449,7 @@ select
 ',
   'sda_old',
   95,
-  '{}'::jsonb
+  '{"new_hymnal_number":96,"old_hymnal_number":96,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-leadeth-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -30519,7 +30521,7 @@ select
 ',
   'sda_old',
   96,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":97,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-came-to-the-garden-alone'
 where be.slug = 'am-sda-hymnal-old'
@@ -30592,7 +30594,7 @@ select
 ',
   'sda_old',
   97,
-  '{}'::jsonb
+  '{"new_hymnal_number":98,"old_hymnal_number":98,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-blessed-lord-how-i-need-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -30665,7 +30667,7 @@ select
 ',
   'sda_old',
   98,
-  '{}'::jsonb
+  '{"new_hymnal_number":100,"old_hymnal_number":99,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brighten-the-way-with-a-smile'
 where be.slug = 'am-sda-hymnal-old'
@@ -30739,7 +30741,7 @@ select
 ',
   'sda_old',
   99,
-  '{}'::jsonb
+  '{"new_hymnal_number":99,"old_hymnal_number":100,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hold-the-fort'
 where be.slug = 'am-sda-hymnal-old'
@@ -30818,7 +30820,7 @@ select
 ',
   'sda_old',
   100,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":101,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-just-when-i-need-him-most'
 where be.slug = 'am-sda-hymnal-old'
@@ -30889,7 +30891,7 @@ select
 ',
   'sda_old',
   101,
-  '{}'::jsonb
+  '{"new_hymnal_number":102,"old_hymnal_number":102,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-belong-to-the-king'
 where be.slug = 'am-sda-hymnal-old'
@@ -30963,7 +30965,7 @@ select
 ',
   'sda_old',
   102,
-  '{}'::jsonb
+  '{"new_hymnal_number":103,"old_hymnal_number":103,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-leaning-on-the-everlasting-arms'
 where be.slug = 'am-sda-hymnal-old'
@@ -31030,7 +31032,7 @@ select
 ',
   'sda_old',
   103,
-  '{}'::jsonb
+  '{"new_hymnal_number":104,"old_hymnal_number":104,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-i-my-cross-have-taken'
 where be.slug = 'am-sda-hymnal-old'
@@ -31113,7 +31115,7 @@ select
 ',
   'sda_old',
   104,
-  '{}'::jsonb
+  '{"new_hymnal_number":106,"old_hymnal_number":105,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-living-for-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -31186,7 +31188,7 @@ select
 ',
   'sda_old',
   105,
-  '{}'::jsonb
+  '{"new_hymnal_number":105,"old_hymnal_number":106,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lead-me-to-calvary'
 where be.slug = 'am-sda-hymnal-old'
@@ -31261,7 +31263,7 @@ select
 ',
   'sda_old',
   106,
-  '{}'::jsonb
+  '{"new_hymnal_number":293,"old_hymnal_number":107,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-under-his-wings'
 where be.slug = 'am-sda-hymnal-old'
@@ -31329,7 +31331,7 @@ select
 ',
   'sda_old',
   107,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":108,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-peace-of-quiet-rest'
 where be.slug = 'am-sda-hymnal-old'
@@ -31394,7 +31396,7 @@ select
 ',
   'sda_old',
   108,
-  '{}'::jsonb
+  '{"new_hymnal_number":296,"old_hymnal_number":109,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-faith-looks-up-to-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -31475,7 +31477,7 @@ select
 ',
   'sda_old',
   109,
-  '{}'::jsonb
+  '{"new_hymnal_number":297,"old_hymnal_number":110,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-will-your-anchor-hold'
 where be.slug = 'am-sda-hymnal-old'
@@ -31549,7 +31551,7 @@ select
 ',
   'sda_old',
   110,
-  '{}'::jsonb
+  '{"new_hymnal_number":298,"old_hymnal_number":111,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-so-sweet-to-trust-in-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -31623,7 +31625,7 @@ select
 ',
   'sda_old',
   111,
-  '{}'::jsonb
+  '{"new_hymnal_number":299,"old_hymnal_number":112,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-need-thee-every-hour'
 where be.slug = 'am-sda-hymnal-old'
@@ -31699,7 +31701,7 @@ select
 ',
   'sda_old',
   112,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":113,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-know-whom-i-have-believed'
 where be.slug = 'am-sda-hymnal-old'
@@ -31778,7 +31780,7 @@ select
 ',
   'sda_old',
   113,
-  '{}'::jsonb
+  '{"new_hymnal_number":302,"old_hymnal_number":114,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-standing-on-the-promises'
 where be.slug = 'am-sda-hymnal-old'
@@ -31845,7 +31847,7 @@ select
 ',
   'sda_old',
   114,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":115,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lead-on-o-king-eternal'
 where be.slug = 'am-sda-hymnal-old'
@@ -31913,7 +31915,7 @@ select
 ',
   'sda_old',
   115,
-  '{}'::jsonb
+  '{"new_hymnal_number":303,"old_hymnal_number":116,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-ll-build-on-the-rock'
 where be.slug = 'am-sda-hymnal-old'
@@ -31981,7 +31983,7 @@ select
 ',
   'sda_old',
   116,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":117,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-remember-calvery'
 where be.slug = 'am-sda-hymnal-old'
@@ -32064,7 +32066,7 @@ select
 ',
   'sda_old',
   117,
-  '{}'::jsonb
+  '{"new_hymnal_number":306,"old_hymnal_number":118,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-we-walk-with-the-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -32135,7 +32137,7 @@ select
 ',
   'sda_old',
   118,
-  '{}'::jsonb
+  '{"new_hymnal_number":304,"old_hymnal_number":119,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-the-way-my-saviour-leads-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -32204,7 +32206,7 @@ select
 ',
   'sda_old',
   119,
-  '{}'::jsonb
+  '{"new_hymnal_number":294,"old_hymnal_number":120,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-never-fails'
 where be.slug = 'am-sda-hymnal-old'
@@ -32279,7 +32281,7 @@ select
 ',
   'sda_old',
   120,
-  '{}'::jsonb
+  '{"new_hymnal_number":305,"old_hymnal_number":121,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-don-t-know-about-tomorrow'
 where be.slug = 'am-sda-hymnal-old'
@@ -32347,7 +32349,7 @@ select
 ',
   'sda_old',
   121,
-  '{}'::jsonb
+  '{"new_hymnal_number":307,"old_hymnal_number":122,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-lord-s-our-rock'
 where be.slug = 'am-sda-hymnal-old'
@@ -32419,7 +32421,7 @@ select
 ',
   'sda_old',
   122,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":123,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-if-jesus-is-my-brother'
 where be.slug = 'am-sda-hymnal-old'
@@ -32499,7 +32501,7 @@ select
 ',
   'sda_old',
   123,
-  '{}'::jsonb
+  '{"new_hymnal_number":125,"old_hymnal_number":124,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-brother-be-faithful'
 where be.slug = 'am-sda-hymnal-old'
@@ -32577,7 +32579,7 @@ select
 ',
   'sda_old',
   124,
-  '{}'::jsonb
+  '{"new_hymnal_number":269,"old_hymnal_number":125,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-follow-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -32645,7 +32647,7 @@ select
 ',
   'sda_old',
   125,
-  '{}'::jsonb
+  '{"new_hymnal_number":124,"old_hymnal_number":126,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wholly-thine'
 where be.slug = 'am-sda-hymnal-old'
@@ -32718,7 +32720,7 @@ select
 ',
   'sda_old',
   126,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":127,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-have-a-friend-so-percious'
 where be.slug = 'am-sda-hymnal-old'
@@ -32788,7 +32790,7 @@ select
 ',
   'sda_old',
   127,
-  '{}'::jsonb
+  '{"new_hymnal_number":128,"old_hymnal_number":128,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-faith-of-our-fathers'
 where be.slug = 'am-sda-hymnal-old'
@@ -32863,7 +32865,7 @@ select
 ',
   'sda_old',
   128,
-  '{}'::jsonb
+  '{"new_hymnal_number":131,"old_hymnal_number":129,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-longing'
 where be.slug = 'am-sda-hymnal-old'
@@ -32927,7 +32929,7 @@ select
 ',
   'sda_old',
   129,
-  '{}'::jsonb
+  '{"new_hymnal_number":132,"old_hymnal_number":130,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-longing-to-be-with-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -33001,7 +33003,7 @@ select
 ',
   'sda_old',
   130,
-  '{}'::jsonb
+  '{"new_hymnal_number":129,"old_hymnal_number":131,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-hope-is-built'
 where be.slug = 'am-sda-hymnal-old'
@@ -33069,7 +33071,7 @@ select
 ',
   'sda_old',
   131,
-  '{}'::jsonb
+  '{"new_hymnal_number":130,"old_hymnal_number":132,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-lift-me-up'
 where be.slug = 'am-sda-hymnal-old'
@@ -33143,7 +33145,7 @@ select
 ',
   'sda_old',
   132,
-  '{}'::jsonb
+  '{"new_hymnal_number":133,"old_hymnal_number":133,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-will-take-care-of-you'
 where be.slug = 'am-sda-hymnal-old'
@@ -33218,7 +33220,7 @@ select
 ',
   'sda_old',
   133,
-  '{}'::jsonb
+  '{"new_hymnal_number":137,"old_hymnal_number":134,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-blessed-assurance'
 where be.slug = 'am-sda-hymnal-old'
@@ -33288,7 +33290,7 @@ select
 ',
   'sda_old',
   134,
-  '{}'::jsonb
+  '{"new_hymnal_number":135,"old_hymnal_number":135,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-happy-day-that-fixed-my-choice'
 where be.slug = 'am-sda-hymnal-old'
@@ -33357,7 +33359,7 @@ select
 ',
   'sda_old',
   135,
-  '{}'::jsonb
+  '{"new_hymnal_number":136,"old_hymnal_number":136,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-my-heart-there-rings-a-melody'
 where be.slug = 'am-sda-hymnal-old'
@@ -33432,7 +33434,7 @@ select
 ',
   'sda_old',
   136,
-  '{}'::jsonb
+  '{"new_hymnal_number":139,"old_hymnal_number":137,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-sunshine-in-my-soul-today'
 where be.slug = 'am-sda-hymnal-old'
@@ -33511,7 +33513,7 @@ select
 ',
   'sda_old',
   137,
-  '{}'::jsonb
+  '{"new_hymnal_number":144,"old_hymnal_number":138,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-is-your-all-on-the-altar'
 where be.slug = 'am-sda-hymnal-old'
@@ -33595,7 +33597,7 @@ select
 ',
   'sda_old',
   138,
-  '{}'::jsonb
+  '{"new_hymnal_number":145,"old_hymnal_number":139,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-peace'
 where be.slug = 'am-sda-hymnal-old'
@@ -33672,7 +33674,7 @@ select
 ',
   'sda_old',
   139,
-  '{}'::jsonb
+  '{"new_hymnal_number":142,"old_hymnal_number":140,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-peace-like-a-river'
 where be.slug = 'am-sda-hymnal-old'
@@ -33744,7 +33746,7 @@ select
 ',
   'sda_old',
   140,
-  '{}'::jsonb
+  '{"new_hymnal_number":141,"old_hymnal_number":141,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-me-your-peace'
 where be.slug = 'am-sda-hymnal-old'
@@ -33828,7 +33830,7 @@ select
 ',
   'sda_old',
   141,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":142,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-wonderful-saviour-in-jesus-my-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -33900,7 +33902,7 @@ select
 ',
   'sda_old',
   142,
-  '{}'::jsonb
+  '{"new_hymnal_number":150,"old_hymnal_number":143,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-ll-love-to-the-end'
 where be.slug = 'am-sda-hymnal-old'
@@ -33975,7 +33977,7 @@ select
 ',
   'sda_old',
   143,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":144,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-sing-of-jesus-love'
 where be.slug = 'am-sda-hymnal-old'
@@ -34048,7 +34050,7 @@ select
 ',
   'sda_old',
   144,
-  '{}'::jsonb
+  '{"new_hymnal_number":151,"old_hymnal_number":145,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-jesus-i-love-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -34115,7 +34117,7 @@ select
 ',
   'sda_old',
   145,
-  '{}'::jsonb
+  '{"new_hymnal_number":152,"old_hymnal_number":146,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-love-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -34188,7 +34190,7 @@ select
 ',
   'sda_old',
   146,
-  '{}'::jsonb
+  '{"new_hymnal_number":154,"old_hymnal_number":147,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-like-as-a-father'
 where be.slug = 'am-sda-hymnal-old'
@@ -34261,7 +34263,7 @@ select
 ',
   'sda_old',
   147,
-  '{}'::jsonb
+  '{"new_hymnal_number":148,"old_hymnal_number":148,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-know-i-love-thee-better-lord'
 where be.slug = 'am-sda-hymnal-old'
@@ -34329,7 +34331,7 @@ select
 ',
   'sda_old',
   148,
-  '{}'::jsonb
+  '{"new_hymnal_number":149,"old_hymnal_number":149,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-love-to-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -34396,7 +34398,7 @@ select
 ',
   'sda_old',
   149,
-  '{}'::jsonb
+  '{"new_hymnal_number":119,"old_hymnal_number":150,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-do-thy-work-lovingly'
 where be.slug = 'am-sda-hymnal-old'
@@ -34469,7 +34471,7 @@ select
 ',
   'sda_old',
   150,
-  '{}'::jsonb
+  '{"new_hymnal_number":120,"old_hymnal_number":151,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hark-the-voice-of-jesus-calling'
 where be.slug = 'am-sda-hymnal-old'
@@ -34536,7 +34538,7 @@ select
 ',
   'sda_old',
   151,
-  '{}'::jsonb
+  '{"new_hymnal_number":121,"old_hymnal_number":152,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-work-for-the-night-is-coming'
 where be.slug = 'am-sda-hymnal-old'
@@ -34609,7 +34611,7 @@ select
 ',
   'sda_old',
   152,
-  '{}'::jsonb
+  '{"new_hymnal_number":163,"old_hymnal_number":153,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-more-about-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -34688,7 +34690,7 @@ select
 ',
   'sda_old',
   153,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":154,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-jesus-came'
 where be.slug = 'am-sda-hymnal-old'
@@ -34761,7 +34763,7 @@ select
 ',
   'sda_old',
   154,
-  '{}'::jsonb
+  '{"new_hymnal_number":260,"old_hymnal_number":155,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-saves'
 where be.slug = 'am-sda-hymnal-old'
@@ -34835,7 +34837,7 @@ select
 ',
   'sda_old',
   155,
-  '{}'::jsonb
+  '{"new_hymnal_number":170,"old_hymnal_number":156,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-have-a-song-i-love-to-sing'
 where be.slug = 'am-sda-hymnal-old'
@@ -34909,7 +34911,7 @@ select
 ',
   'sda_old',
   156,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":157,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-gate-that-stands-ajar'
 where be.slug = 'am-sda-hymnal-old'
@@ -34982,7 +34984,7 @@ select
 ',
   'sda_old',
   157,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":158,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-bids-us-come'
 where be.slug = 'am-sda-hymnal-old'
@@ -35055,7 +35057,7 @@ select
 ',
   'sda_old',
   158,
-  '{}'::jsonb
+  '{"new_hymnal_number":173,"old_hymnal_number":159,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-now-i-ve-found-a-jewel'
 where be.slug = 'am-sda-hymnal-old'
@@ -35124,7 +35126,7 @@ select
 ',
   'sda_old',
   159,
-  '{}'::jsonb
+  '{"new_hymnal_number":160,"old_hymnal_number":160,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-to-jesus-he-ll-teach-the-way'
 where be.slug = 'am-sda-hymnal-old'
@@ -35198,7 +35200,7 @@ select
 ',
   'sda_old',
   160,
-  '{}'::jsonb
+  '{"new_hymnal_number":161,"old_hymnal_number":161,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-take-the-world-but-give-me-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -35265,7 +35267,7 @@ select
 ',
   'sda_old',
   161,
-  '{}'::jsonb
+  '{"new_hymnal_number":162,"old_hymnal_number":162,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-close-to-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -35362,7 +35364,7 @@ select
 ',
   'sda_old',
   162,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":163,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-noting-but-the-blood'
 where be.slug = 'am-sda-hymnal-old'
@@ -35430,7 +35432,7 @@ select
 ',
   'sda_old',
   163,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":164,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ve-found-a-jewel'
 where be.slug = 'am-sda-hymnal-old'
@@ -35504,7 +35506,7 @@ select
 ',
   'sda_old',
   164,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":165,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-ev-ry-soul-by-sin-oporessed'
 where be.slug = 'am-sda-hymnal-old'
@@ -35571,7 +35573,7 @@ select
 ',
   'sda_old',
   165,
-  '{}'::jsonb
+  '{"new_hymnal_number":166,"old_hymnal_number":166,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-give-my-life-for-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -35649,7 +35651,7 @@ select
 ',
   'sda_old',
   166,
-  '{}'::jsonb
+  '{"new_hymnal_number":167,"old_hymnal_number":167,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-the-pearly-gates-will-open'
 where be.slug = 'am-sda-hymnal-old'
@@ -35721,7 +35723,7 @@ select
 ',
   'sda_old',
   167,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":168,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saviour-like-a-shepherd-lead-us'
 where be.slug = 'am-sda-hymnal-old'
@@ -35796,7 +35798,7 @@ select
 ',
   'sda_old',
   168,
-  '{}'::jsonb
+  '{"new_hymnal_number":322,"old_hymnal_number":169,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-be-with-you'
 where be.slug = 'am-sda-hymnal-old'
@@ -35874,7 +35876,7 @@ select
 ',
   'sda_old',
   169,
-  '{}'::jsonb
+  '{"new_hymnal_number":175,"old_hymnal_number":170,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-great-physician-now-is-near'
 where be.slug = 'am-sda-hymnal-old'
@@ -35938,7 +35940,7 @@ select
 ',
   'sda_old',
   170,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":171,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-i-survery-the-woundrous-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -36002,7 +36004,7 @@ select
 ',
   'sda_old',
   171,
-  '{}'::jsonb
+  '{"new_hymnal_number":183,"old_hymnal_number":172,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-go-to-dark-gethesemane'
 where be.slug = 'am-sda-hymnal-old'
@@ -36066,7 +36068,7 @@ select
 ',
   'sda_old',
   172,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":173,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-suffered-for-us'
 where be.slug = 'am-sda-hymnal-old'
@@ -36139,7 +36141,7 @@ select
 ',
   'sda_old',
   173,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":174,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-brought-us-by-his-blood'
 where be.slug = 'am-sda-hymnal-old'
@@ -36212,7 +36214,7 @@ select
 ',
   'sda_old',
   174,
-  '{}'::jsonb
+  '{"new_hymnal_number":186,"old_hymnal_number":175,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-way-of-the-cross-leads-home'
 where be.slug = 'am-sda-hymnal-old'
@@ -36281,7 +36283,7 @@ select
 ',
   'sda_old',
   175,
-  '{}'::jsonb
+  '{"new_hymnal_number":184,"old_hymnal_number":176,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-at-the-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -36348,7 +36350,7 @@ select
 ',
   'sda_old',
   176,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":177,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ll-not-forgot-gethesemane'
 where be.slug = 'am-sda-hymnal-old'
@@ -36416,7 +36418,7 @@ select
 ',
   'sda_old',
   177,
-  '{}'::jsonb
+  '{"new_hymnal_number":178,"old_hymnal_number":178,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-come-thou-fount-of-every-blessing'
 where be.slug = 'am-sda-hymnal-old'
@@ -36490,7 +36492,7 @@ select
 ',
   'sda_old',
   178,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":179,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saves-by-the-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -36569,7 +36571,7 @@ select
 ',
   'sda_old',
   179,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":180,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saved-by-rugged-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -36643,7 +36645,7 @@ select
 ',
   'sda_old',
   180,
-  '{}'::jsonb
+  '{"new_hymnal_number":180,"old_hymnal_number":181,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-keep-me-near-the-cross'
 where be.slug = 'am-sda-hymnal-old'
@@ -36725,7 +36727,7 @@ select
 ',
   'sda_old',
   181,
-  '{}'::jsonb
+  '{"new_hymnal_number":181,"old_hymnal_number":182,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-glory-to-his-name'
 where be.slug = 'am-sda-hymnal-old'
@@ -36793,7 +36795,7 @@ select
 ',
   'sda_old',
   182,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":183,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-being-born-again-of-the-spirit'
 where be.slug = 'am-sda-hymnal-old'
@@ -36877,7 +36879,7 @@ select
 ',
   'sda_old',
   183,
-  '{}'::jsonb
+  '{"new_hymnal_number":311,"old_hymnal_number":184,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-now-i-see-the-crimson-wave'
 where be.slug = 'am-sda-hymnal-old'
@@ -36951,7 +36953,7 @@ select
 ',
   'sda_old',
   184,
-  '{}'::jsonb
+  '{"new_hymnal_number":312,"old_hymnal_number":185,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-hear-thy-welcome-voice'
 where be.slug = 'am-sda-hymnal-old'
@@ -37024,7 +37026,7 @@ select
 ',
   'sda_old',
   185,
-  '{}'::jsonb
+  '{"new_hymnal_number":313,"old_hymnal_number":186,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-fountain'
 where be.slug = 'am-sda-hymnal-old'
@@ -37092,7 +37094,7 @@ select
 ',
   'sda_old',
   186,
-  '{}'::jsonb
+  '{"new_hymnal_number":314,"old_hymnal_number":187,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-rock-of-age'
 where be.slug = 'am-sda-hymnal-old'
@@ -37165,7 +37167,7 @@ select
 ',
   'sda_old',
   187,
-  '{}'::jsonb
+  '{"new_hymnal_number":316,"old_hymnal_number":188,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-christ-is-risen-today'
 where be.slug = 'am-sda-hymnal-old'
@@ -37240,7 +37242,7 @@ select
 ',
   'sda_old',
   188,
-  '{}'::jsonb
+  '{"new_hymnal_number":317,"old_hymnal_number":189,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-lives'
 where be.slug = 'am-sda-hymnal-old'
@@ -37308,7 +37310,7 @@ select
 ',
   'sda_old',
   189,
-  '{}'::jsonb
+  '{"new_hymnal_number":315,"old_hymnal_number":190,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-beyond-the-sunset'
 where be.slug = 'am-sda-hymnal-old'
@@ -37377,7 +37379,7 @@ select
 ',
   'sda_old',
   190,
-  '{}'::jsonb
+  '{"new_hymnal_number":318,"old_hymnal_number":191,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-christ-arose'
 where be.slug = 'am-sda-hymnal-old'
@@ -37445,7 +37447,7 @@ select
 ',
   'sda_old',
   191,
-  '{}'::jsonb
+  '{"new_hymnal_number":319,"old_hymnal_number":192,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lift-your-glad-voice'
 where be.slug = 'am-sda-hymnal-old'
@@ -37517,7 +37519,7 @@ select
 ',
   'sda_old',
   192,
-  '{}'::jsonb
+  '{"new_hymnal_number":196,"old_hymnal_number":193,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-don-t-forget-the-sabbath'
 where be.slug = 'am-sda-hymnal-old'
@@ -37586,7 +37588,7 @@ select
 ',
   'sda_old',
   193,
-  '{}'::jsonb
+  '{"new_hymnal_number":194,"old_hymnal_number":194,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-day-jehovah-s-rest'
 where be.slug = 'am-sda-hymnal-old'
@@ -37653,7 +37655,7 @@ select
 ',
   'sda_old',
   194,
-  '{}'::jsonb
+  '{"new_hymnal_number":195,"old_hymnal_number":195,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-day-of-rest-and-gladness'
 where be.slug = 'am-sda-hymnal-old'
@@ -37726,7 +37728,7 @@ select
 ',
   'sda_old',
   195,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":196,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-far-from-all-care'
 where be.slug = 'am-sda-hymnal-old'
@@ -37794,7 +37796,7 @@ select
 ',
   'sda_old',
   196,
-  '{}'::jsonb
+  '{"new_hymnal_number":197,"old_hymnal_number":197,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-sabbath-home'
 where be.slug = 'am-sda-hymnal-old'
@@ -37864,7 +37866,7 @@ select
 ',
   'sda_old',
   197,
-  '{}'::jsonb
+  '{"new_hymnal_number":199,"old_hymnal_number":198,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-may-thy-words-fill-our-hearts'
 where be.slug = 'am-sda-hymnal-old'
@@ -37942,7 +37944,7 @@ select
 ',
   'sda_old',
   198,
-  '{}'::jsonb
+  '{"new_hymnal_number":200,"old_hymnal_number":199,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-give-me-the-bible'
 where be.slug = 'am-sda-hymnal-old'
@@ -38003,7 +38005,7 @@ select
 ',
   'sda_old',
   199,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":200,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-little-talk-with-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -38078,7 +38080,7 @@ select
 ',
   'sda_old',
   200,
-  '{}'::jsonb
+  '{"new_hymnal_number":201,"old_hymnal_number":201,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tell-me-the-story-of-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -38149,7 +38151,7 @@ select
 ',
   'sda_old',
   201,
-  '{}'::jsonb
+  '{"new_hymnal_number":202,"old_hymnal_number":202,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-words-of-life'
 where be.slug = 'am-sda-hymnal-old'
@@ -38230,7 +38232,7 @@ select
 ',
   'sda_old',
   202,
-  '{}'::jsonb
+  '{"new_hymnal_number":203,"old_hymnal_number":203,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-onward-christian-soldiers'
 where be.slug = 'am-sda-hymnal-old'
@@ -38303,7 +38305,7 @@ select
 ',
   'sda_old',
   203,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":204,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sound-the-battel-cry'
 where be.slug = 'am-sda-hymnal-old'
@@ -38376,7 +38378,7 @@ select
 ',
   'sda_old',
   204,
-  '{}'::jsonb
+  '{"new_hymnal_number":205,"old_hymnal_number":205,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-stand-up-stand-up-for-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -38444,7 +38446,7 @@ select
 ',
   'sda_old',
   205,
-  '{}'::jsonb
+  '{"new_hymnal_number":206,"old_hymnal_number":206,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-soldiers-of-christ-arise'
 where be.slug = 'am-sda-hymnal-old'
@@ -38522,7 +38524,7 @@ select
 ',
   'sda_old',
   206,
-  '{}'::jsonb
+  '{"new_hymnal_number":122,"old_hymnal_number":207,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-all-is-vanity'
 where be.slug = 'am-sda-hymnal-old'
@@ -38605,7 +38607,7 @@ select
 ',
   'sda_old',
   207,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":208,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-jesus-shall-gather-the-nations'
 where be.slug = 'am-sda-hymnal-old'
@@ -38677,7 +38679,7 @@ select
 ',
   'sda_old',
   208,
-  '{}'::jsonb
+  '{"new_hymnal_number":208,"old_hymnal_number":209,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-is-my-name-written-there'
 where be.slug = 'am-sda-hymnal-old'
@@ -38753,7 +38755,7 @@ select
 ',
   'sda_old',
   209,
-  '{}'::jsonb
+  '{"new_hymnal_number":210,"old_hymnal_number":210,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-almost-time-for-the-lord-to-come'
 where be.slug = 'am-sda-hymnal-old'
@@ -38827,7 +38829,7 @@ select
 ',
   'sda_old',
   210,
-  '{}'::jsonb
+  '{"new_hymnal_number":209,"old_hymnal_number":211,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-the-coming-king-is-at-the-door'
 where be.slug = 'am-sda-hymnal-old'
@@ -38899,7 +38901,7 @@ select
 ',
   'sda_old',
   211,
-  '{}'::jsonb
+  '{"new_hymnal_number":212,"old_hymnal_number":212,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-may-be-at-morn'
 where be.slug = 'am-sda-hymnal-old'
@@ -38977,7 +38979,7 @@ select
 ',
   'sda_old',
   212,
-  '{}'::jsonb
+  '{"new_hymnal_number":213,"old_hymnal_number":213,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lo-he-comes'
 where be.slug = 'am-sda-hymnal-old'
@@ -39054,7 +39056,7 @@ select
 ',
   'sda_old',
   213,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":214,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-if-it-were-today'
 where be.slug = 'am-sda-hymnal-old'
@@ -39113,7 +39115,7 @@ select
 ',
   'sda_old',
   214,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":215,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-he-will-come-agein'
 where be.slug = 'am-sda-hymnal-old'
@@ -39190,7 +39192,7 @@ select
 ',
   'sda_old',
   215,
-  '{}'::jsonb
+  '{"new_hymnal_number":217,"old_hymnal_number":216,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-know-not-the-hour'
 where be.slug = 'am-sda-hymnal-old'
@@ -39278,7 +39280,7 @@ select
 ',
   'sda_old',
   216,
-  '{}'::jsonb
+  '{"new_hymnal_number":216,"old_hymnal_number":217,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-lift-up-the-trumpet'
 where be.slug = 'am-sda-hymnal-old'
@@ -39362,7 +39364,7 @@ select
 ',
   'sda_old',
   217,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":218,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-we-all-get-to-heaven'
 where be.slug = 'am-sda-hymnal-old'
@@ -39429,7 +39431,7 @@ select
 ',
   'sda_old',
   218,
-  '{}'::jsonb
+  '{"new_hymnal_number":231,"old_hymnal_number":219,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-is-a-land-of-pure-delight'
 where be.slug = 'am-sda-hymnal-old'
@@ -39504,7 +39506,7 @@ select
 ',
   'sda_old',
   219,
-  '{}'::jsonb
+  '{"new_hymnal_number":232,"old_hymnal_number":220,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-on-jordan-s-stromy-banks'
 where be.slug = 'am-sda-hymnal-old'
@@ -39577,7 +39579,7 @@ select
 ',
   'sda_old',
   220,
-  '{}'::jsonb
+  '{"new_hymnal_number":221,"old_hymnal_number":221,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-a-land-that-is-fairer-than-day'
 where be.slug = 'am-sda-hymnal-old'
@@ -39654,7 +39656,7 @@ select
 ',
   'sda_old',
   221,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":222,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-will-there-any-stars'
 where be.slug = 'am-sda-hymnal-old'
@@ -39715,7 +39717,7 @@ select
 ',
   'sda_old',
   222,
-  '{}'::jsonb
+  '{"new_hymnal_number":218,"old_hymnal_number":223,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-m-on-my-way-home'
 where be.slug = 'am-sda-hymnal-old'
@@ -39787,7 +39789,7 @@ select
 ',
   'sda_old',
   223,
-  '{}'::jsonb
+  '{"new_hymnal_number":225,"old_hymnal_number":224,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-the-roll-is-called-up-younder'
 where be.slug = 'am-sda-hymnal-old'
@@ -39878,7 +39880,7 @@ select
 ',
   'sda_old',
   224,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":225,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sweeping-thought-the-gates'
 where be.slug = 'am-sda-hymnal-old'
@@ -39951,7 +39953,7 @@ select
 ',
   'sda_old',
   225,
-  '{}'::jsonb
+  '{"new_hymnal_number":226,"old_hymnal_number":226,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-few-more-years-shall-roll'
 where be.slug = 'am-sda-hymnal-old'
@@ -40021,7 +40023,7 @@ select
 ',
   'sda_old',
   226,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":227,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-beautiful-valler-of-eden'
 where be.slug = 'am-sda-hymnal-old'
@@ -40090,7 +40092,7 @@ select
 ',
   'sda_old',
   227,
-  '{}'::jsonb
+  '{"new_hymnal_number":228,"old_hymnal_number":228,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-far-beyond-the-sun'
 where be.slug = 'am-sda-hymnal-old'
@@ -40168,7 +40170,7 @@ select
 ',
   'sda_old',
   228,
-  '{}'::jsonb
+  '{"new_hymnal_number":229,"old_hymnal_number":229,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-face-to-face'
 where be.slug = 'am-sda-hymnal-old'
@@ -40248,7 +40250,7 @@ select
 ',
   'sda_old',
   229,
-  '{}'::jsonb
+  '{"new_hymnal_number":230,"old_hymnal_number":230,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-never-grow-old'
 where be.slug = 'am-sda-hymnal-old'
@@ -40316,7 +40318,7 @@ select
 ',
   'sda_old',
   230,
-  '{}'::jsonb
+  '{"new_hymnal_number":246,"old_hymnal_number":231,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-lord-our-saviour'
 where be.slug = 'am-sda-hymnal-old'
@@ -40390,7 +40392,7 @@ select
 ',
   'sda_old',
   231,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":232,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-dare-to-be-a-daniel'
 where be.slug = 'am-sda-hymnal-old'
@@ -40474,7 +40476,7 @@ select
 ',
   'sda_old',
   232,
-  '{}'::jsonb
+  '{"new_hymnal_number":250,"old_hymnal_number":233,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-grace-of-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -40545,7 +40547,7 @@ select
 ',
   'sda_old',
   233,
-  '{}'::jsonb
+  '{"new_hymnal_number":249,"old_hymnal_number":234,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-would-be-true'
 where be.slug = 'am-sda-hymnal-old'
@@ -40624,7 +40626,7 @@ select
 ',
   'sda_old',
   234,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":235,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-a-little-while-we-re-going-home'
 where be.slug = 'am-sda-hymnal-old'
@@ -40697,7 +40699,7 @@ select
 ',
   'sda_old',
   235,
-  '{}'::jsonb
+  '{"new_hymnal_number":252,"old_hymnal_number":236,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-brighten-the-corner-where-you-are'
 where be.slug = 'am-sda-hymnal-old'
@@ -40770,7 +40772,7 @@ select
 ',
   'sda_old',
   236,
-  '{}'::jsonb
+  '{"new_hymnal_number":255,"old_hymnal_number":237,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-in-the-heart-of-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -40847,7 +40849,7 @@ select
 ',
   'sda_old',
   237,
-  '{}'::jsonb
+  '{"new_hymnal_number":257,"old_hymnal_number":238,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-is-morning-in-my-heart'
 where be.slug = 'am-sda-hymnal-old'
@@ -40922,7 +40924,7 @@ select
 ',
   'sda_old',
   238,
-  '{}'::jsonb
+  '{"new_hymnal_number":259,"old_hymnal_number":239,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-missionary-volunteers'
 where be.slug = 'am-sda-hymnal-old'
@@ -41002,7 +41004,7 @@ select
 ',
   'sda_old',
   239,
-  '{}'::jsonb
+  '{"new_hymnal_number":263,"old_hymnal_number":240,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-where-the-gates-swing-outward-never'
 where be.slug = 'am-sda-hymnal-old'
@@ -41086,7 +41088,7 @@ select
 ',
   'sda_old',
   240,
-  '{}'::jsonb
+  '{"new_hymnal_number":264,"old_hymnal_number":241,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-shall-we-gather-at-the-river'
 where be.slug = 'am-sda-hymnal-old'
@@ -41170,7 +41172,7 @@ select
 ',
   'sda_old',
   241,
-  '{}'::jsonb
+  '{"new_hymnal_number":243,"old_hymnal_number":242,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-saviour-lead-me-lest-i-stray'
 where be.slug = 'am-sda-hymnal-old'
@@ -41234,7 +41236,7 @@ select
 ',
   'sda_old',
   242,
-  '{}'::jsonb
+  '{"new_hymnal_number":242,"old_hymnal_number":243,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sing-and-smile-and-pray'
 where be.slug = 'am-sda-hymnal-old'
@@ -41316,7 +41318,7 @@ select
 ',
   'sda_old',
   243,
-  '{}'::jsonb
+  '{"new_hymnal_number":244,"old_hymnal_number":244,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-child-of-the-king'
 where be.slug = 'am-sda-hymnal-old'
@@ -41390,7 +41392,7 @@ select
 ',
   'sda_old',
   244,
-  '{}'::jsonb
+  '{"new_hymnal_number":245,"old_hymnal_number":245,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-lord-and-i'
 where be.slug = 'am-sda-hymnal-old'
@@ -41472,7 +41474,7 @@ select
 ',
   'sda_old',
   245,
-  '{}'::jsonb
+  '{"new_hymnal_number":247,"old_hymnal_number":246,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-surely-goodness-and-mercy'
 where be.slug = 'am-sda-hymnal-old'
@@ -41530,7 +41532,7 @@ select
 ',
   'sda_old',
   246,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":247,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-real-to-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -41591,7 +41593,7 @@ select
 ',
   'sda_old',
   247,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":248,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-is-the-sweetest-name-i-know'
 where be.slug = 'am-sda-hymnal-old'
@@ -41649,7 +41651,7 @@ select
 ',
   'sda_old',
   248,
-  '{}'::jsonb
+  '{"new_hymnal_number":32,"old_hymnal_number":249,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-you-must-open-the-door'
 where be.slug = 'am-sda-hymnal-old'
@@ -41710,7 +41712,7 @@ select
 ',
   'sda_old',
   249,
-  '{}'::jsonb
+  '{"new_hymnal_number":14,"old_hymnal_number":250,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-thank-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -41778,7 +41780,7 @@ select
 ',
   'sda_old',
   250,
-  '{}'::jsonb
+  '{"new_hymnal_number":211,"old_hymnal_number":251,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-we-have-this-hope'
 where be.slug = 'am-sda-hymnal-old'
@@ -41839,7 +41841,7 @@ select
 ',
   'sda_old',
   251,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":252,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wide-wide-as-the-ocean'
 where be.slug = 'am-sda-hymnal-old'
@@ -41900,7 +41902,7 @@ select
 ',
   'sda_old',
   252,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":253,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -41961,7 +41963,7 @@ select
 ',
   'sda_old',
   253,
-  '{}'::jsonb
+  '{"new_hymnal_number":253,"old_hymnal_number":254,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-what-the-world-needs-is-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -42022,7 +42024,7 @@ select
 ',
   'sda_old',
   254,
-  '{}'::jsonb
+  '{"new_hymnal_number":254,"old_hymnal_number":255,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-sing-along'
 where be.slug = 'am-sda-hymnal-old'
@@ -42085,7 +42087,7 @@ select
 ',
   'sda_old',
   255,
-  '{}'::jsonb
+  '{"new_hymnal_number":83,"old_hymnal_number":256,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-into-my-heart'
 where be.slug = 'am-sda-hymnal-old'
@@ -42146,7 +42148,7 @@ select
 ',
   'sda_old',
   256,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":257,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-my-prayer'
 where be.slug = 'am-sda-hymnal-old'
@@ -42206,7 +42208,7 @@ select
 ',
   'sda_old',
   257,
-  '{}'::jsonb
+  '{"new_hymnal_number":256,"old_hymnal_number":258,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-see-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -42266,7 +42268,7 @@ select
 ',
   'sda_old',
   258,
-  '{}'::jsonb
+  '{"new_hymnal_number":192,"old_hymnal_number":259,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-for-god-so-loved-the-world'
 where be.slug = 'am-sda-hymnal-old'
@@ -42329,7 +42331,7 @@ select
 ',
   'sda_old',
   259,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":260,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ll-share-my-faith'
 where be.slug = 'am-sda-hymnal-old'
@@ -42388,7 +42390,7 @@ select
 ',
   'sda_old',
   260,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":261,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-let-it-shine'
 where be.slug = 'am-sda-hymnal-old'
@@ -42449,7 +42451,7 @@ select
 ',
   'sda_old',
   261,
-  '{}'::jsonb
+  '{"new_hymnal_number":215,"old_hymnal_number":262,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-want-to-be-ready'
 where be.slug = 'am-sda-hymnal-old'
@@ -42514,7 +42516,7 @@ select
 ',
   'sda_old',
   262,
-  '{}'::jsonb
+  '{"new_hymnal_number":176,"old_hymnal_number":263,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-wonderful'
 where be.slug = 'am-sda-hymnal-old'
@@ -42575,7 +42577,7 @@ select
 ',
   'sda_old',
   263,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":264,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-cleanse-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -42636,7 +42638,7 @@ select
 ',
   'sda_old',
   264,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":265,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-there-s-new-day-dawning'
 where be.slug = 'am-sda-hymnal-old'
@@ -42695,7 +42697,7 @@ select
 ',
   'sda_old',
   265,
-  '{}'::jsonb
+  '{"new_hymnal_number":80,"old_hymnal_number":266,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-trun-your-eyes-upon-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -42762,7 +42764,7 @@ select
 ',
   'sda_old',
   266,
-  '{}'::jsonb
+  '{"new_hymnal_number":276,"old_hymnal_number":267,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-perfect-love'
 where be.slug = 'am-sda-hymnal-old'
@@ -42839,7 +42841,7 @@ select
 ',
   'sda_old',
   267,
-  '{}'::jsonb
+  '{"new_hymnal_number":268,"old_hymnal_number":268,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-jesus-loves-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -42907,7 +42909,7 @@ select
 ',
   'sda_old',
   268,
-  '{}'::jsonb
+  '{"new_hymnal_number":269,"old_hymnal_number":269,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-will-follow-thee'
 where be.slug = 'am-sda-hymnal-old'
@@ -42980,7 +42982,7 @@ select
 ',
   'sda_old',
   269,
-  '{}'::jsonb
+  '{"new_hymnal_number":270,"old_hymnal_number":270,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-when-he-cometh'
 where be.slug = 'am-sda-hymnal-old'
@@ -43055,7 +43057,7 @@ select
 ',
   'sda_old',
   270,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":271,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-beautiful-flowers'
 where be.slug = 'am-sda-hymnal-old'
@@ -43122,7 +43124,7 @@ select
 ',
   'sda_old',
   271,
-  '{}'::jsonb
+  '{"new_hymnal_number":273,"old_hymnal_number":272,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-let-the-little-ones-come'
 where be.slug = 'am-sda-hymnal-old'
@@ -43196,7 +43198,7 @@ select
 ',
   'sda_old',
   272,
-  '{}'::jsonb
+  '{"new_hymnal_number":272,"old_hymnal_number":273,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-ll-be-a-sunbeam'
 where be.slug = 'am-sda-hymnal-old'
@@ -43264,7 +43266,7 @@ select
 ',
   'sda_old',
   273,
-  '{}'::jsonb
+  '{"new_hymnal_number":274,"old_hymnal_number":274,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-master-hast-thou-work-for-me'
 where be.slug = 'am-sda-hymnal-old'
@@ -43337,7 +43339,7 @@ select
 ',
   'sda_old',
   274,
-  '{}'::jsonb
+  '{"new_hymnal_number":275,"old_hymnal_number":275,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-toiling-for-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -43409,7 +43411,7 @@ select
 ',
   'sda_old',
   275,
-  '{}'::jsonb
+  '{"new_hymnal_number":271,"old_hymnal_number":276,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-like-a-little-candle'
 where be.slug = 'am-sda-hymnal-old'
@@ -43491,7 +43493,7 @@ select
 ',
   'sda_old',
   276,
-  '{}'::jsonb
+  '{"new_hymnal_number":267,"old_hymnal_number":277,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-god-s-children-have-a-firm-foundation'
 where be.slug = 'am-sda-hymnal-old'
@@ -43559,7 +43561,7 @@ select
 ',
   'sda_old',
   277,
-  '{}'::jsonb
+  '{"new_hymnal_number":265,"old_hymnal_number":278,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-this-is-my-father-s-world'
 where be.slug = 'am-sda-hymnal-old'
@@ -43626,7 +43628,7 @@ select
 ',
   'sda_old',
   278,
-  '{}'::jsonb
+  '{"new_hymnal_number":266,"old_hymnal_number":279,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-i-sing-the-mighty-power-of-god'
 where be.slug = 'am-sda-hymnal-old'
@@ -43708,7 +43710,7 @@ select
 ',
   'sda_old',
   279,
-  '{}'::jsonb
+  '{"new_hymnal_number":280,"old_hymnal_number":280,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-holy-night'
 where be.slug = 'am-sda-hymnal-old'
@@ -43781,7 +43783,7 @@ select
 ',
   'sda_old',
   280,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":281,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-little-town-of-bethelehem'
 where be.slug = 'am-sda-hymnal-old'
@@ -43855,7 +43857,7 @@ select
 ',
   'sda_old',
   281,
-  '{}'::jsonb
+  '{"new_hymnal_number":282,"old_hymnal_number":282,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-tis-shining-still'
 where be.slug = 'am-sda-hymnal-old'
@@ -43927,7 +43929,7 @@ select
 ',
   'sda_old',
   282,
-  '{}'::jsonb
+  '{"new_hymnal_number":283,"old_hymnal_number":283,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-o-come-all-ye-faithful'
 where be.slug = 'am-sda-hymnal-old'
@@ -43995,7 +43997,7 @@ select
 ',
   'sda_old',
   283,
-  '{}'::jsonb
+  '{"new_hymnal_number":284,"old_hymnal_number":284,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-christmas-song'
 where be.slug = 'am-sda-hymnal-old'
@@ -44062,7 +44064,7 @@ select
 ',
   'sda_old',
   284,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":285,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-hark-the-herald-angels-sing'
 where be.slug = 'am-sda-hymnal-old'
@@ -44126,7 +44128,7 @@ select
 ',
   'sda_old',
   285,
-  '{}'::jsonb
+  '{"new_hymnal_number":286,"old_hymnal_number":286,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-silent-night-holy-night'
 where be.slug = 'am-sda-hymnal-old'
@@ -44190,7 +44192,7 @@ select
 ',
   'sda_old',
   286,
-  '{}'::jsonb
+  '{"new_hymnal_number":287,"old_hymnal_number":287,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-christmas-morning'
 where be.slug = 'am-sda-hymnal-old'
@@ -44258,7 +44260,7 @@ select
 ',
   'sda_old',
   287,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":288,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-a-child-is-born'
 where be.slug = 'am-sda-hymnal-old'
@@ -44335,7 +44337,7 @@ select
 ',
   'sda_old',
   288,
-  '{}'::jsonb
+  '{"new_hymnal_number":288,"old_hymnal_number":289,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-joy-to-the-world'
 where be.slug = 'am-sda-hymnal-old'
@@ -44408,7 +44410,7 @@ select
 ',
   'sda_old',
   289,
-  '{}'::jsonb
+  '{"new_hymnal_number":290,"old_hymnal_number":290,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-as-with-gladness-men-of-old'
 where be.slug = 'am-sda-hymnal-old'
@@ -44481,7 +44483,7 @@ select
 ',
   'sda_old',
   290,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":291,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-it-came-upon-the-midnight-clear'
 where be.slug = 'am-sda-hymnal-old'
@@ -44559,7 +44561,7 @@ select
 ',
   'sda_old',
   291,
-  '{}'::jsonb
+  '{"new_hymnal_number":null,"old_hymnal_number":292,"match_status":"missing_new"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-some-day-the-silver-cord-will-break'
 where be.slug = 'am-sda-hymnal-old'
@@ -44631,7 +44633,7 @@ select
 ',
   'sda_old',
   292,
-  '{}'::jsonb
+  '{"new_hymnal_number":324,"old_hymnal_number":293,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-never-part-again'
 where be.slug = 'am-sda-hymnal-old'
@@ -44697,7 +44699,7 @@ select
 ',
   'sda_old',
   293,
-  '{}'::jsonb
+  '{"new_hymnal_number":325,"old_hymnal_number":294,"match_status":"matched"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-asleep-in-jesus'
 where be.slug = 'am-sda-hymnal-old'
@@ -44708,6 +44710,4468 @@ on conflict (edition_id, source_key, source_index) do update set
   english_title = excluded.english_title,
   lyrics = excluded.lyrics,
   metadata = excluded.metadata,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-this-is-the-day',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-this-is-the-day","new_hymnal_number":4}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-all-hail-the-power-of-jseus-name',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-all-hail-the-power-of-jseus-name","new_hymnal_number":5}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-majestic-sweetness-sits-enthroned',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-majestic-sweetness-sits-enthroned","new_hymnal_number":75}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-to-god-be-the-glory',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-to-god-be-the-glory","new_hymnal_number":12}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-christ-receiveth-sinful-men',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-christ-receiveth-sinful-men","new_hymnal_number":23}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-sweet-sweet-spirit',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-sweet-sweet-spirit","new_hymnal_number":26}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-watchmen-on-the-walls-of-zion',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-watchmen-on-the-walls-of-zion","new_hymnal_number":29}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-fairest-lord-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-fairest-lord-jesus","new_hymnal_number":30}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-takae-the-name-of-jesus-with-you',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-takae-the-name-of-jesus-with-you","new_hymnal_number":33}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-there-shall-be-shower-of-blessing',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-there-shall-be-shower-of-blessing","new_hymnal_number":39}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-want-jesus-to-walk-with-me',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-want-jesus-to-walk-with-me","new_hymnal_number":42}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-lord-jesus-i-long-to-be-perfectly-whole',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-lord-jesus-i-long-to-be-perfectly-whole","new_hymnal_number":43}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-heard-the-voice-of-jesus-say',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-heard-the-voice-of-jesus-say","new_hymnal_number":48}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-there-s-a-strange-at-the-door',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-there-s-a-strange-at-the-door","new_hymnal_number":49}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-give-of-best-to-the-master',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-give-of-best-to-the-master","new_hymnal_number":55}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-he-saved-me-by-his-blood',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-he-saved-me-by-his-blood","new_hymnal_number":57}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-paid-it-all',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-paid-it-all","new_hymnal_number":58}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-break-thou-the-bread',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-break-thou-the-bread","new_hymnal_number":59}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-tis-the-blessed-of-prayer',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-tis-the-blessed-of-prayer","new_hymnal_number":62}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-have-thine-own-way-lord',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-have-thine-own-way-lord","new_hymnal_number":64}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-o-lord-in-your-mercy',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-o-lord-in-your-mercy","new_hymnal_number":72}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-fill-my-cup-lord',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-fill-my-cup-lord","new_hymnal_number":76}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-god-blessing',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-god-blessing","new_hymnal_number":77}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-take-time-to-be-holy',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-take-time-to-be-holy","new_hymnal_number":78}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-lord-i-want-to-be-christian',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-lord-i-want-to-be-christian","new_hymnal_number":79}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-o-lord-i-m-fired',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-o-lord-i-m-fired","new_hymnal_number":81}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-must-tell-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-must-tell-jesus","new_hymnal_number":82}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-an-we-come-to-you-in-prayer',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-an-we-come-to-you-in-prayer","new_hymnal_number":84}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-love-of-my-soul',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-love-of-my-soul","new_hymnal_number":86}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-more-dilligence',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-more-dilligence","new_hymnal_number":88}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-it-pays-to-serve-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-it-pays-to-serve-jesus","new_hymnal_number":95}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-come-to-the-garden-alone',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-come-to-the-garden-alone","new_hymnal_number":97}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-just-when-i-need-hime-most',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-just-when-i-need-hime-most","new_hymnal_number":101}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-is-all-the-world-to-me',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-is-all-the-world-to-me","new_hymnal_number":108}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-tell-it-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-tell-it-jesus","new_hymnal_number":109}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-like-a-river-glorious',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-like-a-river-glorious","new_hymnal_number":113}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-d-rather-have-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-d-rather-have-jesus","new_hymnal_number":114}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-child-of-the-king',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-child-of-the-king","new_hymnal_number":115}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-heavenly-sunlight',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-heavenly-sunlight","new_hymnal_number":116}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-away-from-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-away-from-jesus","new_hymnal_number":118}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-belived-you',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-belived-you","new_hymnal_number":126}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-have-a-friend-so-precious',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-have-a-friend-so-precious","new_hymnal_number":127}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-be-thou-my-vision',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-be-thou-my-vision","new_hymnal_number":134}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-rejoice-in-the-lord-always',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-rejoice-in-the-lord-always","new_hymnal_number":138}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-you-may-have-the-joy-bells',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-you-may-have-the-joy-bells","new_hymnal_number":140}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-a-wonderful-saviour-is-jesus-my-lord',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-a-wonderful-saviour-is-jesus-my-lord","new_hymnal_number":143}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-peace-like-a-river',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-peace-like-a-river","new_hymnal_number":146}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-joyful-joyful-we-adore-thee',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-joyful-joyful-we-adore-thee","new_hymnal_number":147}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-will-sing-of-jesus-s-love',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-will-sing-of-jesus-s-love","new_hymnal_number":153}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-wonderful-love',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-wonderful-love","new_hymnal_number":155}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-and-can-it-be',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-and-can-it-be","new_hymnal_number":156}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-love-lifted-me',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-love-lifted-me","new_hymnal_number":157}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-behold-what-manner-of-love',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-behold-what-manner-of-love","new_hymnal_number":158}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-wide-wide-as-the-ocen',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-wide-wide-as-the-ocen","new_hymnal_number":159}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-nothing-but-the-blood-of-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-nothing-but-the-blood-of-jesus","new_hymnal_number":164}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-come-ev-ry-soul-by-sin-oppressed',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-come-ev-ry-soul-by-sin-oppressed","new_hymnal_number":165}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-saviour-like-a-shephered-lead-us',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-saviour-like-a-shephered-lead-us","new_hymnal_number":168}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-there-is-a-gate-that-stand-ajar',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-there-is-a-gate-that-stand-ajar","new_hymnal_number":169}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-then-jesus-came',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-then-jesus-came","new_hymnal_number":171}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-bis-us-come',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-bis-us-come","new_hymnal_number":172}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-day-by-day',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-day-by-day","new_hymnal_number":174}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-since-jesus-came-into-my-heart',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-since-jesus-came-into-my-heart","new_hymnal_number":177}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-when-i-survey-the-wondrous-cross',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-when-i-survey-the-wondrous-cross","new_hymnal_number":179}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-the-old-rugged-cross',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-the-old-rugged-cross","new_hymnal_number":182}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-bought-us-by-his-blood',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-bought-us-by-his-blood","new_hymnal_number":185}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-burdens-are-lifted-at-calvary',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-burdens-are-lifted-at-calvary","new_hymnal_number":187}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-o-sacred-head-now-wonded',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-o-sacred-head-now-wonded","new_hymnal_number":188}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-remember',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-remember","new_hymnal_number":189}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-friend-of-children',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-friend-of-children","new_hymnal_number":190}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-blessed-redeemer',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-blessed-redeemer","new_hymnal_number":191}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-ll-not-forget-gethesemane',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-ll-not-forget-gethesemane","new_hymnal_number":193}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-this-is-my-commendment',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-this-is-my-commendment","new_hymnal_number":198}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-sound-the-battle-cry',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-sound-the-battle-cry","new_hymnal_number":204}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-when-jesus-shall-gather-the-nation',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-when-jesus-shall-gather-the-nation","new_hymnal_number":207}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-what-if-were-today',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-what-if-were-today","new_hymnal_number":214}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-is-coming-soon',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-is-coming-soon","new_hymnal_number":219}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-halleluja',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-halleluja","new_hymnal_number":220}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-will-there-be-any-stars',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-will-there-be-any-stars","new_hymnal_number":222}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-when-weall-get-to-heaven',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-when-weall-get-to-heaven","new_hymnal_number":223}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-sweeping-through-the-gates',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-sweeping-through-the-gates","new_hymnal_number":224}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-beautiful-valley-of-eden',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-beautiful-valley-of-eden","new_hymnal_number":227}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-o-when-shall-i-see-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-o-when-shall-i-see-jesus","new_hymnal_number":233}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-soon-and-very-soon',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-soon-and-very-soon","new_hymnal_number":234}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-look-you-saints-the-sight-is-glorious',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-look-you-saints-the-sight-is-glorious","new_hymnal_number":235}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-do-lord',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-do-lord","new_hymnal_number":236}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-lo-what-a-glorious-sight-appears',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-lo-what-a-glorious-sight-appears","new_hymnal_number":237}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-a-song-of-heaven-and-homeland',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-a-song-of-heaven-and-homeland","new_hymnal_number":238}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-over-younder',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-over-younder","new_hymnal_number":239}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-the-king-is-coming',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-the-king-is-coming","new_hymnal_number":240}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-no-night-there',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-no-night-there","new_hymnal_number":241}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-dare-to-be-daniel',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-dare-to-be-daniel","new_hymnal_number":248}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-in-a-little-while-we-ve-going-home',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-in-a-little-while-we-ve-going-home","new_hymnal_number":251}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-father-i-adore-you',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-father-i-adore-you","new_hymnal_number":258}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-let-it-shaine',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-let-it-shaine","new_hymnal_number":261}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-jesus-christ-is-my-friend',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-christ-is-my-friend","new_hymnal_number":262}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-love-at-home',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-love-at-home","new_hymnal_number":277}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-away-in-manger',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-away-in-manger","new_hymnal_number":278}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-what-child-is-this',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-what-child-is-this","new_hymnal_number":279}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-o-little-town-of-bethlehem',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-o-little-town-of-bethlehem","new_hymnal_number":281}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-hark-the-herald-angel-sing',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-hark-the-herald-angel-sing","new_hymnal_number":285}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-angels-we-have-heard-on-hign',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-angels-we-have-heard-on-hign","new_hymnal_number":289}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-it-come-upon-the-midnight-clear',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-it-come-upon-the-midnight-clear","new_hymnal_number":291}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-we-three-kings-of-orient-are',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-we-three-kings-of-orient-are","new_hymnal_number":292}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-there-is-a-place-of-quiet-rest',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-there-is-a-place-of-quiet-rest","new_hymnal_number":295}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-know-whom-i-have-belived',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-know-whom-i-have-belived","new_hymnal_number":300}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-rememr-the-calvary',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-rememr-the-calvary","new_hymnal_number":301}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-farher-along',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-farher-along","new_hymnal_number":308}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-seek-ye-first',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-seek-ye-first","new_hymnal_number":309}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-i-have-decided-to-follow-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-i-have-decided-to-follow-jesus","new_hymnal_number":310}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-alleluia-sing-to-jesus',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-alleluia-sing-to-jesus","new_hymnal_number":320}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-in-eden-our-trouble-will-end',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-in-eden-our-trouble-will-end","new_hymnal_number":321}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_old:am-sda-en-some-day-the-silver-core-will-break',
+  'warning',
+  'missing_old_hymnal_entry',
+  'SDA song has a new hymnal number but no matched old hymnal number.',
+  '{"canonical_key":"am-sda-en-some-day-the-silver-core-will-break","new_hymnal_number":323}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-before-jehovah-s-awful-throne',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-before-jehovah-s-awful-throne","old_hymnal_number":4}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-all-hail-the-power-of-jesus-name',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-all-hail-the-power-of-jesus-name","old_hymnal_number":5}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-on-the-mountain-temple',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-on-the-mountain-temple","old_hymnal_number":7}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-preaise-ye-the-father',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-preaise-ye-the-father","old_hymnal_number":14}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-praise-god-who-saved-the-lost',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-praise-god-who-saved-the-lost","old_hymnal_number":20}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-majestic-sweetness-slits-enthroned-no-1',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-majestic-sweetness-slits-enthroned-no-1","old_hymnal_number":24}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-christ-recievthe-sinful-men',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-christ-recievthe-sinful-men","old_hymnal_number":25}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-watch-men-on-the-walls-zion',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-watch-men-on-the-walls-zion","old_hymnal_number":30}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-fairest-lord-jesu',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-fairest-lord-jesu","old_hymnal_number":31}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-take-the-name-of-jesus-with-you',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-take-the-name-of-jesus-with-you","old_hymnal_number":33}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-there-shall-be-showers-of-blessing',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-there-shall-be-showers-of-blessing","old_hymnal_number":39}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-lord-jesus-i-long-to-be-perfe',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-lord-jesus-i-long-to-be-perfe","old_hymnal_number":43}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-give-of-your-best-to-the-master',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-give-of-your-best-to-the-master","old_hymnal_number":44}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-heard-the-voice-jesus-say',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-heard-the-voice-jesus-say","old_hymnal_number":48}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-there-s-stranger-at-the-door',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-there-s-stranger-at-the-door","old_hymnal_number":49}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-not-i-but-christ',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-not-i-but-christ","old_hymnal_number":56}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-break-thou-the-bread-of-life',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-break-thou-the-bread-of-life","old_hymnal_number":59}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-tis-the-blessed-hour-of-prayer',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-tis-the-blessed-hour-of-prayer","old_hymnal_number":62}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-majestic-sweetness-sits-enthoroned-no-2',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-majestic-sweetness-sits-enthoroned-no-2","old_hymnal_number":63}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-in-eden-our-troubles-will-end',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-in-eden-our-troubles-will-end","old_hymnal_number":64}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-have-thin-own-way-lord',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-have-thin-own-way-lord","old_hymnal_number":65}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-hear-my-prayer',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-hear-my-prayer","old_hymnal_number":66}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-the-lord-be-with-us',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-the-lord-be-with-us","old_hymnal_number":75}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-majestic-sweetness-sits-enthroned-no-3',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-majestic-sweetness-sits-enthroned-no-3","old_hymnal_number":76}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-is-all-world-to-me',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-is-all-world-to-me","old_hymnal_number":80}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-tell-it-to-jesus',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-tell-it-to-jesus","old_hymnal_number":81}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-lover-of-my-soul',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-lover-of-my-soul","old_hymnal_number":86}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-more-diligence',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-more-diligence","old_hymnal_number":88}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-o-the-way-is-long-and-weary',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-o-the-way-is-long-and-weary","old_hymnal_number":91}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-tarry-by-the-living-waters',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-tarry-by-the-living-waters","old_hymnal_number":92}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-it-paves-to-serve-jesus',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-it-paves-to-serve-jesus","old_hymnal_number":95}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-came-to-the-garden-alone',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-came-to-the-garden-alone","old_hymnal_number":97}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-just-when-i-need-him-most',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-just-when-i-need-him-most","old_hymnal_number":101}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-there-is-a-peace-of-quiet-rest',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-there-is-a-peace-of-quiet-rest","old_hymnal_number":108}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-know-whom-i-have-believed',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-know-whom-i-have-believed","old_hymnal_number":113}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-lead-on-o-king-eternal',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-lead-on-o-king-eternal","old_hymnal_number":115}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-remember-calvery',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-remember-calvery","old_hymnal_number":117}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-if-jesus-is-my-brother',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-if-jesus-is-my-brother","old_hymnal_number":123}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-have-a-friend-so-percious',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-have-a-friend-so-percious","old_hymnal_number":127}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-a-wonderful-saviour-in-jesus-my-lord',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-a-wonderful-saviour-in-jesus-my-lord","old_hymnal_number":142}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-will-sing-of-jesus-love',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-will-sing-of-jesus-love","old_hymnal_number":144}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-the-jesus-came',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-the-jesus-came","old_hymnal_number":154}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-there-is-a-gate-that-stands-ajar',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-there-is-a-gate-that-stands-ajar","old_hymnal_number":157}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-bids-us-come',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-bids-us-come","old_hymnal_number":158}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-noting-but-the-blood',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-noting-but-the-blood","old_hymnal_number":163}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-ve-found-a-jewel',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-ve-found-a-jewel","old_hymnal_number":164}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-come-ev-ry-soul-by-sin-oporessed',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-come-ev-ry-soul-by-sin-oporessed","old_hymnal_number":165}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-saviour-like-a-shepherd-lead-us',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-saviour-like-a-shepherd-lead-us","old_hymnal_number":168}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-when-i-survery-the-woundrous-cross',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-when-i-survery-the-woundrous-cross","old_hymnal_number":171}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-suffered-for-us',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-suffered-for-us","old_hymnal_number":173}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-brought-us-by-his-blood',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-brought-us-by-his-blood","old_hymnal_number":174}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-ll-not-forgot-gethesemane',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-ll-not-forgot-gethesemane","old_hymnal_number":177}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-saves-by-the-cross',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-saves-by-the-cross","old_hymnal_number":179}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-saved-by-rugged-cross',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-saved-by-rugged-cross","old_hymnal_number":180}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-being-born-again-of-the-spirit',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-being-born-again-of-the-spirit","old_hymnal_number":183}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-far-from-all-care',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-far-from-all-care","old_hymnal_number":196}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-a-little-talk-with-jesus',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-a-little-talk-with-jesus","old_hymnal_number":200}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-sound-the-battel-cry',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-sound-the-battel-cry","old_hymnal_number":204}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-when-jesus-shall-gather-the-nations',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-when-jesus-shall-gather-the-nations","old_hymnal_number":208}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-what-if-it-were-today',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-what-if-it-were-today","old_hymnal_number":214}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-he-will-come-agein',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-he-will-come-agein","old_hymnal_number":215}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-when-we-all-get-to-heaven',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-when-we-all-get-to-heaven","old_hymnal_number":218}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-will-there-any-stars',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-will-there-any-stars","old_hymnal_number":222}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-sweeping-thought-the-gates',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-sweeping-thought-the-gates","old_hymnal_number":225}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-beautiful-valler-of-eden',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-beautiful-valler-of-eden","old_hymnal_number":227}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-dare-to-be-a-daniel',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-dare-to-be-a-daniel","old_hymnal_number":232}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-in-a-little-while-we-re-going-home',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-in-a-little-while-we-re-going-home","old_hymnal_number":235}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-is-real-to-me',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-is-real-to-me","old_hymnal_number":247}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-jesus-is-the-sweetest-name-i-know',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-jesus-is-the-sweetest-name-i-know","old_hymnal_number":248}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-wide-wide-as-the-ocean',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-wide-wide-as-the-ocean","old_hymnal_number":252}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-wonderful-jesus',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-wonderful-jesus","old_hymnal_number":253}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-my-prayer',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-my-prayer","old_hymnal_number":257}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-i-ll-share-my-faith',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-i-ll-share-my-faith","old_hymnal_number":260}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-let-it-shine',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-let-it-shine","old_hymnal_number":261}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-cleanse-me',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-cleanse-me","old_hymnal_number":264}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-there-s-new-day-dawning',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-there-s-new-day-dawning","old_hymnal_number":265}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-beautiful-flowers',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-beautiful-flowers","old_hymnal_number":271}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-o-little-town-of-bethelehem',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-o-little-town-of-bethelehem","old_hymnal_number":281}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-hark-the-herald-angels-sing',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-hark-the-herald-angels-sing","old_hymnal_number":285}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-a-child-is-born',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-a-child-is-born","old_hymnal_number":288}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-it-came-upon-the-midnight-clear',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-it-came-upon-the-midnight-clear","old_hymnal_number":291}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
+  updated_at = now();
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  'sda_hymnal_json',
+  'missing_new:am-sda-en-some-day-the-silver-cord-will-break',
+  'warning',
+  'missing_new_hymnal_entry',
+  'SDA song has an old hymnal number but no matched new hymnal number.',
+  '{"canonical_key":"am-sda-en-some-day-the-silver-cord-will-break","old_hymnal_number":292}'::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
   updated_at = now();
 insert into works (
   canonical_key,

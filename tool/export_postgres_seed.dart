@@ -103,6 +103,36 @@ void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
   final oldLyrics = data['old_song'] ?? const [];
   final newEnglishTitles = data['new_title_en'] ?? const [];
   final oldEnglishTitles = data['old_title_en'] ?? const [];
+  final newNumbersByKey = <String, int>{};
+  final oldNumbersByKey = <String, int>{};
+
+  for (var index = 0; index < newTitles.length; index++) {
+    final number = index + 1;
+    final title = _fallbackTitle(newTitles[index], 'SDA Hymn $number');
+    final englishTitle = _valueAt(newEnglishTitles, index);
+    final canonicalKey = _sdaCanonicalKey(
+      title: title,
+      englishTitle: englishTitle,
+      fallbackNumber: number,
+      fallbackPrefix: 'new',
+    );
+    newNumbersByKey[canonicalKey] = number;
+  }
+
+  for (var index = 0; index < oldTitles.length; index++) {
+    final number = index + 1;
+    final title = _fallbackTitle(oldTitles[index], 'SDA Old Hymn $number');
+    final englishTitle = _valueAt(oldEnglishTitles, index);
+    final canonicalKey = _sdaCanonicalKey(
+      title: title,
+      englishTitle: englishTitle,
+      fallbackNumber: number,
+      fallbackPrefix: 'old',
+    );
+    oldNumbersByKey[canonicalKey] = number;
+  }
+
+  buffer.writeln(_clearImportIssues('sda_hymnal_json'));
 
   for (var index = 0; index < newTitles.length; index++) {
     final number = index + 1;
@@ -131,6 +161,13 @@ void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
         lyrics: _valueAt(newLyrics, index) ?? '',
         sourceKey: 'sda_new',
         sourceIndex: index,
+        metadata: {
+          'new_hymnal_number': number,
+          'old_hymnal_number': oldNumbersByKey[canonicalKey],
+          'match_status': oldNumbersByKey.containsKey(canonicalKey)
+              ? 'matched'
+              : 'missing_old',
+        },
       ));
   }
 
@@ -161,8 +198,21 @@ void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
         lyrics: _valueAt(oldLyrics, index) ?? '',
         sourceKey: 'sda_old',
         sourceIndex: index,
+        metadata: {
+          'new_hymnal_number': newNumbersByKey[canonicalKey],
+          'old_hymnal_number': number,
+          'match_status': newNumbersByKey.containsKey(canonicalKey)
+              ? 'matched'
+              : 'missing_new',
+        },
       ));
   }
+
+  _appendSdaImportIssues(
+    buffer,
+    newNumbersByKey: newNumbersByKey,
+    oldNumbersByKey: oldNumbersByKey,
+  );
 }
 
 void _appendHagerignaEntries(
@@ -325,6 +375,89 @@ on conflict (edition_id, source_key, source_index) do update set
   english_title = excluded.english_title,
   lyrics = excluded.lyrics,
   metadata = excluded.metadata,
+  updated_at = now();''';
+}
+
+void _appendSdaImportIssues(
+  StringBuffer buffer, {
+  required Map<String, int> newNumbersByKey,
+  required Map<String, int> oldNumbersByKey,
+}) {
+  for (final entry in newNumbersByKey.entries) {
+    if (oldNumbersByKey.containsKey(entry.key)) {
+      continue;
+    }
+    buffer.writeln(_insertImportIssue(
+      sourceName: 'sda_hymnal_json',
+      issueKey: 'missing_old:${entry.key}',
+      severity: 'warning',
+      issueType: 'missing_old_hymnal_entry',
+      message:
+          'SDA song has a new hymnal number but no matched old hymnal number.',
+      metadata: {
+        'canonical_key': entry.key,
+        'new_hymnal_number': entry.value,
+      },
+    ));
+  }
+
+  for (final entry in oldNumbersByKey.entries) {
+    if (newNumbersByKey.containsKey(entry.key)) {
+      continue;
+    }
+    buffer.writeln(_insertImportIssue(
+      sourceName: 'sda_hymnal_json',
+      issueKey: 'missing_new:${entry.key}',
+      severity: 'warning',
+      issueType: 'missing_new_hymnal_entry',
+      message:
+          'SDA song has an old hymnal number but no matched new hymnal number.',
+      metadata: {
+        'canonical_key': entry.key,
+        'old_hymnal_number': entry.value,
+      },
+    ));
+  }
+}
+
+String _clearImportIssues(String sourceName) {
+  return '''
+delete from content_import_issues
+where source_name = ${_sql(sourceName)};''';
+}
+
+String _insertImportIssue({
+  required String sourceName,
+  required String issueKey,
+  required String severity,
+  required String issueType,
+  required String message,
+  required Map<String, Object?> metadata,
+}) {
+  final metadataJson = jsonEncode(metadata);
+  return '''
+insert into content_import_issues (
+  source_name,
+  issue_key,
+  severity,
+  issue_type,
+  message,
+  metadata
+)
+values (
+  ${_sql(sourceName)},
+  ${_sql(issueKey)},
+  ${_sql(severity)},
+  ${_sql(issueType)},
+  ${_sql(message)},
+  ${_sql(metadataJson)}::jsonb
+)
+on conflict (source_name, issue_key) do update set
+  severity = excluded.severity,
+  issue_type = excluded.issue_type,
+  message = excluded.message,
+  metadata = excluded.metadata,
+  resolved_at = null,
   updated_at = now();''';
 }
 
