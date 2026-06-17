@@ -166,10 +166,11 @@ The seeds create:
 - 325 SDA new hymnal entries in the SDA database
 - 294 SDA old hymnal entries in the SDA database
 - 121 Hagerigna entries in the Hagerigna database
+- 398 SDA sheet-music media assets linked to 325 SDA works
 
-Sheet music and audio are not created from the JSON because the JSON does not contain reliable media metadata. Add them later as `media_assets`, then connect them through `media_links`.
+Sheet music is imported from `assets/sheet_music` as `media_assets`, then connected to reusable SDA works through `media_links`. The importer preserves the original app asset path in metadata and stores normalized backend keys such as `sda-hymnal/sheet-music/8/left.webp`. Audio is not created from the JSON because the JSON does not contain reliable audio metadata.
 
-Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map` and `sda_hymnal_songs`, which return `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
+Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, `sda_hymnal_songs`, and `sda_hymnal_sheet_music`, which return old/new numbers, match status, and linked sheet-music metadata per reusable work.
 
 The SDA importer reuses a `works` row when the normalized English title and normalized lyrics match across old and new editions. It can fall back to normalized Amharic title plus lyrics, then to title-only matching only when the title is unique in both editions. This prevents the same song from becoming two rows while avoiding false merges when one English title is reused for different lyrics.
 

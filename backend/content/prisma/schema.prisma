@@ -216,3 +216,24 @@ view SdaHymnalSong {
 
   @@map("sda_hymnal_songs")
 }
+
+view SdaHymnalSheetMusic {
+  workId           String  @map("work_id") @db.Uuid
+  newHymnalNumber  Int?    @map("new_hymnal_number")
+  oldHymnalNumber  Int?    @map("old_hymnal_number")
+  title            String
+  englishTitle     String? @map("english_title")
+  mediaAssetId     String  @map("media_asset_id") @db.Uuid
+  storageProvider  String  @map("storage_provider")
+  storageKey       String  @map("storage_key")
+  publicUrl        String? @map("public_url")
+  mimeType         String  @map("mime_type")
+  fileSizeBytes    BigInt? @map("file_size_bytes")
+  pageLabel        String? @map("page_label")
+  sortOrder        Int     @map("sort_order")
+  assetPath        String? @map("asset_path")
+  originalFileName String? @map("original_file_name")
+
+  @@unique([workId, mediaAssetId])
+  @@map("sda_hymnal_sheet_music")
+}

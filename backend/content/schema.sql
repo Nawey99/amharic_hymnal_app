@@ -162,6 +162,9 @@ create index if not exists idx_works_language on works(primary_language_code);
 create index if not exists idx_media_assets_type on media_assets(media_type);
 create index if not exists idx_media_links_work on media_links(work_id);
 create index if not exists idx_media_links_book_entry on media_links(book_entry_id);
+create unique index if not exists idx_media_links_unique_target
+  on media_links(media_asset_id, work_id, book_entry_id, relation_type)
+  nulls not distinct;
 create index if not exists idx_content_import_issues_status
   on content_import_issues(severity, issue_type, resolved_at);
 
@@ -237,3 +240,26 @@ join book_entries e on e.work_id = w.id
 join book_editions be on be.id = e.edition_id
 where be.slug in ('am-sda-hymnal-new', 'am-sda-hymnal-old')
 group by w.id, w.canonical_key, w.default_title, w.default_english_title;
+
+create or replace view sda_hymnal_sheet_music as
+select
+  s.work_id,
+  s.new_hymnal_number,
+  s.old_hymnal_number,
+  s.title,
+  s.english_title,
+  ma.id as media_asset_id,
+  ma.storage_provider,
+  ma.storage_key,
+  ma.public_url,
+  ma.mime_type,
+  ma.file_size_bytes,
+  ma.page_label,
+  ml.sort_order,
+  ma.metadata ->> 'asset_path' as asset_path,
+  ma.metadata ->> 'original_file_name' as original_file_name
+from sda_hymnal_songs s
+join media_links ml on ml.work_id = s.work_id
+join media_assets ma on ma.id = ml.media_asset_id
+where ma.media_type = 'sheet_music'
+order by s.new_hymnal_number nulls last, ml.sort_order, ma.storage_key;

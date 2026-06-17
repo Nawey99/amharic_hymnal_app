@@ -67,7 +67,15 @@ Expected entry counts:
 - SDA old hymnal: 294 book entries in the SDA database
 - Hagerigna: 121 book entries in the Hagerigna database
 
-The exporter does not invent media rows. Sheet music and audio should be added as real `media_assets` and linked through `media_links`.
+The SDA exporter also imports sheet music from `assets/sheet_music` into `media_assets` and links it to reusable SDA works through `media_links`.
+
+Sheet music naming rules:
+
+- `number.webp` means one sheet-music image for that new hymnal number.
+- `number_L.webp` and `number_R.webp` mean left/right sheet-music pages for that new hymnal number.
+- `number1,number2_L.webp` links the same sheet-music asset to both hymn works.
+
+The backend stores professional asset keys such as `sda-hymnal/sheet-music/8/left.webp` while preserving the original app asset path in metadata.
 
 ## Old/New SDA Hymnal Numbers
 
@@ -77,6 +85,7 @@ For API/read convenience, `backend/content/schema.sql` also defines:
 
 - `sda_hymnal_number_map`
 - `sda_hymnal_songs`
+- `sda_hymnal_sheet_music`
 
 Those views expose one row per reusable work with:
 
@@ -84,6 +93,7 @@ Those views expose one row per reusable work with:
 - `old_hymnal_number`
 - `match_status`
 - old/new entry IDs and lyrics in `sda_hymnal_songs`
+- sheet-music asset paths and storage metadata in `sda_hymnal_sheet_music`
 
 The seed exporter also writes both numbers into SDA entry metadata when known.
 
@@ -95,6 +105,6 @@ When a song exists in one SDA edition but cannot be matched to the other edition
 
 Those rows are review warnings, not fatal migration failures, because the current source data may legitimately contain songs that exist only in one edition.
 
-In Prisma Studio, inspect `SdaHymnalSong` for the unique merged SDA song list. `BookEntry` intentionally contains separate old/new edition rows, so its count is higher.
+In Prisma Studio, inspect `SdaHymnalSong` for the unique merged SDA song list and `SdaHymnalSheetMusic` for sheet music. `BookEntry` intentionally contains separate old/new edition rows, so its count is higher.
 
 Hagerigna uses its own content database. It does not share `works` rows with SDA unless a future import process explicitly links cross-book songs.

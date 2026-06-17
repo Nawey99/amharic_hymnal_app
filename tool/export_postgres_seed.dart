@@ -25,6 +25,28 @@ class _SdaRow {
   String get normalizedLyrics => _normalizeLyrics(lyrics ?? '');
 }
 
+class _SheetMusicAsset {
+  final File file;
+  final List<int> hymnNumbers;
+  final String pageLabel;
+  final int sortOrder;
+
+  const _SheetMusicAsset({
+    required this.file,
+    required this.hymnNumbers,
+    required this.pageLabel,
+    required this.sortOrder,
+  });
+
+  String get assetPath => 'assets/sheet_music/${file.uri.pathSegments.last}';
+  String get extension =>
+      file.uri.pathSegments.last.split('.').last.toLowerCase();
+  String get storageKey {
+    final numbers = hymnNumbers.join('-');
+    return 'sda-hymnal/sheet-music/$numbers/$pageLabel.$extension';
+  }
+}
+
 Future<void> main(List<String> args) async {
   final outputDir = args.isNotEmpty ? args[0] : 'backend/content';
 
@@ -67,6 +89,7 @@ Future<void> main(List<String> args) async {
     ));
 
   _appendSdaEntries(sdaBuffer, sda);
+  _appendSdaSheetMusic(sdaBuffer);
 
   sdaBuffer
     ..writeln()
@@ -307,6 +330,132 @@ void _appendHagerignaEntries(
   }
 }
 
+void _appendSdaSheetMusic(StringBuffer buffer) {
+  final assets = _discoverSdaSheetMusicAssets();
+
+  buffer
+    ..writeln()
+    ..writeln(_clearSdaSheetMusicAssets());
+
+  for (final asset in assets) {
+    buffer.writeln(_insertMediaAsset(asset));
+    for (final hymnNumber in asset.hymnNumbers) {
+      buffer.writeln(_insertSdaSheetMusicLink(
+        asset: asset,
+        hymnNumber: hymnNumber,
+      ));
+    }
+  }
+
+  final invalidFiles = _discoverInvalidSheetMusicFiles();
+  for (final file in invalidFiles) {
+    buffer.writeln(_insertImportIssue(
+      sourceName: 'sda_sheet_music_assets',
+      issueKey: 'unparsed_file:${file.uri.pathSegments.last}',
+      severity: 'warning',
+      issueType: 'unparsed_sheet_music_filename',
+      message:
+          'Sheet music file name does not match the supported hymn number naming pattern.',
+      metadata: {
+        'asset_path': 'assets/sheet_music/${file.uri.pathSegments.last}',
+      },
+    ));
+  }
+}
+
+List<_SheetMusicAsset> _discoverSdaSheetMusicAssets() {
+  final directory = Directory('assets/sheet_music');
+  if (!directory.existsSync()) {
+    return const [];
+  }
+
+  final assets = <_SheetMusicAsset>[];
+  for (final file in directory.listSync().whereType<File>()) {
+    final parsed = _parseSheetMusicFile(file);
+    if (parsed != null) {
+      assets.add(parsed);
+    }
+  }
+
+  assets.sort((a, b) {
+    final numberCompare = a.hymnNumbers.first.compareTo(b.hymnNumbers.first);
+    if (numberCompare != 0) {
+      return numberCompare;
+    }
+    final sortCompare = a.sortOrder.compareTo(b.sortOrder);
+    if (sortCompare != 0) {
+      return sortCompare;
+    }
+    return a.file.uri.pathSegments.last.compareTo(b.file.uri.pathSegments.last);
+  });
+
+  return assets;
+}
+
+List<File> _discoverInvalidSheetMusicFiles() {
+  final directory = Directory('assets/sheet_music');
+  if (!directory.existsSync()) {
+    return const [];
+  }
+
+  return directory
+      .listSync()
+      .whereType<File>()
+      .where((file) => _parseSheetMusicFile(file) == null)
+      .toList()
+    ..sort((a, b) => a.path.compareTo(b.path));
+}
+
+_SheetMusicAsset? _parseSheetMusicFile(File file) {
+  final fileName = file.uri.pathSegments.last;
+  final dotIndex = fileName.lastIndexOf('.');
+  if (dotIndex <= 0) {
+    return null;
+  }
+
+  final extension = fileName.substring(dotIndex + 1).toLowerCase();
+  if (!const {'webp', 'jpg', 'jpeg', 'png'}.contains(extension)) {
+    return null;
+  }
+
+  final baseName = fileName.substring(0, dotIndex);
+  final match =
+      RegExp(r'^(\d+(?:,\d+)*)(?:\.)?(?:_([lLrR]))?$').firstMatch(baseName);
+  if (match == null) {
+    return null;
+  }
+
+  final numbers = match
+      .group(1)!
+      .split(',')
+      .map(int.parse)
+      .where((number) => number > 0)
+      .toList(growable: false);
+  if (numbers.isEmpty) {
+    return null;
+  }
+
+  final side = match.group(2)?.toUpperCase();
+  final pageLabel = switch (side) {
+    'L' => 'left',
+    'R' => 'right',
+    _ => 'single',
+  };
+  final sortOrder = switch (pageLabel) {
+    'single' => 0,
+    'left' => 10,
+    'right' => 20,
+    _ => 99,
+  };
+
+  return _SheetMusicAsset(
+    file: file,
+    hymnNumbers: numbers,
+    pageLabel: pageLabel,
+    sortOrder: sortOrder,
+  );
+}
+
 String _insertLanguage() {
   return '''
 insert into languages (code, native_name, english_name, script_code)
@@ -432,6 +581,90 @@ on conflict (edition_id, source_key, source_index) do update set
   lyrics = excluded.lyrics,
   metadata = excluded.metadata,
   updated_at = now();''';
+}
+
+String _clearSdaSheetMusicAssets() {
+  return '''
+delete from media_links
+where media_asset_id in (
+  select id
+  from media_assets
+  where storage_provider = 'app_asset'
+    and storage_key like 'sda-hymnal/sheet-music/%'
+);
+
+delete from media_assets
+where storage_provider = 'app_asset'
+  and storage_key like 'sda-hymnal/sheet-music/%';
+
+delete from content_import_issues
+where source_name = 'sda_sheet_music_assets';''';
+}
+
+String _insertMediaAsset(_SheetMusicAsset asset) {
+  final metadataJson = jsonEncode({
+    'asset_path': asset.assetPath,
+    'original_file_name': asset.file.uri.pathSegments.last,
+    'hymnal': 'sda',
+    'hymnal_numbers': asset.hymnNumbers,
+    'page_label': asset.pageLabel,
+  });
+
+  return '''
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  ${_sql(asset.storageKey)},
+  null,
+  ${_sql(_mimeTypeForExtension(asset.extension))},
+  ${asset.file.lengthSync()},
+  ${_sql(asset.pageLabel)},
+  ${_sql(metadataJson)}::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();''';
+}
+
+String _insertSdaSheetMusicLink({
+  required _SheetMusicAsset asset,
+  required int hymnNumber,
+}) {
+  return '''
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  ${asset.sortOrder},
+  ${_sql('Imported from ${asset.assetPath} for SDA new hymnal #$hymnNumber.')}
+from media_assets ma
+join book_entries e on e.entry_number = $hymnNumber
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = ${_sql(asset.storageKey)}
+  and be.slug = 'am-sda-hymnal-new';''';
 }
 
 void _appendSdaImportIssues(
@@ -622,6 +855,15 @@ String _shortKey(String value) {
     return normalized;
   }
   return normalized.substring(0, 96).replaceAll(RegExp(r'-+$'), '');
+}
+
+String _mimeTypeForExtension(String extension) {
+  return switch (extension.toLowerCase()) {
+    'webp' => 'image/webp',
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    _ => 'application/octet-stream',
+  };
 }
 
 String _sqlNullable(String? value) {

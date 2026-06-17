@@ -46696,4 +46696,18763 @@ on conflict (source_name, issue_key) do update set
   resolved_at = null,
   updated_at = now();
 
+delete from media_links
+where media_asset_id in (
+  select id
+  from media_assets
+  where storage_provider = 'app_asset'
+    and storage_key like 'sda-hymnal/sheet-music/%'
+);
+
+delete from media_assets
+where storage_provider = 'app_asset'
+  and storage_key like 'sda-hymnal/sheet-music/%';
+
+delete from content_import_issues
+where source_name = 'sda_sheet_music_assets';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/1/single.webp',
+  null,
+  'image/webp',
+  250996,
+  'single',
+  '{"asset_path":"assets/sheet_music/01.webp","original_file_name":"01.webp","hymnal":"sda","hymnal_numbers":[1],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/01.webp for SDA new hymnal #1.'
+from media_assets ma
+join book_entries e on e.entry_number = 1
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/1/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/2/single.webp',
+  null,
+  'image/webp',
+  428430,
+  'single',
+  '{"asset_path":"assets/sheet_music/02.webp","original_file_name":"02.webp","hymnal":"sda","hymnal_numbers":[2],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/02.webp for SDA new hymnal #2.'
+from media_assets ma
+join book_entries e on e.entry_number = 2
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/2/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/3/single.webp',
+  null,
+  'image/webp',
+  374710,
+  'single',
+  '{"asset_path":"assets/sheet_music/03.webp","original_file_name":"03.webp","hymnal":"sda","hymnal_numbers":[3],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/03.webp for SDA new hymnal #3.'
+from media_assets ma
+join book_entries e on e.entry_number = 3
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/3/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/4/single.webp',
+  null,
+  'image/webp',
+  354200,
+  'single',
+  '{"asset_path":"assets/sheet_music/04.webp","original_file_name":"04.webp","hymnal":"sda","hymnal_numbers":[4],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/04.webp for SDA new hymnal #4.'
+from media_assets ma
+join book_entries e on e.entry_number = 4
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/4/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/5/single.webp',
+  null,
+  'image/webp',
+  383436,
+  'single',
+  '{"asset_path":"assets/sheet_music/05.webp","original_file_name":"05.webp","hymnal":"sda","hymnal_numbers":[5],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/05.webp for SDA new hymnal #5.'
+from media_assets ma
+join book_entries e on e.entry_number = 5
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/5/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/6/single.webp',
+  null,
+  'image/webp',
+  454172,
+  'single',
+  '{"asset_path":"assets/sheet_music/06.webp","original_file_name":"06.webp","hymnal":"sda","hymnal_numbers":[6],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/06.webp for SDA new hymnal #6.'
+from media_assets ma
+join book_entries e on e.entry_number = 6
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/6/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/7/single.webp',
+  null,
+  'image/webp',
+  370020,
+  'single',
+  '{"asset_path":"assets/sheet_music/07.webp","original_file_name":"07.webp","hymnal":"sda","hymnal_numbers":[7],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/07.webp for SDA new hymnal #7.'
+from media_assets ma
+join book_entries e on e.entry_number = 7
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/7/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/8/left.webp',
+  null,
+  'image/webp',
+  354072,
+  'left',
+  '{"asset_path":"assets/sheet_music/08_L.webp","original_file_name":"08_L.webp","hymnal":"sda","hymnal_numbers":[8],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/08_L.webp for SDA new hymnal #8.'
+from media_assets ma
+join book_entries e on e.entry_number = 8
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/8/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/8/right.webp',
+  null,
+  'image/webp',
+  276998,
+  'right',
+  '{"asset_path":"assets/sheet_music/08_R.webp","original_file_name":"08_R.webp","hymnal":"sda","hymnal_numbers":[8],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/08_R.webp for SDA new hymnal #8.'
+from media_assets ma
+join book_entries e on e.entry_number = 8
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/8/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/9/left.webp',
+  null,
+  'image/webp',
+  417950,
+  'left',
+  '{"asset_path":"assets/sheet_music/09_L.webp","original_file_name":"09_L.webp","hymnal":"sda","hymnal_numbers":[9],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/09_L.webp for SDA new hymnal #9.'
+from media_assets ma
+join book_entries e on e.entry_number = 9
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/9/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/9/right.webp',
+  null,
+  'image/webp',
+  289120,
+  'right',
+  '{"asset_path":"assets/sheet_music/09_R.webp","original_file_name":"09_R.webp","hymnal":"sda","hymnal_numbers":[9],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/09_R.webp for SDA new hymnal #9.'
+from media_assets ma
+join book_entries e on e.entry_number = 9
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/9/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/10/single.webp',
+  null,
+  'image/webp',
+  376036,
+  'single',
+  '{"asset_path":"assets/sheet_music/10.webp","original_file_name":"10.webp","hymnal":"sda","hymnal_numbers":[10],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/10.webp for SDA new hymnal #10.'
+from media_assets ma
+join book_entries e on e.entry_number = 10
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/10/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/11/single.webp',
+  null,
+  'image/webp',
+  489946,
+  'single',
+  '{"asset_path":"assets/sheet_music/11.webp","original_file_name":"11.webp","hymnal":"sda","hymnal_numbers":[11],"page_label":"single"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  0,
+  'Imported from assets/sheet_music/11.webp for SDA new hymnal #11.'
+from media_assets ma
+join book_entries e on e.entry_number = 11
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/11/single.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/12/left.webp',
+  null,
+  'image/webp',
+  365298,
+  'left',
+  '{"asset_path":"assets/sheet_music/12_L.webp","original_file_name":"12_L.webp","hymnal":"sda","hymnal_numbers":[12],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/12_L.webp for SDA new hymnal #12.'
+from media_assets ma
+join book_entries e on e.entry_number = 12
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/12/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/12/right.webp',
+  null,
+  'image/webp',
+  272666,
+  'right',
+  '{"asset_path":"assets/sheet_music/12_R.webp","original_file_name":"12_R.webp","hymnal":"sda","hymnal_numbers":[12],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/12_R.webp for SDA new hymnal #12.'
+from media_assets ma
+join book_entries e on e.entry_number = 12
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/12/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/13/left.webp',
+  null,
+  'image/webp',
+  408350,
+  'left',
+  '{"asset_path":"assets/sheet_music/13_L.webp","original_file_name":"13_L.webp","hymnal":"sda","hymnal_numbers":[13],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/13_L.webp for SDA new hymnal #13.'
+from media_assets ma
+join book_entries e on e.entry_number = 13
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/13/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/14/right.webp',
+  null,
+  'image/webp',
+  272434,
+  'right',
+  '{"asset_path":"assets/sheet_music/14_R.webp","original_file_name":"14_R.webp","hymnal":"sda","hymnal_numbers":[14],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/14_R.webp for SDA new hymnal #14.'
+from media_assets ma
+join book_entries e on e.entry_number = 14
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/14/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/15/left.webp',
+  null,
+  'image/webp',
+  350058,
+  'left',
+  '{"asset_path":"assets/sheet_music/15_L.webp","original_file_name":"15_L.webp","hymnal":"sda","hymnal_numbers":[15],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/15_L.webp for SDA new hymnal #15.'
+from media_assets ma
+join book_entries e on e.entry_number = 15
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/15/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/16/right.webp',
+  null,
+  'image/webp',
+  385354,
+  'right',
+  '{"asset_path":"assets/sheet_music/16_R.webp","original_file_name":"16_R.webp","hymnal":"sda","hymnal_numbers":[16],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/16_R.webp for SDA new hymnal #16.'
+from media_assets ma
+join book_entries e on e.entry_number = 16
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/16/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/17/left.webp',
+  null,
+  'image/webp',
+  417778,
+  'left',
+  '{"asset_path":"assets/sheet_music/17_L.webp","original_file_name":"17_L.webp","hymnal":"sda","hymnal_numbers":[17],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/17_L.webp for SDA new hymnal #17.'
+from media_assets ma
+join book_entries e on e.entry_number = 17
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/17/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/17/right.webp',
+  null,
+  'image/webp',
+  374330,
+  'right',
+  '{"asset_path":"assets/sheet_music/17_R.webp","original_file_name":"17_R.webp","hymnal":"sda","hymnal_numbers":[17],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/17_R.webp for SDA new hymnal #17.'
+from media_assets ma
+join book_entries e on e.entry_number = 17
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/17/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/18/left.webp',
+  null,
+  'image/webp',
+  396572,
+  'left',
+  '{"asset_path":"assets/sheet_music/18_L.webp","original_file_name":"18_L.webp","hymnal":"sda","hymnal_numbers":[18],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/18_L.webp for SDA new hymnal #18.'
+from media_assets ma
+join book_entries e on e.entry_number = 18
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/18/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/18/right.webp',
+  null,
+  'image/webp',
+  293382,
+  'right',
+  '{"asset_path":"assets/sheet_music/18_R.webp","original_file_name":"18_R.webp","hymnal":"sda","hymnal_numbers":[18],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/18_R.webp for SDA new hymnal #18.'
+from media_assets ma
+join book_entries e on e.entry_number = 18
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/18/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/19/left.webp',
+  null,
+  'image/webp',
+  391620,
+  'left',
+  '{"asset_path":"assets/sheet_music/19_L.webp","original_file_name":"19_L.webp","hymnal":"sda","hymnal_numbers":[19],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/19_L.webp for SDA new hymnal #19.'
+from media_assets ma
+join book_entries e on e.entry_number = 19
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/19/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/20/right.webp',
+  null,
+  'image/webp',
+  416146,
+  'right',
+  '{"asset_path":"assets/sheet_music/20_R.webp","original_file_name":"20_R.webp","hymnal":"sda","hymnal_numbers":[20],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/20_R.webp for SDA new hymnal #20.'
+from media_assets ma
+join book_entries e on e.entry_number = 20
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/20/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/21/left.webp',
+  null,
+  'image/webp',
+  422860,
+  'left',
+  '{"asset_path":"assets/sheet_music/21_L.webp","original_file_name":"21_L.webp","hymnal":"sda","hymnal_numbers":[21],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/21_L.webp for SDA new hymnal #21.'
+from media_assets ma
+join book_entries e on e.entry_number = 21
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/21/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/22/right.webp',
+  null,
+  'image/webp',
+  414384,
+  'right',
+  '{"asset_path":"assets/sheet_music/22_R.webp","original_file_name":"22_R.webp","hymnal":"sda","hymnal_numbers":[22],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/22_R.webp for SDA new hymnal #22.'
+from media_assets ma
+join book_entries e on e.entry_number = 22
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/22/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/23/left.webp',
+  null,
+  'image/webp',
+  410522,
+  'left',
+  '{"asset_path":"assets/sheet_music/23_L.webp","original_file_name":"23_L.webp","hymnal":"sda","hymnal_numbers":[23],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/23_L.webp for SDA new hymnal #23.'
+from media_assets ma
+join book_entries e on e.entry_number = 23
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/23/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/23/right.webp',
+  null,
+  'image/webp',
+  232460,
+  'right',
+  '{"asset_path":"assets/sheet_music/23_R.webp","original_file_name":"23_R.webp","hymnal":"sda","hymnal_numbers":[23],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/23_R.webp for SDA new hymnal #23.'
+from media_assets ma
+join book_entries e on e.entry_number = 23
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/23/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/24/left.webp',
+  null,
+  'image/webp',
+  477568,
+  'left',
+  '{"asset_path":"assets/sheet_music/24_L.webp","original_file_name":"24_L.webp","hymnal":"sda","hymnal_numbers":[24],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/24_L.webp for SDA new hymnal #24.'
+from media_assets ma
+join book_entries e on e.entry_number = 24
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/24/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/25/right.webp',
+  null,
+  'image/webp',
+  370288,
+  'right',
+  '{"asset_path":"assets/sheet_music/25_R.webp","original_file_name":"25_R.webp","hymnal":"sda","hymnal_numbers":[25],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/25_R.webp for SDA new hymnal #25.'
+from media_assets ma
+join book_entries e on e.entry_number = 25
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/25/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/26/left.webp',
+  null,
+  'image/webp',
+  365882,
+  'left',
+  '{"asset_path":"assets/sheet_music/26_L.webp","original_file_name":"26_L.webp","hymnal":"sda","hymnal_numbers":[26],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/26_L.webp for SDA new hymnal #26.'
+from media_assets ma
+join book_entries e on e.entry_number = 26
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/26/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/26/right.webp',
+  null,
+  'image/webp',
+  322666,
+  'right',
+  '{"asset_path":"assets/sheet_music/26_R.webp","original_file_name":"26_R.webp","hymnal":"sda","hymnal_numbers":[26],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/26_R.webp for SDA new hymnal #26.'
+from media_assets ma
+join book_entries e on e.entry_number = 26
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/26/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/27/left.webp',
+  null,
+  'image/webp',
+  420910,
+  'left',
+  '{"asset_path":"assets/sheet_music/27_L.webp","original_file_name":"27_L.webp","hymnal":"sda","hymnal_numbers":[27],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/27_L.webp for SDA new hymnal #27.'
+from media_assets ma
+join book_entries e on e.entry_number = 27
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/27/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/28/right.webp',
+  null,
+  'image/webp',
+  351548,
+  'right',
+  '{"asset_path":"assets/sheet_music/28_R.webp","original_file_name":"28_R.webp","hymnal":"sda","hymnal_numbers":[28],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/28_R.webp for SDA new hymnal #28.'
+from media_assets ma
+join book_entries e on e.entry_number = 28
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/28/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/29/left.webp',
+  null,
+  'image/webp',
+  435848,
+  'left',
+  '{"asset_path":"assets/sheet_music/29_L.webp","original_file_name":"29_L.webp","hymnal":"sda","hymnal_numbers":[29],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/29_L.webp for SDA new hymnal #29.'
+from media_assets ma
+join book_entries e on e.entry_number = 29
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/29/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/30/right.webp',
+  null,
+  'image/webp',
+  385582,
+  'right',
+  '{"asset_path":"assets/sheet_music/30_R.webp","original_file_name":"30_R.webp","hymnal":"sda","hymnal_numbers":[30],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/30_R.webp for SDA new hymnal #30.'
+from media_assets ma
+join book_entries e on e.entry_number = 30
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/30/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/31/left.webp',
+  null,
+  'image/webp',
+  368384,
+  'left',
+  '{"asset_path":"assets/sheet_music/31_L.webp","original_file_name":"31_L.webp","hymnal":"sda","hymnal_numbers":[31],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/31_L.webp for SDA new hymnal #31.'
+from media_assets ma
+join book_entries e on e.entry_number = 31
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/31/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/32/right.webp',
+  null,
+  'image/webp',
+  328620,
+  'right',
+  '{"asset_path":"assets/sheet_music/32_R.webp","original_file_name":"32_R.webp","hymnal":"sda","hymnal_numbers":[32],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/32_R.webp for SDA new hymnal #32.'
+from media_assets ma
+join book_entries e on e.entry_number = 32
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/32/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/33/left.webp',
+  null,
+  'image/webp',
+  438782,
+  'left',
+  '{"asset_path":"assets/sheet_music/33_L.webp","original_file_name":"33_L.webp","hymnal":"sda","hymnal_numbers":[33],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/33_L.webp for SDA new hymnal #33.'
+from media_assets ma
+join book_entries e on e.entry_number = 33
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/33/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/34/right.webp',
+  null,
+  'image/webp',
+  424502,
+  'right',
+  '{"asset_path":"assets/sheet_music/34_R.webp","original_file_name":"34_R.webp","hymnal":"sda","hymnal_numbers":[34],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/34_R.webp for SDA new hymnal #34.'
+from media_assets ma
+join book_entries e on e.entry_number = 34
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/34/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/35/left.webp',
+  null,
+  'image/webp',
+  422732,
+  'left',
+  '{"asset_path":"assets/sheet_music/35_L.webp","original_file_name":"35_L.webp","hymnal":"sda","hymnal_numbers":[35],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/35_L.webp for SDA new hymnal #35.'
+from media_assets ma
+join book_entries e on e.entry_number = 35
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/35/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/36/right.webp',
+  null,
+  'image/webp',
+  471140,
+  'right',
+  '{"asset_path":"assets/sheet_music/36_R.webp","original_file_name":"36_R.webp","hymnal":"sda","hymnal_numbers":[36],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/36_R.webp for SDA new hymnal #36.'
+from media_assets ma
+join book_entries e on e.entry_number = 36
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/36/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/37/left.webp',
+  null,
+  'image/webp',
+  348866,
+  'left',
+  '{"asset_path":"assets/sheet_music/37_L.webp","original_file_name":"37_L.webp","hymnal":"sda","hymnal_numbers":[37],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/37_L.webp for SDA new hymnal #37.'
+from media_assets ma
+join book_entries e on e.entry_number = 37
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/37/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/38/right.webp',
+  null,
+  'image/webp',
+  463044,
+  'right',
+  '{"asset_path":"assets/sheet_music/38_R.webp","original_file_name":"38_R.webp","hymnal":"sda","hymnal_numbers":[38],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/38_R.webp for SDA new hymnal #38.'
+from media_assets ma
+join book_entries e on e.entry_number = 38
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/38/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/39/left.webp',
+  null,
+  'image/webp',
+  415460,
+  'left',
+  '{"asset_path":"assets/sheet_music/39_L.webp","original_file_name":"39_L.webp","hymnal":"sda","hymnal_numbers":[39],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/39_L.webp for SDA new hymnal #39.'
+from media_assets ma
+join book_entries e on e.entry_number = 39
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/39/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/40/right.webp',
+  null,
+  'image/webp',
+  377230,
+  'right',
+  '{"asset_path":"assets/sheet_music/40_R.webp","original_file_name":"40_R.webp","hymnal":"sda","hymnal_numbers":[40],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/40_R.webp for SDA new hymnal #40.'
+from media_assets ma
+join book_entries e on e.entry_number = 40
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/40/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/41/left.webp',
+  null,
+  'image/webp',
+  375180,
+  'left',
+  '{"asset_path":"assets/sheet_music/41_L.webp","original_file_name":"41_L.webp","hymnal":"sda","hymnal_numbers":[41],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/41_L.webp for SDA new hymnal #41.'
+from media_assets ma
+join book_entries e on e.entry_number = 41
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/41/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/41/right.webp',
+  null,
+  'image/webp',
+  290278,
+  'right',
+  '{"asset_path":"assets/sheet_music/41_R.webp","original_file_name":"41_R.webp","hymnal":"sda","hymnal_numbers":[41],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/41_R.webp for SDA new hymnal #41.'
+from media_assets ma
+join book_entries e on e.entry_number = 41
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/41/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/42/left.webp',
+  null,
+  'image/webp',
+  353636,
+  'left',
+  '{"asset_path":"assets/sheet_music/42_L.webp","original_file_name":"42_L.webp","hymnal":"sda","hymnal_numbers":[42],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/42_L.webp for SDA new hymnal #42.'
+from media_assets ma
+join book_entries e on e.entry_number = 42
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/42/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/43/right.webp',
+  null,
+  'image/webp',
+  430380,
+  'right',
+  '{"asset_path":"assets/sheet_music/43_R.webp","original_file_name":"43_R.webp","hymnal":"sda","hymnal_numbers":[43],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/43_R.webp for SDA new hymnal #43.'
+from media_assets ma
+join book_entries e on e.entry_number = 43
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/43/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/44/left.webp',
+  null,
+  'image/webp',
+  391800,
+  'left',
+  '{"asset_path":"assets/sheet_music/44_L.webp","original_file_name":"44_L.webp","hymnal":"sda","hymnal_numbers":[44],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/44_L.webp for SDA new hymnal #44.'
+from media_assets ma
+join book_entries e on e.entry_number = 44
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/44/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/45/right.webp',
+  null,
+  'image/webp',
+  416734,
+  'right',
+  '{"asset_path":"assets/sheet_music/45_R.webp","original_file_name":"45_R.webp","hymnal":"sda","hymnal_numbers":[45],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/45_R.webp for SDA new hymnal #45.'
+from media_assets ma
+join book_entries e on e.entry_number = 45
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/45/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/46/left.webp',
+  null,
+  'image/webp',
+  316076,
+  'left',
+  '{"asset_path":"assets/sheet_music/46_L.webp","original_file_name":"46_L.webp","hymnal":"sda","hymnal_numbers":[46],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/46_L.webp for SDA new hymnal #46.'
+from media_assets ma
+join book_entries e on e.entry_number = 46
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/46/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/47/right.webp',
+  null,
+  'image/webp',
+  408856,
+  'right',
+  '{"asset_path":"assets/sheet_music/47_R.webp","original_file_name":"47_R.webp","hymnal":"sda","hymnal_numbers":[47],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/47_R.webp for SDA new hymnal #47.'
+from media_assets ma
+join book_entries e on e.entry_number = 47
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/47/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/48/left.webp',
+  null,
+  'image/webp',
+  457360,
+  'left',
+  '{"asset_path":"assets/sheet_music/48_L.webp","original_file_name":"48_L.webp","hymnal":"sda","hymnal_numbers":[48],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/48_L.webp for SDA new hymnal #48.'
+from media_assets ma
+join book_entries e on e.entry_number = 48
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/48/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/49/right.webp',
+  null,
+  'image/webp',
+  417574,
+  'right',
+  '{"asset_path":"assets/sheet_music/49_R.webp","original_file_name":"49_R.webp","hymnal":"sda","hymnal_numbers":[49],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/49_R.webp for SDA new hymnal #49.'
+from media_assets ma
+join book_entries e on e.entry_number = 49
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/49/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/50/left.webp',
+  null,
+  'image/webp',
+  396798,
+  'left',
+  '{"asset_path":"assets/sheet_music/50_L.webp","original_file_name":"50_L.webp","hymnal":"sda","hymnal_numbers":[50],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/50_L.webp for SDA new hymnal #50.'
+from media_assets ma
+join book_entries e on e.entry_number = 50
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/50/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/51/right.webp',
+  null,
+  'image/webp',
+  373766,
+  'right',
+  '{"asset_path":"assets/sheet_music/51_R.webp","original_file_name":"51_R.webp","hymnal":"sda","hymnal_numbers":[51],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/51_R.webp for SDA new hymnal #51.'
+from media_assets ma
+join book_entries e on e.entry_number = 51
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/51/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/52/left.webp',
+  null,
+  'image/webp',
+  450222,
+  'left',
+  '{"asset_path":"assets/sheet_music/52_L.webp","original_file_name":"52_L.webp","hymnal":"sda","hymnal_numbers":[52],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/52_L.webp for SDA new hymnal #52.'
+from media_assets ma
+join book_entries e on e.entry_number = 52
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/52/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/53/right.webp',
+  null,
+  'image/webp',
+  421860,
+  'right',
+  '{"asset_path":"assets/sheet_music/53_R.webp","original_file_name":"53_R.webp","hymnal":"sda","hymnal_numbers":[53],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/53_R.webp for SDA new hymnal #53.'
+from media_assets ma
+join book_entries e on e.entry_number = 53
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/53/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/54/left.webp',
+  null,
+  'image/webp',
+  444020,
+  'left',
+  '{"asset_path":"assets/sheet_music/54_L.webp","original_file_name":"54_L.webp","hymnal":"sda","hymnal_numbers":[54],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/54_L.webp for SDA new hymnal #54.'
+from media_assets ma
+join book_entries e on e.entry_number = 54
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/54/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/55/right.webp',
+  null,
+  'image/webp',
+  499336,
+  'right',
+  '{"asset_path":"assets/sheet_music/55_R.webp","original_file_name":"55_R.webp","hymnal":"sda","hymnal_numbers":[55],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/55_R.webp for SDA new hymnal #55.'
+from media_assets ma
+join book_entries e on e.entry_number = 55
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/55/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/56/left.webp',
+  null,
+  'image/webp',
+  366582,
+  'left',
+  '{"asset_path":"assets/sheet_music/56_L.webp","original_file_name":"56_L.webp","hymnal":"sda","hymnal_numbers":[56],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/56_L.webp for SDA new hymnal #56.'
+from media_assets ma
+join book_entries e on e.entry_number = 56
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/56/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/56/right.webp',
+  null,
+  'image/webp',
+  223812,
+  'right',
+  '{"asset_path":"assets/sheet_music/56_R.webp","original_file_name":"56_R.webp","hymnal":"sda","hymnal_numbers":[56],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/56_R.webp for SDA new hymnal #56.'
+from media_assets ma
+join book_entries e on e.entry_number = 56
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/56/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/57/left.webp',
+  null,
+  'image/webp',
+  388996,
+  'left',
+  '{"asset_path":"assets/sheet_music/57_L.webp","original_file_name":"57_L.webp","hymnal":"sda","hymnal_numbers":[57],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/57_L.webp for SDA new hymnal #57.'
+from media_assets ma
+join book_entries e on e.entry_number = 57
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/57/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/57/right.webp',
+  null,
+  'image/webp',
+  271852,
+  'right',
+  '{"asset_path":"assets/sheet_music/57_R.webp","original_file_name":"57_R.webp","hymnal":"sda","hymnal_numbers":[57],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/57_R.webp for SDA new hymnal #57.'
+from media_assets ma
+join book_entries e on e.entry_number = 57
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/57/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/58/left.webp',
+  null,
+  'image/webp',
+  384894,
+  'left',
+  '{"asset_path":"assets/sheet_music/58_L.webp","original_file_name":"58_L.webp","hymnal":"sda","hymnal_numbers":[58],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/58_L.webp for SDA new hymnal #58.'
+from media_assets ma
+join book_entries e on e.entry_number = 58
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/58/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/59/right.webp',
+  null,
+  'image/webp',
+  368630,
+  'right',
+  '{"asset_path":"assets/sheet_music/59_R.webp","original_file_name":"59_R.webp","hymnal":"sda","hymnal_numbers":[59],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/59_R.webp for SDA new hymnal #59.'
+from media_assets ma
+join book_entries e on e.entry_number = 59
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/59/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/60/left.webp',
+  null,
+  'image/webp',
+  448756,
+  'left',
+  '{"asset_path":"assets/sheet_music/60_L.webp","original_file_name":"60_L.webp","hymnal":"sda","hymnal_numbers":[60],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/60_L.webp for SDA new hymnal #60.'
+from media_assets ma
+join book_entries e on e.entry_number = 60
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/60/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/61/right.webp',
+  null,
+  'image/webp',
+  393218,
+  'right',
+  '{"asset_path":"assets/sheet_music/61_R.webp","original_file_name":"61_R.webp","hymnal":"sda","hymnal_numbers":[61],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/61_R.webp for SDA new hymnal #61.'
+from media_assets ma
+join book_entries e on e.entry_number = 61
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/61/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/62/left.webp',
+  null,
+  'image/webp',
+  363550,
+  'left',
+  '{"asset_path":"assets/sheet_music/62_L.webp","original_file_name":"62_L.webp","hymnal":"sda","hymnal_numbers":[62],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/62_L.webp for SDA new hymnal #62.'
+from media_assets ma
+join book_entries e on e.entry_number = 62
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/62/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/62/right.webp',
+  null,
+  'image/webp',
+  265888,
+  'right',
+  '{"asset_path":"assets/sheet_music/62_R.webp","original_file_name":"62_R.webp","hymnal":"sda","hymnal_numbers":[62],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/62_R.webp for SDA new hymnal #62.'
+from media_assets ma
+join book_entries e on e.entry_number = 62
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/62/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/63/left.webp',
+  null,
+  'image/webp',
+  454316,
+  'left',
+  '{"asset_path":"assets/sheet_music/63_L.webp","original_file_name":"63_L.webp","hymnal":"sda","hymnal_numbers":[63],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/63_L.webp for SDA new hymnal #63.'
+from media_assets ma
+join book_entries e on e.entry_number = 63
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/63/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/64/right.webp',
+  null,
+  'image/webp',
+  401496,
+  'right',
+  '{"asset_path":"assets/sheet_music/64_R.webp","original_file_name":"64_R.webp","hymnal":"sda","hymnal_numbers":[64],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/64_R.webp for SDA new hymnal #64.'
+from media_assets ma
+join book_entries e on e.entry_number = 64
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/64/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/65-66/left.webp',
+  null,
+  'image/webp',
+  420762,
+  'left',
+  '{"asset_path":"assets/sheet_music/65,66_L.webp","original_file_name":"65,66_L.webp","hymnal":"sda","hymnal_numbers":[65,66],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/65,66_L.webp for SDA new hymnal #65.'
+from media_assets ma
+join book_entries e on e.entry_number = 65
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/65-66/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/65,66_L.webp for SDA new hymnal #66.'
+from media_assets ma
+join book_entries e on e.entry_number = 66
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/65-66/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/67/right.webp',
+  null,
+  'image/webp',
+  428296,
+  'right',
+  '{"asset_path":"assets/sheet_music/67_R.webp","original_file_name":"67_R.webp","hymnal":"sda","hymnal_numbers":[67],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/67_R.webp for SDA new hymnal #67.'
+from media_assets ma
+join book_entries e on e.entry_number = 67
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/67/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/68/left.webp',
+  null,
+  'image/webp',
+  392160,
+  'left',
+  '{"asset_path":"assets/sheet_music/68_L.webp","original_file_name":"68_L.webp","hymnal":"sda","hymnal_numbers":[68],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/68_L.webp for SDA new hymnal #68.'
+from media_assets ma
+join book_entries e on e.entry_number = 68
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/68/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/69/right.webp',
+  null,
+  'image/webp',
+  373950,
+  'right',
+  '{"asset_path":"assets/sheet_music/69_R.webp","original_file_name":"69_R.webp","hymnal":"sda","hymnal_numbers":[69],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/69_R.webp for SDA new hymnal #69.'
+from media_assets ma
+join book_entries e on e.entry_number = 69
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/69/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/70/left.webp',
+  null,
+  'image/webp',
+  393728,
+  'left',
+  '{"asset_path":"assets/sheet_music/70_L.webp","original_file_name":"70_L.webp","hymnal":"sda","hymnal_numbers":[70],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/70_L.webp for SDA new hymnal #70.'
+from media_assets ma
+join book_entries e on e.entry_number = 70
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/70/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/70/right.webp',
+  null,
+  'image/webp',
+  330210,
+  'right',
+  '{"asset_path":"assets/sheet_music/70_R.webp","original_file_name":"70_R.webp","hymnal":"sda","hymnal_numbers":[70],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/70_R.webp for SDA new hymnal #70.'
+from media_assets ma
+join book_entries e on e.entry_number = 70
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/70/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/71/left.webp',
+  null,
+  'image/webp',
+  371808,
+  'left',
+  '{"asset_path":"assets/sheet_music/71_L.webp","original_file_name":"71_L.webp","hymnal":"sda","hymnal_numbers":[71],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/71_L.webp for SDA new hymnal #71.'
+from media_assets ma
+join book_entries e on e.entry_number = 71
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/71/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/72/right.webp',
+  null,
+  'image/webp',
+  331952,
+  'right',
+  '{"asset_path":"assets/sheet_music/72_R.webp","original_file_name":"72_R.webp","hymnal":"sda","hymnal_numbers":[72],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/72_R.webp for SDA new hymnal #72.'
+from media_assets ma
+join book_entries e on e.entry_number = 72
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/72/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/73-74/left.webp',
+  null,
+  'image/webp',
+  322048,
+  'left',
+  '{"asset_path":"assets/sheet_music/73,74_L.webp","original_file_name":"73,74_L.webp","hymnal":"sda","hymnal_numbers":[73,74],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/73,74_L.webp for SDA new hymnal #73.'
+from media_assets ma
+join book_entries e on e.entry_number = 73
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/73-74/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/73,74_L.webp for SDA new hymnal #74.'
+from media_assets ma
+join book_entries e on e.entry_number = 74
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/73-74/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/75/right.webp',
+  null,
+  'image/webp',
+  401004,
+  'right',
+  '{"asset_path":"assets/sheet_music/75_R.webp","original_file_name":"75_R.webp","hymnal":"sda","hymnal_numbers":[75],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/75_R.webp for SDA new hymnal #75.'
+from media_assets ma
+join book_entries e on e.entry_number = 75
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/75/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/76/left.webp',
+  null,
+  'image/webp',
+  363428,
+  'left',
+  '{"asset_path":"assets/sheet_music/76_L.webp","original_file_name":"76_L.webp","hymnal":"sda","hymnal_numbers":[76],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/76_L.webp for SDA new hymnal #76.'
+from media_assets ma
+join book_entries e on e.entry_number = 76
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/76/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/76/right.webp',
+  null,
+  'image/webp',
+  230168,
+  'right',
+  '{"asset_path":"assets/sheet_music/76_R.webp","original_file_name":"76_R.webp","hymnal":"sda","hymnal_numbers":[76],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/76_R.webp for SDA new hymnal #76.'
+from media_assets ma
+join book_entries e on e.entry_number = 76
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/76/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/77/left.webp',
+  null,
+  'image/webp',
+  228054,
+  'left',
+  '{"asset_path":"assets/sheet_music/77_L.webp","original_file_name":"77_L.webp","hymnal":"sda","hymnal_numbers":[77],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/77_L.webp for SDA new hymnal #77.'
+from media_assets ma
+join book_entries e on e.entry_number = 77
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/77/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/78/right.webp',
+  null,
+  'image/webp',
+  366550,
+  'right',
+  '{"asset_path":"assets/sheet_music/78_R.webp","original_file_name":"78_R.webp","hymnal":"sda","hymnal_numbers":[78],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/78_R.webp for SDA new hymnal #78.'
+from media_assets ma
+join book_entries e on e.entry_number = 78
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/78/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/79/left.webp',
+  null,
+  'image/webp',
+  412368,
+  'left',
+  '{"asset_path":"assets/sheet_music/79_L.webp","original_file_name":"79_L.webp","hymnal":"sda","hymnal_numbers":[79],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/79_L.webp for SDA new hymnal #79.'
+from media_assets ma
+join book_entries e on e.entry_number = 79
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/79/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/80/right.webp',
+  null,
+  'image/webp',
+  265474,
+  'right',
+  '{"asset_path":"assets/sheet_music/80_R.webp","original_file_name":"80_R.webp","hymnal":"sda","hymnal_numbers":[80],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/80_R.webp for SDA new hymnal #80.'
+from media_assets ma
+join book_entries e on e.entry_number = 80
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/80/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/81/left.webp',
+  null,
+  'image/webp',
+  394822,
+  'left',
+  '{"asset_path":"assets/sheet_music/81_L.webp","original_file_name":"81_L.webp","hymnal":"sda","hymnal_numbers":[81],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/81_L.webp for SDA new hymnal #81.'
+from media_assets ma
+join book_entries e on e.entry_number = 81
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/81/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/81/right.webp',
+  null,
+  'image/webp',
+  312482,
+  'right',
+  '{"asset_path":"assets/sheet_music/81_R.webp","original_file_name":"81_R.webp","hymnal":"sda","hymnal_numbers":[81],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/81_R.webp for SDA new hymnal #81.'
+from media_assets ma
+join book_entries e on e.entry_number = 81
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/81/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/82/left.webp',
+  null,
+  'image/webp',
+  418574,
+  'left',
+  '{"asset_path":"assets/sheet_music/82_L.webp","original_file_name":"82_L.webp","hymnal":"sda","hymnal_numbers":[82],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/82_L.webp for SDA new hymnal #82.'
+from media_assets ma
+join book_entries e on e.entry_number = 82
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/82/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/83/right.webp',
+  null,
+  'image/webp',
+  321336,
+  'right',
+  '{"asset_path":"assets/sheet_music/83_R.webp","original_file_name":"83_R.webp","hymnal":"sda","hymnal_numbers":[83],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/83_R.webp for SDA new hymnal #83.'
+from media_assets ma
+join book_entries e on e.entry_number = 83
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/83/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/84/left.webp',
+  null,
+  'image/webp',
+  370800,
+  'left',
+  '{"asset_path":"assets/sheet_music/84_L.webp","original_file_name":"84_L.webp","hymnal":"sda","hymnal_numbers":[84],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/84_L.webp for SDA new hymnal #84.'
+from media_assets ma
+join book_entries e on e.entry_number = 84
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/84/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/85/right.webp',
+  null,
+  'image/webp',
+  502948,
+  'right',
+  '{"asset_path":"assets/sheet_music/85_R.webp","original_file_name":"85_R.webp","hymnal":"sda","hymnal_numbers":[85],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/85_R.webp for SDA new hymnal #85.'
+from media_assets ma
+join book_entries e on e.entry_number = 85
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/85/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/86/left.webp',
+  null,
+  'image/webp',
+  489444,
+  'left',
+  '{"asset_path":"assets/sheet_music/86_L.webp","original_file_name":"86_L.webp","hymnal":"sda","hymnal_numbers":[86],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/86_L.webp for SDA new hymnal #86.'
+from media_assets ma
+join book_entries e on e.entry_number = 86
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/86/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/87/right.webp',
+  null,
+  'image/webp',
+  454606,
+  'right',
+  '{"asset_path":"assets/sheet_music/87_R.webp","original_file_name":"87_R.webp","hymnal":"sda","hymnal_numbers":[87],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/87_R.webp for SDA new hymnal #87.'
+from media_assets ma
+join book_entries e on e.entry_number = 87
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/87/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/88/left.webp',
+  null,
+  'image/webp',
+  403984,
+  'left',
+  '{"asset_path":"assets/sheet_music/88_L.webp","original_file_name":"88_L.webp","hymnal":"sda","hymnal_numbers":[88],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/88_L.webp for SDA new hymnal #88.'
+from media_assets ma
+join book_entries e on e.entry_number = 88
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/88/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/89/right.webp',
+  null,
+  'image/webp',
+  435404,
+  'right',
+  '{"asset_path":"assets/sheet_music/89_R.webp","original_file_name":"89_R.webp","hymnal":"sda","hymnal_numbers":[89],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/89_R.webp for SDA new hymnal #89.'
+from media_assets ma
+join book_entries e on e.entry_number = 89
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/89/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/90/left.webp',
+  null,
+  'image/webp',
+  378732,
+  'left',
+  '{"asset_path":"assets/sheet_music/90_L.webp","original_file_name":"90_L.webp","hymnal":"sda","hymnal_numbers":[90],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/90_L.webp for SDA new hymnal #90.'
+from media_assets ma
+join book_entries e on e.entry_number = 90
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/90/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/90/right.webp',
+  null,
+  'image/webp',
+  343534,
+  'right',
+  '{"asset_path":"assets/sheet_music/90_R.webp","original_file_name":"90_R.webp","hymnal":"sda","hymnal_numbers":[90],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/90_R.webp for SDA new hymnal #90.'
+from media_assets ma
+join book_entries e on e.entry_number = 90
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/90/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/91/left.webp',
+  null,
+  'image/webp',
+  457210,
+  'left',
+  '{"asset_path":"assets/sheet_music/91_L.webp","original_file_name":"91_L.webp","hymnal":"sda","hymnal_numbers":[91],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/91_L.webp for SDA new hymnal #91.'
+from media_assets ma
+join book_entries e on e.entry_number = 91
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/91/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/92/right.webp',
+  null,
+  'image/webp',
+  442816,
+  'right',
+  '{"asset_path":"assets/sheet_music/92_R.webp","original_file_name":"92_R.webp","hymnal":"sda","hymnal_numbers":[92],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/92_R.webp for SDA new hymnal #92.'
+from media_assets ma
+join book_entries e on e.entry_number = 92
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/92/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/93/left.webp',
+  null,
+  'image/webp',
+  382686,
+  'left',
+  '{"asset_path":"assets/sheet_music/93_L.webp","original_file_name":"93_L.webp","hymnal":"sda","hymnal_numbers":[93],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/93_L.webp for SDA new hymnal #93.'
+from media_assets ma
+join book_entries e on e.entry_number = 93
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/93/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/93/right.webp',
+  null,
+  'image/webp',
+  286066,
+  'right',
+  '{"asset_path":"assets/sheet_music/93_R.webp","original_file_name":"93_R.webp","hymnal":"sda","hymnal_numbers":[93],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/93_R.webp for SDA new hymnal #93.'
+from media_assets ma
+join book_entries e on e.entry_number = 93
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/93/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/94/left.webp',
+  null,
+  'image/webp',
+  470860,
+  'left',
+  '{"asset_path":"assets/sheet_music/94_L.webp","original_file_name":"94_L.webp","hymnal":"sda","hymnal_numbers":[94],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/94_L.webp for SDA new hymnal #94.'
+from media_assets ma
+join book_entries e on e.entry_number = 94
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/94/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/95/right.webp',
+  null,
+  'image/webp',
+  456426,
+  'right',
+  '{"asset_path":"assets/sheet_music/95_R.webp","original_file_name":"95_R.webp","hymnal":"sda","hymnal_numbers":[95],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/95_R.webp for SDA new hymnal #95.'
+from media_assets ma
+join book_entries e on e.entry_number = 95
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/95/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/96/left.webp',
+  null,
+  'image/webp',
+  393654,
+  'left',
+  '{"asset_path":"assets/sheet_music/96_L.webp","original_file_name":"96_L.webp","hymnal":"sda","hymnal_numbers":[96],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/96_L.webp for SDA new hymnal #96.'
+from media_assets ma
+join book_entries e on e.entry_number = 96
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/96/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/97/right.webp',
+  null,
+  'image/webp',
+  465270,
+  'right',
+  '{"asset_path":"assets/sheet_music/97_R.webp","original_file_name":"97_R.webp","hymnal":"sda","hymnal_numbers":[97],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/97_R.webp for SDA new hymnal #97.'
+from media_assets ma
+join book_entries e on e.entry_number = 97
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/97/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/98/left.webp',
+  null,
+  'image/webp',
+  405482,
+  'left',
+  '{"asset_path":"assets/sheet_music/98_L.webp","original_file_name":"98_L.webp","hymnal":"sda","hymnal_numbers":[98],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/98_L.webp for SDA new hymnal #98.'
+from media_assets ma
+join book_entries e on e.entry_number = 98
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/98/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/99/right.webp',
+  null,
+  'image/webp',
+  369602,
+  'right',
+  '{"asset_path":"assets/sheet_music/99_R.webp","original_file_name":"99_R.webp","hymnal":"sda","hymnal_numbers":[99],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/99_R.webp for SDA new hymnal #99.'
+from media_assets ma
+join book_entries e on e.entry_number = 99
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/99/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/100/left.webp',
+  null,
+  'image/webp',
+  339938,
+  'left',
+  '{"asset_path":"assets/sheet_music/100_L.webp","original_file_name":"100_L.webp","hymnal":"sda","hymnal_numbers":[100],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/100_L.webp for SDA new hymnal #100.'
+from media_assets ma
+join book_entries e on e.entry_number = 100
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/100/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/100/right.webp',
+  null,
+  'image/webp',
+  218094,
+  'right',
+  '{"asset_path":"assets/sheet_music/100_R.webp","original_file_name":"100_R.webp","hymnal":"sda","hymnal_numbers":[100],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/100_R.webp for SDA new hymnal #100.'
+from media_assets ma
+join book_entries e on e.entry_number = 100
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/100/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/101/left.webp',
+  null,
+  'image/webp',
+  371646,
+  'left',
+  '{"asset_path":"assets/sheet_music/101_L.webp","original_file_name":"101_L.webp","hymnal":"sda","hymnal_numbers":[101],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/101_L.webp for SDA new hymnal #101.'
+from media_assets ma
+join book_entries e on e.entry_number = 101
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/101/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/101/right.webp',
+  null,
+  'image/webp',
+  183764,
+  'right',
+  '{"asset_path":"assets/sheet_music/101_R.webp","original_file_name":"101_R.webp","hymnal":"sda","hymnal_numbers":[101],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/101_R.webp for SDA new hymnal #101.'
+from media_assets ma
+join book_entries e on e.entry_number = 101
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/101/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/102/left.webp',
+  null,
+  'image/webp',
+  484888,
+  'left',
+  '{"asset_path":"assets/sheet_music/102_L.webp","original_file_name":"102_L.webp","hymnal":"sda","hymnal_numbers":[102],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/102_L.webp for SDA new hymnal #102.'
+from media_assets ma
+join book_entries e on e.entry_number = 102
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/102/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/103/right.webp',
+  null,
+  'image/webp',
+  423872,
+  'right',
+  '{"asset_path":"assets/sheet_music/103_R.webp","original_file_name":"103_R.webp","hymnal":"sda","hymnal_numbers":[103],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/103_R.webp for SDA new hymnal #103.'
+from media_assets ma
+join book_entries e on e.entry_number = 103
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/103/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/104/left.webp',
+  null,
+  'image/webp',
+  475514,
+  'left',
+  '{"asset_path":"assets/sheet_music/104_L.webp","original_file_name":"104_L.webp","hymnal":"sda","hymnal_numbers":[104],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/104_L.webp for SDA new hymnal #104.'
+from media_assets ma
+join book_entries e on e.entry_number = 104
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/104/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/105/right.webp',
+  null,
+  'image/webp',
+  422628,
+  'right',
+  '{"asset_path":"assets/sheet_music/105_R.webp","original_file_name":"105_R.webp","hymnal":"sda","hymnal_numbers":[105],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/105_R.webp for SDA new hymnal #105.'
+from media_assets ma
+join book_entries e on e.entry_number = 105
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/105/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/106/left.webp',
+  null,
+  'image/webp',
+  397734,
+  'left',
+  '{"asset_path":"assets/sheet_music/106_L.webp","original_file_name":"106_L.webp","hymnal":"sda","hymnal_numbers":[106],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/106_L.webp for SDA new hymnal #106.'
+from media_assets ma
+join book_entries e on e.entry_number = 106
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/106/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/106/right.webp',
+  null,
+  'image/webp',
+  256806,
+  'right',
+  '{"asset_path":"assets/sheet_music/106_R.webp","original_file_name":"106_R.webp","hymnal":"sda","hymnal_numbers":[106],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/106_R.webp for SDA new hymnal #106.'
+from media_assets ma
+join book_entries e on e.entry_number = 106
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/106/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/107/left.webp',
+  null,
+  'image/webp',
+  473916,
+  'left',
+  '{"asset_path":"assets/sheet_music/107_L.webp","original_file_name":"107_L.webp","hymnal":"sda","hymnal_numbers":[107],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/107_L.webp for SDA new hymnal #107.'
+from media_assets ma
+join book_entries e on e.entry_number = 107
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/107/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/108/right.webp',
+  null,
+  'image/webp',
+  479978,
+  'right',
+  '{"asset_path":"assets/sheet_music/108_R.webp","original_file_name":"108_R.webp","hymnal":"sda","hymnal_numbers":[108],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/108_R.webp for SDA new hymnal #108.'
+from media_assets ma
+join book_entries e on e.entry_number = 108
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/108/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/109/left.webp',
+  null,
+  'image/webp',
+  429858,
+  'left',
+  '{"asset_path":"assets/sheet_music/109_L.webp","original_file_name":"109_L.webp","hymnal":"sda","hymnal_numbers":[109],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/109_L.webp for SDA new hymnal #109.'
+from media_assets ma
+join book_entries e on e.entry_number = 109
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/109/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/110/right.webp',
+  null,
+  'image/webp',
+  493072,
+  'right',
+  '{"asset_path":"assets/sheet_music/110_R.webp","original_file_name":"110_R.webp","hymnal":"sda","hymnal_numbers":[110],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/110_R.webp for SDA new hymnal #110.'
+from media_assets ma
+join book_entries e on e.entry_number = 110
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/110/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/111/left.webp',
+  null,
+  'image/webp',
+  460974,
+  'left',
+  '{"asset_path":"assets/sheet_music/111._L.webp","original_file_name":"111._L.webp","hymnal":"sda","hymnal_numbers":[111],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/111._L.webp for SDA new hymnal #111.'
+from media_assets ma
+join book_entries e on e.entry_number = 111
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/111/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/112/right.webp',
+  null,
+  'image/webp',
+  433228,
+  'right',
+  '{"asset_path":"assets/sheet_music/112_R.webp","original_file_name":"112_R.webp","hymnal":"sda","hymnal_numbers":[112],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/112_R.webp for SDA new hymnal #112.'
+from media_assets ma
+join book_entries e on e.entry_number = 112
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/112/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/113/left.webp',
+  null,
+  'image/webp',
+  440072,
+  'left',
+  '{"asset_path":"assets/sheet_music/113_L.webp","original_file_name":"113_L.webp","hymnal":"sda","hymnal_numbers":[113],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/113_L.webp for SDA new hymnal #113.'
+from media_assets ma
+join book_entries e on e.entry_number = 113
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/113/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/114/right.webp',
+  null,
+  'image/webp',
+  455970,
+  'right',
+  '{"asset_path":"assets/sheet_music/114_R.webp","original_file_name":"114_R.webp","hymnal":"sda","hymnal_numbers":[114],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/114_R.webp for SDA new hymnal #114.'
+from media_assets ma
+join book_entries e on e.entry_number = 114
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/114/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/115/left.webp',
+  null,
+  'image/webp',
+  373212,
+  'left',
+  '{"asset_path":"assets/sheet_music/115_L.webp","original_file_name":"115_L.webp","hymnal":"sda","hymnal_numbers":[115],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/115_L.webp for SDA new hymnal #115.'
+from media_assets ma
+join book_entries e on e.entry_number = 115
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/115/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/115/right.webp',
+  null,
+  'image/webp',
+  222780,
+  'right',
+  '{"asset_path":"assets/sheet_music/115_R.webp","original_file_name":"115_R.webp","hymnal":"sda","hymnal_numbers":[115],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/115_R.webp for SDA new hymnal #115.'
+from media_assets ma
+join book_entries e on e.entry_number = 115
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/115/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/116/left.webp',
+  null,
+  'image/webp',
+  430464,
+  'left',
+  '{"asset_path":"assets/sheet_music/116_L.webp","original_file_name":"116_L.webp","hymnal":"sda","hymnal_numbers":[116],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/116_L.webp for SDA new hymnal #116.'
+from media_assets ma
+join book_entries e on e.entry_number = 116
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/116/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/117/right.webp',
+  null,
+  'image/webp',
+  319240,
+  'right',
+  '{"asset_path":"assets/sheet_music/117_R.webp","original_file_name":"117_R.webp","hymnal":"sda","hymnal_numbers":[117],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/117_R.webp for SDA new hymnal #117.'
+from media_assets ma
+join book_entries e on e.entry_number = 117
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/117/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/118/left.webp',
+  null,
+  'image/webp',
+  362780,
+  'left',
+  '{"asset_path":"assets/sheet_music/118_L.webp","original_file_name":"118_L.webp","hymnal":"sda","hymnal_numbers":[118],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/118_L.webp for SDA new hymnal #118.'
+from media_assets ma
+join book_entries e on e.entry_number = 118
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/118/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/118/right.webp',
+  null,
+  'image/webp',
+  261184,
+  'right',
+  '{"asset_path":"assets/sheet_music/118_R.webp","original_file_name":"118_R.webp","hymnal":"sda","hymnal_numbers":[118],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/118_R.webp for SDA new hymnal #118.'
+from media_assets ma
+join book_entries e on e.entry_number = 118
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/118/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/119/left.webp',
+  null,
+  'image/webp',
+  365328,
+  'left',
+  '{"asset_path":"assets/sheet_music/119_L.webp","original_file_name":"119_L.webp","hymnal":"sda","hymnal_numbers":[119],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/119_L.webp for SDA new hymnal #119.'
+from media_assets ma
+join book_entries e on e.entry_number = 119
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/119/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/120/right.webp',
+  null,
+  'image/webp',
+  454478,
+  'right',
+  '{"asset_path":"assets/sheet_music/120_R.webp","original_file_name":"120_R.webp","hymnal":"sda","hymnal_numbers":[120],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/120_R.webp for SDA new hymnal #120.'
+from media_assets ma
+join book_entries e on e.entry_number = 120
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/120/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/121/left.webp',
+  null,
+  'image/webp',
+  381156,
+  'left',
+  '{"asset_path":"assets/sheet_music/121_L.webp","original_file_name":"121_L.webp","hymnal":"sda","hymnal_numbers":[121],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/121_L.webp for SDA new hymnal #121.'
+from media_assets ma
+join book_entries e on e.entry_number = 121
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/121/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/122/right.webp',
+  null,
+  'image/webp',
+  450532,
+  'right',
+  '{"asset_path":"assets/sheet_music/122_R.webp","original_file_name":"122_R.webp","hymnal":"sda","hymnal_numbers":[122],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/122_R.webp for SDA new hymnal #122.'
+from media_assets ma
+join book_entries e on e.entry_number = 122
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/122/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/123/left.webp',
+  null,
+  'image/webp',
+  441544,
+  'left',
+  '{"asset_path":"assets/sheet_music/123_L.webp","original_file_name":"123_L.webp","hymnal":"sda","hymnal_numbers":[123],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/123_L.webp for SDA new hymnal #123.'
+from media_assets ma
+join book_entries e on e.entry_number = 123
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/123/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/124/right.webp',
+  null,
+  'image/webp',
+  383044,
+  'right',
+  '{"asset_path":"assets/sheet_music/124_R.webp","original_file_name":"124_R.webp","hymnal":"sda","hymnal_numbers":[124],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/124_R.webp for SDA new hymnal #124.'
+from media_assets ma
+join book_entries e on e.entry_number = 124
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/124/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/125/left.webp',
+  null,
+  'image/webp',
+  335272,
+  'left',
+  '{"asset_path":"assets/sheet_music/125_L.webp","original_file_name":"125_L.webp","hymnal":"sda","hymnal_numbers":[125],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/125_L.webp for SDA new hymnal #125.'
+from media_assets ma
+join book_entries e on e.entry_number = 125
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/125/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/125/right.webp',
+  null,
+  'image/webp',
+  301044,
+  'right',
+  '{"asset_path":"assets/sheet_music/125_R.webp","original_file_name":"125_R.webp","hymnal":"sda","hymnal_numbers":[125],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/125_R.webp for SDA new hymnal #125.'
+from media_assets ma
+join book_entries e on e.entry_number = 125
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/125/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/126/left.webp',
+  null,
+  'image/webp',
+  301326,
+  'left',
+  '{"asset_path":"assets/sheet_music/126_L.webp","original_file_name":"126_L.webp","hymnal":"sda","hymnal_numbers":[126],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/126_L.webp for SDA new hymnal #126.'
+from media_assets ma
+join book_entries e on e.entry_number = 126
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/126/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/126/right.webp',
+  null,
+  'image/webp',
+  316638,
+  'right',
+  '{"asset_path":"assets/sheet_music/126_R.webp","original_file_name":"126_R.webp","hymnal":"sda","hymnal_numbers":[126],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/126_R.webp for SDA new hymnal #126.'
+from media_assets ma
+join book_entries e on e.entry_number = 126
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/126/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/127/left.webp',
+  null,
+  'image/webp',
+  430774,
+  'left',
+  '{"asset_path":"assets/sheet_music/127_L.webp","original_file_name":"127_L.webp","hymnal":"sda","hymnal_numbers":[127],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/127_L.webp for SDA new hymnal #127.'
+from media_assets ma
+join book_entries e on e.entry_number = 127
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/127/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/128/right.webp',
+  null,
+  'image/webp',
+  387954,
+  'right',
+  '{"asset_path":"assets/sheet_music/128_R.webp","original_file_name":"128_R.webp","hymnal":"sda","hymnal_numbers":[128],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/128_R.webp for SDA new hymnal #128.'
+from media_assets ma
+join book_entries e on e.entry_number = 128
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/128/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/129/left.webp',
+  null,
+  'image/webp',
+  381976,
+  'left',
+  '{"asset_path":"assets/sheet_music/129_L.webp","original_file_name":"129_L.webp","hymnal":"sda","hymnal_numbers":[129],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/129_L.webp for SDA new hymnal #129.'
+from media_assets ma
+join book_entries e on e.entry_number = 129
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/129/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/130/right.webp',
+  null,
+  'image/webp',
+  357092,
+  'right',
+  '{"asset_path":"assets/sheet_music/130_R.webp","original_file_name":"130_R.webp","hymnal":"sda","hymnal_numbers":[130],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/130_R.webp for SDA new hymnal #130.'
+from media_assets ma
+join book_entries e on e.entry_number = 130
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/130/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/131/left.webp',
+  null,
+  'image/webp',
+  407422,
+  'left',
+  '{"asset_path":"assets/sheet_music/131_L.webp","original_file_name":"131_L.webp","hymnal":"sda","hymnal_numbers":[131],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/131_L.webp for SDA new hymnal #131.'
+from media_assets ma
+join book_entries e on e.entry_number = 131
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/131/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/132/right.webp',
+  null,
+  'image/webp',
+  283812,
+  'right',
+  '{"asset_path":"assets/sheet_music/132_R.webp","original_file_name":"132_R.webp","hymnal":"sda","hymnal_numbers":[132],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/132_R.webp for SDA new hymnal #132.'
+from media_assets ma
+join book_entries e on e.entry_number = 132
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/132/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/133/left.webp',
+  null,
+  'image/webp',
+  406424,
+  'left',
+  '{"asset_path":"assets/sheet_music/133_L.webp","original_file_name":"133_L.webp","hymnal":"sda","hymnal_numbers":[133],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/133_L.webp for SDA new hymnal #133.'
+from media_assets ma
+join book_entries e on e.entry_number = 133
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/133/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/134/right.webp',
+  null,
+  'image/webp',
+  392580,
+  'right',
+  '{"asset_path":"assets/sheet_music/134_R.webp","original_file_name":"134_R.webp","hymnal":"sda","hymnal_numbers":[134],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/134_R.webp for SDA new hymnal #134.'
+from media_assets ma
+join book_entries e on e.entry_number = 134
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/134/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/135/left.webp',
+  null,
+  'image/webp',
+  367582,
+  'left',
+  '{"asset_path":"assets/sheet_music/135_L.webp","original_file_name":"135_L.webp","hymnal":"sda","hymnal_numbers":[135],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/135_L.webp for SDA new hymnal #135.'
+from media_assets ma
+join book_entries e on e.entry_number = 135
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/135/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/135/right.webp',
+  null,
+  'image/webp',
+  196708,
+  'right',
+  '{"asset_path":"assets/sheet_music/135_R.webp","original_file_name":"135_R.webp","hymnal":"sda","hymnal_numbers":[135],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/135_R.webp for SDA new hymnal #135.'
+from media_assets ma
+join book_entries e on e.entry_number = 135
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/135/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/136/left.webp',
+  null,
+  'image/webp',
+  423586,
+  'left',
+  '{"asset_path":"assets/sheet_music/136_L.webp","original_file_name":"136_L.webp","hymnal":"sda","hymnal_numbers":[136],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/136_L.webp for SDA new hymnal #136.'
+from media_assets ma
+join book_entries e on e.entry_number = 136
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/136/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/137/right.webp',
+  null,
+  'image/webp',
+  476270,
+  'right',
+  '{"asset_path":"assets/sheet_music/137_R.webp","original_file_name":"137_R.webp","hymnal":"sda","hymnal_numbers":[137],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/137_R.webp for SDA new hymnal #137.'
+from media_assets ma
+join book_entries e on e.entry_number = 137
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/137/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/138/left.webp',
+  null,
+  'image/webp',
+  284974,
+  'left',
+  '{"asset_path":"assets/sheet_music/138_L.webp","original_file_name":"138_L.webp","hymnal":"sda","hymnal_numbers":[138],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/138_L.webp for SDA new hymnal #138.'
+from media_assets ma
+join book_entries e on e.entry_number = 138
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/138/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/139/right.webp',
+  null,
+  'image/webp',
+  434862,
+  'right',
+  '{"asset_path":"assets/sheet_music/139_R.webp","original_file_name":"139_R.webp","hymnal":"sda","hymnal_numbers":[139],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/139_R.webp for SDA new hymnal #139.'
+from media_assets ma
+join book_entries e on e.entry_number = 139
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/139/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/140/left.webp',
+  null,
+  'image/webp',
+  405038,
+  'left',
+  '{"asset_path":"assets/sheet_music/140_L.webp","original_file_name":"140_L.webp","hymnal":"sda","hymnal_numbers":[140],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/140_L.webp for SDA new hymnal #140.'
+from media_assets ma
+join book_entries e on e.entry_number = 140
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/140/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/140/right.webp',
+  null,
+  'image/webp',
+  207566,
+  'right',
+  '{"asset_path":"assets/sheet_music/140_R.webp","original_file_name":"140_R.webp","hymnal":"sda","hymnal_numbers":[140],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/140_R.webp for SDA new hymnal #140.'
+from media_assets ma
+join book_entries e on e.entry_number = 140
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/140/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/141/left.webp',
+  null,
+  'image/webp',
+  406216,
+  'left',
+  '{"asset_path":"assets/sheet_music/141_L.webp","original_file_name":"141_L.webp","hymnal":"sda","hymnal_numbers":[141],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/141_L.webp for SDA new hymnal #141.'
+from media_assets ma
+join book_entries e on e.entry_number = 141
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/141/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/142/right.webp',
+  null,
+  'image/webp',
+  408614,
+  'right',
+  '{"asset_path":"assets/sheet_music/142_R.webp","original_file_name":"142_R.webp","hymnal":"sda","hymnal_numbers":[142],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/142_R.webp for SDA new hymnal #142.'
+from media_assets ma
+join book_entries e on e.entry_number = 142
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/142/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/143/left.webp',
+  null,
+  'image/webp',
+  417288,
+  'left',
+  '{"asset_path":"assets/sheet_music/143_L.webp","original_file_name":"143_L.webp","hymnal":"sda","hymnal_numbers":[143],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/143_L.webp for SDA new hymnal #143.'
+from media_assets ma
+join book_entries e on e.entry_number = 143
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/143/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/143/right.webp',
+  null,
+  'image/webp',
+  226204,
+  'right',
+  '{"asset_path":"assets/sheet_music/143_R.webp","original_file_name":"143_R.webp","hymnal":"sda","hymnal_numbers":[143],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/143_R.webp for SDA new hymnal #143.'
+from media_assets ma
+join book_entries e on e.entry_number = 143
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/143/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/144/left.webp',
+  null,
+  'image/webp',
+  424998,
+  'left',
+  '{"asset_path":"assets/sheet_music/144_L.webp","original_file_name":"144_L.webp","hymnal":"sda","hymnal_numbers":[144],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/144_L.webp for SDA new hymnal #144.'
+from media_assets ma
+join book_entries e on e.entry_number = 144
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/144/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/144/right.webp',
+  null,
+  'image/webp',
+  226546,
+  'right',
+  '{"asset_path":"assets/sheet_music/144_R.webp","original_file_name":"144_R.webp","hymnal":"sda","hymnal_numbers":[144],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/144_R.webp for SDA new hymnal #144.'
+from media_assets ma
+join book_entries e on e.entry_number = 144
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/144/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/145/left.webp',
+  null,
+  'image/webp',
+  420402,
+  'left',
+  '{"asset_path":"assets/sheet_music/145_L.webp","original_file_name":"145_L.webp","hymnal":"sda","hymnal_numbers":[145],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/145_L.webp for SDA new hymnal #145.'
+from media_assets ma
+join book_entries e on e.entry_number = 145
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/145/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/145/right.webp',
+  null,
+  'image/webp',
+  225150,
+  'right',
+  '{"asset_path":"assets/sheet_music/145_R.webp","original_file_name":"145_R.webp","hymnal":"sda","hymnal_numbers":[145],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/145_R.webp for SDA new hymnal #145.'
+from media_assets ma
+join book_entries e on e.entry_number = 145
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/145/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/146/left.webp',
+  null,
+  'image/webp',
+  318996,
+  'left',
+  '{"asset_path":"assets/sheet_music/146_L.webp","original_file_name":"146_L.webp","hymnal":"sda","hymnal_numbers":[146],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/146_L.webp for SDA new hymnal #146.'
+from media_assets ma
+join book_entries e on e.entry_number = 146
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/146/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/146/right.webp',
+  null,
+  'image/webp',
+  180142,
+  'right',
+  '{"asset_path":"assets/sheet_music/146_R.webp","original_file_name":"146_R.webp","hymnal":"sda","hymnal_numbers":[146],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/146_R.webp for SDA new hymnal #146.'
+from media_assets ma
+join book_entries e on e.entry_number = 146
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/146/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/147/left.webp',
+  null,
+  'image/webp',
+  482842,
+  'left',
+  '{"asset_path":"assets/sheet_music/147_L.webp","original_file_name":"147_L.webp","hymnal":"sda","hymnal_numbers":[147],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/147_L.webp for SDA new hymnal #147.'
+from media_assets ma
+join book_entries e on e.entry_number = 147
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/147/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/148/right.webp',
+  null,
+  'image/webp',
+  396802,
+  'right',
+  '{"asset_path":"assets/sheet_music/148_R.webp","original_file_name":"148_R.webp","hymnal":"sda","hymnal_numbers":[148],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/148_R.webp for SDA new hymnal #148.'
+from media_assets ma
+join book_entries e on e.entry_number = 148
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/148/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/149/left.webp',
+  null,
+  'image/webp',
+  374274,
+  'left',
+  '{"asset_path":"assets/sheet_music/149_L.webp","original_file_name":"149_L.webp","hymnal":"sda","hymnal_numbers":[149],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/149_L.webp for SDA new hymnal #149.'
+from media_assets ma
+join book_entries e on e.entry_number = 149
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/149/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/150/right.webp',
+  null,
+  'image/webp',
+  391004,
+  'right',
+  '{"asset_path":"assets/sheet_music/150_R.webp","original_file_name":"150_R.webp","hymnal":"sda","hymnal_numbers":[150],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/150_R.webp for SDA new hymnal #150.'
+from media_assets ma
+join book_entries e on e.entry_number = 150
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/150/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/151/left.webp',
+  null,
+  'image/webp',
+  390494,
+  'left',
+  '{"asset_path":"assets/sheet_music/151_L.webp","original_file_name":"151_L.webp","hymnal":"sda","hymnal_numbers":[151],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/151_L.webp for SDA new hymnal #151.'
+from media_assets ma
+join book_entries e on e.entry_number = 151
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/151/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/152/right.webp',
+  null,
+  'image/webp',
+  358378,
+  'right',
+  '{"asset_path":"assets/sheet_music/152_R.webp","original_file_name":"152_R.webp","hymnal":"sda","hymnal_numbers":[152],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/152_R.webp for SDA new hymnal #152.'
+from media_assets ma
+join book_entries e on e.entry_number = 152
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/152/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/153/left.webp',
+  null,
+  'image/webp',
+  357104,
+  'left',
+  '{"asset_path":"assets/sheet_music/153_L.webp","original_file_name":"153_L.webp","hymnal":"sda","hymnal_numbers":[153],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/153_L.webp for SDA new hymnal #153.'
+from media_assets ma
+join book_entries e on e.entry_number = 153
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/153/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/153/right.webp',
+  null,
+  'image/webp',
+  181270,
+  'right',
+  '{"asset_path":"assets/sheet_music/153_R.webp","original_file_name":"153_R.webp","hymnal":"sda","hymnal_numbers":[153],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/153_R.webp for SDA new hymnal #153.'
+from media_assets ma
+join book_entries e on e.entry_number = 153
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/153/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/154/left.webp',
+  null,
+  'image/webp',
+  360826,
+  'left',
+  '{"asset_path":"assets/sheet_music/154_L.webp","original_file_name":"154_L.webp","hymnal":"sda","hymnal_numbers":[154],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/154_L.webp for SDA new hymnal #154.'
+from media_assets ma
+join book_entries e on e.entry_number = 154
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/154/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/155/right.webp',
+  null,
+  'image/webp',
+  405470,
+  'right',
+  '{"asset_path":"assets/sheet_music/155_R.webp","original_file_name":"155_R.webp","hymnal":"sda","hymnal_numbers":[155],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/155_R.webp for SDA new hymnal #155.'
+from media_assets ma
+join book_entries e on e.entry_number = 155
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/155/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/156/left.webp',
+  null,
+  'image/webp',
+  334682,
+  'left',
+  '{"asset_path":"assets/sheet_music/156_L.webp","original_file_name":"156_L.webp","hymnal":"sda","hymnal_numbers":[156],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/156_L.webp for SDA new hymnal #156.'
+from media_assets ma
+join book_entries e on e.entry_number = 156
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/156/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/156/right.webp',
+  null,
+  'image/webp',
+  257988,
+  'right',
+  '{"asset_path":"assets/sheet_music/156_R.webp","original_file_name":"156_R.webp","hymnal":"sda","hymnal_numbers":[156],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/156_R.webp for SDA new hymnal #156.'
+from media_assets ma
+join book_entries e on e.entry_number = 156
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/156/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/157/left.webp',
+  null,
+  'image/webp',
+  361016,
+  'left',
+  '{"asset_path":"assets/sheet_music/157_L.webp","original_file_name":"157_L.webp","hymnal":"sda","hymnal_numbers":[157],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/157_L.webp for SDA new hymnal #157.'
+from media_assets ma
+join book_entries e on e.entry_number = 157
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/157/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/157/right.webp',
+  null,
+  'image/webp',
+  279154,
+  'right',
+  '{"asset_path":"assets/sheet_music/157_R.webp","original_file_name":"157_R.webp","hymnal":"sda","hymnal_numbers":[157],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/157_R.webp for SDA new hymnal #157.'
+from media_assets ma
+join book_entries e on e.entry_number = 157
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/157/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/158/left.webp',
+  null,
+  'image/webp',
+  362142,
+  'left',
+  '{"asset_path":"assets/sheet_music/158_L.webp","original_file_name":"158_L.webp","hymnal":"sda","hymnal_numbers":[158],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/158_L.webp for SDA new hymnal #158.'
+from media_assets ma
+join book_entries e on e.entry_number = 158
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/158/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/159/right.webp',
+  null,
+  'image/webp',
+  362576,
+  'right',
+  '{"asset_path":"assets/sheet_music/159_R.webp","original_file_name":"159_R.webp","hymnal":"sda","hymnal_numbers":[159],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/159_R.webp for SDA new hymnal #159.'
+from media_assets ma
+join book_entries e on e.entry_number = 159
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/159/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/160/left.webp',
+  null,
+  'image/webp',
+  328428,
+  'left',
+  '{"asset_path":"assets/sheet_music/160_L.webp","original_file_name":"160_L.webp","hymnal":"sda","hymnal_numbers":[160],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/160_L.webp for SDA new hymnal #160.'
+from media_assets ma
+join book_entries e on e.entry_number = 160
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/160/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/160/right.webp',
+  null,
+  'image/webp',
+  171122,
+  'right',
+  '{"asset_path":"assets/sheet_music/160_R.webp","original_file_name":"160_R.webp","hymnal":"sda","hymnal_numbers":[160],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/160_R.webp for SDA new hymnal #160.'
+from media_assets ma
+join book_entries e on e.entry_number = 160
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/160/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/161/left.webp',
+  null,
+  'image/webp',
+  430290,
+  'left',
+  '{"asset_path":"assets/sheet_music/161_L.webp","original_file_name":"161_L.webp","hymnal":"sda","hymnal_numbers":[161],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/161_L.webp for SDA new hymnal #161.'
+from media_assets ma
+join book_entries e on e.entry_number = 161
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/161/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/162/right.webp',
+  null,
+  'image/webp',
+  405678,
+  'right',
+  '{"asset_path":"assets/sheet_music/162_R.webp","original_file_name":"162_R.webp","hymnal":"sda","hymnal_numbers":[162],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/162_R.webp for SDA new hymnal #162.'
+from media_assets ma
+join book_entries e on e.entry_number = 162
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/162/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/163/left.webp',
+  null,
+  'image/webp',
+  274434,
+  'left',
+  '{"asset_path":"assets/sheet_music/163_L.webp","original_file_name":"163_L.webp","hymnal":"sda","hymnal_numbers":[163],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/163_L.webp for SDA new hymnal #163.'
+from media_assets ma
+join book_entries e on e.entry_number = 163
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/163/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/163/right.webp',
+  null,
+  'image/webp',
+  253684,
+  'right',
+  '{"asset_path":"assets/sheet_music/163_R.webp","original_file_name":"163_R.webp","hymnal":"sda","hymnal_numbers":[163],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/163_R.webp for SDA new hymnal #163.'
+from media_assets ma
+join book_entries e on e.entry_number = 163
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/163/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/164/left.webp',
+  null,
+  'image/webp',
+  459826,
+  'left',
+  '{"asset_path":"assets/sheet_music/164_L.webp","original_file_name":"164_L.webp","hymnal":"sda","hymnal_numbers":[164],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/164_L.webp for SDA new hymnal #164.'
+from media_assets ma
+join book_entries e on e.entry_number = 164
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/164/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/165/right.webp',
+  null,
+  'image/webp',
+  389362,
+  'right',
+  '{"asset_path":"assets/sheet_music/165_R.webp","original_file_name":"165_R.webp","hymnal":"sda","hymnal_numbers":[165],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/165_R.webp for SDA new hymnal #165.'
+from media_assets ma
+join book_entries e on e.entry_number = 165
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/165/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/166/left.webp',
+  null,
+  'image/webp',
+  443314,
+  'left',
+  '{"asset_path":"assets/sheet_music/166_L.webp","original_file_name":"166_L.webp","hymnal":"sda","hymnal_numbers":[166],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/166_L.webp for SDA new hymnal #166.'
+from media_assets ma
+join book_entries e on e.entry_number = 166
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/166/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/167/right.webp',
+  null,
+  'image/webp',
+  455034,
+  'right',
+  '{"asset_path":"assets/sheet_music/167_R.webp","original_file_name":"167_R.webp","hymnal":"sda","hymnal_numbers":[167],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/167_R.webp for SDA new hymnal #167.'
+from media_assets ma
+join book_entries e on e.entry_number = 167
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/167/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/168/left.webp',
+  null,
+  'image/webp',
+  450684,
+  'left',
+  '{"asset_path":"assets/sheet_music/168_L.webp","original_file_name":"168_L.webp","hymnal":"sda","hymnal_numbers":[168],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/168_L.webp for SDA new hymnal #168.'
+from media_assets ma
+join book_entries e on e.entry_number = 168
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/168/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/169/right.webp',
+  null,
+  'image/webp',
+  411112,
+  'right',
+  '{"asset_path":"assets/sheet_music/169_R.webp","original_file_name":"169_R.webp","hymnal":"sda","hymnal_numbers":[169],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/169_R.webp for SDA new hymnal #169.'
+from media_assets ma
+join book_entries e on e.entry_number = 169
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/169/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/170/left.webp',
+  null,
+  'image/webp',
+  347470,
+  'left',
+  '{"asset_path":"assets/sheet_music/170_L.webp","original_file_name":"170_L.webp","hymnal":"sda","hymnal_numbers":[170],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/170_L.webp for SDA new hymnal #170.'
+from media_assets ma
+join book_entries e on e.entry_number = 170
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/170/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/170/right.webp',
+  null,
+  'image/webp',
+  180230,
+  'right',
+  '{"asset_path":"assets/sheet_music/170_R.webp","original_file_name":"170_R.webp","hymnal":"sda","hymnal_numbers":[170],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/170_R.webp for SDA new hymnal #170.'
+from media_assets ma
+join book_entries e on e.entry_number = 170
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/170/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/171/left.webp',
+  null,
+  'image/webp',
+  384488,
+  'left',
+  '{"asset_path":"assets/sheet_music/171_L.webp","original_file_name":"171_L.webp","hymnal":"sda","hymnal_numbers":[171],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/171_L.webp for SDA new hymnal #171.'
+from media_assets ma
+join book_entries e on e.entry_number = 171
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/171/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/171/right.webp',
+  null,
+  'image/webp',
+  271642,
+  'right',
+  '{"asset_path":"assets/sheet_music/171_R.webp","original_file_name":"171_R.webp","hymnal":"sda","hymnal_numbers":[171],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/171_R.webp for SDA new hymnal #171.'
+from media_assets ma
+join book_entries e on e.entry_number = 171
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/171/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/172/left.webp',
+  null,
+  'image/webp',
+  476612,
+  'left',
+  '{"asset_path":"assets/sheet_music/172_L.webp","original_file_name":"172_L.webp","hymnal":"sda","hymnal_numbers":[172],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/172_L.webp for SDA new hymnal #172.'
+from media_assets ma
+join book_entries e on e.entry_number = 172
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/172/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/173/right.webp',
+  null,
+  'image/webp',
+  332424,
+  'right',
+  '{"asset_path":"assets/sheet_music/173_R.webp","original_file_name":"173_R.webp","hymnal":"sda","hymnal_numbers":[173],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/173_R.webp for SDA new hymnal #173.'
+from media_assets ma
+join book_entries e on e.entry_number = 173
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/173/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/174/left.webp',
+  null,
+  'image/webp',
+  406582,
+  'left',
+  '{"asset_path":"assets/sheet_music/174_L.webp","original_file_name":"174_L.webp","hymnal":"sda","hymnal_numbers":[174],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/174_L.webp for SDA new hymnal #174.'
+from media_assets ma
+join book_entries e on e.entry_number = 174
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/174/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/174/right.webp',
+  null,
+  'image/webp',
+  343004,
+  'right',
+  '{"asset_path":"assets/sheet_music/174_R.webp","original_file_name":"174_R.webp","hymnal":"sda","hymnal_numbers":[174],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/174_R.webp for SDA new hymnal #174.'
+from media_assets ma
+join book_entries e on e.entry_number = 174
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/174/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/175/left.webp',
+  null,
+  'image/webp',
+  441614,
+  'left',
+  '{"asset_path":"assets/sheet_music/175_L.webp","original_file_name":"175_L.webp","hymnal":"sda","hymnal_numbers":[175],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/175_L.webp for SDA new hymnal #175.'
+from media_assets ma
+join book_entries e on e.entry_number = 175
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/175/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/176/right.webp',
+  null,
+  'image/webp',
+  292000,
+  'right',
+  '{"asset_path":"assets/sheet_music/176_R.webp","original_file_name":"176_R.webp","hymnal":"sda","hymnal_numbers":[176],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/176_R.webp for SDA new hymnal #176.'
+from media_assets ma
+join book_entries e on e.entry_number = 176
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/176/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/177/left.webp',
+  null,
+  'image/webp',
+  370636,
+  'left',
+  '{"asset_path":"assets/sheet_music/177_L.webp","original_file_name":"177_L.webp","hymnal":"sda","hymnal_numbers":[177],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/177_L.webp for SDA new hymnal #177.'
+from media_assets ma
+join book_entries e on e.entry_number = 177
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/177/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/177/right.webp',
+  null,
+  'image/webp',
+  234780,
+  'right',
+  '{"asset_path":"assets/sheet_music/177_R.webp","original_file_name":"177_R.webp","hymnal":"sda","hymnal_numbers":[177],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/177_R.webp for SDA new hymnal #177.'
+from media_assets ma
+join book_entries e on e.entry_number = 177
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/177/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/178/left.webp',
+  null,
+  'image/webp',
+  432752,
+  'left',
+  '{"asset_path":"assets/sheet_music/178_L.webp","original_file_name":"178_L.webp","hymnal":"sda","hymnal_numbers":[178],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/178_L.webp for SDA new hymnal #178.'
+from media_assets ma
+join book_entries e on e.entry_number = 178
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/178/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/179/right.webp',
+  null,
+  'image/webp',
+  368114,
+  'right',
+  '{"asset_path":"assets/sheet_music/179_R.webp","original_file_name":"179_R.webp","hymnal":"sda","hymnal_numbers":[179],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/179_R.webp for SDA new hymnal #179.'
+from media_assets ma
+join book_entries e on e.entry_number = 179
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/179/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/180/left.webp',
+  null,
+  'image/webp',
+  386368,
+  'left',
+  '{"asset_path":"assets/sheet_music/180_L.webp","original_file_name":"180_L.webp","hymnal":"sda","hymnal_numbers":[180],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/180_L.webp for SDA new hymnal #180.'
+from media_assets ma
+join book_entries e on e.entry_number = 180
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/180/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/181/right.webp',
+  null,
+  'image/webp',
+  404176,
+  'right',
+  '{"asset_path":"assets/sheet_music/181_R.webp","original_file_name":"181_R.webp","hymnal":"sda","hymnal_numbers":[181],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/181_R.webp for SDA new hymnal #181.'
+from media_assets ma
+join book_entries e on e.entry_number = 181
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/181/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/182/left.webp',
+  null,
+  'image/webp',
+  352750,
+  'left',
+  '{"asset_path":"assets/sheet_music/182_L.webp","original_file_name":"182_L.webp","hymnal":"sda","hymnal_numbers":[182],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/182_L.webp for SDA new hymnal #182.'
+from media_assets ma
+join book_entries e on e.entry_number = 182
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/182/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/182/right.webp',
+  null,
+  'image/webp',
+  310114,
+  'right',
+  '{"asset_path":"assets/sheet_music/182_R.webp","original_file_name":"182_R.webp","hymnal":"sda","hymnal_numbers":[182],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/182_R.webp for SDA new hymnal #182.'
+from media_assets ma
+join book_entries e on e.entry_number = 182
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/182/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/183/left.webp',
+  null,
+  'image/webp',
+  351396,
+  'left',
+  '{"asset_path":"assets/sheet_music/183_L.webp","original_file_name":"183_L.webp","hymnal":"sda","hymnal_numbers":[183],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/183_L.webp for SDA new hymnal #183.'
+from media_assets ma
+join book_entries e on e.entry_number = 183
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/183/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/184/right.webp',
+  null,
+  'image/webp',
+  503364,
+  'right',
+  '{"asset_path":"assets/sheet_music/184_R.webp","original_file_name":"184_R.webp","hymnal":"sda","hymnal_numbers":[184],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/184_R.webp for SDA new hymnal #184.'
+from media_assets ma
+join book_entries e on e.entry_number = 184
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/184/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/185/left.webp',
+  null,
+  'image/webp',
+  311560,
+  'left',
+  '{"asset_path":"assets/sheet_music/185_L.webp","original_file_name":"185_L.webp","hymnal":"sda","hymnal_numbers":[185],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/185_L.webp for SDA new hymnal #185.'
+from media_assets ma
+join book_entries e on e.entry_number = 185
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/185/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/185/right.webp',
+  null,
+  'image/webp',
+  275142,
+  'right',
+  '{"asset_path":"assets/sheet_music/185_R.webp","original_file_name":"185_R.webp","hymnal":"sda","hymnal_numbers":[185],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/185_R.webp for SDA new hymnal #185.'
+from media_assets ma
+join book_entries e on e.entry_number = 185
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/185/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/186/left.webp',
+  null,
+  'image/webp',
+  427058,
+  'left',
+  '{"asset_path":"assets/sheet_music/186_L.webp","original_file_name":"186_L.webp","hymnal":"sda","hymnal_numbers":[186],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/186_L.webp for SDA new hymnal #186.'
+from media_assets ma
+join book_entries e on e.entry_number = 186
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/186/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/187/right.webp',
+  null,
+  'image/webp',
+  400418,
+  'right',
+  '{"asset_path":"assets/sheet_music/187_R.webp","original_file_name":"187_R.webp","hymnal":"sda","hymnal_numbers":[187],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/187_R.webp for SDA new hymnal #187.'
+from media_assets ma
+join book_entries e on e.entry_number = 187
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/187/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/188/left.webp',
+  null,
+  'image/webp',
+  423802,
+  'left',
+  '{"asset_path":"assets/sheet_music/188_L.webp","original_file_name":"188_L.webp","hymnal":"sda","hymnal_numbers":[188],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/188_L.webp for SDA new hymnal #188.'
+from media_assets ma
+join book_entries e on e.entry_number = 188
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/188/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/189/right.webp',
+  null,
+  'image/webp',
+  436502,
+  'right',
+  '{"asset_path":"assets/sheet_music/189_R.webp","original_file_name":"189_R.webp","hymnal":"sda","hymnal_numbers":[189],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/189_R.webp for SDA new hymnal #189.'
+from media_assets ma
+join book_entries e on e.entry_number = 189
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/189/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/190/left.webp',
+  null,
+  'image/webp',
+  323838,
+  'left',
+  '{"asset_path":"assets/sheet_music/190_L.webp","original_file_name":"190_L.webp","hymnal":"sda","hymnal_numbers":[190],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/190_L.webp for SDA new hymnal #190.'
+from media_assets ma
+join book_entries e on e.entry_number = 190
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/190/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/191/right.webp',
+  null,
+  'image/webp',
+  448076,
+  'right',
+  '{"asset_path":"assets/sheet_music/191_R.webp","original_file_name":"191_R.webp","hymnal":"sda","hymnal_numbers":[191],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/191_R.webp for SDA new hymnal #191.'
+from media_assets ma
+join book_entries e on e.entry_number = 191
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/191/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/192/left.webp',
+  null,
+  'image/webp',
+  306728,
+  'left',
+  '{"asset_path":"assets/sheet_music/192_L.webp","original_file_name":"192_L.webp","hymnal":"sda","hymnal_numbers":[192],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/192_L.webp for SDA new hymnal #192.'
+from media_assets ma
+join book_entries e on e.entry_number = 192
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/192/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/193/right.webp',
+  null,
+  'image/webp',
+  310330,
+  'right',
+  '{"asset_path":"assets/sheet_music/193_R.webp","original_file_name":"193_R.webp","hymnal":"sda","hymnal_numbers":[193],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/193_R.webp for SDA new hymnal #193.'
+from media_assets ma
+join book_entries e on e.entry_number = 193
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/193/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/194/left.webp',
+  null,
+  'image/webp',
+  382702,
+  'left',
+  '{"asset_path":"assets/sheet_music/194_L.webp","original_file_name":"194_L.webp","hymnal":"sda","hymnal_numbers":[194],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/194_L.webp for SDA new hymnal #194.'
+from media_assets ma
+join book_entries e on e.entry_number = 194
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/194/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/195/right.webp',
+  null,
+  'image/webp',
+  419040,
+  'right',
+  '{"asset_path":"assets/sheet_music/195_R.webp","original_file_name":"195_R.webp","hymnal":"sda","hymnal_numbers":[195],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/195_R.webp for SDA new hymnal #195.'
+from media_assets ma
+join book_entries e on e.entry_number = 195
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/195/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/196/left.webp',
+  null,
+  'image/webp',
+  358942,
+  'left',
+  '{"asset_path":"assets/sheet_music/196_L.webp","original_file_name":"196_L.webp","hymnal":"sda","hymnal_numbers":[196],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/196_L.webp for SDA new hymnal #196.'
+from media_assets ma
+join book_entries e on e.entry_number = 196
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/196/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/196/right.webp',
+  null,
+  'image/webp',
+  286354,
+  'right',
+  '{"asset_path":"assets/sheet_music/196_R.webp","original_file_name":"196_R.webp","hymnal":"sda","hymnal_numbers":[196],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/196_R.webp for SDA new hymnal #196.'
+from media_assets ma
+join book_entries e on e.entry_number = 196
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/196/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/197/left.webp',
+  null,
+  'image/webp',
+  393016,
+  'left',
+  '{"asset_path":"assets/sheet_music/197_L.webp","original_file_name":"197_L.webp","hymnal":"sda","hymnal_numbers":[197],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/197_L.webp for SDA new hymnal #197.'
+from media_assets ma
+join book_entries e on e.entry_number = 197
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/197/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/198/right.webp',
+  null,
+  'image/webp',
+  309190,
+  'right',
+  '{"asset_path":"assets/sheet_music/198_R.webp","original_file_name":"198_R.webp","hymnal":"sda","hymnal_numbers":[198],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/198_R.webp for SDA new hymnal #198.'
+from media_assets ma
+join book_entries e on e.entry_number = 198
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/198/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/199/left.webp',
+  null,
+  'image/webp',
+  372798,
+  'left',
+  '{"asset_path":"assets/sheet_music/199_L.webp","original_file_name":"199_L.webp","hymnal":"sda","hymnal_numbers":[199],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/199_L.webp for SDA new hymnal #199.'
+from media_assets ma
+join book_entries e on e.entry_number = 199
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/199/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/199/right.webp',
+  null,
+  'image/webp',
+  239608,
+  'right',
+  '{"asset_path":"assets/sheet_music/199_R.webp","original_file_name":"199_R.webp","hymnal":"sda","hymnal_numbers":[199],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/199_R.webp for SDA new hymnal #199.'
+from media_assets ma
+join book_entries e on e.entry_number = 199
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/199/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/200/left.webp',
+  null,
+  'image/webp',
+  326902,
+  'left',
+  '{"asset_path":"assets/sheet_music/200_L.webp","original_file_name":"200_L.webp","hymnal":"sda","hymnal_numbers":[200],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/200_L.webp for SDA new hymnal #200.'
+from media_assets ma
+join book_entries e on e.entry_number = 200
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/200/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/200/right.webp',
+  null,
+  'image/webp',
+  315114,
+  'right',
+  '{"asset_path":"assets/sheet_music/200_R.webp","original_file_name":"200_R.webp","hymnal":"sda","hymnal_numbers":[200],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/200_R.webp for SDA new hymnal #200.'
+from media_assets ma
+join book_entries e on e.entry_number = 200
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/200/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/201/left.webp',
+  null,
+  'image/webp',
+  397602,
+  'left',
+  '{"asset_path":"assets/sheet_music/201_L.webp","original_file_name":"201_L.webp","hymnal":"sda","hymnal_numbers":[201],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/201_L.webp for SDA new hymnal #201.'
+from media_assets ma
+join book_entries e on e.entry_number = 201
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/201/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/201/right.webp',
+  null,
+  'image/webp',
+  310812,
+  'right',
+  '{"asset_path":"assets/sheet_music/201_R.webp","original_file_name":"201_R.webp","hymnal":"sda","hymnal_numbers":[201],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/201_R.webp for SDA new hymnal #201.'
+from media_assets ma
+join book_entries e on e.entry_number = 201
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/201/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/202/left.webp',
+  null,
+  'image/webp',
+  361510,
+  'left',
+  '{"asset_path":"assets/sheet_music/202_L.webp","original_file_name":"202_L.webp","hymnal":"sda","hymnal_numbers":[202],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/202_L.webp for SDA new hymnal #202.'
+from media_assets ma
+join book_entries e on e.entry_number = 202
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/202/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/202/right.webp',
+  null,
+  'image/webp',
+  194886,
+  'right',
+  '{"asset_path":"assets/sheet_music/202_R.webp","original_file_name":"202_R.webp","hymnal":"sda","hymnal_numbers":[202],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/202_R.webp for SDA new hymnal #202.'
+from media_assets ma
+join book_entries e on e.entry_number = 202
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/202/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/203/left.webp',
+  null,
+  'image/webp',
+  360088,
+  'left',
+  '{"asset_path":"assets/sheet_music/203_L.webp","original_file_name":"203_L.webp","hymnal":"sda","hymnal_numbers":[203],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/203_L.webp for SDA new hymnal #203.'
+from media_assets ma
+join book_entries e on e.entry_number = 203
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/203/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/203/right.webp',
+  null,
+  'image/webp',
+  261708,
+  'right',
+  '{"asset_path":"assets/sheet_music/203_R.webp","original_file_name":"203_R.webp","hymnal":"sda","hymnal_numbers":[203],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/203_R.webp for SDA new hymnal #203.'
+from media_assets ma
+join book_entries e on e.entry_number = 203
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/203/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/204/left.webp',
+  null,
+  'image/webp',
+  351066,
+  'left',
+  '{"asset_path":"assets/sheet_music/204_L.webp","original_file_name":"204_L.webp","hymnal":"sda","hymnal_numbers":[204],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/204_L.webp for SDA new hymnal #204.'
+from media_assets ma
+join book_entries e on e.entry_number = 204
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/204/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/204/right.webp',
+  null,
+  'image/webp',
+  227446,
+  'right',
+  '{"asset_path":"assets/sheet_music/204_R.webp","original_file_name":"204_R.webp","hymnal":"sda","hymnal_numbers":[204],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/204_R.webp for SDA new hymnal #204.'
+from media_assets ma
+join book_entries e on e.entry_number = 204
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/204/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/205/left.webp',
+  null,
+  'image/webp',
+  439756,
+  'left',
+  '{"asset_path":"assets/sheet_music/205_L.webp","original_file_name":"205_L.webp","hymnal":"sda","hymnal_numbers":[205],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/205_L.webp for SDA new hymnal #205.'
+from media_assets ma
+join book_entries e on e.entry_number = 205
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/205/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/206/right.webp',
+  null,
+  'image/webp',
+  408310,
+  'right',
+  '{"asset_path":"assets/sheet_music/206_R.webp","original_file_name":"206_R.webp","hymnal":"sda","hymnal_numbers":[206],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/206_R.webp for SDA new hymnal #206.'
+from media_assets ma
+join book_entries e on e.entry_number = 206
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/206/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/207/left.webp',
+  null,
+  'image/webp',
+  372960,
+  'left',
+  '{"asset_path":"assets/sheet_music/207_L.webp","original_file_name":"207_L.webp","hymnal":"sda","hymnal_numbers":[207],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/207_L.webp for SDA new hymnal #207.'
+from media_assets ma
+join book_entries e on e.entry_number = 207
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/207/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/207/right.webp',
+  null,
+  'image/webp',
+  289748,
+  'right',
+  '{"asset_path":"assets/sheet_music/207_R.webp","original_file_name":"207_R.webp","hymnal":"sda","hymnal_numbers":[207],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/207_R.webp for SDA new hymnal #207.'
+from media_assets ma
+join book_entries e on e.entry_number = 207
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/207/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/208/left.webp',
+  null,
+  'image/webp',
+  437694,
+  'left',
+  '{"asset_path":"assets/sheet_music/208_L.webp","original_file_name":"208_L.webp","hymnal":"sda","hymnal_numbers":[208],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/208_L.webp for SDA new hymnal #208.'
+from media_assets ma
+join book_entries e on e.entry_number = 208
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/208/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/209/right.webp',
+  null,
+  'image/webp',
+  446726,
+  'right',
+  '{"asset_path":"assets/sheet_music/209_R.webp","original_file_name":"209_R.webp","hymnal":"sda","hymnal_numbers":[209],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/209_R.webp for SDA new hymnal #209.'
+from media_assets ma
+join book_entries e on e.entry_number = 209
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/209/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/210/left.webp',
+  null,
+  'image/webp',
+  327062,
+  'left',
+  '{"asset_path":"assets/sheet_music/210_L.webp","original_file_name":"210_L.webp","hymnal":"sda","hymnal_numbers":[210],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/210_L.webp for SDA new hymnal #210.'
+from media_assets ma
+join book_entries e on e.entry_number = 210
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/210/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/210/right.webp',
+  null,
+  'image/webp',
+  243190,
+  'right',
+  '{"asset_path":"assets/sheet_music/210_R.webp","original_file_name":"210_R.webp","hymnal":"sda","hymnal_numbers":[210],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/210_R.webp for SDA new hymnal #210.'
+from media_assets ma
+join book_entries e on e.entry_number = 210
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/210/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/211/left.webp',
+  null,
+  'image/webp',
+  272306,
+  'left',
+  '{"asset_path":"assets/sheet_music/211_L.webp","original_file_name":"211_L.webp","hymnal":"sda","hymnal_numbers":[211],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/211_L.webp for SDA new hymnal #211.'
+from media_assets ma
+join book_entries e on e.entry_number = 211
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/211/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/211/right.webp',
+  null,
+  'image/webp',
+  295048,
+  'right',
+  '{"asset_path":"assets/sheet_music/211_R.webp","original_file_name":"211_R.webp","hymnal":"sda","hymnal_numbers":[211],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/211_R.webp for SDA new hymnal #211.'
+from media_assets ma
+join book_entries e on e.entry_number = 211
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/211/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/212/left.webp',
+  null,
+  'image/webp',
+  443248,
+  'left',
+  '{"asset_path":"assets/sheet_music/212_L.webp","original_file_name":"212_L.webp","hymnal":"sda","hymnal_numbers":[212],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/212_L.webp for SDA new hymnal #212.'
+from media_assets ma
+join book_entries e on e.entry_number = 212
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/212/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/213/right.webp',
+  null,
+  'image/webp',
+  421766,
+  'right',
+  '{"asset_path":"assets/sheet_music/213_R.webp","original_file_name":"213_R.webp","hymnal":"sda","hymnal_numbers":[213],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/213_R.webp for SDA new hymnal #213.'
+from media_assets ma
+join book_entries e on e.entry_number = 213
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/213/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/214/left.webp',
+  null,
+  'image/webp',
+  447242,
+  'left',
+  '{"asset_path":"assets/sheet_music/214_L.webp","original_file_name":"214_L.webp","hymnal":"sda","hymnal_numbers":[214],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/214_L.webp for SDA new hymnal #214.'
+from media_assets ma
+join book_entries e on e.entry_number = 214
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/214/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/214/right.webp',
+  null,
+  'image/webp',
+  313934,
+  'right',
+  '{"asset_path":"assets/sheet_music/214_R.webp","original_file_name":"214_R.webp","hymnal":"sda","hymnal_numbers":[214],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/214_R.webp for SDA new hymnal #214.'
+from media_assets ma
+join book_entries e on e.entry_number = 214
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/214/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/215/left.webp',
+  null,
+  'image/webp',
+  284432,
+  'left',
+  '{"asset_path":"assets/sheet_music/215_L.webp","original_file_name":"215_L.webp","hymnal":"sda","hymnal_numbers":[215],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/215_L.webp for SDA new hymnal #215.'
+from media_assets ma
+join book_entries e on e.entry_number = 215
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/215/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/216/right.webp',
+  null,
+  'image/webp',
+  461180,
+  'right',
+  '{"asset_path":"assets/sheet_music/216_R.webp","original_file_name":"216_R.webp","hymnal":"sda","hymnal_numbers":[216],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/216_R.webp for SDA new hymnal #216.'
+from media_assets ma
+join book_entries e on e.entry_number = 216
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/216/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/217/left.webp',
+  null,
+  'image/webp',
+  366612,
+  'left',
+  '{"asset_path":"assets/sheet_music/217_L.webp","original_file_name":"217_L.webp","hymnal":"sda","hymnal_numbers":[217],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/217_L.webp for SDA new hymnal #217.'
+from media_assets ma
+join book_entries e on e.entry_number = 217
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/217/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/218/right.webp',
+  null,
+  'image/webp',
+  403036,
+  'right',
+  '{"asset_path":"assets/sheet_music/218_R.webp","original_file_name":"218_R.webp","hymnal":"sda","hymnal_numbers":[218],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/218_R.webp for SDA new hymnal #218.'
+from media_assets ma
+join book_entries e on e.entry_number = 218
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/218/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/219/left.webp',
+  null,
+  'image/webp',
+  381596,
+  'left',
+  '{"asset_path":"assets/sheet_music/219_L.webp","original_file_name":"219_L.webp","hymnal":"sda","hymnal_numbers":[219],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/219_L.webp for SDA new hymnal #219.'
+from media_assets ma
+join book_entries e on e.entry_number = 219
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/219/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/219/right.webp',
+  null,
+  'image/webp',
+  265384,
+  'right',
+  '{"asset_path":"assets/sheet_music/219_R.webp","original_file_name":"219_R.webp","hymnal":"sda","hymnal_numbers":[219],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/219_R.webp for SDA new hymnal #219.'
+from media_assets ma
+join book_entries e on e.entry_number = 219
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/219/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/220/left.webp',
+  null,
+  'image/webp',
+  266562,
+  'left',
+  '{"asset_path":"assets/sheet_music/220_L.webp","original_file_name":"220_L.webp","hymnal":"sda","hymnal_numbers":[220],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/220_L.webp for SDA new hymnal #220.'
+from media_assets ma
+join book_entries e on e.entry_number = 220
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/220/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/221/right.webp',
+  null,
+  'image/webp',
+  430690,
+  'right',
+  '{"asset_path":"assets/sheet_music/221_R.webp","original_file_name":"221_R.webp","hymnal":"sda","hymnal_numbers":[221],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/221_R.webp for SDA new hymnal #221.'
+from media_assets ma
+join book_entries e on e.entry_number = 221
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/221/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/222/left.webp',
+  null,
+  'image/webp',
+  376632,
+  'left',
+  '{"asset_path":"assets/sheet_music/222_L.webp","original_file_name":"222_L.webp","hymnal":"sda","hymnal_numbers":[222],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/222_L.webp for SDA new hymnal #222.'
+from media_assets ma
+join book_entries e on e.entry_number = 222
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/222/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/222/right.webp',
+  null,
+  'image/webp',
+  276222,
+  'right',
+  '{"asset_path":"assets/sheet_music/222_R.webp","original_file_name":"222_R.webp","hymnal":"sda","hymnal_numbers":[222],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/222_R.webp for SDA new hymnal #222.'
+from media_assets ma
+join book_entries e on e.entry_number = 222
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/222/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/223/left.webp',
+  null,
+  'image/webp',
+  440366,
+  'left',
+  '{"asset_path":"assets/sheet_music/223_L.webp","original_file_name":"223_L.webp","hymnal":"sda","hymnal_numbers":[223],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/223_L.webp for SDA new hymnal #223.'
+from media_assets ma
+join book_entries e on e.entry_number = 223
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/223/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/224/right.webp',
+  null,
+  'image/webp',
+  475610,
+  'right',
+  '{"asset_path":"assets/sheet_music/224_R.webp","original_file_name":"224_R.webp","hymnal":"sda","hymnal_numbers":[224],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/224_R.webp for SDA new hymnal #224.'
+from media_assets ma
+join book_entries e on e.entry_number = 224
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/224/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/225/left.webp',
+  null,
+  'image/webp',
+  353010,
+  'left',
+  '{"asset_path":"assets/sheet_music/225_L.webp","original_file_name":"225_L.webp","hymnal":"sda","hymnal_numbers":[225],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/225_L.webp for SDA new hymnal #225.'
+from media_assets ma
+join book_entries e on e.entry_number = 225
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/225/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/225/right.webp',
+  null,
+  'image/webp',
+  300090,
+  'right',
+  '{"asset_path":"assets/sheet_music/225_R.webp","original_file_name":"225_R.webp","hymnal":"sda","hymnal_numbers":[225],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/225_R.webp for SDA new hymnal #225.'
+from media_assets ma
+join book_entries e on e.entry_number = 225
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/225/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/226/left.webp',
+  null,
+  'image/webp',
+  451472,
+  'left',
+  '{"asset_path":"assets/sheet_music/226_L.webp","original_file_name":"226_L.webp","hymnal":"sda","hymnal_numbers":[226],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/226_L.webp for SDA new hymnal #226.'
+from media_assets ma
+join book_entries e on e.entry_number = 226
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/226/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/227/right.webp',
+  null,
+  'image/webp',
+  411478,
+  'right',
+  '{"asset_path":"assets/sheet_music/227_R.webp","original_file_name":"227_R.webp","hymnal":"sda","hymnal_numbers":[227],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/227_R.webp for SDA new hymnal #227.'
+from media_assets ma
+join book_entries e on e.entry_number = 227
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/227/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/228/left.webp',
+  null,
+  'image/webp',
+  394168,
+  'left',
+  '{"asset_path":"assets/sheet_music/228_L.webp","original_file_name":"228_L.webp","hymnal":"sda","hymnal_numbers":[228],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/228_L.webp for SDA new hymnal #228.'
+from media_assets ma
+join book_entries e on e.entry_number = 228
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/228/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/228/right.webp',
+  null,
+  'image/webp',
+  377188,
+  'right',
+  '{"asset_path":"assets/sheet_music/228_R.webp","original_file_name":"228_R.webp","hymnal":"sda","hymnal_numbers":[228],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/228_R.webp for SDA new hymnal #228.'
+from media_assets ma
+join book_entries e on e.entry_number = 228
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/228/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/229/left.webp',
+  null,
+  'image/webp',
+  445088,
+  'left',
+  '{"asset_path":"assets/sheet_music/229_L.webp","original_file_name":"229_L.webp","hymnal":"sda","hymnal_numbers":[229],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/229_L.webp for SDA new hymnal #229.'
+from media_assets ma
+join book_entries e on e.entry_number = 229
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/229/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/230/right.webp',
+  null,
+  'image/webp',
+  497372,
+  'right',
+  '{"asset_path":"assets/sheet_music/230_R.webp","original_file_name":"230_R.webp","hymnal":"sda","hymnal_numbers":[230],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/230_R.webp for SDA new hymnal #230.'
+from media_assets ma
+join book_entries e on e.entry_number = 230
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/230/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/231/left.webp',
+  null,
+  'image/webp',
+  419844,
+  'left',
+  '{"asset_path":"assets/sheet_music/231_L.webp","original_file_name":"231_L.webp","hymnal":"sda","hymnal_numbers":[231],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/231_L.webp for SDA new hymnal #231.'
+from media_assets ma
+join book_entries e on e.entry_number = 231
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/231/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/232/right.webp',
+  null,
+  'image/webp',
+  437674,
+  'right',
+  '{"asset_path":"assets/sheet_music/232_R.webp","original_file_name":"232_R.webp","hymnal":"sda","hymnal_numbers":[232],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/232_R.webp for SDA new hymnal #232.'
+from media_assets ma
+join book_entries e on e.entry_number = 232
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/232/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/233/left.webp',
+  null,
+  'image/webp',
+  363544,
+  'left',
+  '{"asset_path":"assets/sheet_music/233_L.webp","original_file_name":"233_L.webp","hymnal":"sda","hymnal_numbers":[233],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/233_L.webp for SDA new hymnal #233.'
+from media_assets ma
+join book_entries e on e.entry_number = 233
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/233/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/233/right.webp',
+  null,
+  'image/webp',
+  241106,
+  'right',
+  '{"asset_path":"assets/sheet_music/233_R.webp","original_file_name":"233_R.webp","hymnal":"sda","hymnal_numbers":[233],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/233_R.webp for SDA new hymnal #233.'
+from media_assets ma
+join book_entries e on e.entry_number = 233
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/233/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/234/left.webp',
+  null,
+  'image/webp',
+  420816,
+  'left',
+  '{"asset_path":"assets/sheet_music/234_L.webp","original_file_name":"234_L.webp","hymnal":"sda","hymnal_numbers":[234],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/234_L.webp for SDA new hymnal #234.'
+from media_assets ma
+join book_entries e on e.entry_number = 234
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/234/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/235/right.webp',
+  null,
+  'image/webp',
+  424074,
+  'right',
+  '{"asset_path":"assets/sheet_music/235_R.webp","original_file_name":"235_R.webp","hymnal":"sda","hymnal_numbers":[235],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/235_R.webp for SDA new hymnal #235.'
+from media_assets ma
+join book_entries e on e.entry_number = 235
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/235/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/236/left.webp',
+  null,
+  'image/webp',
+  345058,
+  'left',
+  '{"asset_path":"assets/sheet_music/236_L.webp","original_file_name":"236_L.webp","hymnal":"sda","hymnal_numbers":[236],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/236_L.webp for SDA new hymnal #236.'
+from media_assets ma
+join book_entries e on e.entry_number = 236
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/236/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/236/right.webp',
+  null,
+  'image/webp',
+  231926,
+  'right',
+  '{"asset_path":"assets/sheet_music/236_R.webp","original_file_name":"236_R.webp","hymnal":"sda","hymnal_numbers":[236],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/236_R.webp for SDA new hymnal #236.'
+from media_assets ma
+join book_entries e on e.entry_number = 236
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/236/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/237/left.webp',
+  null,
+  'image/webp',
+  390762,
+  'left',
+  '{"asset_path":"assets/sheet_music/237_L.webp","original_file_name":"237_L.webp","hymnal":"sda","hymnal_numbers":[237],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/237_L.webp for SDA new hymnal #237.'
+from media_assets ma
+join book_entries e on e.entry_number = 237
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/237/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/237/right.webp',
+  null,
+  'image/webp',
+  360702,
+  'right',
+  '{"asset_path":"assets/sheet_music/237_R.webp","original_file_name":"237_R.webp","hymnal":"sda","hymnal_numbers":[237],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/237_R.webp for SDA new hymnal #237.'
+from media_assets ma
+join book_entries e on e.entry_number = 237
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/237/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/238/left.webp',
+  null,
+  'image/webp',
+  368482,
+  'left',
+  '{"asset_path":"assets/sheet_music/238_L.webp","original_file_name":"238_L.webp","hymnal":"sda","hymnal_numbers":[238],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/238_L.webp for SDA new hymnal #238.'
+from media_assets ma
+join book_entries e on e.entry_number = 238
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/238/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/238/right.webp',
+  null,
+  'image/webp',
+  259476,
+  'right',
+  '{"asset_path":"assets/sheet_music/238_R.webp","original_file_name":"238_R.webp","hymnal":"sda","hymnal_numbers":[238],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/238_R.webp for SDA new hymnal #238.'
+from media_assets ma
+join book_entries e on e.entry_number = 238
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/238/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/239/left.webp',
+  null,
+  'image/webp',
+  406010,
+  'left',
+  '{"asset_path":"assets/sheet_music/239_L.webp","original_file_name":"239_L.webp","hymnal":"sda","hymnal_numbers":[239],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/239_L.webp for SDA new hymnal #239.'
+from media_assets ma
+join book_entries e on e.entry_number = 239
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/239/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/240/right.webp',
+  null,
+  'image/webp',
+  304724,
+  'right',
+  '{"asset_path":"assets/sheet_music/240_R.webp","original_file_name":"240_R.webp","hymnal":"sda","hymnal_numbers":[240],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/240_R.webp for SDA new hymnal #240.'
+from media_assets ma
+join book_entries e on e.entry_number = 240
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/240/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/241/left.webp',
+  null,
+  'image/webp',
+  409960,
+  'left',
+  '{"asset_path":"assets/sheet_music/241_L.webp","original_file_name":"241_L.webp","hymnal":"sda","hymnal_numbers":[241],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/241_L.webp for SDA new hymnal #241.'
+from media_assets ma
+join book_entries e on e.entry_number = 241
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/241/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/242/right.webp',
+  null,
+  'image/webp',
+  344260,
+  'right',
+  '{"asset_path":"assets/sheet_music/242_R.webp","original_file_name":"242_R.webp","hymnal":"sda","hymnal_numbers":[242],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/242_R.webp for SDA new hymnal #242.'
+from media_assets ma
+join book_entries e on e.entry_number = 242
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/242/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/243/left.webp',
+  null,
+  'image/webp',
+  284198,
+  'left',
+  '{"asset_path":"assets/sheet_music/243_L.webp","original_file_name":"243_L.webp","hymnal":"sda","hymnal_numbers":[243],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/243_L.webp for SDA new hymnal #243.'
+from media_assets ma
+join book_entries e on e.entry_number = 243
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/243/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/243/right.webp',
+  null,
+  'image/webp',
+  296346,
+  'right',
+  '{"asset_path":"assets/sheet_music/243_R.webp","original_file_name":"243_R.webp","hymnal":"sda","hymnal_numbers":[243],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/243_R.webp for SDA new hymnal #243.'
+from media_assets ma
+join book_entries e on e.entry_number = 243
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/243/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/244/left.webp',
+  null,
+  'image/webp',
+  348614,
+  'left',
+  '{"asset_path":"assets/sheet_music/244_L.webp","original_file_name":"244_L.webp","hymnal":"sda","hymnal_numbers":[244],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/244_L.webp for SDA new hymnal #244.'
+from media_assets ma
+join book_entries e on e.entry_number = 244
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/244/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/244/right.webp',
+  null,
+  'image/webp',
+  278430,
+  'right',
+  '{"asset_path":"assets/sheet_music/244_R.webp","original_file_name":"244_R.webp","hymnal":"sda","hymnal_numbers":[244],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/244_R.webp for SDA new hymnal #244.'
+from media_assets ma
+join book_entries e on e.entry_number = 244
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/244/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/245/left.webp',
+  null,
+  'image/webp',
+  472992,
+  'left',
+  '{"asset_path":"assets/sheet_music/245_L.webp","original_file_name":"245_L.webp","hymnal":"sda","hymnal_numbers":[245],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/245_L.webp for SDA new hymnal #245.'
+from media_assets ma
+join book_entries e on e.entry_number = 245
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/245/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/246/right.webp',
+  null,
+  'image/webp',
+  364172,
+  'right',
+  '{"asset_path":"assets/sheet_music/246_R.webp","original_file_name":"246_R.webp","hymnal":"sda","hymnal_numbers":[246],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/246_R.webp for SDA new hymnal #246.'
+from media_assets ma
+join book_entries e on e.entry_number = 246
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/246/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/247/left.webp',
+  null,
+  'image/webp',
+  460138,
+  'left',
+  '{"asset_path":"assets/sheet_music/247_L.webp","original_file_name":"247_L.webp","hymnal":"sda","hymnal_numbers":[247],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/247_L.webp for SDA new hymnal #247.'
+from media_assets ma
+join book_entries e on e.entry_number = 247
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/247/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/247/right.webp',
+  null,
+  'image/webp',
+  416998,
+  'right',
+  '{"asset_path":"assets/sheet_music/247_R.webp","original_file_name":"247_R.webp","hymnal":"sda","hymnal_numbers":[247],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/247_R.webp for SDA new hymnal #247.'
+from media_assets ma
+join book_entries e on e.entry_number = 247
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/247/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/248/left.webp',
+  null,
+  'image/webp',
+  365814,
+  'left',
+  '{"asset_path":"assets/sheet_music/248_L.webp","original_file_name":"248_L.webp","hymnal":"sda","hymnal_numbers":[248],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/248_L.webp for SDA new hymnal #248.'
+from media_assets ma
+join book_entries e on e.entry_number = 248
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/248/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/249/right.webp',
+  null,
+  'image/webp',
+  392162,
+  'right',
+  '{"asset_path":"assets/sheet_music/249_R.webp","original_file_name":"249_R.webp","hymnal":"sda","hymnal_numbers":[249],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/249_R.webp for SDA new hymnal #249.'
+from media_assets ma
+join book_entries e on e.entry_number = 249
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/249/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/250/left.webp',
+  null,
+  'image/webp',
+  435730,
+  'left',
+  '{"asset_path":"assets/sheet_music/250_L.webp","original_file_name":"250_L.webp","hymnal":"sda","hymnal_numbers":[250],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/250_L.webp for SDA new hymnal #250.'
+from media_assets ma
+join book_entries e on e.entry_number = 250
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/250/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/250/right.webp',
+  null,
+  'image/webp',
+  407632,
+  'right',
+  '{"asset_path":"assets/sheet_music/250_R.webp","original_file_name":"250_R.webp","hymnal":"sda","hymnal_numbers":[250],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/250_R.webp for SDA new hymnal #250.'
+from media_assets ma
+join book_entries e on e.entry_number = 250
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/250/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/251/left.webp',
+  null,
+  'image/webp',
+  468920,
+  'left',
+  '{"asset_path":"assets/sheet_music/251_L.webp","original_file_name":"251_L.webp","hymnal":"sda","hymnal_numbers":[251],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/251_L.webp for SDA new hymnal #251.'
+from media_assets ma
+join book_entries e on e.entry_number = 251
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/251/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/252/right.webp',
+  null,
+  'image/webp',
+  458554,
+  'right',
+  '{"asset_path":"assets/sheet_music/252_R.webp","original_file_name":"252_R.webp","hymnal":"sda","hymnal_numbers":[252],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/252_R.webp for SDA new hymnal #252.'
+from media_assets ma
+join book_entries e on e.entry_number = 252
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/252/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/253/left.webp',
+  null,
+  'image/webp',
+  341378,
+  'left',
+  '{"asset_path":"assets/sheet_music/253_L.webp","original_file_name":"253_L.webp","hymnal":"sda","hymnal_numbers":[253],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/253_L.webp for SDA new hymnal #253.'
+from media_assets ma
+join book_entries e on e.entry_number = 253
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/253/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/254/right.webp',
+  null,
+  'image/webp',
+  318446,
+  'right',
+  '{"asset_path":"assets/sheet_music/254_R.webp","original_file_name":"254_R.webp","hymnal":"sda","hymnal_numbers":[254],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/254_R.webp for SDA new hymnal #254.'
+from media_assets ma
+join book_entries e on e.entry_number = 254
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/254/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/255/left.webp',
+  null,
+  'image/webp',
+  370386,
+  'left',
+  '{"asset_path":"assets/sheet_music/255_L.webp","original_file_name":"255_L.webp","hymnal":"sda","hymnal_numbers":[255],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/255_L.webp for SDA new hymnal #255.'
+from media_assets ma
+join book_entries e on e.entry_number = 255
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/255/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/256/right.webp',
+  null,
+  'image/webp',
+  268526,
+  'right',
+  '{"asset_path":"assets/sheet_music/256_R.webp","original_file_name":"256_R.webp","hymnal":"sda","hymnal_numbers":[256],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/256_R.webp for SDA new hymnal #256.'
+from media_assets ma
+join book_entries e on e.entry_number = 256
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/256/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/257/left.webp',
+  null,
+  'image/webp',
+  414162,
+  'left',
+  '{"asset_path":"assets/sheet_music/257_L.webp","original_file_name":"257_L.webp","hymnal":"sda","hymnal_numbers":[257],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/257_L.webp for SDA new hymnal #257.'
+from media_assets ma
+join book_entries e on e.entry_number = 257
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/257/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/258/right.webp',
+  null,
+  'image/webp',
+  296668,
+  'right',
+  '{"asset_path":"assets/sheet_music/258_R.webp","original_file_name":"258_R.webp","hymnal":"sda","hymnal_numbers":[258],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/258_R.webp for SDA new hymnal #258.'
+from media_assets ma
+join book_entries e on e.entry_number = 258
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/258/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/259/left.webp',
+  null,
+  'image/webp',
+  437684,
+  'left',
+  '{"asset_path":"assets/sheet_music/259_L.webp","original_file_name":"259_L.webp","hymnal":"sda","hymnal_numbers":[259],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/259_L.webp for SDA new hymnal #259.'
+from media_assets ma
+join book_entries e on e.entry_number = 259
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/259/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/260/right.webp',
+  null,
+  'image/webp',
+  449272,
+  'right',
+  '{"asset_path":"assets/sheet_music/260_R.webp","original_file_name":"260_R.webp","hymnal":"sda","hymnal_numbers":[260],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/260_R.webp for SDA new hymnal #260.'
+from media_assets ma
+join book_entries e on e.entry_number = 260
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/260/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/261/left.webp',
+  null,
+  'image/webp',
+  276152,
+  'left',
+  '{"asset_path":"assets/sheet_music/261_L.webp","original_file_name":"261_L.webp","hymnal":"sda","hymnal_numbers":[261],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/261_L.webp for SDA new hymnal #261.'
+from media_assets ma
+join book_entries e on e.entry_number = 261
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/261/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/262/right.webp',
+  null,
+  'image/webp',
+  345526,
+  'right',
+  '{"asset_path":"assets/sheet_music/262_R.webp","original_file_name":"262_R.webp","hymnal":"sda","hymnal_numbers":[262],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/262_R.webp for SDA new hymnal #262.'
+from media_assets ma
+join book_entries e on e.entry_number = 262
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/262/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/263/left.webp',
+  null,
+  'image/webp',
+  352566,
+  'left',
+  '{"asset_path":"assets/sheet_music/263_L.webp","original_file_name":"263_L.webp","hymnal":"sda","hymnal_numbers":[263],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/263_L.webp for SDA new hymnal #263.'
+from media_assets ma
+join book_entries e on e.entry_number = 263
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/263/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/263/right.webp',
+  null,
+  'image/webp',
+  224174,
+  'right',
+  '{"asset_path":"assets/sheet_music/263_R.webp","original_file_name":"263_R.webp","hymnal":"sda","hymnal_numbers":[263],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/263_R.webp for SDA new hymnal #263.'
+from media_assets ma
+join book_entries e on e.entry_number = 263
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/263/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/264/left.webp',
+  null,
+  'image/webp',
+  459154,
+  'left',
+  '{"asset_path":"assets/sheet_music/264_L.webp","original_file_name":"264_L.webp","hymnal":"sda","hymnal_numbers":[264],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/264_L.webp for SDA new hymnal #264.'
+from media_assets ma
+join book_entries e on e.entry_number = 264
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/264/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/265/right.webp',
+  null,
+  'image/webp',
+  401450,
+  'right',
+  '{"asset_path":"assets/sheet_music/265_R.webp","original_file_name":"265_R.webp","hymnal":"sda","hymnal_numbers":[265],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/265_R.webp for SDA new hymnal #265.'
+from media_assets ma
+join book_entries e on e.entry_number = 265
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/265/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/266/left.webp',
+  null,
+  'image/webp',
+  410026,
+  'left',
+  '{"asset_path":"assets/sheet_music/266_L.webp","original_file_name":"266_L.webp","hymnal":"sda","hymnal_numbers":[266],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/266_L.webp for SDA new hymnal #266.'
+from media_assets ma
+join book_entries e on e.entry_number = 266
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/266/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/267/right.webp',
+  null,
+  'image/webp',
+  372388,
+  'right',
+  '{"asset_path":"assets/sheet_music/267_R.webp","original_file_name":"267_R.webp","hymnal":"sda","hymnal_numbers":[267],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/267_R.webp for SDA new hymnal #267.'
+from media_assets ma
+join book_entries e on e.entry_number = 267
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/267/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/268/left.webp',
+  null,
+  'image/webp',
+  377184,
+  'left',
+  '{"asset_path":"assets/sheet_music/268_L.webp","original_file_name":"268_L.webp","hymnal":"sda","hymnal_numbers":[268],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/268_L.webp for SDA new hymnal #268.'
+from media_assets ma
+join book_entries e on e.entry_number = 268
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/268/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/269/right.webp',
+  null,
+  'image/webp',
+  325512,
+  'right',
+  '{"asset_path":"assets/sheet_music/269_R.webp","original_file_name":"269_R.webp","hymnal":"sda","hymnal_numbers":[269],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/269_R.webp for SDA new hymnal #269.'
+from media_assets ma
+join book_entries e on e.entry_number = 269
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/269/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/270/left.webp',
+  null,
+  'image/webp',
+  367834,
+  'left',
+  '{"asset_path":"assets/sheet_music/270_L.webp","original_file_name":"270_L.webp","hymnal":"sda","hymnal_numbers":[270],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/270_L.webp for SDA new hymnal #270.'
+from media_assets ma
+join book_entries e on e.entry_number = 270
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/270/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/271/right.webp',
+  null,
+  'image/webp',
+  364554,
+  'right',
+  '{"asset_path":"assets/sheet_music/271_R.webp","original_file_name":"271_R.webp","hymnal":"sda","hymnal_numbers":[271],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/271_R.webp for SDA new hymnal #271.'
+from media_assets ma
+join book_entries e on e.entry_number = 271
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/271/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/272/left.webp',
+  null,
+  'image/webp',
+  446608,
+  'left',
+  '{"asset_path":"assets/sheet_music/272_L.webp","original_file_name":"272_L.webp","hymnal":"sda","hymnal_numbers":[272],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/272_L.webp for SDA new hymnal #272.'
+from media_assets ma
+join book_entries e on e.entry_number = 272
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/272/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/273/right.webp',
+  null,
+  'image/webp',
+  478330,
+  'right',
+  '{"asset_path":"assets/sheet_music/273_R.webp","original_file_name":"273_R.webp","hymnal":"sda","hymnal_numbers":[273],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/273_R.webp for SDA new hymnal #273.'
+from media_assets ma
+join book_entries e on e.entry_number = 273
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/273/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/274/left.webp',
+  null,
+  'image/webp',
+  370196,
+  'left',
+  '{"asset_path":"assets/sheet_music/274_L.webp","original_file_name":"274_L.webp","hymnal":"sda","hymnal_numbers":[274],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/274_L.webp for SDA new hymnal #274.'
+from media_assets ma
+join book_entries e on e.entry_number = 274
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/274/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/275/right.webp',
+  null,
+  'image/webp',
+  438596,
+  'right',
+  '{"asset_path":"assets/sheet_music/275_R.webp","original_file_name":"275_R.webp","hymnal":"sda","hymnal_numbers":[275],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/275_R.webp for SDA new hymnal #275.'
+from media_assets ma
+join book_entries e on e.entry_number = 275
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/275/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/276/left.webp',
+  null,
+  'image/webp',
+  357812,
+  'left',
+  '{"asset_path":"assets/sheet_music/276_L.webp","original_file_name":"276_L.webp","hymnal":"sda","hymnal_numbers":[276],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/276_L.webp for SDA new hymnal #276.'
+from media_assets ma
+join book_entries e on e.entry_number = 276
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/276/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/277/right.webp',
+  null,
+  'image/webp',
+  419194,
+  'right',
+  '{"asset_path":"assets/sheet_music/277_R.webp","original_file_name":"277_R.webp","hymnal":"sda","hymnal_numbers":[277],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/277_R.webp for SDA new hymnal #277.'
+from media_assets ma
+join book_entries e on e.entry_number = 277
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/277/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/278/left.webp',
+  null,
+  'image/webp',
+  310518,
+  'left',
+  '{"asset_path":"assets/sheet_music/278_L.webp","original_file_name":"278_L.webp","hymnal":"sda","hymnal_numbers":[278],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/278_L.webp for SDA new hymnal #278.'
+from media_assets ma
+join book_entries e on e.entry_number = 278
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/278/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/279/right.webp',
+  null,
+  'image/webp',
+  396200,
+  'right',
+  '{"asset_path":"assets/sheet_music/279_R.webp","original_file_name":"279_R.webp","hymnal":"sda","hymnal_numbers":[279],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/279_R.webp for SDA new hymnal #279.'
+from media_assets ma
+join book_entries e on e.entry_number = 279
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/279/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/280/left.webp',
+  null,
+  'image/webp',
+  462528,
+  'left',
+  '{"asset_path":"assets/sheet_music/280_L.webp","original_file_name":"280_L.webp","hymnal":"sda","hymnal_numbers":[280],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/280_L.webp for SDA new hymnal #280.'
+from media_assets ma
+join book_entries e on e.entry_number = 280
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/280/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/280/right.webp',
+  null,
+  'image/webp',
+  377832,
+  'right',
+  '{"asset_path":"assets/sheet_music/280_R.webp","original_file_name":"280_R.webp","hymnal":"sda","hymnal_numbers":[280],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/280_R.webp for SDA new hymnal #280.'
+from media_assets ma
+join book_entries e on e.entry_number = 280
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/280/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/281/left.webp',
+  null,
+  'image/webp',
+  438644,
+  'left',
+  '{"asset_path":"assets/sheet_music/281_L.webp","original_file_name":"281_L.webp","hymnal":"sda","hymnal_numbers":[281],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/281_L.webp for SDA new hymnal #281.'
+from media_assets ma
+join book_entries e on e.entry_number = 281
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/281/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/282/right.webp',
+  null,
+  'image/webp',
+  452948,
+  'right',
+  '{"asset_path":"assets/sheet_music/282_R.webp","original_file_name":"282_R.webp","hymnal":"sda","hymnal_numbers":[282],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/282_R.webp for SDA new hymnal #282.'
+from media_assets ma
+join book_entries e on e.entry_number = 282
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/282/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/283/left.webp',
+  null,
+  'image/webp',
+  406452,
+  'left',
+  '{"asset_path":"assets/sheet_music/283_L.webp","original_file_name":"283_L.webp","hymnal":"sda","hymnal_numbers":[283],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/283_L.webp for SDA new hymnal #283.'
+from media_assets ma
+join book_entries e on e.entry_number = 283
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/283/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/284/right.webp',
+  null,
+  'image/webp',
+  364064,
+  'right',
+  '{"asset_path":"assets/sheet_music/284_R.webp","original_file_name":"284_R.webp","hymnal":"sda","hymnal_numbers":[284],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/284_R.webp for SDA new hymnal #284.'
+from media_assets ma
+join book_entries e on e.entry_number = 284
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/284/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/285/left.webp',
+  null,
+  'image/webp',
+  420328,
+  'left',
+  '{"asset_path":"assets/sheet_music/285_L.webp","original_file_name":"285_L.webp","hymnal":"sda","hymnal_numbers":[285],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/285_L.webp for SDA new hymnal #285.'
+from media_assets ma
+join book_entries e on e.entry_number = 285
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/285/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/286/right.webp',
+  null,
+  'image/webp',
+  434492,
+  'right',
+  '{"asset_path":"assets/sheet_music/286_R.webp","original_file_name":"286_R.webp","hymnal":"sda","hymnal_numbers":[286],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/286_R.webp for SDA new hymnal #286.'
+from media_assets ma
+join book_entries e on e.entry_number = 286
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/286/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/287/left.webp',
+  null,
+  'image/webp',
+  342566,
+  'left',
+  '{"asset_path":"assets/sheet_music/287_L.webp","original_file_name":"287_L.webp","hymnal":"sda","hymnal_numbers":[287],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/287_L.webp for SDA new hymnal #287.'
+from media_assets ma
+join book_entries e on e.entry_number = 287
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/287/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/288/right.webp',
+  null,
+  'image/webp',
+  395214,
+  'right',
+  '{"asset_path":"assets/sheet_music/288_R.webp","original_file_name":"288_R.webp","hymnal":"sda","hymnal_numbers":[288],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/288_R.webp for SDA new hymnal #288.'
+from media_assets ma
+join book_entries e on e.entry_number = 288
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/288/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/289/left.webp',
+  null,
+  'image/webp',
+  375800,
+  'left',
+  '{"asset_path":"assets/sheet_music/289_L.webp","original_file_name":"289_L.webp","hymnal":"sda","hymnal_numbers":[289],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/289_L.webp for SDA new hymnal #289.'
+from media_assets ma
+join book_entries e on e.entry_number = 289
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/289/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/289/right.webp',
+  null,
+  'image/webp',
+  190244,
+  'right',
+  '{"asset_path":"assets/sheet_music/289_R.webp","original_file_name":"289_R.webp","hymnal":"sda","hymnal_numbers":[289],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/289_R.webp for SDA new hymnal #289.'
+from media_assets ma
+join book_entries e on e.entry_number = 289
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/289/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/290/left.webp',
+  null,
+  'image/webp',
+  381678,
+  'left',
+  '{"asset_path":"assets/sheet_music/290_L.webp","original_file_name":"290_L.webp","hymnal":"sda","hymnal_numbers":[290],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/290_L.webp for SDA new hymnal #290.'
+from media_assets ma
+join book_entries e on e.entry_number = 290
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/290/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/291/right.webp',
+  null,
+  'image/webp',
+  525200,
+  'right',
+  '{"asset_path":"assets/sheet_music/291_R.webp","original_file_name":"291_R.webp","hymnal":"sda","hymnal_numbers":[291],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/291_R.webp for SDA new hymnal #291.'
+from media_assets ma
+join book_entries e on e.entry_number = 291
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/291/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/292/left.webp',
+  null,
+  'image/webp',
+  356088,
+  'left',
+  '{"asset_path":"assets/sheet_music/292_L.webp","original_file_name":"292_L.webp","hymnal":"sda","hymnal_numbers":[292],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/292_L.webp for SDA new hymnal #292.'
+from media_assets ma
+join book_entries e on e.entry_number = 292
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/292/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/292/right.webp',
+  null,
+  'image/webp',
+  173296,
+  'right',
+  '{"asset_path":"assets/sheet_music/292_R.webp","original_file_name":"292_R.webp","hymnal":"sda","hymnal_numbers":[292],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/292_R.webp for SDA new hymnal #292.'
+from media_assets ma
+join book_entries e on e.entry_number = 292
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/292/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/293/left.webp',
+  null,
+  'image/webp',
+  388194,
+  'left',
+  '{"asset_path":"assets/sheet_music/293_L.webp","original_file_name":"293_L.webp","hymnal":"sda","hymnal_numbers":[293],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/293_L.webp for SDA new hymnal #293.'
+from media_assets ma
+join book_entries e on e.entry_number = 293
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/293/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/294/right.webp',
+  null,
+  'image/webp',
+  426194,
+  'right',
+  '{"asset_path":"assets/sheet_music/294_R.webp","original_file_name":"294_R.webp","hymnal":"sda","hymnal_numbers":[294],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/294_R.webp for SDA new hymnal #294.'
+from media_assets ma
+join book_entries e on e.entry_number = 294
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/294/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/295/left.webp',
+  null,
+  'image/webp',
+  397752,
+  'left',
+  '{"asset_path":"assets/sheet_music/295_L.webp","original_file_name":"295_L.webp","hymnal":"sda","hymnal_numbers":[295],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/295_L.webp for SDA new hymnal #295.'
+from media_assets ma
+join book_entries e on e.entry_number = 295
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/295/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/296/right.webp',
+  null,
+  'image/webp',
+  342506,
+  'right',
+  '{"asset_path":"assets/sheet_music/296_R.webp","original_file_name":"296_R.webp","hymnal":"sda","hymnal_numbers":[296],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/296_R.webp for SDA new hymnal #296.'
+from media_assets ma
+join book_entries e on e.entry_number = 296
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/296/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/297/left.webp',
+  null,
+  'image/webp',
+  376008,
+  'left',
+  '{"asset_path":"assets/sheet_music/297_L.webp","original_file_name":"297_L.webp","hymnal":"sda","hymnal_numbers":[297],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/297_L.webp for SDA new hymnal #297.'
+from media_assets ma
+join book_entries e on e.entry_number = 297
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/297/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/297/right.webp',
+  null,
+  'image/webp',
+  217642,
+  'right',
+  '{"asset_path":"assets/sheet_music/297_R.webp","original_file_name":"297_R.webp","hymnal":"sda","hymnal_numbers":[297],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/297_R.webp for SDA new hymnal #297.'
+from media_assets ma
+join book_entries e on e.entry_number = 297
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/297/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/298/left.webp',
+  null,
+  'image/webp',
+  399590,
+  'left',
+  '{"asset_path":"assets/sheet_music/298_L.webp","original_file_name":"298_L.webp","hymnal":"sda","hymnal_numbers":[298],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/298_L.webp for SDA new hymnal #298.'
+from media_assets ma
+join book_entries e on e.entry_number = 298
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/298/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/299/right.webp',
+  null,
+  'image/webp',
+  387866,
+  'right',
+  '{"asset_path":"assets/sheet_music/299_R.webp","original_file_name":"299_R.webp","hymnal":"sda","hymnal_numbers":[299],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/299_R.webp for SDA new hymnal #299.'
+from media_assets ma
+join book_entries e on e.entry_number = 299
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/299/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/300/left.webp',
+  null,
+  'image/webp',
+  434860,
+  'left',
+  '{"asset_path":"assets/sheet_music/300_L.webp","original_file_name":"300_L.webp","hymnal":"sda","hymnal_numbers":[300],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/300_L.webp for SDA new hymnal #300.'
+from media_assets ma
+join book_entries e on e.entry_number = 300
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/300/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/301/right.webp',
+  null,
+  'image/webp',
+  370298,
+  'right',
+  '{"asset_path":"assets/sheet_music/301_R.webp","original_file_name":"301_R.webp","hymnal":"sda","hymnal_numbers":[301],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/301_R.webp for SDA new hymnal #301.'
+from media_assets ma
+join book_entries e on e.entry_number = 301
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/301/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/302/left.webp',
+  null,
+  'image/webp',
+  351648,
+  'left',
+  '{"asset_path":"assets/sheet_music/302_L.webp","original_file_name":"302_L.webp","hymnal":"sda","hymnal_numbers":[302],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/302_L.webp for SDA new hymnal #302.'
+from media_assets ma
+join book_entries e on e.entry_number = 302
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/302/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/302/right.webp',
+  null,
+  'image/webp',
+  300274,
+  'right',
+  '{"asset_path":"assets/sheet_music/302_R.webp","original_file_name":"302_R.webp","hymnal":"sda","hymnal_numbers":[302],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/302_R.webp for SDA new hymnal #302.'
+from media_assets ma
+join book_entries e on e.entry_number = 302
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/302/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/303/left.webp',
+  null,
+  'image/webp',
+  214698,
+  'left',
+  '{"asset_path":"assets/sheet_music/303_L.webp","original_file_name":"303_L.webp","hymnal":"sda","hymnal_numbers":[303],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/303_L.webp for SDA new hymnal #303.'
+from media_assets ma
+join book_entries e on e.entry_number = 303
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/303/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/303/right.webp',
+  null,
+  'image/webp',
+  213728,
+  'right',
+  '{"asset_path":"assets/sheet_music/303_R.webp","original_file_name":"303_R.webp","hymnal":"sda","hymnal_numbers":[303],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/303_R.webp for SDA new hymnal #303.'
+from media_assets ma
+join book_entries e on e.entry_number = 303
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/303/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/304/left.webp',
+  null,
+  'image/webp',
+  385332,
+  'left',
+  '{"asset_path":"assets/sheet_music/304_L.webp","original_file_name":"304_L.webp","hymnal":"sda","hymnal_numbers":[304],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/304_L.webp for SDA new hymnal #304.'
+from media_assets ma
+join book_entries e on e.entry_number = 304
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/304/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/304/right.webp',
+  null,
+  'image/webp',
+  240710,
+  'right',
+  '{"asset_path":"assets/sheet_music/304_R.webp","original_file_name":"304_R.webp","hymnal":"sda","hymnal_numbers":[304],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/304_R.webp for SDA new hymnal #304.'
+from media_assets ma
+join book_entries e on e.entry_number = 304
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/304/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/305/left.webp',
+  null,
+  'image/webp',
+  437662,
+  'left',
+  '{"asset_path":"assets/sheet_music/305_L.webp","original_file_name":"305_L.webp","hymnal":"sda","hymnal_numbers":[305],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/305_L.webp for SDA new hymnal #305.'
+from media_assets ma
+join book_entries e on e.entry_number = 305
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/305/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/305/right.webp',
+  null,
+  'image/webp',
+  350610,
+  'right',
+  '{"asset_path":"assets/sheet_music/305_R.webp","original_file_name":"305_R.webp","hymnal":"sda","hymnal_numbers":[305],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/305_R.webp for SDA new hymnal #305.'
+from media_assets ma
+join book_entries e on e.entry_number = 305
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/305/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/306/left.webp',
+  null,
+  'image/webp',
+  476034,
+  'left',
+  '{"asset_path":"assets/sheet_music/306_L.webp","original_file_name":"306_L.webp","hymnal":"sda","hymnal_numbers":[306],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/306_L.webp for SDA new hymnal #306.'
+from media_assets ma
+join book_entries e on e.entry_number = 306
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/306/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/307/right.webp',
+  null,
+  'image/webp',
+  382774,
+  'right',
+  '{"asset_path":"assets/sheet_music/307_R.webp","original_file_name":"307_R.webp","hymnal":"sda","hymnal_numbers":[307],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/307_R.webp for SDA new hymnal #307.'
+from media_assets ma
+join book_entries e on e.entry_number = 307
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/307/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/308/left.webp',
+  null,
+  'image/webp',
+  329680,
+  'left',
+  '{"asset_path":"assets/sheet_music/308_L.webp","original_file_name":"308_L.webp","hymnal":"sda","hymnal_numbers":[308],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/308_L.webp for SDA new hymnal #308.'
+from media_assets ma
+join book_entries e on e.entry_number = 308
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/308/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/308/right.webp',
+  null,
+  'image/webp',
+  252528,
+  'right',
+  '{"asset_path":"assets/sheet_music/308_R.webp","original_file_name":"308_R.webp","hymnal":"sda","hymnal_numbers":[308],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/308_R.webp for SDA new hymnal #308.'
+from media_assets ma
+join book_entries e on e.entry_number = 308
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/308/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/309/left.webp',
+  null,
+  'image/webp',
+  256690,
+  'left',
+  '{"asset_path":"assets/sheet_music/309_L.webp","original_file_name":"309_L.webp","hymnal":"sda","hymnal_numbers":[309],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/309_L.webp for SDA new hymnal #309.'
+from media_assets ma
+join book_entries e on e.entry_number = 309
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/309/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/310/right.webp',
+  null,
+  'image/webp',
+  362706,
+  'right',
+  '{"asset_path":"assets/sheet_music/310_R.webp","original_file_name":"310_R.webp","hymnal":"sda","hymnal_numbers":[310],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/310_R.webp for SDA new hymnal #310.'
+from media_assets ma
+join book_entries e on e.entry_number = 310
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/310/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/311/left.webp',
+  null,
+  'image/webp',
+  401168,
+  'left',
+  '{"asset_path":"assets/sheet_music/311_L.webp","original_file_name":"311_L.webp","hymnal":"sda","hymnal_numbers":[311],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/311_L.webp for SDA new hymnal #311.'
+from media_assets ma
+join book_entries e on e.entry_number = 311
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/311/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/312/right.webp',
+  null,
+  'image/webp',
+  371688,
+  'right',
+  '{"asset_path":"assets/sheet_music/312_R.webp","original_file_name":"312_R.webp","hymnal":"sda","hymnal_numbers":[312],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/312_R.webp for SDA new hymnal #312.'
+from media_assets ma
+join book_entries e on e.entry_number = 312
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/312/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/313/left.webp',
+  null,
+  'image/webp',
+  453058,
+  'left',
+  '{"asset_path":"assets/sheet_music/313_L.webp","original_file_name":"313_L.webp","hymnal":"sda","hymnal_numbers":[313],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/313_L.webp for SDA new hymnal #313.'
+from media_assets ma
+join book_entries e on e.entry_number = 313
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/313/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/314/right.webp',
+  null,
+  'image/webp',
+  397454,
+  'right',
+  '{"asset_path":"assets/sheet_music/314_R.webp","original_file_name":"314_R.webp","hymnal":"sda","hymnal_numbers":[314],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/314_R.webp for SDA new hymnal #314.'
+from media_assets ma
+join book_entries e on e.entry_number = 314
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/314/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/315/left.webp',
+  null,
+  'image/webp',
+  381564,
+  'left',
+  '{"asset_path":"assets/sheet_music/315_L.webp","original_file_name":"315_L.webp","hymnal":"sda","hymnal_numbers":[315],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/315_L.webp for SDA new hymnal #315.'
+from media_assets ma
+join book_entries e on e.entry_number = 315
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/315/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/316/right.webp',
+  null,
+  'image/webp',
+  421104,
+  'right',
+  '{"asset_path":"assets/sheet_music/316_R.webp","original_file_name":"316_R.webp","hymnal":"sda","hymnal_numbers":[316],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/316_R.webp for SDA new hymnal #316.'
+from media_assets ma
+join book_entries e on e.entry_number = 316
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/316/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/317/left.webp',
+  null,
+  'image/webp',
+  417388,
+  'left',
+  '{"asset_path":"assets/sheet_music/317_L.webp","original_file_name":"317_L.webp","hymnal":"sda","hymnal_numbers":[317],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/317_L.webp for SDA new hymnal #317.'
+from media_assets ma
+join book_entries e on e.entry_number = 317
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/317/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/317/right.webp',
+  null,
+  'image/webp',
+  350110,
+  'right',
+  '{"asset_path":"assets/sheet_music/317_R.webp","original_file_name":"317_R.webp","hymnal":"sda","hymnal_numbers":[317],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/317_R.webp for SDA new hymnal #317.'
+from media_assets ma
+join book_entries e on e.entry_number = 317
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/317/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/318/left.webp',
+  null,
+  'image/webp',
+  380354,
+  'left',
+  '{"asset_path":"assets/sheet_music/318_L.webp","original_file_name":"318_L.webp","hymnal":"sda","hymnal_numbers":[318],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/318_L.webp for SDA new hymnal #318.'
+from media_assets ma
+join book_entries e on e.entry_number = 318
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/318/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/319/right.webp',
+  null,
+  'image/webp',
+  420048,
+  'right',
+  '{"asset_path":"assets/sheet_music/319_R.webp","original_file_name":"319_R.webp","hymnal":"sda","hymnal_numbers":[319],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/319_R.webp for SDA new hymnal #319.'
+from media_assets ma
+join book_entries e on e.entry_number = 319
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/319/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/320/left.webp',
+  null,
+  'image/webp',
+  465262,
+  'left',
+  '{"asset_path":"assets/sheet_music/320_L.webp","original_file_name":"320_L.webp","hymnal":"sda","hymnal_numbers":[320],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/320_L.webp for SDA new hymnal #320.'
+from media_assets ma
+join book_entries e on e.entry_number = 320
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/320/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/321/right.webp',
+  null,
+  'image/webp',
+  444356,
+  'right',
+  '{"asset_path":"assets/sheet_music/321_R.webp","original_file_name":"321_R.webp","hymnal":"sda","hymnal_numbers":[321],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/321_R.webp for SDA new hymnal #321.'
+from media_assets ma
+join book_entries e on e.entry_number = 321
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/321/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/322/left.webp',
+  null,
+  'image/webp',
+  437126,
+  'left',
+  '{"asset_path":"assets/sheet_music/322_L.webp","original_file_name":"322_L.webp","hymnal":"sda","hymnal_numbers":[322],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/322_L.webp for SDA new hymnal #322.'
+from media_assets ma
+join book_entries e on e.entry_number = 322
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/322/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/323/right.webp',
+  null,
+  'image/webp',
+  435158,
+  'right',
+  '{"asset_path":"assets/sheet_music/323_R.webp","original_file_name":"323_R.webp","hymnal":"sda","hymnal_numbers":[323],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/323_R.webp for SDA new hymnal #323.'
+from media_assets ma
+join book_entries e on e.entry_number = 323
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/323/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/324/left.webp',
+  null,
+  'image/webp',
+  415588,
+  'left',
+  '{"asset_path":"assets/sheet_music/324_L.webp","original_file_name":"324_L.webp","hymnal":"sda","hymnal_numbers":[324],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/324_L.webp for SDA new hymnal #324.'
+from media_assets ma
+join book_entries e on e.entry_number = 324
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/324/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/324/right.webp',
+  null,
+  'image/webp',
+  254300,
+  'right',
+  '{"asset_path":"assets/sheet_music/324_R.webp","original_file_name":"324_R.webp","hymnal":"sda","hymnal_numbers":[324],"page_label":"right"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  20,
+  'Imported from assets/sheet_music/324_R.webp for SDA new hymnal #324.'
+from media_assets ma
+join book_entries e on e.entry_number = 324
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/324/right.webp'
+  and be.slug = 'am-sda-hymnal-new';
+insert into media_assets (
+  media_type,
+  storage_provider,
+  storage_key,
+  public_url,
+  mime_type,
+  file_size_bytes,
+  page_label,
+  metadata
+)
+values (
+  'sheet_music',
+  'app_asset',
+  'sda-hymnal/sheet-music/325/left.webp',
+  null,
+  'image/webp',
+  336450,
+  'left',
+  '{"asset_path":"assets/sheet_music/325_L.webp","original_file_name":"325_L.webp","hymnal":"sda","hymnal_numbers":[325],"page_label":"left"}'::jsonb
+)
+on conflict (storage_provider, storage_key) do update set
+  media_type = excluded.media_type,
+  public_url = excluded.public_url,
+  mime_type = excluded.mime_type,
+  file_size_bytes = excluded.file_size_bytes,
+  page_label = excluded.page_label,
+  metadata = excluded.metadata,
+  updated_at = now();
+insert into media_links (
+  media_asset_id,
+  work_id,
+  relation_type,
+  sort_order,
+  notes
+)
+select
+  ma.id,
+  e.work_id,
+  'primary_sheet_music',
+  10,
+  'Imported from assets/sheet_music/325_L.webp for SDA new hymnal #325.'
+from media_assets ma
+join book_entries e on e.entry_number = 325
+join book_editions be on be.id = e.edition_id
+where ma.storage_provider = 'app_asset'
+  and ma.storage_key = 'sda-hymnal/sheet-music/325/left.webp'
+  and be.slug = 'am-sda-hymnal-new';
+
 commit;
