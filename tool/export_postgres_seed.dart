@@ -1,0 +1,380 @@
+// ignore_for_file: avoid_print
+
+import 'dart:convert';
+import 'dart:io';
+
+Future<void> main(List<String> args) async {
+  final outputPath =
+      args.isNotEmpty ? args[0] : 'backend/content/seed_from_current_json.sql';
+
+  final sda = _loadResourceArrays('assets/data/database/SDA_Hymnal.json');
+  final hagerigna =
+      _loadResourceArrays('assets/data/database/HagerignaData.json');
+
+  final buffer = StringBuffer()
+    ..writeln('-- Generated from current Flutter JSON assets.')
+    ..writeln('-- Run after backend/content/schema.sql.')
+    ..writeln('begin;')
+    ..writeln()
+    ..writeln(_insertLanguage())
+    ..writeln()
+    ..writeln(_insertBook(
+      slug: 'am-sda-hymnal',
+      languageCode: 'am',
+      title: 'Amharic SDA Hymnal',
+      bookType: 'hymnal',
+      sourceNote: 'Imported from assets/data/database/SDA_Hymnal.json',
+    ))
+    ..writeln(_insertEdition(
+      bookSlug: 'am-sda-hymnal',
+      slug: 'am-sda-hymnal-new',
+      title: 'Amharic SDA Hymnal',
+      editionType: 'new',
+      sortOrder: 10,
+      sourceNote: 'new_title_forbookmark and new_song arrays',
+    ))
+    ..writeln(_insertEdition(
+      bookSlug: 'am-sda-hymnal',
+      slug: 'am-sda-hymnal-old',
+      title: 'Amharic SDA Hymnal Old Edition',
+      editionType: 'old',
+      sortOrder: 20,
+      sourceNote: 'old_title_forbookmark and old_song arrays',
+    ))
+    ..writeln(_insertBook(
+      slug: 'am-hagerigna',
+      languageCode: 'am',
+      title: 'Hagerigna Worship Songs',
+      bookType: 'songbook',
+      sourceNote: 'Imported from assets/data/database/HagerignaData.json',
+    ))
+    ..writeln(_insertEdition(
+      bookSlug: 'am-hagerigna',
+      slug: 'am-hagerigna-primary',
+      title: 'Hagerigna Worship Songs',
+      editionType: 'primary',
+      sortOrder: 30,
+      sourceNote: 'song_title_text, song_text, and song_author_text arrays',
+    ));
+
+  _appendSdaEntries(buffer, sda);
+  _appendHagerignaEntries(buffer, hagerigna);
+
+  buffer
+    ..writeln()
+    ..writeln('commit;');
+
+  final outputFile = File(outputPath);
+  outputFile.parent.createSync(recursive: true);
+  outputFile.writeAsStringSync(buffer.toString());
+
+  print('Wrote PostgreSQL seed to $outputPath');
+}
+
+Map<String, List<String>> _loadResourceArrays(String path) {
+  final file = File(path);
+  if (!file.existsSync()) {
+    throw ArgumentError('Missing input file: $path');
+  }
+
+  final jsonData = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+  final arrays = jsonData['resources']?['array'] as List<dynamic>? ?? [];
+
+  final result = <String, List<String>>{};
+  for (final item in arrays) {
+    if (item is! Map<String, dynamic>) {
+      continue;
+    }
+    final name = item['_name']?.toString();
+    final values = item['item'] as List<dynamic>?;
+    if (name == null || values == null) {
+      continue;
+    }
+    result[name] = values.map((value) => value?.toString() ?? '').toList();
+  }
+
+  return result;
+}
+
+void _appendSdaEntries(StringBuffer buffer, Map<String, List<String>> data) {
+  final newTitles = data['new_title_forbookmark'] ?? const [];
+  final oldTitles = data['old_title_forbookmark'] ?? const [];
+  final newLyrics = data['new_song'] ?? const [];
+  final oldLyrics = data['old_song'] ?? const [];
+  final newEnglishTitles = data['new_title_en'] ?? const [];
+  final oldEnglishTitles = data['old_title_en'] ?? const [];
+
+  for (var index = 0; index < newTitles.length; index++) {
+    final number = index + 1;
+    final title = _fallbackTitle(newTitles[index], 'SDA Hymn $number');
+    final englishTitle = _valueAt(newEnglishTitles, index);
+    final canonicalKey = _sdaCanonicalKey(
+      title: title,
+      englishTitle: englishTitle,
+      fallbackNumber: number,
+      fallbackPrefix: 'new',
+    );
+
+    buffer
+      ..writeln(_insertWork(
+        canonicalKey: canonicalKey,
+        defaultTitle: title,
+        defaultEnglishTitle: englishTitle,
+        notes: 'Imported from SDA new hymnal row $number.',
+      ))
+      ..writeln(_insertEntry(
+        editionSlug: 'am-sda-hymnal-new',
+        canonicalKey: canonicalKey,
+        number: number,
+        title: title,
+        englishTitle: englishTitle,
+        lyrics: _valueAt(newLyrics, index) ?? '',
+        sourceKey: 'sda_new',
+        sourceIndex: index,
+      ));
+  }
+
+  for (var index = 0; index < oldTitles.length; index++) {
+    final number = index + 1;
+    final title = _fallbackTitle(oldTitles[index], 'SDA Old Hymn $number');
+    final englishTitle = _valueAt(oldEnglishTitles, index);
+    final canonicalKey = _sdaCanonicalKey(
+      title: title,
+      englishTitle: englishTitle,
+      fallbackNumber: number,
+      fallbackPrefix: 'old',
+    );
+
+    buffer
+      ..writeln(_insertWork(
+        canonicalKey: canonicalKey,
+        defaultTitle: title,
+        defaultEnglishTitle: englishTitle,
+        notes: 'Imported from SDA old hymnal row $number.',
+      ))
+      ..writeln(_insertEntry(
+        editionSlug: 'am-sda-hymnal-old',
+        canonicalKey: canonicalKey,
+        number: number,
+        title: title,
+        englishTitle: englishTitle,
+        lyrics: _valueAt(oldLyrics, index) ?? '',
+        sourceKey: 'sda_old',
+        sourceIndex: index,
+      ));
+  }
+}
+
+void _appendHagerignaEntries(
+  StringBuffer buffer,
+  Map<String, List<String>> data,
+) {
+  final titles = data['song_title_text'] ?? const [];
+  final lyrics = data['song_text'] ?? const [];
+  final artists = data['song_author_text'] ?? const [];
+
+  for (var index = 0; index < titles.length; index++) {
+    final number = index + 1;
+    final title = _fallbackTitle(titles[index], 'Hagerigna Song $number');
+    final canonicalKey = 'am-hagerigna-${number.toString().padLeft(3, '0')}';
+
+    buffer
+      ..writeln(_insertWork(
+        canonicalKey: canonicalKey,
+        defaultTitle: title,
+        defaultEnglishTitle: null,
+        notes: 'Imported from Hagerigna row $number.',
+      ))
+      ..writeln(_insertEntry(
+        editionSlug: 'am-hagerigna-primary',
+        canonicalKey: canonicalKey,
+        number: number,
+        title: title,
+        englishTitle: null,
+        lyrics: _valueAt(lyrics, index) ?? '',
+        sourceKey: 'hagerigna',
+        sourceIndex: index,
+        metadata: {
+          'artist': _valueAt(artists, index),
+        },
+      ));
+  }
+}
+
+String _insertLanguage() {
+  return '''
+insert into languages (code, native_name, english_name, script_code)
+values ('am', 'አማርኛ', 'Amharic', 'Ethi')
+on conflict (code) do update set
+  native_name = excluded.native_name,
+  english_name = excluded.english_name,
+  script_code = excluded.script_code,
+  updated_at = now();''';
+}
+
+String _insertBook({
+  required String slug,
+  required String languageCode,
+  required String title,
+  required String bookType,
+  required String sourceNote,
+}) {
+  return '''
+insert into books (slug, language_code, title, book_type, source_note)
+values (${_sql(slug)}, ${_sql(languageCode)}, ${_sql(title)}, ${_sql(bookType)}, ${_sql(sourceNote)})
+on conflict (slug) do update set
+  language_code = excluded.language_code,
+  title = excluded.title,
+  book_type = excluded.book_type,
+  source_note = excluded.source_note,
+  updated_at = now();''';
+}
+
+String _insertEdition({
+  required String bookSlug,
+  required String slug,
+  required String title,
+  required String editionType,
+  required int sortOrder,
+  required String sourceNote,
+}) {
+  return '''
+insert into book_editions (book_id, slug, title, edition_type, sort_order, source_note)
+select id, ${_sql(slug)}, ${_sql(title)}, ${_sql(editionType)}, $sortOrder, ${_sql(sourceNote)}
+from books
+where slug = ${_sql(bookSlug)}
+on conflict (slug) do update set
+  title = excluded.title,
+  edition_type = excluded.edition_type,
+  sort_order = excluded.sort_order,
+  source_note = excluded.source_note,
+  updated_at = now();''';
+}
+
+String _insertWork({
+  required String canonicalKey,
+  required String defaultTitle,
+  required String? defaultEnglishTitle,
+  required String notes,
+}) {
+  return '''
+insert into works (
+  canonical_key,
+  primary_language_code,
+  default_title,
+  default_english_title,
+  normalized_title,
+  notes
+)
+values (
+  ${_sql(canonicalKey)},
+  'am',
+  ${_sql(defaultTitle)},
+  ${_sqlNullable(defaultEnglishTitle)},
+  ${_sql(_normalize(defaultTitle))},
+  ${_sql(notes)}
+)
+on conflict (canonical_key) do update set
+  default_title = coalesce(nullif(works.default_title, ''), excluded.default_title),
+  default_english_title = coalesce(works.default_english_title, excluded.default_english_title),
+  normalized_title = coalesce(works.normalized_title, excluded.normalized_title),
+  updated_at = now();''';
+}
+
+String _insertEntry({
+  required String editionSlug,
+  required String canonicalKey,
+  required int number,
+  required String title,
+  required String? englishTitle,
+  required String lyrics,
+  required String sourceKey,
+  required int sourceIndex,
+  Map<String, Object?> metadata = const {},
+}) {
+  final metadataJson = jsonEncode(metadata);
+  return '''
+insert into book_entries (
+  edition_id,
+  work_id,
+  entry_number,
+  title,
+  english_title,
+  lyrics,
+  source_key,
+  source_index,
+  metadata
+)
+select
+  be.id,
+  w.id,
+  $number,
+  ${_sql(title)},
+  ${_sqlNullable(englishTitle)},
+  ${_sql(lyrics.replaceAll(r'\n', '\n'))},
+  ${_sql(sourceKey)},
+  $sourceIndex,
+  ${_sql(metadataJson)}::jsonb
+from book_editions be
+join works w on w.canonical_key = ${_sql(canonicalKey)}
+where be.slug = ${_sql(editionSlug)}
+on conflict (edition_id, source_key, source_index) do update set
+  work_id = excluded.work_id,
+  entry_number = excluded.entry_number,
+  title = excluded.title,
+  english_title = excluded.english_title,
+  lyrics = excluded.lyrics,
+  metadata = excluded.metadata,
+  updated_at = now();''';
+}
+
+String _sdaCanonicalKey({
+  required String title,
+  required String? englishTitle,
+  required int fallbackNumber,
+  required String fallbackPrefix,
+}) {
+  final english = _normalize(englishTitle ?? '');
+  if (english.isNotEmpty) {
+    return 'am-sda-en-$english';
+  }
+
+  final amharic = _normalize(title);
+  if (amharic.isNotEmpty) {
+    return 'am-sda-am-$amharic';
+  }
+
+  return 'am-sda-$fallbackPrefix-${fallbackNumber.toString().padLeft(3, '0')}';
+}
+
+String _fallbackTitle(String value, String fallback) {
+  final trimmed = value.trim();
+  return trimmed.isEmpty ? fallback : trimmed;
+}
+
+String? _valueAt(List<String> values, int index) {
+  if (index >= values.length) {
+    return null;
+  }
+  final value = values[index].trim();
+  return value.isEmpty ? null : value;
+}
+
+String _normalize(String value) {
+  return value
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9\u1200-\u137f]+'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'^-|-$'), '');
+}
+
+String _sqlNullable(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'null';
+  }
+  return _sql(value);
+}
+
+String _sql(String value) {
+  return "'${value.replaceAll("'", "''")}'";
+}
