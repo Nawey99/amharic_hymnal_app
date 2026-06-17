@@ -206,3 +206,34 @@ join book_entries e on e.work_id = w.id
 join book_editions be on be.id = e.edition_id
 where be.slug in ('am-sda-hymnal-new', 'am-sda-hymnal-old')
 group by w.id, w.canonical_key, w.default_title, w.default_english_title;
+
+create or replace view sda_hymnal_songs as
+select
+  w.id as work_id,
+  w.canonical_key,
+  coalesce(
+    max(e.title) filter (where be.slug = 'am-sda-hymnal-new'),
+    max(e.title) filter (where be.slug = 'am-sda-hymnal-old'),
+    w.default_title
+  ) as title,
+  coalesce(
+    max(e.english_title) filter (where be.slug = 'am-sda-hymnal-new'),
+    max(e.english_title) filter (where be.slug = 'am-sda-hymnal-old'),
+    w.default_english_title
+  ) as english_title,
+  (max(e.id::text) filter (where be.slug = 'am-sda-hymnal-new'))::uuid as new_entry_id,
+  max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-new') as new_hymnal_number,
+  max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-new') as new_lyrics,
+  (max(e.id::text) filter (where be.slug = 'am-sda-hymnal-old'))::uuid as old_entry_id,
+  max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-old') as old_hymnal_number,
+  max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-old') as old_lyrics,
+  case
+    when max(e.id::text) filter (where be.slug = 'am-sda-hymnal-new') is null then 'missing_new'
+    when max(e.id::text) filter (where be.slug = 'am-sda-hymnal-old') is null then 'missing_old'
+    else 'matched'
+  end as match_status
+from works w
+join book_entries e on e.work_id = w.id
+join book_editions be on be.id = e.edition_id
+where be.slug in ('am-sda-hymnal-new', 'am-sda-hymnal-old')
+group by w.id, w.canonical_key, w.default_title, w.default_english_title;

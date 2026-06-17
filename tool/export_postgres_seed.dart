@@ -22,6 +22,7 @@ class _SdaRow {
 
   String get normalizedEnglish => _normalize(englishTitle ?? '');
   String get normalizedAmharic => _normalize(title);
+  String get normalizedLyrics => _normalizeLyrics(lyrics ?? '');
 }
 
 Future<void> main(List<String> args) async {
@@ -517,6 +518,14 @@ on conflict (source_name, issue_key) do update set
 }
 
 void _countSdaMatchKeys(Map<String, int> counts, _SdaRow row) {
+  if (row.normalizedEnglish.isNotEmpty && row.normalizedLyrics.isNotEmpty) {
+    final key = 'en_lyrics:${row.normalizedEnglish}:${row.normalizedLyrics}';
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
+  if (row.normalizedAmharic.isNotEmpty && row.normalizedLyrics.isNotEmpty) {
+    final key = 'am_lyrics:${row.normalizedAmharic}:${row.normalizedLyrics}';
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
   if (row.normalizedEnglish.isNotEmpty) {
     counts['en:${row.normalizedEnglish}'] =
         (counts['en:${row.normalizedEnglish}'] ?? 0) + 1;
@@ -534,18 +543,35 @@ String _sdaCanonicalKey({
 }) {
   final english = row.normalizedEnglish;
   final amharic = row.normalizedAmharic;
+  final lyrics = row.normalizedLyrics;
+  final englishLyricsKey =
+      english.isEmpty || lyrics.isEmpty ? null : 'en_lyrics:$english:$lyrics';
+  final amharicLyricsKey =
+      amharic.isEmpty || lyrics.isEmpty ? null : 'am_lyrics:$amharic:$lyrics';
   final englishKey = english.isEmpty ? null : 'en:$english';
   final amharicKey = amharic.isEmpty ? null : 'am:$amharic';
 
+  if (englishLyricsKey != null &&
+      ownKeyCounts[englishLyricsKey] == 1 &&
+      oppositeKeyCounts[englishLyricsKey] == 1) {
+    return 'am-sda-en-lyrics-${_shortKey('$english-$lyrics')}';
+  }
+
+  if (amharicLyricsKey != null &&
+      ownKeyCounts[amharicLyricsKey] == 1 &&
+      oppositeKeyCounts[amharicLyricsKey] == 1) {
+    return 'am-sda-am-lyrics-${_shortKey('$amharic-$lyrics')}';
+  }
+
   if (englishKey != null &&
       ownKeyCounts[englishKey] == 1 &&
-      oppositeKeyCounts.containsKey(englishKey)) {
+      oppositeKeyCounts[englishKey] == 1) {
     return 'am-sda-en-$english';
   }
 
   if (amharicKey != null &&
       ownKeyCounts[amharicKey] == 1 &&
-      oppositeKeyCounts.containsKey(amharicKey)) {
+      oppositeKeyCounts[amharicKey] == 1) {
     return 'am-sda-am-$amharic';
   }
 
@@ -579,6 +605,23 @@ String _normalize(String value) {
       .replaceAll(RegExp(r'[^a-z0-9\u1200-\u137f]+'), '-')
       .replaceAll(RegExp(r'-+'), '-')
       .replaceAll(RegExp(r'^-|-$'), '');
+}
+
+String _normalizeLyrics(String value) {
+  return value
+      .replaceAll(r'\n', '\n')
+      .toLowerCase()
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(RegExp(r'[።፣፤፥፦፧፨.,;:!?()\\[\\]{}"' '`~_-]+'), '')
+      .trim();
+}
+
+String _shortKey(String value) {
+  final normalized = _normalize(value);
+  if (normalized.length <= 96) {
+    return normalized;
+  }
+  return normalized.substring(0, 96).replaceAll(RegExp(r'-+$'), '');
 }
 
 String _sqlNullable(String? value) {

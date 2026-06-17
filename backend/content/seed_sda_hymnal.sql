@@ -148,7 +148,7 @@ select
 ',
   'sda_new',
   1,
-  '{"new_hymnal_number":2,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
+  '{"new_hymnal_number":2,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
 where be.slug = 'am-sda-hymnal-new'
@@ -169,7 +169,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-holy-holy',
+  'am-sda-en-lyrics-holy-holy-holy-ቅዱስ-ቅዱስ-ቅዱስ-ኃያል-ጌታችን-በየጧቱ-ላንተ-እንዘምራለን-ቅዱስ-ቅዱስ-ቅዱስ-መኃሪና-ኃያል-እግዚአብሔር-የዘላለም-ገዥ-ቅዱስ-ቅ',
   'am',
   'ቅዱስ ቅዱስ ቅዱስ',
   'Holy Holy Holy',
@@ -217,7 +217,7 @@ select
   2,
   '{"new_hymnal_number":3,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-holy-holy-ቅዱስ-ቅዱስ-ቅዱስ-ኃያል-ጌታችን-በየጧቱ-ላንተ-እንዘምራለን-ቅዱስ-ቅዱስ-ቅዱስ-መኃሪና-ኃያል-እግዚአብሔር-የዘላለም-ገዥ-ቅዱስ-ቅ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -300,7 +300,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ለየሱስ-ስም-እልል-በሉ',
+  'am-sda-am-lyrics-ለየሱስ-ስም-እልል-በሉ-ለየሱስ-ስም-እልል-በሉ-መላዕክት-ስገዱ-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-እላ',
   'am',
   'ለየሱስ ስም እልል በሉ',
   'All Hail the Power of Jseus Name',
@@ -353,7 +353,7 @@ select
   4,
   '{"new_hymnal_number":5,"old_hymnal_number":5,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ለየሱስ-ስም-እልል-በሉ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ለየሱስ-ስም-እልል-በሉ-ለየሱስ-ስም-እልል-በሉ-መላዕክት-ስገዱ-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-እላ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -372,7 +372,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-praise-to-jesus',
+  'am-sda-en-lyrics-praise-to-jesus-ጌታችን-አመስግኑት-በደስታ-ዝማሬ-ሕፃናት-ያመስግኑት-የሱስ-ጌታችንን-ታናሾችን-ወደደ-ወደርሱም-ጠራቸው-በክንዱም-አቀፋቸው-ነፍሱን',
   'am',
   'ጌታችን አመስግኑት',
   'Praise to Jesus',
@@ -425,7 +425,7 @@ select
   5,
   '{"new_hymnal_number":6,"old_hymnal_number":6,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-praise-to-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-praise-to-jesus-ጌታችን-አመስግኑት-በደስታ-ዝማሬ-ሕፃናት-ያመስግኑት-የሱስ-ጌታችንን-ታናሾችን-ወደደ-ወደርሱም-ጠራቸው-በክንዱም-አቀፋቸው-ነፍሱን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -444,7 +444,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ልዑላዊ-ግሩም-ክብሩ',
+  'am-sda-am-lyrics-ልዑላዊ-ግሩም-ክብሩ-ልዑላዊ-ግሩም-ክብሩ-በርሱ-ተገለጠ-የብርሃን-አክሊልን-ለብሷል-ካፉም-ፀጋ-ሞልቷል-ካፉም-ፀጋ-ሞልቷል-ሟች-ከሆኑ-ከሰው-ልጆች-አይወዳደ',
   'am',
   'ልዑላዊ ግሩም ክብሩ',
   'Majestic Sweetness Sits Enthroned',
@@ -503,7 +503,7 @@ select
   6,
   '{"new_hymnal_number":7,"old_hymnal_number":24,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ልዑላዊ-ግሩም-ክብሩ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ልዑላዊ-ግሩም-ክብሩ-ልዑላዊ-ግሩም-ክብሩ-በርሱ-ተገለጠ-የብርሃን-አክሊልን-ለብሷል-ካፉም-ፀጋ-ሞልቷል-ካፉም-ፀጋ-ሞልቷል-ሟች-ከሆኑ-ከሰው-ልጆች-አይወዳደ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -522,7 +522,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tell-me-that-old-old-story',
+  'am-sda-en-lyrics-tell-me-that-old-old-story-የጥንት-ታሪክ-ንገረኝ-ስላዲሷ-አገር-ስለ-የሱስ-ፍቅር-ስለ-የሱስ-ክብር-እንዲባኝ-አድርገህ-ታሪኩን-ንገረኝ-ኃጢ',
   'am',
   'የጥንት ታሪክ ንገረኝ',
   'Tell Me that Old, Old Story',
@@ -577,7 +577,7 @@ select
   7,
   '{"new_hymnal_number":8,"old_hymnal_number":8,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tell-me-that-old-old-story'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tell-me-that-old-old-story-የጥንት-ታሪክ-ንገረኝ-ስላዲሷ-አገር-ስለ-የሱስ-ፍቅር-ስለ-የሱስ-ክብር-እንዲባኝ-አድርገህ-ታሪኩን-ንገረኝ-ኃጢ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -596,7 +596,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-redeemer',
+  'am-sda-en-lyrics-my-redeemer-እዘምራለሁ-ላዳኜ-ላስደናቂው-ፍቅሩ-ስል-ተሰቃየልኝ-በመስቀል-ከመርገም-እኔን-ሊያድን-ዘምሩ-ላዳኜ-ክብር-ላዳኜ-ክብር-ዘምሩ-ላዳኜ-ክብር',
   'am',
   'ላዳኜ እዘምራለው',
   'My Redeemer',
@@ -657,7 +657,7 @@ select
   8,
   '{"new_hymnal_number":9,"old_hymnal_number":9,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-redeemer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-redeemer-እዘምራለሁ-ላዳኜ-ላስደናቂው-ፍቅሩ-ስል-ተሰቃየልኝ-በመስቀል-ከመርገም-እኔን-ሊያድን-ዘምሩ-ላዳኜ-ክብር-ላዳኜ-ክብር-ዘምሩ-ላዳኜ-ክብር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -676,7 +676,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-maker-and-my-king',
+  'am-sda-en-lyrics-my-maker-and-my-king-ፈጣሪ-ንጉሤ-ሁሉን-የሰጠኸኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-እኔ-የእጅህ-ፍ',
   'am',
   'ፈጣሪ ንጉሤ',
   'My Maker and My King',
@@ -725,7 +725,7 @@ select
   9,
   '{"new_hymnal_number":10,"old_hymnal_number":10,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-maker-and-my-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-maker-and-my-king-ፈጣሪ-ንጉሤ-ሁሉን-የሰጠኸኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-እኔ-የእጅህ-ፍ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -744,7 +744,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-mighty-fortress-is-our-god',
+  'am-sda-en-lyrics-a-mighty-fortress-is-our-god-አምባችን-አምላካችን-ነው-ብርቱ-ዕቃ-ጦራችን-በመከራችን-እርሱ-ነው-ጽኑ-መጠጊያችን-የጥንት-ጠላትችን-ሊያጠፋ',
   'am',
   'አምባችን አምላካችን ነው',
   'A Mighty Fortress is Our God',
@@ -792,7 +792,7 @@ select
   10,
   '{"new_hymnal_number":11,"old_hymnal_number":11,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-mighty-fortress-is-our-god'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-mighty-fortress-is-our-god-አምባችን-አምላካችን-ነው-ብርቱ-ዕቃ-ጦራችን-በመከራችን-እርሱ-ነው-ጽኑ-መጠጊያችን-የጥንት-ጠላትችን-ሊያጠፋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -811,7 +811,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ተመስገን',
+  'am-sda-am-lyrics-ተመስገን-ሁሉን-የፈጠረ-አምላክ-ይመስገን-ዓለምን-ወዶ-ልጁን-እስኪሰጠን-ከኃጢዓት-ሊያነፃን-ሕይወቱን-ሰጠን-የሕይወት-መንገድ-ደግሞ-ከፈተልን-ተመስገን-ተመ',
   'am',
   'ተመስገን',
   'To God Be the Glory',
@@ -868,7 +868,7 @@ select
   11,
   '{"new_hymnal_number":12,"old_hymnal_number":13,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ተመስገን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ተመስገን-ሁሉን-የፈጠረ-አምላክ-ይመስገን-ዓለምን-ወዶ-ልጁን-እስኪሰጠን-ከኃጢዓት-ሊያነፃን-ሕይወቱን-ሰጠን-የሕይወት-መንገድ-ደግሞ-ከፈተልን-ተመስገን-ተመ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -887,7 +887,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-did-he-do',
+  'am-sda-en-lyrics-what-did-he-do-አስደናቂውን-ታሪክ-ስሙ-ያምላክ-ልጅ-የሰራውን-ክብሩን-ትቶ-ተዋረደልን-በክቡር-ደሙ-ገዛን-ማነው-ከጥፋት-ያዳነኝ-ምን-ሠራልኝ-የት',
   'am',
   'ምን ሠራልን',
   'What Did He Do?',
@@ -939,7 +939,7 @@ select
   12,
   '{"new_hymnal_number":13,"old_hymnal_number":12,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-did-he-do'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-did-he-do-አስደናቂውን-ታሪክ-ስሙ-ያምላክ-ልጅ-የሰራውን-ክብሩን-ትቶ-ተዋረደልን-በክቡር-ደሙ-ገዛን-ማነው-ከጥፋት-ያዳነኝ-ምን-ሠራልኝ-የት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -958,7 +958,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-thank-thee',
+  'am-sda-en-lyrics-we-thank-thee-ምስጋና-ለአንተ-ይገባሃል-ለስጦታህ-ከቀን-ወደ-ቀን-ለምህረትህ-ምስጋና-ይድረስህ-በየቀኑ-ለምትሰጠን',
   'am',
   'ምስጋና ይገባሃል',
   'We Thank Thee',
@@ -997,9 +997,9 @@ select
 ',
   'sda_new',
   13,
-  '{"new_hymnal_number":14,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
+  '{"new_hymnal_number":14,"old_hymnal_number":250,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-thank-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-thank-thee-ምስጋና-ለአንተ-ይገባሃል-ለስጦታህ-ከቀን-ወደ-ቀን-ለምህረትህ-ምስጋና-ይድረስህ-በየቀኑ-ለምትሰጠን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1018,7 +1018,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-worthy-worthy-is-the-lamb',
+  'am-sda-en-lyrics-worthy-worthy-is-the-lamb-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ለሞተው-ክብር-ሃሌሉያ-ስብሐት-ሃሌሉያ-ክብር-ሃሌሉያ-ለ',
   'am',
   'ክብር ለበጉ ይሁን',
   'Worthy, Worthy, Is the Lamb',
@@ -1067,7 +1067,7 @@ select
   14,
   '{"new_hymnal_number":15,"old_hymnal_number":15,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-worthy-worthy-is-the-lamb'
+join works w on w.canonical_key = 'am-sda-en-lyrics-worthy-worthy-is-the-lamb-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ለሞተው-ክብር-ሃሌሉያ-ስብሐት-ሃሌሉያ-ክብር-ሃሌሉያ-ለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1086,7 +1086,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-praise-to-the-lord',
+  'am-sda-en-lyrics-praise-to-the-lord-ምስጋና-ላምላክ-ኃያሉ-የፍጥረታት-ንጉሥ-አወድሱት-ፈቃር-ነውና-ቸርና-ቅዱስ-የምትሰሙ-ወደ-መቅደስ-ቅረቡ-ምስጋና-በደስታ-ስጡ',
   'am',
   'ምስጋና ላምላክ',
   'Praise to the Lord',
@@ -1135,7 +1135,7 @@ select
   15,
   '{"new_hymnal_number":16,"old_hymnal_number":16,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-praise-to-the-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-praise-to-the-lord-ምስጋና-ላምላክ-ኃያሉ-የፍጥረታት-ንጉሥ-አወድሱት-ፈቃር-ነውና-ቸርና-ቅዱስ-የምትሰሙ-ወደ-መቅደስ-ቅረቡ-ምስጋና-በደስታ-ስጡ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1237,7 +1237,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-count-your-blessing',
+  'am-sda-en-lyrics-count-your-blessing-በሕይወት-ማዕበል-ጎርፍ-ስትቀጠቀጥ-ሁሉም-ጠፍቶብህ-ተስፋህም-ሲቆረጥ-ባርኮትህን-ቁጠር-ዘርዝር-በተራ-ወዲያው-ታስባለህ-ያም',
   'am',
   'ባርኮትህን ቁጠር',
   'Count Your Blessing',
@@ -1303,7 +1303,7 @@ select
   17,
   '{"new_hymnal_number":18,"old_hymnal_number":19,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-count-your-blessing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-count-your-blessing-በሕይወት-ማዕበል-ጎርፍ-ስትቀጠቀጥ-ሁሉም-ጠፍቶብህ-ተስፋህም-ሲቆረጥ-ባርኮትህን-ቁጠር-ዘርዝር-በተራ-ወዲያው-ታስባለህ-ያም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1322,7 +1322,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-revive-us-again',
+  'am-sda-en-lyrics-revive-us-again-አምላክ-ይመስገን-ልጁን-ስለሰጠን-በክቡር-ደሙ-ስለ-ገዛን-ሃሌሉያ-ክብር-ላንተ-ሃሌሉያ-አሜን-ሃሌሉያ-ክብር-ላንተ-አድሰን-አሁን',
   'am',
   'አምላክ ይመስገን',
   'Revive Us Again',
@@ -1381,7 +1381,7 @@ select
   18,
   '{"new_hymnal_number":19,"old_hymnal_number":26,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-revive-us-again'
+join works w on w.canonical_key = 'am-sda-en-lyrics-revive-us-again-አምላክ-ይመስገን-ልጁን-ስለሰጠን-በክቡር-ደሙ-ስለ-ገዛን-ሃሌሉያ-ክብር-ላንተ-ሃሌሉያ-አሜን-ሃሌሉያ-ክብር-ላንተ-አድሰን-አሁን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1400,7 +1400,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-thou-in-whose-presence',
+  'am-sda-en-lyrics-o-thou-in-whose-presence-ነፍሴ-ደስ-የምትሰኝብህ-ጌታ-በጭንቀቴ-የምጠራህ-አጽናኝ-ደጋፊ-በርቱ-መከታዬ-ተስፋዬ-ሁለንተናዬ-ግሩም-ጣፋጭ-የሆነ',
   'am',
   'ነፍሴ ደስ የምትሰኝብህ ጌታ',
   'O Thou in Whose Presence',
@@ -1454,7 +1454,7 @@ select
   19,
   '{"new_hymnal_number":20,"old_hymnal_number":22,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-thou-in-whose-presence'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-thou-in-whose-presence-ነፍሴ-ደስ-የምትሰኝብህ-ጌታ-በጭንቀቴ-የምጠራህ-አጽናኝ-ደጋፊ-በርቱ-መከታዬ-ተስፋዬ-ሁለንተናዬ-ግሩም-ጣፋጭ-የሆነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1473,7 +1473,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-will-sing-the-wondrous-story',
+  'am-sda-en-lyrics-i-will-sing-the-wondrous-story-እዘምራለው-ታሪኩን-ለየሱስ-ለሞተልኝ-ክብሩን-ሁሉ-እንደጣለ-በቀራኒዮ-መስቀል-ልዘምር-ያንን-ግሩም-ታሪክ',
   'am',
   'ታሪኩን እዘምራለው',
   'I Will Sing the Wondrous Story',
@@ -1532,7 +1532,7 @@ select
   20,
   '{"new_hymnal_number":21,"old_hymnal_number":21,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-will-sing-the-wondrous-story'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-sing-the-wondrous-story-እዘምራለው-ታሪኩን-ለየሱስ-ለሞተልኝ-ክብሩን-ሁሉ-እንደጣለ-በቀራኒዮ-መስቀል-ልዘምር-ያንን-ግሩም-ታሪክ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1551,7 +1551,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-the-very-thought-of-thee',
+  'am-sda-en-lyrics-jesus-the-very-thought-of-thee-ኦ-የሱስ-ሆይ-አንተን-ሳስብ-ልቤ-ይደሰታል-ፊትህን-ማየት-ግን-ይበልጣል-ዕረፍትም-ይሰጣል-የትሁታንም-ፋሆ',
   'am',
   'ኦ የሱስ ሆይ አንተን ሳስብ',
   'Jesus, The Very Thought Of Thee',
@@ -1600,7 +1600,7 @@ select
   21,
   '{"new_hymnal_number":22,"old_hymnal_number":18,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-the-very-thought-of-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-the-very-thought-of-thee-ኦ-የሱስ-ሆይ-አንተን-ሳስብ-ልቤ-ይደሰታል-ፊትህን-ማየት-ግን-ይበልጣል-ዕረፍትም-ይሰጣል-የትሁታንም-ፋሆ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1619,7 +1619,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መዝሙሩን-ዘምሩለት',
+  'am-sda-am-lyrics-መዝሙሩን-ዘምሩለት-ክርስቶስ-ኃጢአተኞችን-በፀጋው-ይቀበላል-በላይኛውም-መንገድ-ሊመራቸው-ይወዳል-መዝሙሩን-ዘምሩለት-ደጋግመህ-ዘምር-ደጋግመህ-ዘምር-በፀጋው',
   'am',
   'መዝሙሩን ዘምሩለት',
   'Christ Receiveth Sinful Men',
@@ -1677,7 +1677,7 @@ select
   22,
   '{"new_hymnal_number":23,"old_hymnal_number":25,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መዝሙሩን-ዘምሩለት'
+join works w on w.canonical_key = 'am-sda-am-lyrics-መዝሙሩን-ዘምሩለት-ክርስቶስ-ኃጢአተኞችን-በፀጋው-ይቀበላል-በላይኛውም-መንገድ-ሊመራቸው-ይወዳል-መዝሙሩን-ዘምሩለት-ደጋግመህ-ዘምር-ደጋግመህ-ዘምር-በፀጋው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1696,7 +1696,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-redeemed',
+  'am-sda-en-lyrics-redeemed-መዳኔን-ላውጅ-እወዳለው-በሞተው-በግ-ደም-ድኛለው-ወሰን-በሌለው-ምህረት-ዳንኩኝ-ለዘላለምም-ልጁ-ነኝ-ዳንኩኝ-ዳንኩኝ-በሞተው-በግ-ደም-ድኛለ',
   'am',
   'ዳንኩኝ',
   'Redeemed',
@@ -1768,7 +1768,7 @@ select
   23,
   '{"new_hymnal_number":24,"old_hymnal_number":23,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-redeemed'
+join works w on w.canonical_key = 'am-sda-en-lyrics-redeemed-መዳኔን-ላውጅ-እወዳለው-በሞተው-በግ-ደም-ድኛለው-ወሰን-በሌለው-ምህረት-ዳንኩኝ-ለዘላለምም-ልጁ-ነኝ-ዳንኩኝ-ዳንኩኝ-በሞተው-በግ-ደም-ድኛለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -1932,7 +1932,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-would-draw-nearer-to-jesus',
+  'am-sda-en-lyrics-i-would-draw-nearer-to-jesus-ወደ-የሱስ-እቀርባለሁ-ባለበት-እኖራለው-ለማገልገል-እየሞከርሁ-በእጁ-እድናለው-ወደ-የሱስ-እቀርባለው-ወደ-እ',
   'am',
   'ወደ የሱስ እቀርባለው',
   'I Would Draw Nearer to Jesus',
@@ -1983,7 +1983,7 @@ select
   26,
   '{"new_hymnal_number":27,"old_hymnal_number":28,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-would-draw-nearer-to-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-would-draw-nearer-to-jesus-ወደ-የሱስ-እቀርባለሁ-ባለበት-እኖራለው-ለማገልገል-እየሞከርሁ-በእጁ-እድናለው-ወደ-የሱስ-እቀርባለው-ወደ-እ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2002,7 +2002,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-we-come-to-hear-his-word',
+  'am-sda-en-lyrics-when-we-come-to-hear-his-word-በተስፋ-ስቀርበው-ለመስማት-ቃሉን-ሲያበራልኝ-የጨለማ-ኃይልም-ይርቃል-ከኔ-የሕይወትም-ብርሃን-ይበራል-በፍቅ',
   'am',
   'በተስፋ ስቀርበው',
   'When We Come to Hear His Word',
@@ -2051,7 +2051,7 @@ select
   27,
   '{"new_hymnal_number":28,"old_hymnal_number":29,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-we-come-to-hear-his-word'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-we-come-to-hear-his-word-በተስፋ-ስቀርበው-ለመስማት-ቃሉን-ሲያበራልኝ-የጨለማ-ኃይልም-ይርቃል-ከኔ-የሕይወትም-ብርሃን-ይበራል-በፍቅ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2070,7 +2070,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የጽዮን-ግንብ-ጠባቂ-ሆይ',
+  'am-sda-am-lyrics-የጽዮን-ግንብ-ጠባቂ-ሆይ-የጽዮን-ግንብ-ጠባቂ-ሆይ-ስለ-ሌቱ-ንገረን-ቀኑ-ሊነጋ-ብሏልን-ንጋቱስ-ሊወጣልን-አብራልን-አሁን-የብርሃን-ጮራ-አብራልን-አሁን-የ',
   'am',
   'የጽዮን ግንብ ጠባቂ ሆይ',
   'Watchmen on the walls of Zion',
@@ -2123,7 +2123,7 @@ select
   28,
   '{"new_hymnal_number":29,"old_hymnal_number":30,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የጽዮን-ግንብ-ጠባቂ-ሆይ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የጽዮን-ግንብ-ጠባቂ-ሆይ-የጽዮን-ግንብ-ጠባቂ-ሆይ-ስለ-ሌቱ-ንገረን-ቀኑ-ሊነጋ-ብሏልን-ንጋቱስ-ሊወጣልን-አብራልን-አሁን-የብርሃን-ጮራ-አብራልን-አሁን-የ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2142,7 +2142,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ግሩም-ድንቁ-የሱስ',
+  'am-sda-am-lyrics-ግሩም-ድንቁ-የሱስ-ግሩም-ድንቁ-የሱስ-የፍጥረታት-ንጉሥ-ኦ-ያምላክ-እና-የሰው-ልጅ-አፈቀርህ-አለሁ-አከብርህ-አለው-አንተ-ነህ-ክብሬ-ደስታዬም-መስክህ-ያም',
   'am',
   'ግሩም ድንቁ የሱስ',
   'Fairest Lord Jesus',
@@ -2187,7 +2187,7 @@ select
   29,
   '{"new_hymnal_number":30,"old_hymnal_number":31,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ግሩም-ድንቁ-የሱስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ግሩም-ድንቁ-የሱስ-ግሩም-ድንቁ-የሱስ-የፍጥረታት-ንጉሥ-ኦ-ያምላክ-እና-የሰው-ልጅ-አፈቀርህ-አለሁ-አከብርህ-አለው-አንተ-ነህ-ክብሬ-ደስታዬም-መስክህ-ያም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2206,7 +2206,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-ye-watchers-and-ye-holy-ones',
+  'am-sda-en-lyrics-ye-watchers-and-ye-holy-ones-እላንት-ተመልካች-ቅዱሳን-ብሩክ-ኪሩቤል-ዙፋናትም-ዘምሩለት-ሃሌሉያ-ጩሁ-ግዛት-ስልጣናትም-ኃያል-መላዕክት-ዘ',
   'am',
   'እላንት ተመልካች ቅዱሳን',
   'Ye Watchers and Ye Holy Ones',
@@ -2255,7 +2255,7 @@ select
   30,
   '{"new_hymnal_number":31,"old_hymnal_number":32,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-ye-watchers-and-ye-holy-ones'
+join works w on w.canonical_key = 'am-sda-en-lyrics-ye-watchers-and-ye-holy-ones-እላንት-ተመልካች-ቅዱሳን-ብሩክ-ኪሩቤል-ዙፋናትም-ዘምሩለት-ሃሌሉያ-ጩሁ-ግዛት-ስልጣናትም-ኃያል-መላዕክት-ዘ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2274,7 +2274,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-you-must-open-the-door',
+  'am-sda-en-lyrics-you-must-open-the-door-በሩን-ክፈቱለት-በሩን-ክፈቱለት-የሱስ-ሲገባ-አርነት-ያወጣል-ግን-በሩን-ክፈቱለት',
   'am',
   'በሩን ክፈቱለት',
   'You Must Open the Door',
@@ -2310,7 +2310,7 @@ select
   31,
   '{"new_hymnal_number":32,"old_hymnal_number":249,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-you-must-open-the-door'
+join works w on w.canonical_key = 'am-sda-en-lyrics-you-must-open-the-door-በሩን-ክፈቱለት-በሩን-ክፈቱለት-የሱስ-ሲገባ-አርነት-ያወጣል-ግን-በሩን-ክፈቱለት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2329,7 +2329,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የየሱስን-ስም-ተቀበል',
+  'am-sda-am-lyrics-የየሱስን-ስም-ተቀበል-የየሱስን-ስም-ተቀበል-አንተ-ችግረኛ-ልጅ-መጽናናትን-እንዲሰጥህ-በምትሄድበት-ሁሉ-ክቡር-ስም-ጣፋጭ-ስም-የዘላለም-ደስታ-ነው-ክቡር',
   'am',
   'የየሱስን ስም ተቀበል',
   'Takae the Name of Jesus With You',
@@ -2384,7 +2384,7 @@ select
   32,
   '{"new_hymnal_number":33,"old_hymnal_number":33,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የየሱስን-ስም-ተቀበል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የየሱስን-ስም-ተቀበል-የየሱስን-ስም-ተቀበል-አንተ-ችግረኛ-ልጅ-መጽናናትን-እንዲሰጥህ-በምትሄድበት-ሁሉ-ክቡር-ስም-ጣፋጭ-ስም-የዘላለም-ደስታ-ነው-ክቡር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2403,7 +2403,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-every-day-and-every-hour',
+  'am-sda-en-lyrics-every-day-and-every-hour-መድኅኔ-ተቀበለኝ-እጠጋለው-ጌታ-ወዳንተ-ደምህ-እንዲጠብቀኝ-ከመለየት-አምላኬ-ካንተ-አ-በየሰዓት-በየጊዜው-ዝ-በደም',
   'am',
   'በየሰዓት በየጊዜው',
   'Every Day and Every Hour',
@@ -2457,7 +2457,7 @@ select
   33,
   '{"new_hymnal_number":34,"old_hymnal_number":34,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-every-day-and-every-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-every-day-and-every-hour-መድኅኔ-ተቀበለኝ-እጠጋለው-ጌታ-ወዳንተ-ደምህ-እንዲጠብቀኝ-ከመለየት-አምላኬ-ካንተ-አ-በየሰዓት-በየጊዜው-ዝ-በደም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2476,7 +2476,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-no-other-name-like-jesus',
+  'am-sda-en-lyrics-there-s-no-other-name-like-jesus-እንደ-የሱስ-ስም-አይገኝም-ይህ-የተወደደም-ስም-ለመላዕክትም-ደስታ-ነው-ለክርስቲያንም-ተድላ-ነው-የሱ',
   'am',
   'እንደ የሱስ ስም አይገኝም',
   'There\''s No Other Name Like Jesus',
@@ -2539,7 +2539,7 @@ select
   34,
   '{"new_hymnal_number":35,"old_hymnal_number":35,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-no-other-name-like-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-no-other-name-like-jesus-እንደ-የሱስ-ስም-አይገኝም-ይህ-የተወደደም-ስም-ለመላዕክትም-ደስታ-ነው-ለክርስቲያንም-ተድላ-ነው-የሱ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2558,7 +2558,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-spirit-faithful-guide',
+  'am-sda-en-lyrics-holy-spirit-faithful-guide-ከክርስቲያን-የማይርቀው-መንፈስ-ቅዱስ-መሪያችን-በበረሃ-ስንመንን-እጃችን-ይዘህ-ምራን-ስንሰማ-መልካም-ቃልህን',
   'am',
   'መንፈስ ቅዱስ መሪያችን',
   'Holy Spirit, Faithful Guide',
@@ -2606,7 +2606,7 @@ select
   35,
   '{"new_hymnal_number":36,"old_hymnal_number":36,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-spirit-faithful-guide'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-spirit-faithful-guide-ከክርስቲያን-የማይርቀው-መንፈስ-ቅዱስ-መሪያችን-በበረሃ-ስንመንን-እጃችን-ይዘህ-ምራን-ስንሰማ-መልካም-ቃልህን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2625,7 +2625,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-abide-with-me',
+  'am-sda-en-lyrics-abide-with-me-ከኔ-ጋር-ሁን-በጨለመ-ጊዜ-ጨልሟልና-ከኔ-ጋር-እደር-ያላንተ-ረዳት-በታጣ-ጊዜ-የረዳተቢስ-ረጅ-አትለየኝ-የሕይወት-ቀን-ቶሎ-ይቸኩላል',
   'am',
   'ከኔ ጋር ሁን',
   'Abide With Me',
@@ -2678,7 +2678,7 @@ select
   36,
   '{"new_hymnal_number":37,"old_hymnal_number":37,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-abide-with-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-abide-with-me-ከኔ-ጋር-ሁን-በጨለመ-ጊዜ-ጨልሟልና-ከኔ-ጋር-እደር-ያላንተ-ረዳት-በታጣ-ጊዜ-የረዳተቢስ-ረጅ-አትለየኝ-የሕይወት-ቀን-ቶሎ-ይቸኩላል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2697,7 +2697,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-day-is-dying-in-the-west',
+  'am-sda-en-lyrics-day-is-dying-in-the-west-ፀሀዩ-ሊገባ-ነው-ጨለማ-ሊመጣ-ነው-ትጋ-ስገድ-ፀልይም-የሌሊት-ፀዳል-ሲታይ-በሰማያት-ቅዱስ-ቅዱስ-ቅዱስ-ልዑል-አም',
   'am',
   'ፀሀዩ ሊገባ ነው',
   'Day is Dying in the West',
@@ -2762,7 +2762,7 @@ select
   37,
   '{"new_hymnal_number":38,"old_hymnal_number":38,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-day-is-dying-in-the-west'
+join works w on w.canonical_key = 'am-sda-en-lyrics-day-is-dying-in-the-west-ፀሀዩ-ሊገባ-ነው-ጨለማ-ሊመጣ-ነው-ትጋ-ስገድ-ፀልይም-የሌሊት-ፀዳል-ሲታይ-በሰማያት-ቅዱስ-ቅዱስ-ቅዱስ-ልዑል-አም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2781,7 +2781,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የበረከት-ዝናብ-አለ',
+  'am-sda-am-lyrics-የበረከት-ዝናብ-አለ-የበረከት-ዝናብ-አለ-ግሩም-የፍቅር-ተስፋ-የመታደስ-ወራት-አለ-ከአዳኙ-የሚላክ-አ-ባርኮት-ያዘንባል-ዝ-የሚያሻንንም-ሁሉ-ማ-በጠብታ-ሲ',
   'am',
   'የበረከት ዝናብ አለ',
   'There Shall Be Shower of Blessing',
@@ -2840,7 +2840,7 @@ select
   38,
   '{"new_hymnal_number":39,"old_hymnal_number":39,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የበረከት-ዝናብ-አለ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የበረከት-ዝናብ-አለ-የበረከት-ዝናብ-አለ-ግሩም-የፍቅር-ተስፋ-የመታደስ-ወራት-አለ-ከአዳኙ-የሚላክ-አ-ባርኮት-ያዘንባል-ዝ-የሚያሻንንም-ሁሉ-ማ-በጠብታ-ሲ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2859,7 +2859,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-worship-the-king',
+  'am-sda-en-lyrics-o-worship-the-king-እንስገድ-ላምላክ-ለክብር-ጌታ-እንዘምርም-ፍቅሩን-በደስታ-መጠጊያ-ጋሻችን-ፈጣሪያችን-ግርማን-ተላብሷል-እንዲሁም-ምስጋናን-ኃ',
   'am',
   'እንስገድ ላምላክ',
   'O Worship the King',
@@ -2913,7 +2913,7 @@ select
   39,
   '{"new_hymnal_number":40,"old_hymnal_number":40,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-worship-the-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-worship-the-king-እንስገድ-ላምላክ-ለክብር-ጌታ-እንዘምርም-ፍቅሩን-በደስታ-መጠጊያ-ጋሻችን-ፈጣሪያችን-ግርማን-ተላብሷል-እንዲሁም-ምስጋናን-ኃ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -2932,7 +2932,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-how-great-thou-art',
+  'am-sda-en-lyrics-how-great-thou-art-ጌታ-አምላኬ-እንዴት-እገረማለው-ሳስብ-ሳለው-የጆችህን-ፍጥረት-ከዋክብትን-ሳይ-ነጎድጓድን-ስሰማ-ያንተ-ስልጣን-በሕዋ-ውስጥ',
   'am',
   'ጌታ አምላኬ',
   'How Great Thou Art',
@@ -2997,7 +2997,7 @@ select
   40,
   '{"new_hymnal_number":41,"old_hymnal_number":41,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-how-great-thou-art'
+join works w on w.canonical_key = 'am-sda-en-lyrics-how-great-thou-art-ጌታ-አምላኬ-እንዴት-እገረማለው-ሳስብ-ሳለው-የጆችህን-ፍጥረት-ከዋክብትን-ሳይ-ነጎድጓድን-ስሰማ-ያንተ-ስልጣን-በሕዋ-ውስጥ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3083,7 +3083,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ከበረዶ-እነፃለሁ',
+  'am-sda-am-lyrics-ከበረዶ-እነፃለሁ-ፍፁም-መሆንን-እወዳለው-የሱስ-ለዘላለም-በውስጤ-እንድትኖር-ጣዖትን-ስበር-ጠላትን-አርቀው-እጠበኝ-ከበረዶ-እነፃለሁ-እነፃለሁ-ከበረዶ-ይል',
   'am',
   'ከበረዶ እነፃለሁ',
   'Lord Jesus, I Long to be Perfectly Whole',
@@ -3142,7 +3142,7 @@ select
   42,
   '{"new_hymnal_number":43,"old_hymnal_number":43,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ከበረዶ-እነፃለሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ከበረዶ-እነፃለሁ-ፍፁም-መሆንን-እወዳለው-የሱስ-ለዘላለም-በውስጤ-እንድትኖር-ጣዖትን-ስበር-ጠላትን-አርቀው-እጠበኝ-ከበረዶ-እነፃለሁ-እነፃለሁ-ከበረዶ-ይል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3161,7 +3161,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-is-tenderly-calling',
+  'am-sda-en-lyrics-jesus-is-tenderly-calling-የሱስ-በገርነት-ይጠራል-ዛሬውኑ-ይጠራሃል-ስለምንስ-ከሚያበራው-ፍቅር-በጣሙን-ትርቃለህ-ዛሬውኑ-ይጠራሃል-የሱስ-ይ',
   'am',
   'የሱስ ይጠራሃል',
   'Jesus is Tenderly Calling',
@@ -3216,7 +3216,7 @@ select
   43,
   '{"new_hymnal_number":44,"old_hymnal_number":42,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-is-tenderly-calling'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-is-tenderly-calling-የሱስ-በገርነት-ይጠራል-ዛሬውኑ-ይጠራሃል-ስለምንስ-ከሚያበራው-ፍቅር-በጣሙን-ትርቃለህ-ዛሬውኑ-ይጠራሃል-የሱስ-ይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3235,7 +3235,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-just-as-i-am',
+  'am-sda-en-lyrics-just-as-i-am-ያለ-ደስታ-ስኖር-ሳለው-ክቡር-ደምህ-ፈሰሰልኝ-ምህረትህን-ላገኝ-መጣሁ-የአምላክ-በግ-መጣሁ-እርዳኝ-ከጨለማ-ልዳን-ብዬ-ሳልዘጋጅ-ለጌታ',
   'am',
   'ያለ ደስታ ስኖር',
   'Just as I Am',
@@ -3283,7 +3283,7 @@ select
   44,
   '{"new_hymnal_number":45,"old_hymnal_number":45,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-just-as-i-am'
+join works w on w.canonical_key = 'am-sda-en-lyrics-just-as-i-am-ያለ-ደስታ-ስኖር-ሳለው-ክቡር-ደምህ-ፈሰሰልኝ-ምህረትህን-ላገኝ-መጣሁ-የአምላክ-በግ-መጣሁ-እርዳኝ-ከጨለማ-ልዳን-ብዬ-ሳልዘጋጅ-ለጌታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3302,7 +3302,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-comes-to-us',
+  'am-sda-en-lyrics-jesus-comes-to-us-ቸሩ-አባት-መድኃኒታችን-በፀጋህ-ኃይል-ወዶኛልና-በልጆችህ-መካከል-ደግሞ-የመንፈስህን-ብርሃን-አብራ-የሱስ-አሁን-ወደ-ሁላችን',
   'am',
   'ቸሩ አባት መድኃኒታችን',
   'Jesus Comes to Us',
@@ -3344,7 +3344,7 @@ select
   45,
   '{"new_hymnal_number":46,"old_hymnal_number":46,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-comes-to-us'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-comes-to-us-ቸሩ-አባት-መድኃኒታችን-በፀጋህ-ኃይል-ወዶኛልና-በልጆችህ-መካከል-ደግሞ-የመንፈስህን-ብርሃን-አብራ-የሱስ-አሁን-ወደ-ሁላችን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3363,7 +3363,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lord-i-m-coming-home',
+  'am-sda-en-lyrics-lord-i-m-coming-home-ከአምላክ-ርቄ-ዙሪያለሁ-አሁን-ተመለስሁ-በኃጢአት-መንገድ-ሄጃለው-ጌታ-ሆይ-መጣሁ-ወደ-ቤትህ-መጣሁኝ-አልዞርም-በቃኝ-እጆ',
   'am',
   'ወደ ቤትህ መጣሁ',
   'Lord I\''m Coming Home',
@@ -3417,7 +3417,7 @@ select
   46,
   '{"new_hymnal_number":47,"old_hymnal_number":47,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lord-i-m-coming-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lord-i-m-coming-home-ከአምላክ-ርቄ-ዙሪያለሁ-አሁን-ተመለስሁ-በኃጢአት-መንገድ-ሄጃለው-ጌታ-ሆይ-መጣሁ-ወደ-ቤትህ-መጣሁኝ-አልዞርም-በቃኝ-እጆ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3436,7 +3436,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ',
+  'am-sda-am-lyrics-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-ና-ወደ-ዕረፍቴ-አንተ-የደክምህ-ሆይ-ዕረፍ-በብብቴ-ወደርሱ-መጣሁ-በድካም-በኃዘን-ሳለሁ-እርሱ-ደስታ',
   'am',
   'የየሱስ ድምፅ ሲለኝ ሰማሁ',
   'I Heard the Voice of Jesus Say',
@@ -3484,7 +3484,7 @@ select
   47,
   '{"new_hymnal_number":48,"old_hymnal_number":48,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-ና-ወደ-ዕረፍቴ-አንተ-የደክምህ-ሆይ-ዕረፍ-በብብቴ-ወደርሱ-መጣሁ-በድካም-በኃዘን-ሳለሁ-እርሱ-ደስታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3503,7 +3503,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እንግዳ-አለ-በደጅ',
+  'am-sda-am-lyrics-እንግዳ-አለ-በደጅ-እንግዳ-አለ-በደጅ-አስገባው-ከዚያ-ብዙ-ቆይቷል-አስገባው-አስገባው-ሳይሄድብህ-አስገባው-ቅዱስ-ጌታህን-የሱስን-የአብን-ልጅ-አስገባው-ል',
   'am',
   'እንግዳ አለ በደጅ',
   'There\''s a Strange at the Door',
@@ -3556,7 +3556,7 @@ select
   48,
   '{"new_hymnal_number":49,"old_hymnal_number":49,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እንግዳ-አለ-በደጅ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-እንግዳ-አለ-በደጅ-እንግዳ-አለ-በደጅ-አስገባው-ከዚያ-ብዙ-ቆይቷል-አስገባው-አስገባው-ሳይሄድብህ-አስገባው-ቅዱስ-ጌታህን-የሱስን-የአብን-ልጅ-አስገባው-ል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3575,7 +3575,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-to-jesus-i-surrender',
+  'am-sda-en-lyrics-all-to-jesus-i-surrender-ለየሱስ-አስረክባለሁ-በነፃ-እሰጣለሁ-ሁልጊዜ-እውደዋለሁ-በፊቱ-እኖራለሁ-አስረክባለሁ-አስረክባለሁ-ሁሉን-ላንተ-መድ',
   'am',
   'ለየሱስ አስረክባለሁ',
   'All to Jesus I Surrender',
@@ -3630,7 +3630,7 @@ select
   49,
   '{"new_hymnal_number":50,"old_hymnal_number":50,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-to-jesus-i-surrender'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-to-jesus-i-surrender-ለየሱስ-አስረክባለሁ-በነፃ-እሰጣለሁ-ሁልጊዜ-እውደዋለሁ-በፊቱ-እኖራለሁ-አስረክባለሁ-አስረክባለሁ-ሁሉን-ላንተ-መድ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3649,7 +3649,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-pass-me-not-o-gentle-saviour',
+  'am-sda-en-lyrics-pass-me-not-o-gentle-saviour-የሱስ-ሆይ-አትለፍብኝ-ፀሎቴን-ስማኝ-ሌሎች-ፀጋህን-ሲያገኙ-አትለፍብኝ-የሱስ-ክርስቶስ-ፀሎቴን-ስማኝ-ሌሎች',
   'am',
   'የሱስ ሆይ አትለፍብኝ',
   'Pass Me Not, O Gentle Saviour',
@@ -3703,7 +3703,7 @@ select
   50,
   '{"new_hymnal_number":51,"old_hymnal_number":51,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-pass-me-not-o-gentle-saviour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-pass-me-not-o-gentle-saviour-የሱስ-ሆይ-አትለፍብኝ-ፀሎቴን-ስማኝ-ሌሎች-ፀጋህን-ሲያገኙ-አትለፍብኝ-የሱስ-ክርስቶስ-ፀሎቴን-ስማኝ-ሌሎች'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3722,7 +3722,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-power-in-the-blood',
+  'am-sda-en-lyrics-there-is-power-in-the-blood-ከኃጢዓት-መንፃት-ትወዳለህን-ባፈሰሰልህ-ክቡር-ደሙ-ክፉን-ማሸነፍ-ምኞትህ-ነውን-መልካም-ሀይል-አለው-በደሙ-ክ',
   'am',
   'ኃይል አለው በደሙ',
   'There is Power in the Blood',
@@ -3787,7 +3787,7 @@ select
   51,
   '{"new_hymnal_number":52,"old_hymnal_number":52,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-power-in-the-blood'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-power-in-the-blood-ከኃጢዓት-መንፃት-ትወዳለህን-ባፈሰሰልህ-ክቡር-ደሙ-ክፉን-ማሸነፍ-ምኞትህ-ነውን-መልካም-ሀይል-አለው-በደሙ-ክ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3806,7 +3806,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-am-coming-to-the-cross',
+  'am-sda-en-lyrics-i-am-coming-to-the-cross-መጣሁ-ወደ-መስቀልህ-ምስኪን-ነኝ-ደካማም-ነኝ-ሁሉን-ነገር-ትቻለሁ-መደኀንን-አገኛለው-ባንተ-አምንብሀለው-ኦ-የቀራ',
   'am',
   'መጣሁ ወደ መስቀልህ',
   'I Am Coming to the Cross',
@@ -3861,7 +3861,7 @@ select
   52,
   '{"new_hymnal_number":53,"old_hymnal_number":53,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-am-coming-to-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-am-coming-to-the-cross-መጣሁ-ወደ-መስቀልህ-ምስኪን-ነኝ-ደካማም-ነኝ-ሁሉን-ነገር-ትቻለሁ-መደኀንን-አገኛለው-ባንተ-አምንብሀለው-ኦ-የቀራ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3880,7 +3880,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brightly-beams-our-father-s-mercy',
+  'am-sda-en-lyrics-brightly-beams-our-father-s-mercy-እኔ-የሱስን-ለማየት-ከቶ-አይሆንልኝም-የኔ-ጠባይ-ደካማ-ነው-የሚመራኝ-ለጥፋት-ብርሃንን-ለሁሉ-ፍጥረ',
   'am',
   'እኔ የሱስን ለማየት',
   'Brightly Beams Our Father\''s Mercy',
@@ -3928,7 +3928,7 @@ select
   53,
   '{"new_hymnal_number":54,"old_hymnal_number":54,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brightly-beams-our-father-s-mercy'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brightly-beams-our-father-s-mercy-እኔ-የሱስን-ለማየት-ከቶ-አይሆንልኝም-የኔ-ጠባይ-ደካማ-ነው-የሚመራኝ-ለጥፋት-ብርሃንን-ለሁሉ-ፍጥረ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -3947,7 +3947,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ካለህ-የበለጠውን-ስጥ',
+  'am-sda-am-lyrics-ካለህ-የበለጠውን-ስጥ-ካለህ-የበለጠውን-ስጥ-ወጣትነትህንም-ሁለመናህን-አስረክብ-ለእውነት-ወታደር-ሁን-የሱስም-ምሳሌህ-ሆኖ-ራስህን-ላምላክ-አስገዛ-አንተም',
   'am',
   'ካለህ የበለጠውን ስጥ',
   'Give of Best to the Master',
@@ -4004,7 +4004,7 @@ select
   54,
   '{"new_hymnal_number":55,"old_hymnal_number":44,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ካለህ-የበለጠውን-ስጥ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ካለህ-የበለጠውን-ስጥ-ካለህ-የበለጠውን-ስጥ-ወጣትነትህንም-ሁለመናህን-አስረክብ-ለእውነት-ወታደር-ሁን-የሱስም-ምሳሌህ-ሆኖ-ራስህን-ላምላክ-አስገዛ-አንተም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4023,7 +4023,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-though-your-sins-be-as-scarlet',
+  'am-sda-en-lyrics-though-your-sins-be-as-scarlet-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ግን-ቢቀላ-እንደ-ደም-እ',
   'am',
   'ኃጢአትህ ቢቀላብህ',
   'Though Your Sins be as Scarlet',
@@ -4074,7 +4074,7 @@ select
   55,
   '{"new_hymnal_number":56,"old_hymnal_number":55,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-though-your-sins-be-as-scarlet'
+join works w on w.canonical_key = 'am-sda-en-lyrics-though-your-sins-be-as-scarlet-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ግን-ቢቀላ-እንደ-ደም-እ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4239,7 +4239,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሕይወት-እንጀራ',
+  'am-sda-am-lyrics-የሕይወት-እንጀራ-የሕይወት-እንጀራ-ቁረስልኝ-በባህር-ዳር-ምግብ-እንደቆረስህ-በተቀደሰው-ገጽ-እሻህአለሁ-መንፈሴ-ናፍቆሃል-ሕያው-ቃል-ሆይ-እውነቱን-ባርክል',
   'am',
   'የሕይወት እንጀራ',
   'Break Thou the Bread',
@@ -4292,7 +4292,7 @@ select
   58,
   '{"new_hymnal_number":59,"old_hymnal_number":59,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሕይወት-እንጀራ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሕይወት-እንጀራ-የሕይወት-እንጀራ-ቁረስልኝ-በባህር-ዳር-ምግብ-እንደቆረስህ-በተቀደሰው-ገጽ-እሻህአለሁ-መንፈሴ-ናፍቆሃል-ሕያው-ቃል-ሆይ-እውነቱን-ባርክል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4311,7 +4311,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-beautiful-garden-of-prayer',
+  'am-sda-en-lyrics-the-beautiful-garden-of-prayer-የሱስ-ለጸሎት-ይጠብቀናል-አስገራሚ-ከሆነው-ሥፍራ-በየሱስ-ብርሃን-ይበራልናል-ከተዋበው-የፀሎት-ስፍራ-አስ',
   'am',
   'የጸሎት ስፍራ',
   'The Beautiful Garden of Prayer',
@@ -4364,7 +4364,7 @@ select
   59,
   '{"new_hymnal_number":60,"old_hymnal_number":60,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-beautiful-garden-of-prayer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-beautiful-garden-of-prayer-የሱስ-ለጸሎት-ይጠብቀናል-አስገራሚ-ከሆነው-ሥፍራ-በየሱስ-ብርሃን-ይበራልናል-ከተዋበው-የፀሎት-ስፍራ-አስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4383,7 +4383,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-nearer-still-nearer',
+  'am-sda-en-lyrics-nearer-still-nearer-ጥግ-ሁነኝ-ጌታ-ቅረበኝም-ቅዱስ-ነህ-መድኃኒቴ-አስጠጋኝ-እቀፈኝ-ያዘኝ-በደረትህ-የሱስ-ጋርደኝ-በዚያ-ልረፍበት-የሱስ-ጋርደ',
   'am',
   'ጥግ ሁነኝ',
   'Nearer, Still Nearer',
@@ -4434,7 +4434,7 @@ select
   60,
   '{"new_hymnal_number":61,"old_hymnal_number":61,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-nearer-still-nearer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-nearer-still-nearer-ጥግ-ሁነኝ-ጌታ-ቅረበኝም-ቅዱስ-ነህ-መድኃኒቴ-አስጠጋኝ-እቀፈኝ-ያዘኝ-በደረትህ-የሱስ-ጋርደኝ-በዚያ-ልረፍበት-የሱስ-ጋርደ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4453,7 +4453,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የተባረከ-ሰዓት-ነው',
+  'am-sda-am-lyrics-የተባረከ-ሰዓት-ነው-የተባረከ-ሰዓት-ነው-የምንፀልይበት-ወዳምላካችን-የሱስ-የምንቀርብበት-በሃይማኖት-ብንቀርበው-እርሱ-ያስጠጋናል-እንዴት-ጣፋጭ-ዕረፍት-ነ',
   'am',
   'የተባረከ ሰዓት ነው',
   '\''Tis the Blessed of Prayer',
@@ -4512,7 +4512,7 @@ select
   61,
   '{"new_hymnal_number":62,"old_hymnal_number":62,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የተባረከ-ሰዓት-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የተባረከ-ሰዓት-ነው-የተባረከ-ሰዓት-ነው-የምንፀልይበት-ወዳምላካችን-የሱስ-የምንቀርብበት-በሃይማኖት-ብንቀርበው-እርሱ-ያስጠጋናል-እንዴት-ጣፋጭ-ዕረፍት-ነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4531,7 +4531,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sweet-hour-of-prayer',
+  'am-sda-en-lyrics-sweet-hour-of-prayer-የጸሎት-ሰዓት-የደስታ-ሰዓት-ከዓለም-የምሸሽበት-አባቴን-የምሻበት-ምኞቴን-የምነግርበት-ከመከራ-እርቃለሁ-ጽናቴንም-አገኛለ',
   'am',
   'የጸሎት ሰዓት',
   'Sweet Hour of Prayer',
@@ -4579,7 +4579,7 @@ select
   62,
   '{"new_hymnal_number":63,"old_hymnal_number":58,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sweet-hour-of-prayer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sweet-hour-of-prayer-የጸሎት-ሰዓት-የደስታ-ሰዓት-ከዓለም-የምሸሽበት-አባቴን-የምሻበት-ምኞቴን-የምነግርበት-ከመከራ-እርቃለሁ-ጽናቴንም-አገኛለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4598,7 +4598,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ፈቃድህን-አድርግ',
+  'am-sda-am-lyrics-ፈቃድህን-አድርግ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ-አንተ-ሰሪ-ነህ-እኔ-ሸክላ-አብጀኝ-ስራኝ-እንደምትወድ-ስጠብቅህ-ሳል-በፈቃዴ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ',
   'am',
   'ፈቃድህን አድርግ',
   'Have Thine Own Way Lord',
@@ -4651,7 +4651,7 @@ select
   63,
   '{"new_hymnal_number":64,"old_hymnal_number":65,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ፈቃድህን-አድርግ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ፈቃድህን-አድርግ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ-አንተ-ሰሪ-ነህ-እኔ-ሸክላ-አብጀኝ-ስራኝ-እንደምትወድ-ስጠብቅህ-ሳል-በፈቃዴ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4713,7 +4713,7 @@ select
 ',
   'sda_new',
   64,
-  '{"new_hymnal_number":65,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
+  '{"new_hymnal_number":65,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
 from book_editions be
 join works w on w.canonical_key = 'am-sda-en-amazing-grace'
 where be.slug = 'am-sda-hymnal-new'
@@ -4734,7 +4734,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-hear-our-prayer-o-lord',
+  'am-sda-en-lyrics-hear-our-prayer-o-lord-ፀሎታችንን-ስማ-ጌታ-ሆይ-ጆሮህን-አዘንብል-ሰላምን-ስጠን-አሜን',
   'am',
   'ፀሎታችንን ስማ',
   'Hear our prayer, O Lord',
@@ -4771,7 +4771,7 @@ select
   65,
   '{"new_hymnal_number":66,"old_hymnal_number":2,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-hear-our-prayer-o-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-hear-our-prayer-o-lord-ፀሎታችንን-ስማ-ጌታ-ሆይ-ጆሮህን-አዘንብል-ሰላምን-ስጠን-አሜን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4790,7 +4790,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-am-thine-o-lord',
+  'am-sda-en-lyrics-i-am-thine-o-lord-ድምፅህን-ሰማሁ-ጌታ-ያንተ-ነኝ-ፍቅርህን-የነገረኝ-እጄን-ዘርግቼ-ወደ-ጌታዬ-ወደ-አንተ-እንድቀርብ-ወደ-አንተ-አቅርበኝ-ጌታ',
   'am',
   'ወዳንተ አቅርበኝ',
   'I Am Thine, O Lord',
@@ -4855,7 +4855,7 @@ select
   66,
   '{"new_hymnal_number":67,"old_hymnal_number":68,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-am-thine-o-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-am-thine-o-lord-ድምፅህን-ሰማሁ-ጌታ-ያንተ-ነኝ-ፍቅርህን-የነገረኝ-እጄን-ዘርግቼ-ወደ-ጌታዬ-ወደ-አንተ-እንድቀርብ-ወደ-አንተ-አቅርበኝ-ጌታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4874,7 +4874,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-nearer-my-god-to-thee',
+  'am-sda-en-lyrics-nearer-my-god-to-thee-አምላኬ-ወዳንተ-እቀርባለሁ-ሸክሜን-እንኳ-ቢከብድ-ከነ-ሸክሜ-አሁንም-መዝሙሬን-ወዳንተ-መቅረብ-ነው-ወዳንተ-መቅረብ-ነው',
   'am',
   'አምላኬ ወዳንተ',
   'Nearer My God to Thee',
@@ -4933,7 +4933,7 @@ select
   67,
   '{"new_hymnal_number":68,"old_hymnal_number":69,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-nearer-my-god-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-nearer-my-god-to-thee-አምላኬ-ወዳንተ-እቀርባለሁ-ሸክሜን-እንኳ-ቢከብድ-ከነ-ሸክሜ-አሁንም-መዝሙሬን-ወዳንተ-መቅረብ-ነው-ወዳንተ-መቅረብ-ነው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -4952,7 +4952,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-the-hour-of-trial',
+  'am-sda-en-lyrics-in-the-hour-of-trial-በመከራ-ጊዜ-የሱስ-አስበኝ-በክህደቴም-ምክኒያት-እንዳትለየኝ-እምነቴ-መድከሙ-በመልኬ-ሲታይ-አትተወኝ-ጌታ-ካንተ-እንዳልለ',
   'am',
   'በመከራ ጊዜ',
   'In the Hour of Trial',
@@ -5000,7 +5000,7 @@ select
   68,
   '{"new_hymnal_number":69,"old_hymnal_number":70,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-the-hour-of-trial'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-the-hour-of-trial-በመከራ-ጊዜ-የሱስ-አስበኝ-በክህደቴም-ምክኒያት-እንዳትለየኝ-እምነቴ-መድከሙ-በመልኬ-ሲታይ-አትተወኝ-ጌታ-ካንተ-እንዳልለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5019,7 +5019,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-speak-to-my-soul',
+  'am-sda-en-lyrics-speak-to-my-soul-ነፍሴን-ተናገር-የሱስ-ቀስ-ብለህ-ንገረኝ-በቸርነት-አስታዉቀኝ-አልተዉህም-በለኝ-እንዳዳምጥህ-ልብ-ስጠኝ-ቃልህን-እንድሰማ-ነፍሴ',
   'am',
   'ነፍሴን ተናገር',
   'Speak to my Soul',
@@ -5077,7 +5077,7 @@ select
   69,
   '{"new_hymnal_number":70,"old_hymnal_number":71,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-speak-to-my-soul'
+join works w on w.canonical_key = 'am-sda-en-lyrics-speak-to-my-soul-ነፍሴን-ተናገር-የሱስ-ቀስ-ብለህ-ንገረኝ-በቸርነት-አስታዉቀኝ-አልተዉህም-በለኝ-እንዳዳምጥህ-ልብ-ስጠኝ-ቃልህን-እንድሰማ-ነፍሴ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5096,7 +5096,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-now-spread-thy-wings-of-love',
+  'am-sda-en-lyrics-now-spread-thy-wings-of-love-ኦ-የሱስ-ቅዱስ-እጅህ-በኔ-ላይ-ይስፈር-በሀዘንም-በደስታም-ከአንተ-ዘንድ-ልረፍ-ጥበቤም-ሃይሌም-ጥጌም-ሁሉም',
   'am',
   'የሱስ ቅዱስ እጅህ',
   'Now Spread Thy Wings of Love',
@@ -5139,7 +5139,7 @@ select
   70,
   '{"new_hymnal_number":71,"old_hymnal_number":72,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-now-spread-thy-wings-of-love'
+join works w on w.canonical_key = 'am-sda-en-lyrics-now-spread-thy-wings-of-love-ኦ-የሱስ-ቅዱስ-እጅህ-በኔ-ላይ-ይስፈር-በሀዘንም-በደስታም-ከአንተ-ዘንድ-ልረፍ-ጥበቤም-ሃይሌም-ጥጌም-ሁሉም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5158,7 +5158,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ኦ-ጌታ-ሆይ-በምህረትህ',
+  'am-sda-am-lyrics-ኦ-ጌታ-ሆይ-በምህረትህ-ኦ-ጌታ-ሆይ-በምህረትህ-ወዳንተ-አቅርበን-በሥራችን-የጠፋን-ነን-በጸጋህ-አድነን-ኃጢአታችን-ይቅር-በለን-አሁን-ተቀበለን-በዚህ-ዓለ',
   'am',
   'ኦ ጌታ ሆይ በምህረትህ',
   'O Lord In Your Mercy',
@@ -5210,9 +5210,9 @@ select
 ',
   'sda_new',
   71,
-  '{"new_hymnal_number":72,"old_hymnal_number":null,"match_status":"missing_old"}'::jsonb
+  '{"new_hymnal_number":72,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ኦ-ጌታ-ሆይ-በምህረትህ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ኦ-ጌታ-ሆይ-በምህረትህ-ኦ-ጌታ-ሆይ-በምህረትህ-ወዳንተ-አቅርበን-በሥራችን-የጠፋን-ነን-በጸጋህ-አድነን-ኃጢአታችን-ይቅር-በለን-አሁን-ተቀበለን-በዚህ-ዓለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5287,7 +5287,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-with-thy-spirit-fill-me',
+  'am-sda-en-lyrics-with-thy-spirit-fill-me-በመንፈስህ-ሙላኝ-በመንፈስህ-ሙላኝ-ሁሉን-ልስጥህ-እርዳኝ-በመንፈስህ-ሙላኝ',
   'am',
   'በመንፈስህ ሙላኝ',
   'With Thy Spirit Fill Me',
@@ -5328,7 +5328,7 @@ select
   73,
   '{"new_hymnal_number":74,"old_hymnal_number":67,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-with-thy-spirit-fill-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-with-thy-spirit-fill-me-በመንፈስህ-ሙላኝ-በመንፈስህ-ሙላኝ-ሁሉን-ልስጥህ-እርዳኝ-በመንፈስህ-ሙላኝ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5347,7 +5347,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-አባታችን-ጌታችን-ሆይ',
+  'am-sda-am-lyrics-አባታችን-ጌታችን-ሆይ-አባታችን-ጌታችን-ሆይ-የምትኖር-በሰማይ-መንግስትህ-ትምጣልን-ከላይ-ክብርህን-እንድናይ-ክብርህን-እንድናይ-ፈቃድህ-በሰማይ-ቀድሞ-ሕይ',
   'am',
   'አባታችን ጌታችን ሆይ',
   'Majestic Sweetness Sits Enthroned',
@@ -5401,7 +5401,7 @@ select
   74,
   '{"new_hymnal_number":75,"old_hymnal_number":76,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-አባታችን-ጌታችን-ሆይ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-አባታችን-ጌታችን-ሆይ-አባታችን-ጌታችን-ሆይ-የምትኖር-በሰማይ-መንግስትህ-ትምጣልን-ከላይ-ክብርህን-እንድናይ-ክብርህን-እንድናይ-ፈቃድህ-በሰማይ-ቀድሞ-ሕይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5695,7 +5695,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-trun-your-eyes-upon-jesus',
+  'am-sda-en-lyrics-trun-your-eyes-upon-jesus-ወደ-የሱስ-ተመልከት-ግሩም-አስደናቂ-ፊቱን-የዚህ-ዓለም-ኃብት-ሁሉ-ጠፊ-ነው-ሁሉም-ያልፋል-ግርማውን-ስናይ',
   'am',
   'ወደ የሱስ ተመልከት',
   'Trun Your Eyes Upon Jesus',
@@ -5735,7 +5735,7 @@ select
   79,
   '{"new_hymnal_number":80,"old_hymnal_number":266,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-trun-your-eyes-upon-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-trun-your-eyes-upon-jesus-ወደ-የሱስ-ተመልከት-ግሩም-አስደናቂ-ፊቱን-የዚህ-ዓለም-ኃብት-ሁሉ-ጠፊ-ነው-ሁሉም-ያልፋል-ግርማውን-ስናይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -5906,7 +5906,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-into-my-heart',
+  'am-sda-en-lyrics-into-my-heart-በልቤ-ውስጥ-በልቤ-ውስጥ-አንተ-ግባበት-ኦ-የሱስ-ግባ-ዛሬ-ከኔ-ጋር-ሁን-በልቤ-ግባ-ኦ-የሱስ-በልቤ-ውስጥ-በልቤ-ውስጥ-ብርሃንህ-ይ',
   'am',
   'በልቤ ውስጥ',
   'Into My Heart',
@@ -5950,7 +5950,7 @@ select
   82,
   '{"new_hymnal_number":83,"old_hymnal_number":256,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-into-my-heart'
+join works w on w.canonical_key = 'am-sda-en-lyrics-into-my-heart-በልቤ-ውስጥ-በልቤ-ውስጥ-አንተ-ግባበት-ኦ-የሱስ-ግባ-ዛሬ-ከኔ-ጋር-ሁን-በልቤ-ግባ-ኦ-የሱስ-በልቤ-ውስጥ-በልቤ-ውስጥ-ብርሃንህ-ይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6032,7 +6032,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-safe-in-the-arms-of-jesus',
+  'am-sda-en-lyrics-safe-in-the-arms-of-jesus-ልረፍ-በየሱስ-ክንዶች-ልረፍ-በብብቱ-በፍቅሩ-ከከለለኝ-ነፍሤ-አትፈራም-ከቶ-ስማ-ከሰማይ-መዝሙር-በመላዕክት-ሲዘመ',
   'am',
   'ልረፍ በየሱስ ክንዶች',
   'Safe in the Arms of Jesus',
@@ -6087,7 +6087,7 @@ select
   84,
   '{"new_hymnal_number":85,"old_hymnal_number":85,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-safe-in-the-arms-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-safe-in-the-arms-of-jesus-ልረፍ-በየሱስ-ክንዶች-ልረፍ-በብብቱ-በፍቅሩ-ከከለለኝ-ነፍሤ-አትፈራም-ከቶ-ስማ-ከሰማይ-መዝሙር-በመላዕክት-ሲዘመ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6106,7 +6106,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-የልቤ-ወዳጅ',
+  'am-sda-am-lyrics-የሱስ-የልቤ-ወዳጅ-የሱስ-የልቤ-ወዳጅ-ወደአንተ-አስጠጋኝ-መከራ-ሲመጣብኝ-ሞገዱ-ሲነሳብኝ-ሸሽገኝ-ልዑል-አምላክ-የህይወት-ችግር-እስኪያልፍ-ወደ-ሰማይ-አድ',
   'am',
   'የሱስ የልቤ ወዳጅ',
   'Jesus, Love of My Soul',
@@ -6160,7 +6160,7 @@ select
   85,
   '{"new_hymnal_number":86,"old_hymnal_number":86,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-የልቤ-ወዳጅ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-የልቤ-ወዳጅ-የሱስ-የልቤ-ወዳጅ-ወደአንተ-አስጠጋኝ-መከራ-ሲመጣብኝ-ሞገዱ-ሲነሳብኝ-ሸሽገኝ-ልዑል-አምላክ-የህይወት-ችግር-እስኪያልፍ-ወደ-ሰማይ-አድ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6179,7 +6179,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-any-where-with-jesus',
+  'am-sda-en-lyrics-any-where-with-jesus-ከየሱስ-ጋር-በደኅና-እሔዳለው-በዚህ-ዓለም-ላይ-በርሱ-ከተመራሁ-ያለርሱ-ደስታዬ-ከንቱ-ይሆናል-እርሱ-ግን-ፍርሀትን-ሁሉ',
   'am',
   'ከየሱስ ጋር በደኅና እሔዳለው',
   'Any Where With Jesus',
@@ -6234,7 +6234,7 @@ select
   86,
   '{"new_hymnal_number":87,"old_hymnal_number":87,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-any-where-with-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-any-where-with-jesus-ከየሱስ-ጋር-በደኅና-እሔዳለው-በዚህ-ዓለም-ላይ-በርሱ-ከተመራሁ-ያለርሱ-ደስታዬ-ከንቱ-ይሆናል-እርሱ-ግን-ፍርሀትን-ሁሉ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6253,7 +6253,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ትጉ-አድርገኝ',
+  'am-sda-am-lyrics-ትጉ-አድርገኝ-ጊዜ-እንዳይጠፋ-ትጉ-አድርገኝ-ኃጢዓተኛ-አይሙት-ተስፋ-ሳያገኝ-እንዴት-ስራ-ልፍታ-ክርስቶስን-ያወቅሁ-ፍቅርህን-እንድነግር-ትጋትን-ስጠኝ-ለጠ',
   'am',
   'ትጉ አድርገኝ',
   'More Dilligence',
@@ -6306,7 +6306,7 @@ select
   87,
   '{"new_hymnal_number":88,"old_hymnal_number":88,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ትጉ-አድርገኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ትጉ-አድርገኝ-ጊዜ-እንዳይጠፋ-ትጉ-አድርገኝ-ኃጢዓተኛ-አይሙት-ተስፋ-ሳያገኝ-እንዴት-ስራ-ልፍታ-ክርስቶስን-ያወቅሁ-ፍቅርህን-እንድነግር-ትጋትን-ስጠኝ-ለጠ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6399,7 +6399,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-if-i-gained-the-world',
+  'am-sda-en-lyrics-if-i-gained-the-world-የሱስ-ትቼ-ዓለምን-ባተርፍ-የዕለት-ሕይወቴ-ጥቅመቢስ-ነው-በሃብቴ-ብዛት-እረፍት-የለኝም-ልቤም-ሰላምን-አያገኝም-የሱስ',
   'am',
   'የሱስ ትቼ ዓለምን ባተርፍ',
   'If I Gained the World',
@@ -6457,7 +6457,7 @@ select
   89,
   '{"new_hymnal_number":90,"old_hymnal_number":89,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-if-i-gained-the-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-if-i-gained-the-world-የሱስ-ትቼ-ዓለምን-ባተርፍ-የዕለት-ሕይወቴ-ጥቅመቢስ-ነው-በሃብቴ-ብዛት-እረፍት-የለኝም-ልቤም-ሰላምን-አያገኝም-የሱስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6476,7 +6476,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-re-marching-to-zion',
+  'am-sda-en-lyrics-we-re-marching-to-zion-ያምላክ-ወዳጆች-ኑ-ደስታችሁ-ትታወቅ-ኑ-ባንድነት-እንዘምር-ላምላካችን-ቅዱስ-መዝሙር-የርሱን-ዙፋን-ከበን-እናንግሠው',
   'am',
   'ወደ ጽዮን እንጓዝ',
   'We\''re Marching to Zion',
@@ -6536,7 +6536,7 @@ select
   90,
   '{"new_hymnal_number":91,"old_hymnal_number":77,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-re-marching-to-zion'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-re-marching-to-zion-ያምላክ-ወዳጆች-ኑ-ደስታችሁ-ትታወቅ-ኑ-ባንድነት-እንዘምር-ላምላካችን-ቅዱስ-መዝሙር-የርሱን-ዙፋን-ከበን-እናንግሠው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6555,7 +6555,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-saviour-with-me',
+  'am-sda-en-lyrics-the-saviour-with-me-መድኃኒቴ-አልለይም-መንገዱ-እንዳይጠፋኝ-ከፊቱ-እንድዘምር-አልርቅም-በክንዶቹ-እንዲ-አቅፈኝ-አሁን-ነፍሴ-አትፈራም-የሱሴ-አ',
   'am',
   'መድኃኒቴ አልለይም',
   'The Saviour With Me',
@@ -6613,7 +6613,7 @@ select
   91,
   '{"new_hymnal_number":92,"old_hymnal_number":78,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-saviour-with-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-saviour-with-me-መድኃኒቴ-አልለይም-መንገዱ-እንዳይጠፋኝ-ከፊቱ-እንድዘምር-አልርቅም-በክንዶቹ-እንዲ-አቅፈኝ-አሁን-ነፍሴ-አትፈራም-የሱሴ-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6632,7 +6632,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-call-to-jesus-in-trouble',
+  'am-sda-en-lyrics-call-to-jesus-in-trouble-ስትጨነቅ-ሳለ-ጥራ-የሱስን-ከጥፋት-ሁሉ-ለማዳን-ያለህን-ድካም-ግለፅለት-አሁን-ችግርህን-ሁሉ-ነገረው-በአዳኝ-ፀጋው',
   'am',
   'ስትጨነቅ ሳለ የሱስን ጥራ',
   'Call to Jesus in Trouble',
@@ -6681,7 +6681,7 @@ select
   92,
   '{"new_hymnal_number":93,"old_hymnal_number":93,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-call-to-jesus-in-trouble'
+join works w on w.canonical_key = 'am-sda-en-lyrics-call-to-jesus-in-trouble-ስትጨነቅ-ሳለ-ጥራ-የሱስን-ከጥፋት-ሁሉ-ለማዳን-ያለህን-ድካም-ግለፅለት-አሁን-ችግርህን-ሁሉ-ነገረው-በአዳኝ-ፀጋው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6700,7 +6700,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-m-pressing-on-the-upward-way',
+  'am-sda-en-lyrics-i-m-pressing-on-the-upward-way-አቀበቱ-እወጣለሁ-በየቀኑም-አዘግማለሁ-እየጸለይሁ-እጓዛለሁ-አምላክ-ሆይ-አዝልቀኝ-እያልሁ-አምላኬ-ሆይ-ና',
   'am',
   'አቀበቱ እወጣለሁ',
   'I\''m Pressing on the Upward Way',
@@ -6755,7 +6755,7 @@ select
   93,
   '{"new_hymnal_number":94,"old_hymnal_number":94,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-m-pressing-on-the-upward-way'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-m-pressing-on-the-upward-way-አቀበቱ-እወጣለሁ-በየቀኑም-አዘግማለሁ-እየጸለይሁ-እጓዛለሁ-አምላክ-ሆይ-አዝልቀኝ-እያልሁ-አምላኬ-ሆይ-ና'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6774,7 +6774,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስን-ማገልገል',
+  'am-sda-am-lyrics-የሱስን-ማገልገል-የሱስን-ማገልገል-ዋጋ-ይሰጣል-ፍፁም-ደስታ-ከርሱ-ይገኛል-በቃሉ-መታመን-ታላቅ-ዕረፍት-ነው-ስለዚህ-ና-አገልግለው-የሱስን-አገልግል-ዕድሜ',
   'am',
   'የሱስን ማገልገል',
   'It Pays to Serve Jesus',
@@ -6824,7 +6824,7 @@ select
   94,
   '{"new_hymnal_number":95,"old_hymnal_number":95,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስን-ማገልገል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስን-ማገልገል-የሱስን-ማገልገል-ዋጋ-ይሰጣል-ፍፁም-ደስታ-ከርሱ-ይገኛል-በቃሉ-መታመን-ታላቅ-ዕረፍት-ነው-ስለዚህ-ና-አገልግለው-የሱስን-አገልግል-ዕድሜ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6843,7 +6843,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-leadeth-me',
+  'am-sda-en-lyrics-he-leadeth-me-ይመራኛል-ይመራኛል-በቃሉ-ኃይል-ያፅናናኛል-በሥራዬ-በኑሮዬ-ምራኝ-በእጅህ-ኦ-ጌታ-ሆይ-ይመራኛል-ይመራኛል-በገዛ-እጁ-ይመራኛል-ተከታ',
   'am',
   'ይመራኛል',
   'He Leadeth Me',
@@ -6892,7 +6892,7 @@ select
   95,
   '{"new_hymnal_number":96,"old_hymnal_number":96,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-leadeth-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-leadeth-me-ይመራኛል-ይመራኛል-በቃሉ-ኃይል-ያፅናናኛል-በሥራዬ-በኑሮዬ-ምራኝ-በእጅህ-ኦ-ጌታ-ሆይ-ይመራኛል-ይመራኛል-በገዛ-እጁ-ይመራኛል-ተከታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6911,7 +6911,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ወደ-ጸሎት-ስፍራ-መጣሁ',
+  'am-sda-am-lyrics-ወደ-ጸሎት-ስፍራ-መጣሁ-ወደ-ጸሎት-ስፍራ-መጣሁ-ማለድ-ብዬ-ጤዛው-ሣይረግፍ-ከዚያ-ስገባ-ድምፅህን-ሰማሁ-ያምላክ-ልጅ-ሲመጣ-አየሁ-ከኔ-ጋር-ሲጓዝ-ሲያነጋግ',
   'am',
   'ወደ ጸሎት ስፍራ መጣሁ',
   'I Come to the Garden Alone',
@@ -6964,7 +6964,7 @@ select
   96,
   '{"new_hymnal_number":97,"old_hymnal_number":97,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ወደ-ጸሎት-ስፍራ-መጣሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ወደ-ጸሎት-ስፍራ-መጣሁ-ወደ-ጸሎት-ስፍራ-መጣሁ-ማለድ-ብዬ-ጤዛው-ሣይረግፍ-ከዚያ-ስገባ-ድምፅህን-ሰማሁ-ያምላክ-ልጅ-ሲመጣ-አየሁ-ከኔ-ጋር-ሲጓዝ-ሲያነጋግ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -6983,7 +6983,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-blessed-lord-how-i-need-thee',
+  'am-sda-en-lyrics-blessed-lord-how-i-need-thee-ጌታ-ሆይ-ናፍቄህ-አለሁ-ደካማ-ዕውር-ሣለሁ-ኃይልና-ማየት-አገኘሁ-ባንተ-እታመናለሁ-በየሰዓት-በየሰዓቱ-መድኃ',
   'am',
   'ጌታ ሆይ ናፍቄሃለሁ',
   'Blessed Lord How I Need Thee',
@@ -7037,7 +7037,7 @@ select
   97,
   '{"new_hymnal_number":98,"old_hymnal_number":98,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-blessed-lord-how-i-need-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-blessed-lord-how-i-need-thee-ጌታ-ሆይ-ናፍቄህ-አለሁ-ደካማ-ዕውር-ሣለሁ-ኃይልና-ማየት-አገኘሁ-ባንተ-እታመናለሁ-በየሰዓት-በየሰዓቱ-መድኃ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7056,7 +7056,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-hold-the-fort',
+  'am-sda-en-lyrics-hold-the-fort-ወንድሞቼ-ተመልከቱ-ባንዲራችንን-ኃይላችን-ተጨምሯል-ድል-ልንነሳ-ነን-ጠንክሩ-እየመጣሁ-ነኝ-ይላል-ጌታችን-እንሰራለን-ጌታ-የሱስ-በፀ',
   'am',
   'ጠንክሩ',
   'Hold the Fort',
@@ -7111,7 +7111,7 @@ select
   98,
   '{"new_hymnal_number":99,"old_hymnal_number":100,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-hold-the-fort'
+join works w on w.canonical_key = 'am-sda-en-lyrics-hold-the-fort-ወንድሞቼ-ተመልከቱ-ባንዲራችንን-ኃይላችን-ተጨምሯል-ድል-ልንነሳ-ነን-ጠንክሩ-እየመጣሁ-ነኝ-ይላል-ጌታችን-እንሰራለን-ጌታ-የሱስ-በፀ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7130,7 +7130,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brighten-the-way-with-a-smile',
+  'am-sda-en-lyrics-brighten-the-way-with-a-smile-ዛሬ-በጣም-የሚያዝኑትን-ልቦች-ሁሉ-ሁልጊዜም-ባዘን-የተሞሉ-የአምላክን-ተስፋ-ሰባኮች-ንገሩ-በደስታ-መንገዱ',
   'am',
   'መንገዱን በደስታ አብሩ',
   'Brighten the Way With a Smile',
@@ -7184,7 +7184,7 @@ select
   99,
   '{"new_hymnal_number":100,"old_hymnal_number":99,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brighten-the-way-with-a-smile'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brighten-the-way-with-a-smile-ዛሬ-በጣም-የሚያዝኑትን-ልቦች-ሁሉ-ሁልጊዜም-ባዘን-የተሞሉ-የአምላክን-ተስፋ-ሰባኮች-ንገሩ-በደስታ-መንገዱ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7203,7 +7203,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-ስሻው',
+  'am-sda-am-lyrics-የሱስ-ስሻው-የሱስ-ስሻው-ከኔ-ጋር-ነው-ሥፈራና-ጭንቀት-ሲይዘኝ-እኔን-ለመርዳት-ዝግጁ-ነው-እጅግ-ስፈልገው-እርሱን-ስፈልገው-እጅግ-ስፈልገው-ሊያፅናናኝ-ተ',
   'am',
   'የሱስ ስሻው',
   'Just When I Need Hime Most',
@@ -7263,7 +7263,7 @@ select
   100,
   '{"new_hymnal_number":101,"old_hymnal_number":101,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-ስሻው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-ስሻው-የሱስ-ስሻው-ከኔ-ጋር-ነው-ሥፈራና-ጭንቀት-ሲይዘኝ-እኔን-ለመርዳት-ዝግጁ-ነው-እጅግ-ስፈልገው-እርሱን-ስፈልገው-እጅግ-ስፈልገው-ሊያፅናናኝ-ተ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7355,7 +7355,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-leaning-on-the-everlasting-arms',
+  'am-sda-en-lyrics-leaning-on-the-everlasting-arms-እንዴት-ጸጋ-ነው-እንዴት-ደስታ-ነው-ለዘላለም-በየሱስ-ማረፍ-እንዴት-መባረክ-እና-ሰላም-ነው-ለዘላለም',
   'am',
   'እንዴት ጸጋ ነው',
   'Leaning on the Everlasting Arms',
@@ -7410,7 +7410,7 @@ select
   102,
   '{"new_hymnal_number":103,"old_hymnal_number":103,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-leaning-on-the-everlasting-arms'
+join works w on w.canonical_key = 'am-sda-en-lyrics-leaning-on-the-everlasting-arms-እንዴት-ጸጋ-ነው-እንዴት-ደስታ-ነው-ለዘላለም-በየሱስ-ማረፍ-እንዴት-መባረክ-እና-ሰላም-ነው-ለዘላለም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7429,7 +7429,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-i-my-cross-have-taken',
+  'am-sda-en-lyrics-jesus-i-my-cross-have-taken-መስቀሌን-ተሸክሜአለሁ-የሱስ-ሆይ-ልከተልህ-ያለኝን-ሁሉ-ትቻለሁ-አንተ-የኔ-ትሆን-ዘንድ-የዓለምን-ምኞትና-ተስ',
   'am',
   'መስቀሌን ተሸክሜአለሁ',
   'Jesus, I My Cross Have Taken',
@@ -7477,7 +7477,7 @@ select
   103,
   '{"new_hymnal_number":104,"old_hymnal_number":104,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-i-my-cross-have-taken'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-i-my-cross-have-taken-መስቀሌን-ተሸክሜአለሁ-የሱስ-ሆይ-ልከተልህ-ያለኝን-ሁሉ-ትቻለሁ-አንተ-የኔ-ትሆን-ዘንድ-የዓለምን-ምኞትና-ተስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7496,7 +7496,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lead-me-to-calvary',
+  'am-sda-en-lyrics-lead-me-to-calvary-የሕይወቴ-ገዥ-ላንግስህ-ምስጋናህን-ልስጥህ-እንዳልረሳ-ሾህ-አክሊልህን-አስታውሰኝ-ቀራኒዮን-እንዳልረሳ-ጌትሰማኔን-እንዳልረሳ',
   'am',
   'አስታውሰኝ ቀራኒዮን',
   'Lead Me to Calvary',
@@ -7550,7 +7550,7 @@ select
   104,
   '{"new_hymnal_number":105,"old_hymnal_number":106,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lead-me-to-calvary'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lead-me-to-calvary-የሕይወቴ-ገዥ-ላንግስህ-ምስጋናህን-ልስጥህ-እንዳልረሳ-ሾህ-አክሊልህን-አስታውሰኝ-ቀራኒዮን-እንዳልረሳ-ጌትሰማኔን-እንዳልረሳ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7569,7 +7569,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-living-for-jesus',
+  'am-sda-en-lyrics-living-for-jesus-ልኑር-ለየሱስ-የእውነት-ኑሮ-እርሱ-ደስ-ስላሰኘኝ-በሁሉ-ነገር-የልብ-ደስታና-መታመን-ሣሣይ-ይህ-ነው-በረከት-የማገኝበት-ኦ-የሱ',
   'am',
   'ልኑር ለየሱስ',
   'Living for Jesus',
@@ -7633,7 +7633,7 @@ select
   105,
   '{"new_hymnal_number":106,"old_hymnal_number":105,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-living-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-living-for-jesus-ልኑር-ለየሱስ-የእውነት-ኑሮ-እርሱ-ደስ-ስላሰኘኝ-በሁሉ-ነገር-የልብ-ደስታና-መታመን-ሣሣይ-ይህ-ነው-በረከት-የማገኝበት-ኦ-የሱ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7652,7 +7652,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-yield-not-to-temptation',
+  'am-sda-en-lyrics-yield-not-to-temptation-ፈተናን-አሸንፍ-በአምላክ-ጸጋ-በየጊዜው-ተግተህ-በእምነት-ተቋቋም-ልብህም-በአንዳች-አያመንታ-የየሱስን-ብቻ-እይ-ከቶ',
   'am',
   'ፈተናን አሸንፍ',
   'Yield not to Temptation',
@@ -7708,7 +7708,7 @@ select
   106,
   '{"new_hymnal_number":107,"old_hymnal_number":79,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-yield-not-to-temptation'
+join works w on w.canonical_key = 'am-sda-en-lyrics-yield-not-to-temptation-ፈተናን-አሸንፍ-በአምላክ-ጸጋ-በየጊዜው-ተግተህ-በእምነት-ተቋቋም-ልብህም-በአንዳች-አያመንታ-የየሱስን-ብቻ-እይ-ከቶ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7799,7 +7799,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ለየሱስ-ንገር',
+  'am-sda-am-lyrics-ለየሱስ-ንገር-ደክሞህ-እንደሁ-ከብዶ-እንደሁ-ልብህ-ለየሱስ-ንገር-ለየሱስ-ንገር-ሐዘን-ቢሰማህ-ደስታም-ቢለይህ-ብቻ-ለየሱስ-ንገር-ለየሱስ-ንገር-ለየሱስ-ን',
   'am',
   'ለየሱስ ንገር',
   'Tell it Jesus',
@@ -7859,7 +7859,7 @@ select
   108,
   '{"new_hymnal_number":109,"old_hymnal_number":81,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ለየሱስ-ንገር'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ለየሱስ-ንገር-ደክሞህ-እንደሁ-ከብዶ-እንደሁ-ልብህ-ለየሱስ-ንገር-ለየሱስ-ንገር-ሐዘን-ቢሰማህ-ደስታም-ቢለይህ-ብቻ-ለየሱስ-ንገር-ለየሱስ-ንገር-ለየሱስ-ን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7878,7 +7878,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-ve-found-a-friend',
+  'am-sda-en-lyrics-i-ve-found-a-friend-እንዴት-ያለ-ወዳጅ-አለኝ-አስቀድሞ-ወደደኝ-በፍቅሩ-ወደርሱ-ሳበኝ-ወደርሱ-አቀረበኝ-በፍቅሩ-ገመድ-አሰረኝ-ሊፈታ-በማይቻል',
   'am',
   'እንዴት ያለ ወዳጅ አለኝ',
   'I\''ve Found a Friend',
@@ -7931,7 +7931,7 @@ select
   109,
   '{"new_hymnal_number":110,"old_hymnal_number":82,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-ve-found-a-friend'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-ve-found-a-friend-እንዴት-ያለ-ወዳጅ-አለኝ-አስቀድሞ-ወደደኝ-በፍቅሩ-ወደርሱ-ሳበኝ-ወደርሱ-አቀረበኝ-በፍቅሩ-ገመድ-አሰረኝ-ሊፈታ-በማይቻል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -7950,7 +7950,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-does-jesus-care',
+  'am-sda-en-lyrics-does-jesus-care-የሱስ-ያውቃል-ልቤ-ሲጨነቅ-ደስታና-መዝሙር-ስናፍቅ-ሸክም-ሲበዛ-ደግሞም-ስጨነቅ-ደክሞኝ-ታክቶኝ-ጉዞው-ሲርቅ-አዎን-ያውቃል-ይጨነ',
   'am',
   'የሱስ ያውቃል',
   'Does Jesus Care?',
@@ -8015,7 +8015,7 @@ select
   110,
   '{"new_hymnal_number":111,"old_hymnal_number":83,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-does-jesus-care'
+join works w on w.canonical_key = 'am-sda-en-lyrics-does-jesus-care-የሱስ-ያውቃል-ልቤ-ሲጨነቅ-ደስታና-መዝሙር-ስናፍቅ-ሸክም-ሲበዛ-ደግሞም-ስጨነቅ-ደክሞኝ-ታክቶኝ-ጉዞው-ሲርቅ-አዎን-ያውቃል-ይጨነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8034,7 +8034,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-a-friend-we-have-in-jesus',
+  'am-sda-en-lyrics-what-a-friend-we-have-in-jesus-የሱስ-ክርስቶስ-የኔ-ወዳጅ-እንደ-እርሱ-የለኝም-ሌሎችም-እንኳ-ቢተወኝ-እርሱስ-አያደርገውም-ማን-ነው-አሁ',
   'am',
   'የሱስ ክርስቶስ የኔ ወዳጅ',
   'What a Friend We Have in Jesus',
@@ -8083,7 +8083,7 @@ select
   111,
   '{"new_hymnal_number":112,"old_hymnal_number":84,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-a-friend-we-have-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-a-friend-we-have-in-jesus-የሱስ-ክርስቶስ-የኔ-ወዳጅ-እንደ-እርሱ-የለኝም-ሌሎችም-እንኳ-ቢተወኝ-እርሱስ-አያደርገውም-ማን-ነው-አሁ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8388,7 +8388,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-take-my-life-and-let-it-be',
+  'am-sda-en-lyrics-take-my-life-and-let-it-be-ሕይወቴን-ውሰድና-የተቀደሰ-ይሁን-እጆቼን-ውሰድና-ባንተ-ይታዘዙልኝ-ባንተ-ይታዘዙልኝ-እግሬንም-አንተው-እዘዝ-አ',
   'am',
   'ሕይወቴን ውሰድ',
   'Take my Life and Let it Be',
@@ -8433,7 +8433,7 @@ select
   116,
   '{"new_hymnal_number":117,"old_hymnal_number":57,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-take-my-life-and-let-it-be'
+join works w on w.canonical_key = 'am-sda-en-lyrics-take-my-life-and-let-it-be-ሕይወቴን-ውሰድና-የተቀደሰ-ይሁን-እጆቼን-ውሰድና-ባንተ-ይታዘዙልኝ-ባንተ-ይታዘዙልኝ-እግሬንም-አንተው-እዘዝ-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8526,7 +8526,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-do-thy-work-lovingly',
+  'am-sda-en-lyrics-do-thy-work-lovingly-ሥራህን-ስትሰራ-ባምላክህ-ታመን-መንገድህን-ስትሄድ-ጨብጥ-ቃሉን-የአምላክን-ልጆች-ጠብቅ-ተግተህ-በፍቅር-ከዘራህ-መከር-አ',
   'am',
   'ሥራህን ስትሰራ',
   'Do Thy Work Lovingly',
@@ -8574,7 +8574,7 @@ select
   118,
   '{"new_hymnal_number":119,"old_hymnal_number":150,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-do-thy-work-lovingly'
+join works w on w.canonical_key = 'am-sda-en-lyrics-do-thy-work-lovingly-ሥራህን-ስትሰራ-ባምላክህ-ታመን-መንገድህን-ስትሄድ-ጨብጥ-ቃሉን-የአምላክን-ልጆች-ጠብቅ-ተግተህ-በፍቅር-ከዘራህ-መከር-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8666,7 +8666,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-work-for-the-night-is-coming',
+  'am-sda-en-lyrics-work-for-the-night-is-coming-ቀርቧል-ሌሊቱ-ሥሩ-ማልዳችሁ-ተነሱ-ጤዛው-ሳይረግፍ-ስሩ-ባበቦች-ዙሪያ-ቀኑ-እንዳይሔድባችሁ-ብርሃን-ሣለ-ሥሩ',
   'am',
   'ቀርቧል ሌሊቱ',
   'Work, for the Night is Coming',
@@ -8714,7 +8714,7 @@ select
   120,
   '{"new_hymnal_number":121,"old_hymnal_number":152,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-work-for-the-night-is-coming'
+join works w on w.canonical_key = 'am-sda-en-lyrics-work-for-the-night-is-coming-ቀርቧል-ሌሊቱ-ሥሩ-ማልዳችሁ-ተነሱ-ጤዛው-ሳይረግፍ-ስሩ-ባበቦች-ዙሪያ-ቀኑ-እንዳይሔድባችሁ-ብርሃን-ሣለ-ሥሩ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8733,7 +8733,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-is-vanity',
+  'am-sda-en-lyrics-all-is-vanity-ሰባኪው-አለ-ከንቱ-ከሰማይ-በታች-የሚሰራው-ደስ-የሚለውና-የሚያዝነው-ሁሉ-በቶሎ-ሊያልፍ-ነው-አ-ከንቱ-ነው-ከንቱ-ነው-ዝ-ሰባኪው-አ',
   'am',
   'ሰባኪው አለ ከንቱ',
   'All is Vanity',
@@ -8792,7 +8792,7 @@ select
   121,
   '{"new_hymnal_number":122,"old_hymnal_number":207,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-is-vanity'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-is-vanity-ሰባኪው-አለ-ከንቱ-ከሰማይ-በታች-የሚሰራው-ደስ-የሚለውና-የሚያዝነው-ሁሉ-በቶሎ-ሊያልፍ-ነው-አ-ከንቱ-ነው-ከንቱ-ነው-ዝ-ሰባኪው-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8811,7 +8811,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መድኃኒቴ-ልከተልህ',
+  'am-sda-en-lyrics-i-will-follow-thee-መድኃኒቴ-ልከተልህ-በታዘዝሁበት-ሁሉ-በምትሄደው-ልከተልህ-ልከተልህ-በሁሉ-ልከተልህ-መድኃኔቴ-ደምህን-አፈሰስህ-ለኔ-ሰው-ሁሉ',
   'am',
   'መድኃኒቴ ልከተልህ',
   'I Will Follow Thee',
@@ -8870,7 +8870,7 @@ select
   122,
   '{"new_hymnal_number":123,"old_hymnal_number":125,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መድኃኒቴ-ልከተልህ'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-follow-thee-መድኃኒቴ-ልከተልህ-በታዘዝሁበት-ሁሉ-በምትሄደው-ልከተልህ-ልከተልህ-በሁሉ-ልከተልህ-መድኃኔቴ-ደምህን-አፈሰስህ-ለኔ-ሰው-ሁሉ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8889,7 +8889,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wholly-thine',
+  'am-sda-en-lyrics-wholly-thine-ወዳጅህ-እንድሆን-ሁልጊዜ-አስተምረኝ-አስተምረኝ-ፈቃድህን-ላድርግ-የኔን-ትቼ-እርዳኝ-ና-እርዳኝ-ሁሉ-ላንት-ሁሉ-ላንት-ሁሉ-ላንት-ይህ',
   'am',
   'ወዳጅህ እንድሆን',
   'Wholly Thine',
@@ -8938,7 +8938,7 @@ select
   123,
   '{"new_hymnal_number":124,"old_hymnal_number":126,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wholly-thine'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wholly-thine-ወዳጅህ-እንድሆን-ሁልጊዜ-አስተምረኝ-አስተምረኝ-ፈቃድህን-ላድርግ-የኔን-ትቼ-እርዳኝ-ና-እርዳኝ-ሁሉ-ላንት-ሁሉ-ላንት-ሁሉ-ላንት-ይህ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -8957,7 +8957,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-brother-be-faithful',
+  'am-sda-en-lyrics-o-brother-be-faithful-ወንድሜ-ታማኝ-ሁን-የሱስ-ይመጣል-እስከ-ዛሬ-የጠበቅነው-በቅርብ-ወደቤታችን-እንገባለን-የድል-መዝሙር-ልንዘምር-ወንድሜ',
   'am',
   'ወንድሜ ታማኝ ሁን',
   'O Brother be Faithful',
@@ -9018,7 +9018,7 @@ select
   124,
   '{"new_hymnal_number":125,"old_hymnal_number":124,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-brother-be-faithful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-brother-be-faithful-ወንድሜ-ታማኝ-ሁን-የሱስ-ይመጣል-እስከ-ዛሬ-የጠበቅነው-በቅርብ-ወደቤታችን-እንገባለን-የድል-መዝሙር-ልንዘምር-ወንድሜ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9110,7 +9110,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ክቡር-መድኃኒት-አለኝ',
+  'am-sda-am-lyrics-ክቡር-መድኃኒት-አለኝ-ክቡር-መድኃኒት-አለኝ-በጣም-የምወደው-በርኅራኄው-ይወደኛል-በውነት-ያፈቅረኛል-ያለርሱ-ልኖር-አልችልም-እርሱን-እጠጋለሁ-ስለዚህ-ከጌ',
   'am',
   'ክቡር መድኃኒት አለኝ',
   'I Have a Friend So Precious',
@@ -9164,7 +9164,7 @@ select
   126,
   '{"new_hymnal_number":127,"old_hymnal_number":127,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ክቡር-መድኃኒት-አለኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ክቡር-መድኃኒት-አለኝ-ክቡር-መድኃኒት-አለኝ-በጣም-የምወደው-በርኅራኄው-ይወደኛል-በውነት-ያፈቅረኛል-ያለርሱ-ልኖር-አልችልም-እርሱን-እጠጋለሁ-ስለዚህ-ከጌ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9183,7 +9183,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-faith-of-our-fathers',
+  'am-sda-en-lyrics-faith-of-our-fathers-እሥራት-ሰይፍና-እሳትም-ቢኖር-ያባቶች-ሃይማኖት-አለን-ልባችን-በጣም-ይደሰታል-ይህን-ግሩም-ቃል-ሲሰማ-ያባቶች-እምነት-ፅ',
   'am',
   'ያባቶች ሃይማኖት',
   'Faith of Our Fathers',
@@ -9234,7 +9234,7 @@ select
   127,
   '{"new_hymnal_number":128,"old_hymnal_number":128,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-faith-of-our-fathers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-faith-of-our-fathers-እሥራት-ሰይፍና-እሳትም-ቢኖር-ያባቶች-ሃይማኖት-አለን-ልባችን-በጣም-ይደሰታል-ይህን-ግሩም-ቃል-ሲሰማ-ያባቶች-እምነት-ፅ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9253,7 +9253,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-hope-is-built',
+  'am-sda-en-lyrics-my-hope-is-built-የኔ-ተስፋ-የተሰራው-በየሱስ-ደም-በፅድቁም-ነው-በቅዱስ-የሱስ-ስም-በቀር-ሌላ-የለኝም-የማምነው-በየሱስ-ላይ-እቆማለሁ-ሌላው-መ',
   'am',
   'የኔ ተስፋ የተሰራው',
   'My Hope is Built',
@@ -9317,7 +9317,7 @@ select
   128,
   '{"new_hymnal_number":129,"old_hymnal_number":131,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-hope-is-built'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-hope-is-built-የኔ-ተስፋ-የተሰራው-በየሱስ-ደም-በፅድቁም-ነው-በቅዱስ-የሱስ-ስም-በቀር-ሌላ-የለኝም-የማምነው-በየሱስ-ላይ-እቆማለሁ-ሌላው-መ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9336,7 +9336,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-lift-me-up',
+  'am-sda-en-lyrics-jesus-lift-me-up-ከዓለም-ከንቱ-ወደላይ-ስሻገር-ቶሎ-ደከምሁኝ-የሱስ-ግን-አስነሳኝ-በእጁ-ያዘኝ-በፍቅሩ-ረዳኝ-በፍቅሩ-ረዳኝ-ስራመድ-ሳለሁ-በሲና',
   'am',
   'የሱስ አነሳኝ',
   'Jesus Lift Me Up',
@@ -9385,7 +9385,7 @@ select
   129,
   '{"new_hymnal_number":130,"old_hymnal_number":132,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-lift-me-up'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-lift-me-up-ከዓለም-ከንቱ-ወደላይ-ስሻገር-ቶሎ-ደከምሁኝ-የሱስ-ግን-አስነሳኝ-በእጁ-ያዘኝ-በፍቅሩ-ረዳኝ-በፍቅሩ-ረዳኝ-ስራመድ-ሳለሁ-በሲና'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9404,7 +9404,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-longing',
+  'am-sda-en-lyrics-longing-የተወደደ-አዳኜ-የሱስ-ከሁሉ-የከበረ-ነው-በረከቱንም-ስለዚህ-ነው-የምናፍቀው-መድኃኒቴ-ሆይ-ናፍቄህአለሁ-አንተን-ለማየት-እቸኩላለሁ-መድኃኒቴ',
   'am',
   'የተወደደ አዳኜ የሱስ',
   'Longing',
@@ -9460,7 +9460,7 @@ select
   130,
   '{"new_hymnal_number":131,"old_hymnal_number":129,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-longing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-longing-የተወደደ-አዳኜ-የሱስ-ከሁሉ-የከበረ-ነው-በረከቱንም-ስለዚህ-ነው-የምናፍቀው-መድኃኒቴ-ሆይ-ናፍቄህአለሁ-አንተን-ለማየት-እቸኩላለሁ-መድኃኒቴ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9479,7 +9479,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-longing-to-be-with-jesus',
+  'am-sda-en-lyrics-longing-to-be-with-jesus-ወዳንተ-የሱስ-ሆይ-ልቤ-ይናፍቃል-የአምላክ-በግ-ሁነህ-ስለኔ-ሞተሀል-ሰላም-ለኔ-ሰጠህ-ተሸክመህ-ቅጣት-ጠባቂዬ-ሆነ',
   'am',
   'ወዳንተ የሱስ ሆይ',
   'Longing to be With Jesus',
@@ -9524,7 +9524,7 @@ select
   131,
   '{"new_hymnal_number":132,"old_hymnal_number":130,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-longing-to-be-with-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-longing-to-be-with-jesus-ወዳንተ-የሱስ-ሆይ-ልቤ-ይናፍቃል-የአምላክ-በግ-ሁነህ-ስለኔ-ሞተሀል-ሰላም-ለኔ-ሰጠህ-ተሸክመህ-ቅጣት-ጠባቂዬ-ሆነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9543,7 +9543,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-will-take-care-of-you',
+  'am-sda-en-lyrics-god-will-take-care-of-you-ምንም-ቢሆን-ተስፋ-አትቁረጥ-አምላክ-ይረዳሃል-በፍቅር-ክንፉ-ስር-ብትኖር-አምላክ-ይረዳሃል-አምላክ-ይረዳሃል-ቀኑ',
   'am',
   'አምላክ ይረዳሃል',
   'God Will Take Care of You',
@@ -9608,7 +9608,7 @@ select
   132,
   '{"new_hymnal_number":133,"old_hymnal_number":133,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-will-take-care-of-you'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-will-take-care-of-you-ምንም-ቢሆን-ተስፋ-አትቁረጥ-አምላክ-ይረዳሃል-በፍቅር-ክንፉ-ስር-ብትኖር-አምላክ-ይረዳሃል-አምላክ-ይረዳሃል-ቀኑ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9700,7 +9700,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-happy-day-that-fixed-my-choice',
+  'am-sda-en-lyrics-o-happy-day-that-fixed-my-choice-በደስታ-ቀን-የመረጠኝ-አዳኜና-አምላኬ-ነው-ልቤን-እጅግ-ደስ-ያሰኛል-ያረገውን-እነግራለሁ-ደስታ-ቀን',
   'am',
   'በደስታ ቀን',
   'O Happy Day! That Fixed My Choice',
@@ -9751,7 +9751,7 @@ select
   134,
   '{"new_hymnal_number":135,"old_hymnal_number":135,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-happy-day-that-fixed-my-choice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-happy-day-that-fixed-my-choice-በደስታ-ቀን-የመረጠኝ-አዳኜና-አምላኬ-ነው-ልቤን-እጅግ-ደስ-ያሰኛል-ያረገውን-እነግራለሁ-ደስታ-ቀን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9770,7 +9770,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-my-heart-there-rings-a-melody',
+  'am-sda-en-lyrics-in-my-heart-there-rings-a-melody-የሱስ-የሰጠኝ-መዝሙር-አለኝ-ከሰማይ-የተላከ-ከሱ-የተሻለ-ዜማ-የለም-የፍቅሩ-ዜማ-ነው-በልቤ-ዜማ-ይሰ',
   'am',
   'በልቤ ዜማ ይሰማኛል',
   'In My Heart There Rings a  Melody',
@@ -9820,7 +9820,7 @@ select
   135,
   '{"new_hymnal_number":136,"old_hymnal_number":136,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-my-heart-there-rings-a-melody'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-my-heart-there-rings-a-melody-የሱስ-የሰጠኝ-መዝሙር-አለኝ-ከሰማይ-የተላከ-ከሱ-የተሻለ-ዜማ-የለም-የፍቅሩ-ዜማ-ነው-በልቤ-ዜማ-ይሰ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9839,7 +9839,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-blessed-assurance',
+  'am-sda-en-lyrics-blessed-assurance-የሱስ-የኔ-ነው-መልካም-ተስፋ-መለኮታዊ-ክብሩ-ይስፋፋ-የህይወት-ወራሽ-ልንሆን-ገዛን-በመንፈሱና-በደም-አጥቦን-አ-ይህ-ነው-ታ',
   'am',
   'የሱስ የኔ ነው',
   'Blessed Assurance',
@@ -9893,7 +9893,7 @@ select
   136,
   '{"new_hymnal_number":137,"old_hymnal_number":134,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-blessed-assurance'
+join works w on w.canonical_key = 'am-sda-en-lyrics-blessed-assurance-የሱስ-የኔ-ነው-መልካም-ተስፋ-መለኮታዊ-ክብሩ-ይስፋፋ-የህይወት-ወራሽ-ልንሆን-ገዛን-በመንፈሱና-በደም-አጥቦን-አ-ይህ-ነው-ታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -9973,7 +9973,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-sunshine-in-my-soul-today',
+  'am-sda-en-lyrics-there-s-sunshine-in-my-soul-today-በልቤ-ፀሐይ-ታበራለች-በክብር-በብራሃንዋ-ብርሃኑም-ሁሉ-ያበራል-የሱስ-የኔ-ብርሃን-ብርሃን-አለኝ-ብ',
   'am',
   'በልቤ ፀሐይ ታበራለች',
   'There\''s Sunshine in My Soul Today',
@@ -10029,7 +10029,7 @@ select
   138,
   '{"new_hymnal_number":139,"old_hymnal_number":137,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-sunshine-in-my-soul-today'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-sunshine-in-my-soul-today-በልቤ-ፀሐይ-ታበራለች-በክብር-በብራሃንዋ-ብርሃኑም-ሁሉ-ያበራል-የሱስ-የኔ-ብርሃን-ብርሃን-አለኝ-ብ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10123,7 +10123,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-give-me-your-peace',
+  'am-sda-en-lyrics-give-me-your-peace-ያንተን-ሰላም-ኦ-የሱስ-አውርድልን-በሁከት-የሚያድል-ፀጥታን-በእንግድነት-ተስፋን-የሚሰጠን-በገነት-የሚሰጠነ-ብርሃን-ባጭር',
   'am',
   'ያንተን ሰላም',
   'Give me Your Peace',
@@ -10176,7 +10176,7 @@ select
   140,
   '{"new_hymnal_number":141,"old_hymnal_number":141,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-give-me-your-peace'
+join works w on w.canonical_key = 'am-sda-en-lyrics-give-me-your-peace-ያንተን-ሰላም-ኦ-የሱስ-አውርድልን-በሁከት-የሚያድል-ፀጥታን-በእንግድነት-ተስፋን-የሚሰጠን-በገነት-የሚሰጠነ-ብርሃን-ባጭር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10195,7 +10195,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-peace-like-a-river',
+  'am-sda-en-lyrics-when-peace-like-a-river-ሰላም-እንደ-ወንዝ-በመንገዱ-ሲወርድ-ኃዘን-ሲመጣ-እንደ-ማዕበል-የሆነ-ቢሆን-ካንተ-ተምሬአለሁ-ህይወቴ-ደህና-ነው-እ',
   'am',
   'ሰላም እንደ ወንዝ',
   'When Peace, Like a River',
@@ -10253,7 +10253,7 @@ select
   141,
   '{"new_hymnal_number":142,"old_hymnal_number":140,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-peace-like-a-river'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-peace-like-a-river-ሰላም-እንደ-ወንዝ-በመንገዱ-ሲወርድ-ኃዘን-ሲመጣ-እንደ-ማዕበል-የሆነ-ቢሆን-ካንተ-ተምሬአለሁ-ህይወቴ-ደህና-ነው-እ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10272,7 +10272,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሚያስደንቅ-መድህን',
+  'am-sda-am-lyrics-የሚያስደንቅ-መድህን-የሚያስደንቅ-መድህን-ነው-የሱስ-ጌታ-አስደናቂ-አዳኜ-ነው-ለነፍሴ-ደግሞ-መጠጊያዋ-ነው-የደስታን-ወንዝ-ባየሁ-ጊዜ-ለነፍሴ-መጠጊያ-ይሆ',
   'am',
   'የሚያስደንቅ መድህን',
   'A Wonderful Saviour is Jesus My Lord',
@@ -10337,7 +10337,7 @@ select
   142,
   '{"new_hymnal_number":143,"old_hymnal_number":142,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሚያስደንቅ-መድህን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሚያስደንቅ-መድህን-የሚያስደንቅ-መድህን-ነው-የሱስ-ጌታ-አስደናቂ-አዳኜ-ነው-ለነፍሴ-ደግሞ-መጠጊያዋ-ነው-የደስታን-ወንዝ-ባየሁ-ጊዜ-ለነፍሴ-መጠጊያ-ይሆ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10356,7 +10356,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-is-your-all-on-the-altar',
+  'am-sda-en-lyrics-is-your-all-on-the-altar-ሰላም-ፈልገሃል-እምነትህን-ለማከል-በናፍቆት-በትጋት-ጸልየሀል-ግን-መባረክና-ማረፍ-ያቅትሀል-ሁሉንም-በመሰውያው-ጣ',
   'am',
   'ሰላም ፈልገሃል',
   'Is Your all on the Altar?',
@@ -10416,7 +10416,7 @@ select
   143,
   '{"new_hymnal_number":144,"old_hymnal_number":138,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-is-your-all-on-the-altar'
+join works w on w.canonical_key = 'am-sda-en-lyrics-is-your-all-on-the-altar-ሰላም-ፈልገሃል-እምነትህን-ለማከል-በናፍቆት-በትጋት-ጸልየሀል-ግን-መባረክና-ማረፍ-ያቅትሀል-ሁሉንም-በመሰውያው-ጣ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10435,7 +10435,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-peace',
+  'am-sda-en-lyrics-wonderful-peace-በመንፈሴ-ጠልቆ-አሁን-ዛሬ-ማታ-ይሰማል-የሚጣፍጥ-ዜማ-የሰማዩ-ዜማ-ሣያቋርጥ-ሲወርድ-ነፍሴ-አያገኛትም-ሞገድ-ሰላም-ግሩም-ሰላም',
   'am',
   'ግሩም ሰላም',
   'Wonderful Peace',
@@ -10502,7 +10502,7 @@ select
   144,
   '{"new_hymnal_number":145,"old_hymnal_number":139,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-peace'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-peace-በመንፈሴ-ጠልቆ-አሁን-ዛሬ-ማታ-ይሰማል-የሚጣፍጥ-ዜማ-የሰማዩ-ዜማ-ሣያቋርጥ-ሲወርድ-ነፍሴ-አያገኛትም-ሞገድ-ሰላም-ግሩም-ሰላም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10663,7 +10663,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-know-i-love-thee-better-lord',
+  'am-sda-en-lyrics-i-know-i-love-thee-better-lord-እወድህአለሁ-ኦ-ጌታ-ከምድራዊ-ደስታ-ኦ-ያንተን-ሰላም-ሰጠኸኝ-የማይጠፋብኝን-እኩሉም-አልተነገረም-የፍቅሩ',
   'am',
   'እወድሃለሁ ኦ ጌታ',
   'I Know I Love Thee Better Lord',
@@ -10717,7 +10717,7 @@ select
   147,
   '{"new_hymnal_number":148,"old_hymnal_number":148,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-know-i-love-thee-better-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-know-i-love-thee-better-lord-እወድህአለሁ-ኦ-ጌታ-ከምድራዊ-ደስታ-ኦ-ያንተን-ሰላም-ሰጠኸኝ-የማይጠፋብኝን-እኩሉም-አልተነገረም-የፍቅሩ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10736,7 +10736,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-more-love-to-thee',
+  'am-sda-en-lyrics-more-love-to-thee-በብዙው-ላፍቅርህ-ኦ-የሱስ-ሆይ-ልመናዬን-ስማ-ስፀልይ-ሣል-ይህ-ነው-የኔ-ምኞት-ፍቅር-ኦ-የሱስ-ላንት-ፍቅር-ላንተ-ፍቅር-ላን',
   'am',
   'ፍቅር ኦ የሱስ ላንት',
   'More Love to Thee',
@@ -10785,7 +10785,7 @@ select
   148,
   '{"new_hymnal_number":149,"old_hymnal_number":149,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-more-love-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-more-love-to-thee-በብዙው-ላፍቅርህ-ኦ-የሱስ-ሆይ-ልመናዬን-ስማ-ስፀልይ-ሣል-ይህ-ነው-የኔ-ምኞት-ፍቅር-ኦ-የሱስ-ላንት-ፍቅር-ላንተ-ፍቅር-ላን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10804,7 +10804,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-ll-love-to-the-end',
+  'am-sda-en-lyrics-he-ll-love-to-the-end-ወደደኝ-ወደደኝ-መድህን-ወዳጄ-ጥንቃቄውና-ፀጋው-ብዙ-ነው-ከርሱ-ይመጣልኛል-በረከቴ-ለእግሬም-መንገዴን-ይጠርግልኛል-ወደ',
   'am',
   'ወደደኝ ወደደኝ',
   'He\''ll Love to the End',
@@ -10858,7 +10858,7 @@ select
   149,
   '{"new_hymnal_number":150,"old_hymnal_number":143,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-ll-love-to-the-end'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-ll-love-to-the-end-ወደደኝ-ወደደኝ-መድህን-ወዳጄ-ጥንቃቄውና-ፀጋው-ብዙ-ነው-ከርሱ-ይመጣልኛል-በረከቴ-ለእግሬም-መንገዴን-ይጠርግልኛል-ወደ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10877,7 +10877,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-jesus-i-love-thee',
+  'am-sda-en-lyrics-my-jesus-i-love-thee-የሱስ-ሆይ-ወደድሁህ-የኔ-ነህና-ኃጢዓቴንም-ሁሉ-እተወዋለሁ-ክቡር-አዳኜና-መድኃኒቴ-ነህ-ከቀድሞውም-ይልቅ-አሁን-ወደድሁህ',
   'am',
   'የሱስ ሆይ ወደድሁህ',
   'My Jesus I Love Thee',
@@ -10931,7 +10931,7 @@ select
   150,
   '{"new_hymnal_number":151,"old_hymnal_number":145,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-jesus-i-love-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-jesus-i-love-thee-የሱስ-ሆይ-ወደድሁህ-የኔ-ነህና-ኃጢዓቴንም-ሁሉ-እተወዋለሁ-ክቡር-አዳኜና-መድኃኒቴ-ነህ-ከቀድሞውም-ይልቅ-አሁን-ወደድሁህ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -10950,7 +10950,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-love-thee',
+  'am-sda-en-lyrics-i-love-thee-ወደድሁህ-ወደድሁህ-ወደድሁህ-ጌታ-ወደድሁህ-አዳኜ-ወደድሁህ-ጌታዬ-ወደድሁህ-ወደድሁህ-ታላቅ-አምላክ-ነህ-ሕይወትህን-ሰዋህ-እኔን-ለማዳን',
   'am',
   'ወደድሁህ ወደድሁህ',
   'I Love Thee',
@@ -10998,7 +10998,7 @@ select
   151,
   '{"new_hymnal_number":152,"old_hymnal_number":146,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-love-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-love-thee-ወደድሁህ-ወደድሁህ-ወደድሁህ-ጌታ-ወደድሁህ-አዳኜ-ወደድሁህ-ጌታዬ-ወደድሁህ-ወደድሁህ-ታላቅ-አምላክ-ነህ-ሕይወትህን-ሰዋህ-እኔን-ለማዳን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11100,7 +11100,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-like-as-a-father',
+  'am-sda-en-lyrics-like-as-a-father-አባት-ለልጁ-እንዲራራ-አምላክ-ለኃጠአተኛ-ይራራል-ይጠብቀናል-ያስብልናል-በታላቅ-ፍቅሩ-ይናፍቀናል-እንደ-አባታችን-ብናምነው-በም',
   'am',
   'አባት ለልጁ እንዲራራ',
   'Like as a Father',
@@ -11154,7 +11154,7 @@ select
   153,
   '{"new_hymnal_number":154,"old_hymnal_number":147,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-like-as-a-father'
+join works w on w.canonical_key = 'am-sda-en-lyrics-like-as-a-father-አባት-ለልጁ-እንዲራራ-አምላክ-ለኃጠአተኛ-ይራራል-ይጠብቀናል-ያስብልናል-በታላቅ-ፍቅሩ-ይናፍቀናል-እንደ-አባታችን-ብናምነው-በም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11457,7 +11457,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ጥልቅ-እንደ-ውቂያኖስ',
+  'am-sda-am-lyrics-ጥልቅ-እንደ-ውቂያኖስ-ጥልቅ-እንደ-ውቂያኖስ-ከፍ-ያለ-እንደ-ጠፈር-ከምድር-የሰፋ-ነው-የየሱስ-ፍቅር-ይደግፈኛልም-ኃጢአተኛም-ብሆን-ቃሉ-ይነግረኛል-ፍቅሩ',
   'am',
   'ጥልቅ እንደ ውቂያኖስ',
   'Wide, Wide as the Ocen',
@@ -11499,7 +11499,7 @@ select
   158,
   '{"new_hymnal_number":159,"old_hymnal_number":252,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ጥልቅ-እንደ-ውቂያኖስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ጥልቅ-እንደ-ውቂያኖስ-ጥልቅ-እንደ-ውቂያኖስ-ከፍ-ያለ-እንደ-ጠፈር-ከምድር-የሰፋ-ነው-የየሱስ-ፍቅር-ይደግፈኛልም-ኃጢአተኛም-ብሆን-ቃሉ-ይነግረኛል-ፍቅሩ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11518,7 +11518,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-come-to-jesus-he-ll-teach-the-way',
+  'am-sda-en-lyrics-come-to-jesus-he-ll-teach-the-way-ቶሎ-ወደ-የሱስ-ና-መንገዱን-ያስተምርሃል-ከኛ-ጋር-ይቆማል-ይጮሃልምና-ደስታ-ደስታ-ይሆናልና-ኃጢአታ',
   'am',
   'ቶሎ ወደ የሱስ ና',
   'Come to Jesus He\''ll Teach the Way',
@@ -11567,7 +11567,7 @@ select
   159,
   '{"new_hymnal_number":160,"old_hymnal_number":160,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-come-to-jesus-he-ll-teach-the-way'
+join works w on w.canonical_key = 'am-sda-en-lyrics-come-to-jesus-he-ll-teach-the-way-ቶሎ-ወደ-የሱስ-ና-መንገዱን-ያስተምርሃል-ከኛ-ጋር-ይቆማል-ይጮሃልምና-ደስታ-ደስታ-ይሆናልና-ኃጢአታ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11664,7 +11664,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-close-to-thee',
+  'am-sda-en-lyrics-close-to-thee-የዘላለም-ምርጫዬ-ነህ-ወዳጄና-ሕይወቴ-በጉዞዬ-ካንተ-ጋራ-ልራመድ-መድኃኒቴ-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-በጉዞዬ-ካን',
   'am',
   'ካንተ ጋር',
   'Close to Thee',
@@ -11712,7 +11712,7 @@ select
   161,
   '{"new_hymnal_number":162,"old_hymnal_number":162,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-close-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-close-to-thee-የዘላለም-ምርጫዬ-ነህ-ወዳጄና-ሕይወቴ-በጉዞዬ-ካንተ-ጋራ-ልራመድ-መድኃኒቴ-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-በጉዞዬ-ካን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11731,7 +11731,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-more-about-jesus',
+  'am-sda-en-lyrics-more-about-jesus-ስለ-የሱስ-ባወቅሁ-ፀጋውን-ባካፈልሁ-የማዳኑን-ሙላት-ባየሁ-የፍቅሩ-ሞቱን-ባወራሁ-ጌታ-በወደድሁት-ፍቅሩን-በተማርሁት-የማዳኑን',
   'am',
   'ስለ የሱስ ባወቅሁ',
   'More About Jesus',
@@ -11785,7 +11785,7 @@ select
   162,
   '{"new_hymnal_number":163,"old_hymnal_number":153,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-more-about-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-more-about-jesus-ስለ-የሱስ-ባወቅሁ-ፀጋውን-ባካፈልሁ-የማዳኑን-ሙላት-ባየሁ-የፍቅሩ-ሞቱን-ባወራሁ-ጌታ-በወደድሁት-ፍቅሩን-በተማርሁት-የማዳኑን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11804,7 +11804,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የክርስቶስ-ደም-ብቻ-ነው',
+  'am-sda-am-lyrics-የክርስቶስ-ደም-ብቻ-ነው-ኃጢአቴን-ምን-ያጥበዋል-የክርስቶስ-ደም-ብቻ-ነው-ምን-ንፁህ-ያደርገኛል-የክርስቶስ-ደም-ብቻ-ነው-ኦ-ፍፁም-ብሩክ-ምንጭ-ኃጢአቴን',
   'am',
   'የክርስቶስ ደም ብቻ ነው',
   'Nothing But the Blood of Jesus',
@@ -11882,7 +11882,7 @@ select
   163,
   '{"new_hymnal_number":164,"old_hymnal_number":163,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የክርስቶስ-ደም-ብቻ-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የክርስቶስ-ደም-ብቻ-ነው-ኃጢአቴን-ምን-ያጥበዋል-የክርስቶስ-ደም-ብቻ-ነው-ምን-ንፁህ-ያደርገኛል-የክርስቶስ-ደም-ብቻ-ነው-ኦ-ፍፁም-ብሩክ-ምንጭ-ኃጢአቴን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11901,7 +11901,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በርሱ-ጽኑ',
+  'am-sda-am-lyrics-በርሱ-ጽኑ-ነፍሶች-ሁሉ-በኃጢአት-የተጨቆናችሁ-በውነት-ጌታችን-ፈዋሽ-ነው-በቃሉ-ብታምኑ-በርሱ-ጽኑ-በርሱ-ጽኑ-በጌታ-ጽኑ-ይቅር-ባይ-ነው-ይቅር-ባይ-ነው',
   'am',
   'በርሱ ጽኑ',
   'Come, Ev\''ry Soul by Sin Oppressed',
@@ -11956,7 +11956,7 @@ select
   164,
   '{"new_hymnal_number":165,"old_hymnal_number":165,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በርሱ-ጽኑ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በርሱ-ጽኑ-ነፍሶች-ሁሉ-በኃጢአት-የተጨቆናችሁ-በውነት-ጌታችን-ፈዋሽ-ነው-በቃሉ-ብታምኑ-በርሱ-ጽኑ-በርሱ-ጽኑ-በጌታ-ጽኑ-ይቅር-ባይ-ነው-ይቅር-ባይ-ነው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -11975,7 +11975,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-give-my-life-for-thee',
+  'am-sda-en-lyrics-i-give-my-life-for-thee-ሕይወቴን-ለወጥሁልህ-ልገዛ-ነፍስህን-ሰማይን-ልከፍትልህ-ልሰጥህ-ርስትህን-ትድን-ዘንድ-ደሜ-ፈሶልሃል-ምን-መልሰህልኛ',
   'am',
   'ሕይወቴን ለወጥሁልህ',
   'I Give My Life for Thee',
@@ -12023,7 +12023,7 @@ select
   165,
   '{"new_hymnal_number":166,"old_hymnal_number":166,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-give-my-life-for-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-give-my-life-for-thee-ሕይወቴን-ለወጥሁልህ-ልገዛ-ነፍስህን-ሰማይን-ልከፍትልህ-ልሰጥህ-ርስትህን-ትድን-ዘንድ-ደሜ-ፈሶልሃል-ምን-መልሰህልኛ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12042,7 +12042,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-the-pearly-gates-will-open',
+  'am-sda-en-lyrics-he-the-pearly-gates-will-open-ታላቅ-የመለኮት-ፍቅር-ጥልቅና-ኃያል-ቅዱስ-ከየሱስ-ልብ-ይመነጫል-የማያልቅ-ግሩም-ፍቅር-አ-ድንቅ-የፀጋ-በ',
   'am',
   'ድንቅ የፀጋ በር ከፈተ',
   'He the Pearly Gates Will Open',
@@ -12101,7 +12101,7 @@ select
   166,
   '{"new_hymnal_number":167,"old_hymnal_number":167,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-the-pearly-gates-will-open'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-the-pearly-gates-will-open-ታላቅ-የመለኮት-ፍቅር-ጥልቅና-ኃያል-ቅዱስ-ከየሱስ-ልብ-ይመነጫል-የማያልቅ-ግሩም-ፍቅር-አ-ድንቅ-የፀጋ-በ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12120,7 +12120,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ቸሩ-የሱስ',
+  'am-sda-am-lyrics-ቸሩ-የሱስ-ቸሩ-ጠባቂ-ምራን-በጥሩ-ቃልህ-ብርሃን-ከመከራ-ጠብቀን-በምህረትህ-መግበን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕለት-ጠብቅ-መንጋህን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕ',
   'am',
   'ቸሩ የሱስ',
   'Saviour, Like a Shephered Lead Us',
@@ -12173,7 +12173,7 @@ select
   167,
   '{"new_hymnal_number":168,"old_hymnal_number":168,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ቸሩ-የሱስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ቸሩ-የሱስ-ቸሩ-ጠባቂ-ምራን-በጥሩ-ቃልህ-ብርሃን-ከመከራ-ጠብቀን-በምህረትህ-መግበን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕለት-ጠብቅ-መንጋህን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12266,7 +12266,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-have-a-song-i-love-to-sing',
+  'am-sda-en-lyrics-i-have-a-song-i-love-to-sing-መዝሙር-አለኝ-የምወደው-ጌታ-ስላዳነኝ-ለጌታዬ-ልዘምረው-እርሱ-ስላዳነኝ-ጌታ-ስላዳነኝ-ጌታ-ስላዳነኝ-ስሙንም',
   'am',
   'ጌታ ስላዳነኝ',
   'I Have a Song I Love to Sing',
@@ -12321,7 +12321,7 @@ select
   169,
   '{"new_hymnal_number":170,"old_hymnal_number":156,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-have-a-song-i-love-to-sing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-have-a-song-i-love-to-sing-መዝሙር-አለኝ-የምወደው-ጌታ-ስላዳነኝ-ለጌታዬ-ልዘምረው-እርሱ-ስላዳነኝ-ጌታ-ስላዳነኝ-ጌታ-ስላዳነኝ-ስሙንም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12340,7 +12340,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-መጣ',
+  'am-sda-am-lyrics-የሱስ-መጣ-ተቀምጦ-በመንገድ-ዳር-ሲለምን-ዓይኑ-ጠፍቶ-አላየም-ብርሃን-ተራቁቶ-በብርድ-ሲንቀጠቀጥ-የሱስ-መጣ-ጨለማን-ሊያስወግድ-የሱስ-መጥቶ-የሰይጣንን-ኃ',
   'am',
   'የሱስ መጣ',
   'Then Jesus Came',
@@ -12400,7 +12400,7 @@ select
   170,
   '{"new_hymnal_number":171,"old_hymnal_number":154,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-መጣ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-መጣ-ተቀምጦ-በመንገድ-ዳር-ሲለምን-ዓይኑ-ጠፍቶ-አላየም-ብርሃን-ተራቁቶ-በብርድ-ሲንቀጠቀጥ-የሱስ-መጣ-ጨለማን-ሊያስወግድ-የሱስ-መጥቶ-የሰይጣንን-ኃ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12419,7 +12419,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ያባትህ-እጅ-ተዘርግቷል',
+  'am-sda-am-lyrics-ያባትህ-እጅ-ተዘርግቷል-ያባትህ-እጅ-ተዘርግቷል-ልጁን-ሊቀበልህ-ገና-በስምህ-ይጠራል-ወደርሱም-ይስብሃል-ገና-ከፍ-ያለ-የምክር-ድምፁ-ይነግርሃል-እያለ-ልጄ',
   'am',
   'ያባትህ እጅ ተዘርግቷል',
   'Jesus Bis us Come',
@@ -12473,7 +12473,7 @@ select
   171,
   '{"new_hymnal_number":172,"old_hymnal_number":158,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ያባትህ-እጅ-ተዘርግቷል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ያባትህ-እጅ-ተዘርግቷል-ያባትህ-እጅ-ተዘርግቷል-ልጁን-ሊቀበልህ-ገና-በስምህ-ይጠራል-ወደርሱም-ይስብሃል-ገና-ከፍ-ያለ-የምክር-ድምፁ-ይነግርሃል-እያለ-ልጄ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12492,7 +12492,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-now-i-ve-found-a-jewel',
+  'am-sda-en-lyrics-now-i-ve-found-a-jewel-አሁን-ድንቅ-እንቁ-አገኘሁ-ነፍሴን-ደስ-የሚያሰኝ-ማነው-ብለህ-ብትጠይቀኝ-የሱስ-አዳኜ-ነው-ተነሽ-ዘምሪ-ነፍሴ-ሆይ-ጌ',
   'am',
   'አሁን ድንቅ እንቁ አገኘሁ',
   'Now I\''ve Found a Jewel',
@@ -12546,7 +12546,7 @@ select
   172,
   '{"new_hymnal_number":173,"old_hymnal_number":159,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-now-i-ve-found-a-jewel'
+join works w on w.canonical_key = 'am-sda-en-lyrics-now-i-ve-found-a-jewel-አሁን-ድንቅ-እንቁ-አገኘሁ-ነፍሴን-ደስ-የሚያሰኝ-ማነው-ብለህ-ብትጠይቀኝ-የሱስ-አዳኜ-ነው-ተነሽ-ዘምሪ-ነፍሴ-ሆይ-ጌ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12632,7 +12632,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-great-physician-now-is-near',
+  'am-sda-en-lyrics-the-great-physician-now-is-near-ታላቁ-ሐኪም-መጥቷል-አዛኝ-የሆነው-የሱስ-ያዘነን-ልብ-ያስደስታል-እንስማ-የጌታን-ቃል-ስሙ-ይላቅ-ለቅዱ',
   'am',
   'ታላቁ ሐኪም መጥቷል',
   'The Great Physician Now is Near',
@@ -12691,7 +12691,7 @@ select
   174,
   '{"new_hymnal_number":175,"old_hymnal_number":170,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-great-physician-now-is-near'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-great-physician-now-is-near-ታላቁ-ሐኪም-መጥቷል-አዛኝ-የሆነው-የሱስ-ያዘነን-ልብ-ያስደስታል-እንስማ-የጌታን-ቃል-ስሙ-ይላቅ-ለቅዱ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12710,7 +12710,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful',
+  'am-sda-en-lyrics-wonderful-መልካም-ስምን-ይዟል-መልካም-ዘውድም-ደፍቷል-ድሉ-ግሩም-በረከት-ያስገኛል-ግሩሙ-ቀራኒዮ-ግሩም-ጸጋው-ለኔ-ፍቅሩን-ለሁላችን-ይሰጠናል',
   'am',
   'መልካም ስም',
   'Wonderful',
@@ -12756,7 +12756,7 @@ select
   175,
   '{"new_hymnal_number":176,"old_hymnal_number":263,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-መልካም-ስምን-ይዟል-መልካም-ዘውድም-ደፍቷል-ድሉ-ግሩም-በረከት-ያስገኛል-ግሩሙ-ቀራኒዮ-ግሩም-ጸጋው-ለኔ-ፍቅሩን-ለሁላችን-ይሰጠናል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12932,7 +12932,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ስመለከት-ያን-ድንቅ-መስቀል',
+  'am-sda-am-lyrics-ስመለከት-ያን-ድንቅ-መስቀል-ስመለከት-ያን-ድንቅ-መስቀል-መድኅኔ-የሞተበትን-እንቀዋለሁ-ህይወቴን-ትምክቴ-ከንቱ-ይሆናል-በቅዱስ-መስቀልህ-በቀር-እንዳልመካ',
   'am',
   'ስመለከት ያን ድንቅ መስቀል',
   'When I Survey the Wondrous Cross',
@@ -12977,7 +12977,7 @@ select
   178,
   '{"new_hymnal_number":179,"old_hymnal_number":171,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ስመለከት-ያን-ድንቅ-መስቀል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ስመለከት-ያን-ድንቅ-መስቀል-ስመለከት-ያን-ድንቅ-መስቀል-መድኅኔ-የሞተበትን-እንቀዋለሁ-ህይወቴን-ትምክቴ-ከንቱ-ይሆናል-በቅዱስ-መስቀልህ-በቀር-እንዳልመካ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -12996,7 +12996,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-keep-me-near-the-cross',
+  'am-sda-en-lyrics-jesus-keep-me-near-the-cross-የሱስ-መስቀልህን-ልቅረብ-ያንን-የክብር-ምንጭ-ከዚያ-ነፃ-ምንጭ-አለ-ለሁሉ-ጤና-ሰጭ-መስቀልህ-መስቀልህ-ይሁ',
   'am',
   'መስቀልህ',
   'Jesus, Keep Me Near the Cross',
@@ -13051,7 +13051,7 @@ select
   179,
   '{"new_hymnal_number":180,"old_hymnal_number":181,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-keep-me-near-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-keep-me-near-the-cross-የሱስ-መስቀልህን-ልቅረብ-ያንን-የክብር-ምንጭ-ከዚያ-ነፃ-ምንጭ-አለ-ለሁሉ-ጤና-ሰጭ-መስቀልህ-መስቀልህ-ይሁ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13070,7 +13070,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-glory-to-his-name',
+  'am-sda-en-lyrics-glory-to-his-name-በመስቀል-ሞተ-መድኃኒቴ-ሊያድነኝ-ብሎ-ከጥፋቴ-ሊመልሰኝም-ከኃጢአቴ-ክብር-ለስሙ-ክብር-ለስሙ-ክብር-ለስሙ-ነፃ-ስላወጣኝ-በደሙ',
   'am',
   'ክብር ለስሙ',
   'Glory to His Name',
@@ -13133,7 +13133,7 @@ select
   180,
   '{"new_hymnal_number":181,"old_hymnal_number":182,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-glory-to-his-name'
+join works w on w.canonical_key = 'am-sda-en-lyrics-glory-to-his-name-በመስቀል-ሞተ-መድኃኒቴ-ሊያድነኝ-ብሎ-ከጥፋቴ-ሊመልሰኝም-ከኃጢአቴ-ክብር-ለስሙ-ክብር-ለስሙ-ክብር-ለስሙ-ነፃ-ስላወጣኝ-በደሙ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13152,7 +13152,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በራቀው-ኮረብታ',
+  'am-sda-am-lyrics-በራቀው-ኮረብታ-በራቀው-ኮረብታ-መስቀል-ይታየኛል-የየሱስ-መከራ-መስቀል-ከሁሉ-ይልቅ-ያመስቀል-ደስ-ይለኛል-ለዓለም-ሞቱን-ያሳያል-ስለዚህ-ልውደደው-መስቀሉ',
   'am',
   'በራቀው ኮረብታ',
   'The Old Rugged Cross',
@@ -13212,7 +13212,7 @@ select
   181,
   '{"new_hymnal_number":182,"old_hymnal_number":180,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በራቀው-ኮረብታ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በራቀው-ኮረብታ-በራቀው-ኮረብታ-መስቀል-ይታየኛል-የየሱስ-መከራ-መስቀል-ከሁሉ-ይልቅ-ያመስቀል-ደስ-ይለኛል-ለዓለም-ሞቱን-ያሳያል-ስለዚህ-ልውደደው-መስቀሉ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13231,7 +13231,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-go-to-dark-gethesemane',
+  'am-sda-en-lyrics-go-to-dark-gethesemane-ሂድ-ወደ-ጌተሴማኔ-ፈተናን-ፈሪ-ሰው-ሆይ-ላንዲት-መራራ-ሰዓት-ያዳኝህን-ስቃይ-እይ-ከኀዘኑም-ሳትርቅ-ከርሱ-ጸሎትን-ተ',
   'am',
   'ሂድ ወደ ጌተሴማኔ',
   'Go to Dark Gethesemane',
@@ -13276,7 +13276,7 @@ select
   182,
   '{"new_hymnal_number":183,"old_hymnal_number":172,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-go-to-dark-gethesemane'
+join works w on w.canonical_key = 'am-sda-en-lyrics-go-to-dark-gethesemane-ሂድ-ወደ-ጌተሴማኔ-ፈተናን-ፈሪ-ሰው-ሆይ-ላንዲት-መራራ-ሰዓት-ያዳኝህን-ስቃይ-እይ-ከኀዘኑም-ሳትርቅ-ከርሱ-ጸሎትን-ተ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13295,7 +13295,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-at-the-cross',
+  'am-sda-en-lyrics-at-the-cross-አዳኜ-ደሙ-ፈሰሰ-ንጉሤ-ሞተልኝ-ራሱ-ለውርደት-ደረሰ-እኔን-ሊያድነኝ-በመስቀል-በመስቀል-ብርሃን-ባየሁበት-የልቤ-ሸክም-በቀለለበት-በሃ',
   'am',
   'በመስቀል በመስቀል',
   'At the Cross',
@@ -13345,7 +13345,7 @@ select
   183,
   '{"new_hymnal_number":184,"old_hymnal_number":176,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-at-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-at-the-cross-አዳኜ-ደሙ-ፈሰሰ-ንጉሤ-ሞተልኝ-ራሱ-ለውርደት-ደረሰ-እኔን-ሊያድነኝ-በመስቀል-በመስቀል-ብርሃን-ባየሁበት-የልቤ-ሸክም-በቀለለበት-በሃ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13364,7 +13364,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-በደሙ-ገዛን',
+  'am-sda-am-lyrics-የሱስ-በደሙ-ገዛን-ዕዳ-ተከፍሎ-ድልም-ተሰጠ-ለኛ-ሲል-የሱስ-ክርስቶስ-ሞተ-ከኦሪት-መርገም-ከኃጢአት-ክርስቶስ-አዳነን-ሁላችን-አሁንም-ሰው-ሆይ-ይህንን-እ',
   'am',
   'የሱስ በደሙ ገዛን',
   'Jesus Bought Us by His Blood',
@@ -13418,7 +13418,7 @@ select
   184,
   '{"new_hymnal_number":185,"old_hymnal_number":174,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-በደሙ-ገዛን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-በደሙ-ገዛን-ዕዳ-ተከፍሎ-ድልም-ተሰጠ-ለኛ-ሲል-የሱስ-ክርስቶስ-ሞተ-ከኦሪት-መርገም-ከኃጢአት-ክርስቶስ-አዳነን-ሁላችን-አሁንም-ሰው-ሆይ-ይህንን-እ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13437,7 +13437,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-way-of-the-cross-leads-home',
+  'am-sda-en-lyrics-the-way-of-the-cross-leads-home-መስቀሉን-ይዤ-ወደ-ቤቴ-ካልሄድሁ-ሌላ-መንገድ-የለኝም-ላየው-አልችልም-የብርሃኑን-ደጅ-የመስቀሉን-መንገ',
   'am',
   'መስቀሉ እኔን ይምራኝ',
   'The Way of the Cross Leads Home',
@@ -13492,7 +13492,7 @@ select
   185,
   '{"new_hymnal_number":186,"old_hymnal_number":175,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-way-of-the-cross-leads-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-way-of-the-cross-leads-home-መስቀሉን-ይዤ-ወደ-ቤቴ-ካልሄድሁ-ሌላ-መንገድ-የለኝም-ላየው-አልችልም-የብርሃኑን-ደጅ-የመስቀሉን-መንገ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13921,7 +13921,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-አልረሳውም',
+  'am-sda-am-lyrics-አልረሳውም-አልረሳውም-ያነን-ጊዜ-በጌተሰማኔ-በጣርህ-ሲያልብህ-ስለኔ-አምላኬ-በዚያ-ስፍራ-በአትክልቱ-በልቤ-አየሁህ-ቤዛ-ሆነህ-የፍርድ-መዓት-እንደ-ተቀበል',
   'am',
   'አልረሳውም',
   'I\''ll Not Forget Gethesemane',
@@ -13969,7 +13969,7 @@ select
   192,
   '{"new_hymnal_number":193,"old_hymnal_number":177,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-አልረሳውም'
+join works w on w.canonical_key = 'am-sda-am-lyrics-አልረሳውም-አልረሳውም-ያነን-ጊዜ-በጌተሰማኔ-በጣርህ-ሲያልብህ-ስለኔ-አምላኬ-በዚያ-ስፍራ-በአትክልቱ-በልቤ-አየሁህ-ቤዛ-ሆነህ-የፍርድ-መዓት-እንደ-ተቀበል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -13988,7 +13988,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-day-jehovah-s-rest',
+  'am-sda-en-lyrics-holy-day-jehovah-s-rest-የአምላክ-የዕረፍት-ቀን-እግዚአብሔር-የባረካት-በሙሉ-የቀደሳት-በሰማይ-ኃይል-የሞላት-እልል-እልል-እልል-እልል-በረከ',
   'am',
   'የአምላክ የዕረፍት ቀን',
   'Holy Day, Jehovah\''s Rest',
@@ -14039,7 +14039,7 @@ select
   193,
   '{"new_hymnal_number":194,"old_hymnal_number":194,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-day-jehovah-s-rest'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-day-jehovah-s-rest-የአምላክ-የዕረፍት-ቀን-እግዚአብሔር-የባረካት-በሙሉ-የቀደሳት-በሰማይ-ኃይል-የሞላት-እልል-እልል-እልል-እልል-በረከ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14058,7 +14058,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-day-of-rest-and-gladness',
+  'am-sda-en-lyrics-o-day-of-rest-and-gladness-የደስታ-የዕረፍት-ቀን-የደስታ-የብርሃን-ቀን-የኃዘን-ማራቂያ-በጣን-የተዋበች-በዚያችም-ቀን-ለመስገድ-በዙፋን-ፊ',
   'am',
   'የደስታ የዕረፍት ቀን',
   'O Day of Rest and Gladness',
@@ -14106,7 +14106,7 @@ select
   194,
   '{"new_hymnal_number":195,"old_hymnal_number":195,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-day-of-rest-and-gladness'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-day-of-rest-and-gladness-የደስታ-የዕረፍት-ቀን-የደስታ-የብርሃን-ቀን-የኃዘን-ማራቂያ-በጣን-የተዋበች-በዚያችም-ቀን-ለመስገድ-በዙፋን-ፊ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14125,7 +14125,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-don-t-forget-the-sabbath',
+  'am-sda-en-lyrics-don-t-forget-the-sabbath-ሰንበትን-አንርሳ-የተባረከች-ነች-ሁሉን-ያበራች-በጣም-የበለጠች-ዕረፍትን-ታመጣለች-ደስታን-ትነግራለች-መለኮታዊ-ብ',
   'am',
   'ሰንበትን አንርሳ',
   'Don\''t Forget the Sabbath',
@@ -14178,7 +14178,7 @@ select
   195,
   '{"new_hymnal_number":196,"old_hymnal_number":193,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-don-t-forget-the-sabbath'
+join works w on w.canonical_key = 'am-sda-en-lyrics-don-t-forget-the-sabbath-ሰንበትን-አንርሳ-የተባረከች-ነች-ሁሉን-ያበራች-በጣም-የበለጠች-ዕረፍትን-ታመጣለች-ደስታን-ትነግራለች-መለኮታዊ-ብ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14197,7 +14197,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-sabbath-home',
+  'am-sda-en-lyrics-my-sabbath-home-የሰንበት-ቀን-ቅዱስ-ቀን-ናት-ከሌላው-ቀን-ይልቅ-ልቤ-በርሷ-ደስ-ይላታል-ስለ-ቅዱስ-ሰንበት-ሰንበት-ቀን-ብሩክ-ቀን-ቅዱስ-ቀን',
   'am',
   'የሰንበት ቀን',
   'My Sabbath Home',
@@ -14247,7 +14247,7 @@ select
   196,
   '{"new_hymnal_number":197,"old_hymnal_number":197,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-sabbath-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-sabbath-home-የሰንበት-ቀን-ቅዱስ-ቀን-ናት-ከሌላው-ቀን-ይልቅ-ልቤ-በርሷ-ደስ-ይላታል-ስለ-ቅዱስ-ሰንበት-ሰንበት-ቀን-ብሩክ-ቀን-ቅዱስ-ቀን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14329,7 +14329,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-may-thy-words-fill-our-hearts',
+  'am-sda-en-lyrics-may-thy-words-fill-our-hearts-ልንሰማ-እንሰብሰብ-ቃልህን-ጌታችን-ሆይ-እንደ-ዝናብ-በድርቅ-ምድር-በልባችን-እንዲቆይ-መንፈስ-ቅዱስህን-ስ',
   'am',
   'ልንሰማ እንሰብሰብ',
   'May Thy Words Fill Our Hearts',
@@ -14380,7 +14380,7 @@ select
   198,
   '{"new_hymnal_number":199,"old_hymnal_number":198,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-may-thy-words-fill-our-hearts'
+join works w on w.canonical_key = 'am-sda-en-lyrics-may-thy-words-fill-our-hearts-ልንሰማ-እንሰብሰብ-ቃልህን-ጌታችን-ሆይ-እንደ-ዝናብ-በድርቅ-ምድር-በልባችን-እንዲቆይ-መንፈስ-ቅዱስህን-ስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14399,7 +14399,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-give-me-the-bible',
+  'am-sda-en-lyrics-give-me-the-bible-መፅሐፉን-ስጠኝ-ብርሃን-እንዲሆነኝ-በችግር-ጊዜ-ደስ-እንዲያሰኘኝ-የሰላም-ጮራ-ማንም-የማይጋርደኝ-የሱስ-መጣልኝ-እኔን-ሊያድነ',
   'am',
   'መፅሐፉን ስጠኝ',
   'Give Me the Bible',
@@ -14457,7 +14457,7 @@ select
   199,
   '{"new_hymnal_number":200,"old_hymnal_number":199,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-give-me-the-bible'
+join works w on w.canonical_key = 'am-sda-en-lyrics-give-me-the-bible-መፅሐፉን-ስጠኝ-ብርሃን-እንዲሆነኝ-በችግር-ጊዜ-ደስ-እንዲያሰኘኝ-የሰላም-ጮራ-ማንም-የማይጋርደኝ-የሱስ-መጣልኝ-እኔን-ሊያድነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14476,7 +14476,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tell-me-the-story-of-jesus',
+  'am-sda-en-lyrics-tell-me-the-story-of-jesus-የጌታን-ታሪክ-ንገረኝ-ቃሎቹን-በልቤ-ፃፍ-የበለጠውን-አስታውቀኝ-ጣፋጭ-ቃል-ያልተሰማ-መላዕክት-ሲያመሰግኑህ-በል',
   'am',
   'የጌታን ታሪክ ንገረኝ',
   'Tell Me The Story of Jesus',
@@ -14532,7 +14532,7 @@ select
   200,
   '{"new_hymnal_number":201,"old_hymnal_number":201,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tell-me-the-story-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tell-me-the-story-of-jesus-የጌታን-ታሪክ-ንገረኝ-ቃሎቹን-በልቤ-ፃፍ-የበለጠውን-አስታውቀኝ-ጣፋጭ-ቃል-ያልተሰማ-መላዕክት-ሲያመሰግኑህ-በል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14551,7 +14551,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-words-of-life',
+  'am-sda-en-lyrics-wonderful-words-of-life-ደጋግምና-ዘምርልኝ-ያንን-የሕይወት-ቃል-እኔም-መርምሬ-ልረዳው-ያንን-የሕይወት-ቃል-እምነትና-ሥራን-የሕይወት-ቃል-ይ',
   'am',
   'ደጋግምና ዘምርልኝ',
   'Wonderful Words of Life',
@@ -14603,7 +14603,7 @@ select
   201,
   '{"new_hymnal_number":202,"old_hymnal_number":202,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-words-of-life'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-words-of-life-ደጋግምና-ዘምርልኝ-ያንን-የሕይወት-ቃል-እኔም-መርምሬ-ልረዳው-ያንን-የሕይወት-ቃል-እምነትና-ሥራን-የሕይወት-ቃል-ይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14622,7 +14622,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-onward-christian-soldiers',
+  'am-sda-en-lyrics-onward-christian-soldiers-የክርስቲያን-አርበኞች-ለጦር-ስትሄዱ-የየሱስን-መስቀል-በፊት-አስኪዱ-ክርስቶስ-ነው-መሪያችን-በጦር-ሜዳው-ላይ-ሂ',
   'am',
   'የክርስቲያን አርበኞች',
   'Onward, Christian Soldiers',
@@ -14684,7 +14684,7 @@ select
   202,
   '{"new_hymnal_number":203,"old_hymnal_number":203,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-onward-christian-soldiers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-onward-christian-soldiers-የክርስቲያን-አርበኞች-ለጦር-ስትሄዱ-የየሱስን-መስቀል-በፊት-አስኪዱ-ክርስቶስ-ነው-መሪያችን-በጦር-ሜዳው-ላይ-ሂ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14703,7 +14703,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሰልፉ-መሪ-ጌታ-አምላክ-ነው',
+  'am-sda-am-lyrics-የሰልፉ-መሪ-ጌታ-አምላክ-ነው-ያምላክ-ወገኖች-ለሠልፉ-ውጡ-አምላክ-ሲዋጋ-እንድታዩ-ጠብቁ-ቁሙ-ማዳኑን-እዩ-በርሱ-ማሸነፍ-እንድትረኩ-አ-ንቁ-ቁሙ-ያምላክ',
   'am',
   'የሰልፉ መሪ ጌታ አምላክ ነው',
   'Sound the Battle Cry',
@@ -14757,7 +14757,7 @@ select
   203,
   '{"new_hymnal_number":204,"old_hymnal_number":204,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሰልፉ-መሪ-ጌታ-አምላክ-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሰልፉ-መሪ-ጌታ-አምላክ-ነው-ያምላክ-ወገኖች-ለሠልፉ-ውጡ-አምላክ-ሲዋጋ-እንድታዩ-ጠብቁ-ቁሙ-ማዳኑን-እዩ-በርሱ-ማሸነፍ-እንድትረኩ-አ-ንቁ-ቁሙ-ያምላክ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14776,7 +14776,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-stand-up-stand-up-for-jesus',
+  'am-sda-en-lyrics-stand-up-stand-up-for-jesus-ተነሱ-ቁሙ-ለየሱስ-እላንተ-ወታደሩ-የጽድቁን-ጥሩር-ልበሱ-በእርሱ-ተመሩ-ከድልም-ወደ-ድልም-በእርሱ-ታምናችሁ',
   'am',
   'ተነሱ ቁሙ ለየሱስ',
   'Stand up, Stand Up for Jesus',
@@ -14830,7 +14830,7 @@ select
   204,
   '{"new_hymnal_number":205,"old_hymnal_number":205,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-stand-up-stand-up-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-stand-up-stand-up-for-jesus-ተነሱ-ቁሙ-ለየሱስ-እላንተ-ወታደሩ-የጽድቁን-ጥሩር-ልበሱ-በእርሱ-ተመሩ-ከድልም-ወደ-ድልም-በእርሱ-ታምናችሁ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14849,7 +14849,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-soldiers-of-christ-arise',
+  'am-sda-en-lyrics-soldiers-of-christ-arise-የክርስቲያን-አርበኞች-ታጠቁ-ባዋጁ-ጌታ-በሚሰጣችሁ-ኃይል-በዘልዓለም-ልጁ-በሠራዊት-ጌታ-በኃይሉና-በብርታት-በየሱስ',
   'am',
   'የክርስቲያን አርበኞች ታጠቁ',
   'Soldiers of Christ, Arise',
@@ -14898,7 +14898,7 @@ select
   205,
   '{"new_hymnal_number":206,"old_hymnal_number":206,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-soldiers-of-christ-arise'
+join works w on w.canonical_key = 'am-sda-en-lyrics-soldiers-of-christ-arise-የክርስቲያን-አርበኞች-ታጠቁ-ባዋጁ-ጌታ-በሚሰጣችሁ-ኃይል-በዘልዓለም-ልጁ-በሠራዊት-ጌታ-በኃይሉና-በብርታት-በየሱስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -14917,7 +14917,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-የጠራቸው-እለት',
+  'am-sda-am-lyrics-የሱስ-የጠራቸው-እለት-የሱስ-ሕዝቦቹን-የጠራቸው-እለት-በጉባኤው-የቀረቡለት-በፍርዱ-እንዴት-እንቆማለን-ፍርድ-ሊሰጠን-የጠራንለት-አ-ስንዴን-በጎተራው-ያጠራ',
   'am',
   'የሱስ የጠራቸው እለት',
   'When Jesus Shall Gather the Nation',
@@ -14981,7 +14981,7 @@ select
   206,
   '{"new_hymnal_number":207,"old_hymnal_number":208,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-የጠራቸው-እለት'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-የጠራቸው-እለት-የሱስ-ሕዝቦቹን-የጠራቸው-እለት-በጉባኤው-የቀረቡለት-በፍርዱ-እንዴት-እንቆማለን-ፍርድ-ሊሰጠን-የጠራንለት-አ-ስንዴን-በጎተራው-ያጠራ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15000,7 +15000,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-is-my-name-written-there',
+  'am-sda-en-lyrics-is-my-name-written-there-የምድር-ኃብት-ወይም-ወርቅ-ምን-ያደርግልኛል-ከሰማያዊ-ቤቴ-ከመንጋው-እሆናለሁ-በሰማያዊ-መዝገብ-ከመፅሐፍቱ-ውስጥ',
   'am',
   'ተጽፏል ወይ ስሜ',
   'Is My Name Written There?',
@@ -15053,7 +15053,7 @@ select
   207,
   '{"new_hymnal_number":208,"old_hymnal_number":209,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-is-my-name-written-there'
+join works w on w.canonical_key = 'am-sda-en-lyrics-is-my-name-written-there-የምድር-ኃብት-ወይም-ወርቅ-ምን-ያደርግልኛል-ከሰማያዊ-ቤቴ-ከመንጋው-እሆናለሁ-በሰማያዊ-መዝገብ-ከመፅሐፍቱ-ውስጥ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15072,7 +15072,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-coming-king-is-at-the-door',
+  'am-sda-en-lyrics-the-coming-king-is-at-the-door-የሚመጣው-ንጉሥ-ቀርቧል-ለኃጥዓን-የተሰቀለ-አሁን-ግን-ጻድቃንን-ብቻ-ይዟቸው-ይሄዳል-መጥቷል-መጥቷል-መጥ',
   'am',
   'የሚመጣው ንጉሥ ቀርቧል',
   'The Coming King is at the Door',
@@ -15127,7 +15127,7 @@ select
   208,
   '{"new_hymnal_number":209,"old_hymnal_number":211,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-coming-king-is-at-the-door'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-coming-king-is-at-the-door-የሚመጣው-ንጉሥ-ቀርቧል-ለኃጥዓን-የተሰቀለ-አሁን-ግን-ጻድቃንን-ብቻ-ይዟቸው-ይሄዳል-መጥቷል-መጥቷል-መጥ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15146,7 +15146,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-almost-time-for-the-lord-to-come',
+  'am-sda-en-lyrics-tis-almost-time-for-the-lord-to-come-የአምላክ-መምጫ-ቀን-ቀርቧል-ሲሉ-እሰማለሁ-የጸሐይ-ብርሃን-ሲጨልም-ቀኑ-ሊነጋ-ተቃርቧል-ኦ-ቀኑ',
   'am',
   'የአምላክ መምጫ ቀን ቀርቧል',
   '\''Tis Almost Time for the Lord to Come',
@@ -15202,7 +15202,7 @@ select
   209,
   '{"new_hymnal_number":210,"old_hymnal_number":210,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-almost-time-for-the-lord-to-come'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-almost-time-for-the-lord-to-come-የአምላክ-መምጫ-ቀን-ቀርቧል-ሲሉ-እሰማለሁ-የጸሐይ-ብርሃን-ሲጨልም-ቀኑ-ሊነጋ-ተቃርቧል-ኦ-ቀኑ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15221,7 +15221,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-have-this-hope',
+  'am-sda-en-lyrics-we-have-this-hope-ይህ-ተስፋ-አለን-ልብን-የሚያሞቅ-የጌታ-መምጣት-ተስፋችን-እምነት-አለን-ክርስቶስ-የሰጠን-በቃሉ-ተስፋ-መታመን-አሁን-ቀኑ-ቀር',
   'am',
   'ይህ ተስፋ አለን',
   'We Have This Hope',
@@ -15270,7 +15270,7 @@ select
   210,
   '{"new_hymnal_number":211,"old_hymnal_number":251,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-have-this-hope'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-have-this-hope-ይህ-ተስፋ-አለን-ልብን-የሚያሞቅ-የጌታ-መምጣት-ተስፋችን-እምነት-አለን-ክርስቶስ-የሰጠን-በቃሉ-ተስፋ-መታመን-አሁን-ቀኑ-ቀር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15289,7 +15289,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-it-may-be-at-morn',
+  'am-sda-en-lyrics-it-may-be-at-morn-ያ-ቀን-ይመጣል-በጠዋት-በማታ-ጨለማ-ሁሉ-የሚመሽበት-ጊዜ-ያን-ጊዜ-ክርስቶስ-በክብር-ይገለጣል-የርሱን-ከዓለም-ሊወስድ-የሱስ',
   'am',
   'ያ ቀን ይመጣል',
   'It May be at Morn',
@@ -15342,7 +15342,7 @@ select
   211,
   '{"new_hymnal_number":212,"old_hymnal_number":212,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-it-may-be-at-morn'
+join works w on w.canonical_key = 'am-sda-en-lyrics-it-may-be-at-morn-ያ-ቀን-ይመጣል-በጠዋት-በማታ-ጨለማ-ሁሉ-የሚመሽበት-ጊዜ-ያን-ጊዜ-ክርስቶስ-በክብር-ይገለጣል-የርሱን-ከዓለም-ሊወስድ-የሱስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15361,7 +15361,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lo-he-comes',
+  'am-sda-en-lyrics-lo-he-comes-ክርስቲያናት-ትጉ-ጠብቁ-ምልክት-ከሰማይ-እዩ-ተዘጋጁ-ለመምጣቱ-ይመጣል-በድል-ነሽነት-አ-ይመጣል-አዎን-ይመጣል-ዝ-መምጣቱ-ከመላዕክት-ጋ',
   'am',
   'ክርስቲያናት ትጉ ጠብቁ',
   'Lo He Comes',
@@ -15421,7 +15421,7 @@ select
   212,
   '{"new_hymnal_number":213,"old_hymnal_number":213,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lo-he-comes'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lo-he-comes-ክርስቲያናት-ትጉ-ጠብቁ-ምልክት-ከሰማይ-እዩ-ተዘጋጁ-ለመምጣቱ-ይመጣል-በድል-ነሽነት-አ-ይመጣል-አዎን-ይመጣል-ዝ-መምጣቱ-ከመላዕክት-ጋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15440,7 +15440,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ዛሬ-ቢመጣሳ',
+  'am-sda-am-lyrics-ዛሬ-ቢመጣሳ-የሱስ-እንደገና-ይመጣል-ዛሬ-ቢመጣሳ-ኃይሉ-እና-ፍቅሩ-ይገዛል-ዛሬ-ቢመጣሳ-ሙሽራይቱን-ለመቀበል-የዳኑትን-የነፁትን-በምድር-ፊት-የሚያድሩትን',
   'am',
   'ዛሬ ቢመጣሳ',
   'What if were Today',
@@ -15499,7 +15499,7 @@ select
   213,
   '{"new_hymnal_number":214,"old_hymnal_number":214,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ዛሬ-ቢመጣሳ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ዛሬ-ቢመጣሳ-የሱስ-እንደገና-ይመጣል-ዛሬ-ቢመጣሳ-ኃይሉ-እና-ፍቅሩ-ይገዛል-ዛሬ-ቢመጣሳ-ሙሽራይቱን-ለመቀበል-የዳኑትን-የነፁትን-በምድር-ፊት-የሚያድሩትን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15518,7 +15518,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-want-to-be-ready',
+  'am-sda-en-lyrics-i-want-to-be-ready-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-የሱስ-ሳይመጣ-ያለምን-ደስታ-ተው-ተጠንቀቅ-እስኪመጣ',
   'am',
   'ዛሬ ተዘጋጅ',
   'I Want to be Ready',
@@ -15560,7 +15560,7 @@ select
   214,
   '{"new_hymnal_number":215,"old_hymnal_number":262,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-want-to-be-ready'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-want-to-be-ready-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-የሱስ-ሳይመጣ-ያለምን-ደስታ-ተው-ተጠንቀቅ-እስኪመጣ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15579,7 +15579,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lift-up-the-trumpet',
+  'am-sda-en-lyrics-lift-up-the-trumpet-መለከት-ንፉ-ሁሉ-እስኪሰማ-የሱስ-ዳግም-ይመጣል-ደስ-ይበለን-እንዘምርም-የሱስ-ዳግም-ይመጣል-ይመለሳል-ይመለሳል-የሱስ-ዳግ',
   'am',
   'መለከት ንፉ',
   'Lift Up the Trumpet',
@@ -15648,7 +15648,7 @@ select
   215,
   '{"new_hymnal_number":216,"old_hymnal_number":217,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lift-up-the-trumpet'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lift-up-the-trumpet-መለከት-ንፉ-ሁሉ-እስኪሰማ-የሱስ-ዳግም-ይመጣል-ደስ-ይበለን-እንዘምርም-የሱስ-ዳግም-ይመጣል-ይመለሳል-ይመለሳል-የሱስ-ዳግ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15667,7 +15667,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-know-not-the-hour',
+  'am-sda-en-lyrics-we-know-not-the-hour-የጌታችን-መምጫ-ሰዓቱን-አናውቅም-ምልክት-ሁሉ-መቅረቡን-ያሳየናል-ሲመለስ-ሳለ-ተስፋው-ደስ-ያሰኘናል-ጊዜአቱን-አናውቅም',
   'am',
   'ይመጣል',
   'We Know not the Hour',
@@ -15725,7 +15725,7 @@ select
   216,
   '{"new_hymnal_number":217,"old_hymnal_number":216,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-know-not-the-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-know-not-the-hour-የጌታችን-መምጫ-ሰዓቱን-አናውቅም-ምልክት-ሁሉ-መቅረቡን-ያሳየናል-ሲመለስ-ሳለ-ተስፋው-ደስ-ያሰኘናል-ጊዜአቱን-አናውቅም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15744,7 +15744,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-m-on-my-way-home',
+  'am-sda-en-lyrics-i-m-on-my-way-home-ወደ-ቤት-ልሒድ-ወደ-ሰማይ-ቤት-ወደ-ቤት-ልሒድ-ወደ-የሱስ-ፈተና-ያልፋል-በሰማዩ-በር-ወደ-ቤት-ልሒድ-በሰማይ',
   'am',
   'ወደ ቤት ልሒድ',
   'I\''m on My Way Home',
@@ -15786,7 +15786,7 @@ select
   217,
   '{"new_hymnal_number":218,"old_hymnal_number":223,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-m-on-my-way-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-m-on-my-way-home-ወደ-ቤት-ልሒድ-ወደ-ሰማይ-ቤት-ወደ-ቤት-ልሒድ-ወደ-የሱስ-ፈተና-ያልፋል-በሰማዩ-በር-ወደ-ቤት-ልሒድ-በሰማይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -15938,7 +15938,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-a-land-that-is-fairer-than-day',
+  'am-sda-en-lyrics-there-s-a-land-that-is-fairer-than-day-የምታምረው-ሀገር-ያች-ናት-በእምነት-በሩቅ-የምናያት-አባታችን-በዚያ-ይሆናል-መኖሪያም-ያዘጋ',
   'am',
   'ቅርብ ነው ጊዜው',
   'There\''s a Land that is Fairer than Day',
@@ -15992,7 +15992,7 @@ select
   220,
   '{"new_hymnal_number":221,"old_hymnal_number":221,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-a-land-that-is-fairer-than-day'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-a-land-that-is-fairer-than-day-የምታምረው-ሀገር-ያች-ናት-በእምነት-በሩቅ-የምናያት-አባታችን-በዚያ-ይሆናል-መኖሪያም-ያዘጋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16011,7 +16011,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በዘውዴ-ከዋክብት-ይኖሩን',
+  'am-sda-am-lyrics-በዘውዴ-ከዋክብት-ይኖሩን-ስላማረችው-ከተማ-አስባለሁ-ጸሐይ-ሲገባ-እደርሳለሁ-ከሚገርመው-ዙፋን-እቀመጣለሁ-በዘውዴ-ከዋክብት-ይኖሩን-ከዋክብት-አሉኝ-ወይ-የ',
   'am',
   'በዘውዴ ከዋክብት ይኖሩን',
   'Will there be any Stars?',
@@ -16069,7 +16069,7 @@ select
   221,
   '{"new_hymnal_number":222,"old_hymnal_number":222,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በዘውዴ-ከዋክብት-ይኖሩን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በዘውዴ-ከዋክብት-ይኖሩን-ስላማረችው-ከተማ-አስባለሁ-ጸሐይ-ሲገባ-እደርሳለሁ-ከሚገርመው-ዙፋን-እቀመጣለሁ-በዘውዴ-ከዋክብት-ይኖሩን-ከዋክብት-አሉኝ-ወይ-የ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16088,7 +16088,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ሁላችን-ሰማይ-ስንደርስ',
+  'am-sda-am-lyrics-ሁላችን-ሰማይ-ስንደርስ-የየሱስን-ግሩም-ፍቅር-ዘምር-ምህረቱን-ፀጋውንም-ዘምር-በከበረው-ግሩም-ስፍራ-ያዘጋጃል-ቤታችን-ሁላችን-ሰማይ-ስንደርስ-ምን-ዓይነት',
   'am',
   'ሁላችን ሰማይ ስንደርስ',
   'When Weall Get to Heaven',
@@ -16153,7 +16153,7 @@ select
   222,
   '{"new_hymnal_number":223,"old_hymnal_number":218,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ሁላችን-ሰማይ-ስንደርስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ሁላችን-ሰማይ-ስንደርስ-የየሱስን-ግሩም-ፍቅር-ዘምር-ምህረቱን-ፀጋውንም-ዘምር-በከበረው-ግሩም-ስፍራ-ያዘጋጃል-ቤታችን-ሁላችን-ሰማይ-ስንደርስ-ምን-ዓይነት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16172,7 +16172,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በደጅ-ይገባሉ',
+  'am-sda-am-lyrics-በደጅ-ይገባሉ-እሊያ-ማን-ናቸው-የሚኖሩ-ከሞት-ወደ-ህይወት-ተሻገሩ-ጌታን-የሚያከብሩ-ንፁሐን-በበጉ-ደም-በደጅ-ይገባሉ-ወደ-የሩሳሌም-ንፁሐን-በበጉ-ደም-በ',
   'am',
   'በደጅ ይገባሉ',
   'Sweeping Through the Gates',
@@ -16244,7 +16244,7 @@ select
   223,
   '{"new_hymnal_number":224,"old_hymnal_number":225,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በደጅ-ይገባሉ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በደጅ-ይገባሉ-እሊያ-ማን-ናቸው-የሚኖሩ-ከሞት-ወደ-ህይወት-ተሻገሩ-ጌታን-የሚያከብሩ-ንፁሐን-በበጉ-ደም-በደጅ-ይገባሉ-ወደ-የሩሳሌም-ንፁሐን-በበጉ-ደም-በ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16263,7 +16263,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-the-roll-is-called-up-younder',
+  'am-sda-en-lyrics-when-the-roll-is-called-up-younder-የጌታ-መለከት-ሲነፋ-ጊዜውም-ሲፈፀም-የንጋት-ብርሃን-ይብራ-ለዘላለም-የዳኑት-ፃድቃን-ከዚህ-ወደላይ',
   'am',
   'ስሜ ሲጠራ',
   'When the Roll is Called Up Younder',
@@ -16316,7 +16316,7 @@ select
   224,
   '{"new_hymnal_number":225,"old_hymnal_number":224,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-the-roll-is-called-up-younder'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-the-roll-is-called-up-younder-የጌታ-መለከት-ሲነፋ-ጊዜውም-ሲፈፀም-የንጋት-ብርሃን-ይብራ-ለዘላለም-የዳኑት-ፃድቃን-ከዚህ-ወደላይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16335,7 +16335,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-few-more-years-shall-roll',
+  'am-sda-en-lyrics-a-few-more-years-shall-roll-ጊዜያቱ-ይሄዳል-ወራቱም-ይመጣል-ወዳጆቻችንን-ልናይ-በቀብር-ያሉትን-ኦ-ጌታ-ሆይ-ነፍሴን-አዘጋጅ-ለዚያ-ቀን-ኦ',
   'am',
   'ጊዜያቱ ይሄዳል',
   'A Few More Years Shall Roll',
@@ -16390,7 +16390,7 @@ select
   225,
   '{"new_hymnal_number":226,"old_hymnal_number":226,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-few-more-years-shall-roll'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-few-more-years-shall-roll-ጊዜያቱ-ይሄዳል-ወራቱም-ይመጣል-ወዳጆቻችንን-ልናይ-በቀብር-ያሉትን-ኦ-ጌታ-ሆይ-ነፍሴን-አዘጋጅ-ለዚያ-ቀን-ኦ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16409,7 +16409,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ውቧ-የኤደን-ሸለቆ',
+  'am-sda-am-lyrics-ውቧ-የኤደን-ሸለቆ-ውቧ-የኤደን-ሸለቆ-ደኖችሽ-ውበትሽ-ፈውስና-ጠገን-ይሰጣል-ደክመው-ሳል-ልጆችሽ-ውቧ-የኤደን-ሸለቆ-የተቀደሱት-ቤት-በበረሃ-ስመላለስ-ሳል',
   'am',
   'ውቧ የኤደን ሸለቆ',
   'Beautiful Valley of Eden',
@@ -16460,7 +16460,7 @@ select
   226,
   '{"new_hymnal_number":227,"old_hymnal_number":227,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ውቧ-የኤደን-ሸለቆ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ውቧ-የኤደን-ሸለቆ-ውቧ-የኤደን-ሸለቆ-ደኖችሽ-ውበትሽ-ፈውስና-ጠገን-ይሰጣል-ደክመው-ሳል-ልጆችሽ-ውቧ-የኤደን-ሸለቆ-የተቀደሱት-ቤት-በበረሃ-ስመላለስ-ሳል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16479,7 +16479,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-far-beyond-the-sun',
+  'am-sda-en-lyrics-far-beyond-the-sun-ምንም-ኃብት-ባይኖረኝ-በምድራዊ-ጉዞ-በዚህ-ሕይወት-ማዶ-ቤት-ይኖረኛል-ባለም-ባይመቸኝ-የተናቅሁ-ብሆንም-ጌታ-ያድነኛል-ተስፋ',
   'am',
   'ከፀሐይ ማዶ',
   'Far Beyond the Sun',
@@ -16529,7 +16529,7 @@ select
   227,
   '{"new_hymnal_number":228,"old_hymnal_number":228,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-far-beyond-the-sun'
+join works w on w.canonical_key = 'am-sda-en-lyrics-far-beyond-the-sun-ምንም-ኃብት-ባይኖረኝ-በምድራዊ-ጉዞ-በዚህ-ሕይወት-ማዶ-ቤት-ይኖረኛል-ባለም-ባይመቸኝ-የተናቅሁ-ብሆንም-ጌታ-ያድነኛል-ተስፋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16548,7 +16548,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-face-to-face',
+  'am-sda-en-lyrics-face-to-face-ፊት-ለፊት-ከክርስቶስ-ጋር-ፊት-ለፊት-እንዴት-ይሆን-በደስታ-ባየሁት-ጊዜ-የሱስ-የሞተልኝን-አ-ፊት-ለፊትም-አየዋለሁ-ማ-በሰማዩ-ሰማያ',
   'am',
   'ፊት ለፊት',
   'Face to Face',
@@ -16607,7 +16607,7 @@ select
   228,
   '{"new_hymnal_number":229,"old_hymnal_number":229,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-face-to-face'
+join works w on w.canonical_key = 'am-sda-en-lyrics-face-to-face-ፊት-ለፊት-ከክርስቶስ-ጋር-ፊት-ለፊት-እንዴት-ይሆን-በደስታ-ባየሁት-ጊዜ-የሱስ-የሞተልኝን-አ-ፊት-ለፊትም-አየዋለሁ-ማ-በሰማዩ-ሰማያ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16626,7 +16626,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-never-grow-old',
+  'am-sda-en-lyrics-never-grow-old-ስላንድ-አገር-ሰማሁ-ከሩቅ-ጠረፍ-ያለ-መልካም-የተዋበ-ግሩም-ቤት-የሠራው-የሱስ-ነው-ከዚያ-አንሞትም-ከዚያ-ፈፅሞ-አናረጅም-ከዚያ',
   'am',
   'ከዚያ መድከም ማርጀት የለም',
   'Never Grow Old',
@@ -16686,7 +16686,7 @@ select
   229,
   '{"new_hymnal_number":230,"old_hymnal_number":230,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-never-grow-old'
+join works w on w.canonical_key = 'am-sda-en-lyrics-never-grow-old-ስላንድ-አገር-ሰማሁ-ከሩቅ-ጠረፍ-ያለ-መልካም-የተዋበ-ግሩም-ቤት-የሠራው-የሱስ-ነው-ከዚያ-አንሞትም-ከዚያ-ፈፅሞ-አናረጅም-ከዚያ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16705,7 +16705,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-a-land-of-pure-delight',
+  'am-sda-en-lyrics-there-is-a-land-of-pure-delight-መልካም-የደስታ-አገር-ቅዱሳን-ያሉባት-ቀኑ-ጨለማን-ያርቃል-ደስታም-መከራን-የዘላለም-ምንጭ-ይፈልቃል-አ',
   'am',
   'መልካም የደስታ አገር',
   'There is a Land of Pure Delight',
@@ -16753,7 +16753,7 @@ select
   230,
   '{"new_hymnal_number":231,"old_hymnal_number":219,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-a-land-of-pure-delight'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-a-land-of-pure-delight-መልካም-የደስታ-አገር-ቅዱሳን-ያሉባት-ቀኑ-ጨለማን-ያርቃል-ደስታም-መከራን-የዘላለም-ምንጭ-ይፈልቃል-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -16772,7 +16772,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-on-jordan-s-stromy-banks',
+  'am-sda-en-lyrics-on-jordan-s-stromy-banks-በዮርዳኖስ-ወንዝ-ዳር-ቆሜ-አሻግሬ-ስመኝ-የምታምረውን-ከነዓንን-ለኔ-እመኛታለሁ-ባማረችው-ሥፍራ-ዕረፍት-ስገናኝ-ወ',
   'am',
   'በዮርዳኖስ ወንዝ ዳር ቆሜ',
   'On Jordan\''s Stromy Banks',
@@ -16828,7 +16828,7 @@ select
   231,
   '{"new_hymnal_number":232,"old_hymnal_number":220,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-on-jordan-s-stromy-banks'
+join works w on w.canonical_key = 'am-sda-en-lyrics-on-jordan-s-stromy-banks-በዮርዳኖስ-ወንዝ-ዳር-ቆሜ-አሻግሬ-ስመኝ-የምታምረውን-ከነዓንን-ለኔ-እመኛታለሁ-ባማረችው-ሥፍራ-ዕረፍት-ስገናኝ-ወ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17485,7 +17485,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sing-and-smile-and-pray',
+  'am-sda-en-lyrics-sing-and-smile-and-pray-ዘምር-በደስታ-በቀን-በማታ-ስትዘምር-ስታወድስ-ይርቃል-መከራህ-ኑር-በፈገግታ-በቀን-በማታ-ስትዘምር-ደስም-ሲልህ-ይር',
   'am',
   'ዘምር በደስታ',
   'Sing and Smile and Pray',
@@ -17530,7 +17530,7 @@ select
   241,
   '{"new_hymnal_number":242,"old_hymnal_number":243,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sing-and-smile-and-pray'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sing-and-smile-and-pray-ዘምር-በደስታ-በቀን-በማታ-ስትዘምር-ስታወድስ-ይርቃል-መከራህ-ኑር-በፈገግታ-በቀን-በማታ-ስትዘምር-ደስም-ሲልህ-ይር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17549,7 +17549,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-saviour-lead-me-lest-i-stray',
+  'am-sda-en-lyrics-saviour-lead-me-lest-i-stray-የሱስ-ሆይ-ምራኝ-ና-ምራኝ-እንዳልጠፋም-ጠብቀኝ-ጠብቀን-በፍቅር-እጅህ-ምራኝ-ና-ምራኝ-ከጎንህም-አትለየኝ-አ',
   'am',
   'ምራኝ',
   'Saviour, Lead Me Lest I Stray',
@@ -17614,7 +17614,7 @@ select
   242,
   '{"new_hymnal_number":243,"old_hymnal_number":242,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-saviour-lead-me-lest-i-stray'
+join works w on w.canonical_key = 'am-sda-en-lyrics-saviour-lead-me-lest-i-stray-የሱስ-ሆይ-ምራኝ-ና-ምራኝ-እንዳልጠፋም-ጠብቀኝ-ጠብቀን-በፍቅር-እጅህ-ምራኝ-ና-ምራኝ-ከጎንህም-አትለየኝ-አ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17633,7 +17633,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-child-of-the-king',
+  'am-sda-en-lyrics-a-child-of-the-king-አባቴ-ተርፎት-ቤትና-መሬት-በጁ-ጨብጧል-ዓለምን-ንብረት-በሉል-በአልማዝ-በብር-በወርቅም-ሣጥኑ-ሞልቷል-መማያልቅ-ኃብቱ-የን',
   'am',
   'የንጉሡ ልጅ ነኝ',
   'A Child of the King',
@@ -17697,7 +17697,7 @@ select
   243,
   '{"new_hymnal_number":244,"old_hymnal_number":244,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-child-of-the-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-child-of-the-king-አባቴ-ተርፎት-ቤትና-መሬት-በጁ-ጨብጧል-ዓለምን-ንብረት-በሉል-በአልማዝ-በብር-በወርቅም-ሣጥኑ-ሞልቷል-መማያልቅ-ኃብቱ-የን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17716,7 +17716,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-lord-and-i',
+  'am-sda-en-lyrics-my-lord-and-i-አምላኬ-ለኔ-ቸር-እረኛዬ-ነው-ታማኝ-ወዳጅ-የለኝም-እንደርሱ-እጄን-ይዞ-መንገዱን-ያሳኛል-ከመከራም-ጉድጓድ-ያወጣኛል-እጄን-ይዞ-መን',
   'am',
   'ቸር አምላክ',
   'My Lord and I',
@@ -17772,7 +17772,7 @@ select
   244,
   '{"new_hymnal_number":245,"old_hymnal_number":245,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-lord-and-i'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-lord-and-i-አምላኬ-ለኔ-ቸር-እረኛዬ-ነው-ታማኝ-ወዳጅ-የለኝም-እንደርሱ-እጄን-ይዞ-መንገዱን-ያሳኛል-ከመከራም-ጉድጓድ-ያወጣኛል-እጄን-ይዞ-መን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17791,7 +17791,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-lord-our-saviour',
+  'am-sda-en-lyrics-o-lord-our-saviour-የወጣቶች-አምላክ-ፀሎታችን-ስማ-አንተን-የማይወዱህ-እንዲሹህ-እርዳ-ያለም-ፍቅር-ቢይዛቸውም-ቅሉ-የአንተ-ናቸው-የአንተ-ናቸው',
   'am',
   'የወጣቶች አምላክ',
   'O Lord Our Saviour',
@@ -17840,7 +17840,7 @@ select
   245,
   '{"new_hymnal_number":246,"old_hymnal_number":231,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-lord-our-saviour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-lord-our-saviour-የወጣቶች-አምላክ-ፀሎታችን-ስማ-አንተን-የማይወዱህ-እንዲሹህ-እርዳ-ያለም-ፍቅር-ቢይዛቸውም-ቅሉ-የአንተ-ናቸው-የአንተ-ናቸው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -17936,7 +17936,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እንደ-ዳንኤል-ሁን',
+  'am-sda-am-lyrics-እንደ-ዳንኤል-ሁን-በኃሳብ-ጽኑ-ሁነህ-በትዕዛዙ-ሒድ-ክብር-ለታማኝ-ሰዎች-ክብር-ለዳንኤል-ጓድ-እንደ-ዳንኤል-ሁን-በድፍረትም-ቁም-ድፈር-ባሳብህ-ጽና-በድፍ',
   'am',
   'እንደ ዳንኤል ሁን',
   'Dare to be Daniel',
@@ -17991,7 +17991,7 @@ select
   247,
   '{"new_hymnal_number":248,"old_hymnal_number":232,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እንደ-ዳንኤል-ሁን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-እንደ-ዳንኤል-ሁን-በኃሳብ-ጽኑ-ሁነህ-በትዕዛዙ-ሒድ-ክብር-ለታማኝ-ሰዎች-ክብር-ለዳንኤል-ጓድ-እንደ-ዳንኤል-ሁን-በድፍረትም-ቁም-ድፈር-ባሳብህ-ጽና-በድፍ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18010,7 +18010,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-would-be-true',
+  'am-sda-en-lyrics-i-would-be-true-ታማኝ-ልሁን-ለሚያምኑብኝ-ሁሉ-ንፁህ-ልሁን-ከንፁሀን-ጋራ-ብርቱ-ልሁን-የሚመጣብኝ-ሥቃይ-ደፋር-ልሁን-ድፍረት-ስለ-ሚያሻኝ-ደፋር',
   'am',
   'ታማኝ ልሁን',
   'I Would Be True',
@@ -18061,7 +18061,7 @@ select
   248,
   '{"new_hymnal_number":249,"old_hymnal_number":234,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-would-be-true'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-would-be-true-ታማኝ-ልሁን-ለሚያምኑብኝ-ሁሉ-ንፁህ-ልሁን-ከንፁሀን-ጋራ-ብርቱ-ልሁን-የሚመጣብኝ-ሥቃይ-ደፋር-ልሁን-ድፍረት-ስለ-ሚያሻኝ-ደፋር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18080,7 +18080,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-grace-of-jesus',
+  'am-sda-en-lyrics-wonderful-grace-of-jesus-የየሱስ-ግሩም-ፀጋ-ኃጢዓቴን-ሸፈነው-ምላሴስ-እንዴት-ትድፈር-ክብሩን-ለመናገር-ሸክሜን-ከላዬ-አነሳ-እኔም-ነፃ-ወጣ',
   'am',
   'የየሱስ ግሩም ፀጋ',
   'Wonderful Grace of Jesus',
@@ -18145,7 +18145,7 @@ select
   249,
   '{"new_hymnal_number":250,"old_hymnal_number":233,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-grace-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-grace-of-jesus-የየሱስ-ግሩም-ፀጋ-ኃጢዓቴን-ሸፈነው-ምላሴስ-እንዴት-ትድፈር-ክብሩን-ለመናገር-ሸክሜን-ከላዬ-አነሳ-እኔም-ነፃ-ወጣ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18164,7 +18164,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መዝሙር-እንዘምር',
+  'am-sda-am-lyrics-መዝሙር-እንዘምር-መዝሙር-እንዘምር-በየመንገድ-የሚረዳን-ወደ-ቤታችን-ስንገሰግሥ-ሌሊቱ-ያልፋል-በብርሃን-ይለወጣል-ወደ-ቤታችን-እንገሥግስ-ባጭሩ-ጊዜ-ባጭሩ',
   'am',
   'መዝሙር እንዘምር',
   'In a Little While We\''ve Going Home',
@@ -18224,7 +18224,7 @@ select
   250,
   '{"new_hymnal_number":251,"old_hymnal_number":235,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መዝሙር-እንዘምር'
+join works w on w.canonical_key = 'am-sda-am-lyrics-መዝሙር-እንዘምር-መዝሙር-እንዘምር-በየመንገድ-የሚረዳን-ወደ-ቤታችን-ስንገሰግሥ-ሌሊቱ-ያልፋል-በብርሃን-ይለወጣል-ወደ-ቤታችን-እንገሥግስ-ባጭሩ-ጊዜ-ባጭሩ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18243,7 +18243,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brighten-the-corner-where-you-are',
+  'am-sda-en-lyrics-brighten-the-corner-where-you-are-አንድን-ታላቅ-በመፈለግ-አትታክቱ-በሩቅ-አገር-መልካም-ልትሰራ-ባጠገብህ-ባለው-ሥራ-ታማኝ-ሁንና-ባለ',
   'am',
   'ባለህበት ማዕዘን አብራ',
   'Brighten the Corner Where you Are',
@@ -18297,7 +18297,7 @@ select
   251,
   '{"new_hymnal_number":252,"old_hymnal_number":236,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brighten-the-corner-where-you-are'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brighten-the-corner-where-you-are-አንድን-ታላቅ-በመፈለግ-አትታክቱ-በሩቅ-አገር-መልካም-ልትሰራ-ባጠገብህ-ባለው-ሥራ-ታማኝ-ሁንና-ባለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18316,7 +18316,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-the-world-needs-is-jesus',
+  'am-sda-en-lyrics-what-the-world-needs-is-jesus-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ሰላም-ደስታ-ይሰጣል-ሐዘንንም-ያጠፋል',
   'am',
   'ዓለም የሱስን ይሻል',
   'What the World Needs is Jesus',
@@ -18358,7 +18358,7 @@ select
   252,
   '{"new_hymnal_number":253,"old_hymnal_number":254,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-the-world-needs-is-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-the-world-needs-is-jesus-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ሰላም-ደስታ-ይሰጣል-ሐዘንንም-ያጠፋል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18377,7 +18377,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sing-along',
+  'am-sda-en-lyrics-sing-along-ስንጓዝ-እንዘምር-የሱስን-ጨብጠን-ብርሃኑን-እናብራ-እርሱ-የሰጠንን-ሌሎች-እንዲከተሉን-የደስታ-ድምጽ-ሲሰማ-ስንጓዝ-እንዘምር-የሱስን-ጨብ',
   'am',
   'ስንጓዝ እንዘምር',
   'Sing Along',
@@ -18419,7 +18419,7 @@ select
   253,
   '{"new_hymnal_number":254,"old_hymnal_number":255,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sing-along'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sing-along-ስንጓዝ-እንዘምር-የሱስን-ጨብጠን-ብርሃኑን-እናብራ-እርሱ-የሰጠንን-ሌሎች-እንዲከተሉን-የደስታ-ድምጽ-ሲሰማ-ስንጓዝ-እንዘምር-የሱስን-ጨብ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18438,7 +18438,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-the-heart-of-jesus',
+  'am-sda-en-lyrics-in-the-heart-of-jesus-በጌታ-የሱስ-ልብ-ፍቅር-አለልን-ገር-የሆነ-ፍቅር-እንዳያመልጠን-ለምን-ስለ-ወዳጅ-እንቸገራለን-በጌታ-የሱስ-ልብ-ውስጥ',
   'am',
   'በጌታ የሱስ ልብ',
   'In the Heart of Jesus',
@@ -18493,7 +18493,7 @@ select
   254,
   '{"new_hymnal_number":255,"old_hymnal_number":237,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-the-heart-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-the-heart-of-jesus-በጌታ-የሱስ-ልብ-ፍቅር-አለልን-ገር-የሆነ-ፍቅር-እንዳያመልጠን-ለምን-ስለ-ወዳጅ-እንቸገራለን-በጌታ-የሱስ-ልብ-ውስጥ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18512,7 +18512,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-see-jesus',
+  'am-sda-en-lyrics-i-see-jesus-በየጧቱ-ይታየኛል-በየማታው-ትዝ-ይለኛል-በጨለማ-ይሰማኛል-በየቦታው-የሱስ-ይታያል',
   'am',
   'የሱስ ይታያል',
   'I see Jesus',
@@ -18553,7 +18553,7 @@ select
   255,
   '{"new_hymnal_number":256,"old_hymnal_number":258,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-see-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-see-jesus-በየጧቱ-ይታየኛል-በየማታው-ትዝ-ይለኛል-በጨለማ-ይሰማኛል-በየቦታው-የሱስ-ይታያል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18572,7 +18572,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-it-is-morning-in-my-heart',
+  'am-sda-en-lyrics-it-is-morning-in-my-heart-የሌሊቱ-ጨለማ-ተወግዷል-ንጋት-ሁኗል-በልቤ-ብርሃን-ባለበቱ-ቀን-እኖራለሁ-ንጋት-ሁኗል-በልቤ-ፀሀይ-ወጥቷል-ጸሐይ',
   'am',
   'ጸሐይ ወጥቷል በልቤ',
   'It is Morning in My Heart',
@@ -18630,7 +18630,7 @@ select
   256,
   '{"new_hymnal_number":257,"old_hymnal_number":238,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-it-is-morning-in-my-heart'
+join works w on w.canonical_key = 'am-sda-en-lyrics-it-is-morning-in-my-heart-የሌሊቱ-ጨለማ-ተወግዷል-ንጋት-ሁኗል-በልቤ-ብርሃን-ባለበቱ-ቀን-እኖራለሁ-ንጋት-ሁኗል-በልቤ-ፀሀይ-ወጥቷል-ጸሐይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18711,7 +18711,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-missionary-volunteers',
+  'am-sda-en-lyrics-missionary-volunteers-ፈቃደኛ-ሰባኮች-የእውነት-ታዛዦች-ወንጌልንም-የሚሰብኩ-ለዓለም-ሰዎች-ታዛዦች-ታዛዦች-ያምራል-ስማችን-ታዛዦች-ታዛዦች-ያ',
   'am',
   'ፈቃደኛ ሰባኮች',
   'Missionary Volunteers',
@@ -18767,7 +18767,7 @@ select
   258,
   '{"new_hymnal_number":259,"old_hymnal_number":239,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-missionary-volunteers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-missionary-volunteers-ፈቃደኛ-ሰባኮች-የእውነት-ታዛዦች-ወንጌልንም-የሚሰብኩ-ለዓለም-ሰዎች-ታዛዦች-ታዛዦች-ያምራል-ስማችን-ታዛዦች-ታዛዦች-ያ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18859,7 +18859,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ይበራል',
+  'am-sda-am-lyrics-ይበራል-ይበራል-ይበራል-መብራትህን-ከፍ-አድርገው-ይበራል-ዓለም-ሁሉ-ጨልሟል-ልታበራ-ያሻሃል-መንገድህን-ያሳያል-ይበራል',
   'am',
   'ይበራል',
   'Let It Shaine',
@@ -18899,7 +18899,7 @@ select
   260,
   '{"new_hymnal_number":261,"old_hymnal_number":261,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ይበራል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ይበራል-ይበራል-ይበራል-መብራትህን-ከፍ-አድርገው-ይበራል-ዓለም-ሁሉ-ጨልሟል-ልታበራ-ያሻሃል-መንገድህን-ያሳያል-ይበራል'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -18994,7 +18994,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-where-the-gates-swing-outward-never',
+  'am-sda-en-lyrics-where-the-gates-swing-outward-never-ጥቂት-ቀን-ቀርቷል-ጌታን-ልናከብር-ታሪኩንም-ልንናገር-ጸሐይ-ሲገባ-መድኅን-ሊጠራ-በክብርም-እቀር',
   'am',
   'ጥቂት ቀን ቀርቷል',
   'Where the Gates Swing Outward Never',
@@ -19055,7 +19055,7 @@ select
   262,
   '{"new_hymnal_number":263,"old_hymnal_number":240,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-where-the-gates-swing-outward-never'
+join works w on w.canonical_key = 'am-sda-en-lyrics-where-the-gates-swing-outward-never-ጥቂት-ቀን-ቀርቷል-ጌታን-ልናከብር-ታሪኩንም-ልንናገር-ጸሐይ-ሲገባ-መድኅን-ሊጠራ-በክብርም-እቀር'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19074,7 +19074,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-shall-we-gather-at-the-river',
+  'am-sda-en-lyrics-shall-we-gather-at-the-river-በወንዙ-ዳር-እንሰብሰብ-መላዕክት-በሔዱት-ለዘላለም-የሚያበራ-የአምላክ-ዙፋን-ያለበት-በወንዙ-ዳር-እንሰብሰብ',
   'am',
   'በወንዙ ዳር እንሰብሰብ',
   'Shall We Gather at the River',
@@ -19139,7 +19139,7 @@ select
   263,
   '{"new_hymnal_number":264,"old_hymnal_number":241,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-shall-we-gather-at-the-river'
+join works w on w.canonical_key = 'am-sda-en-lyrics-shall-we-gather-at-the-river-በወንዙ-ዳር-እንሰብሰብ-መላዕክት-በሔዱት-ለዘላለም-የሚያበራ-የአምላክ-ዙፋን-ያለበት-በወንዙ-ዳር-እንሰብሰብ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19158,7 +19158,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-this-is-my-father-s-world',
+  'am-sda-en-lyrics-this-is-my-father-s-world-ይህ-ዓለም-የአብ-ነው-ጆሮዬም-ሲሰማ-ይዘምራል-ፍጥረት-ሁሉ-የሰማይን-ዜማ-ይህ-ዓለም-የአብ-ነው-ያረካል-አሣቤ-ቋ',
   'am',
   'ይህ ዓለም የአብ ነው',
   'This is my Father\''s World',
@@ -19207,7 +19207,7 @@ select
   264,
   '{"new_hymnal_number":265,"old_hymnal_number":278,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-this-is-my-father-s-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-this-is-my-father-s-world-ይህ-ዓለም-የአብ-ነው-ጆሮዬም-ሲሰማ-ይዘምራል-ፍጥረት-ሁሉ-የሰማይን-ዜማ-ይህ-ዓለም-የአብ-ነው-ያረካል-አሣቤ-ቋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19226,7 +19226,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-sing-the-mighty-power-of-god',
+  'am-sda-en-lyrics-i-sing-the-mighty-power-of-god-ያምላክን-ኃይል-ልዘምረው-ጋራ-የሰራውን-ባሕርን-የዘረጋውን-ሰማይን-ያረጋውን-ፀሀይ-በቀን-ያወጣውን-በሌት',
   'am',
   'ያምላክን ኃይል ልዘምረው',
   'I Sing the Mighty Power of God',
@@ -19274,7 +19274,7 @@ select
   265,
   '{"new_hymnal_number":266,"old_hymnal_number":279,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-sing-the-mighty-power-of-god'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-sing-the-mighty-power-of-god-ያምላክን-ኃይል-ልዘምረው-ጋራ-የሰራውን-ባሕርን-የዘረጋውን-ሰማይን-ያረጋውን-ፀሀይ-በቀን-ያወጣውን-በሌት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19293,7 +19293,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-s-children-have-a-firm-foundation',
+  'am-sda-en-lyrics-god-s-children-have-a-firm-foundation-ያምላክ-ታናሽ-ጭፍራ-ጽኑ-ነው-በሁሉ-ስፍራ-በአምላክ-ይታመናሉ-ሁሉን-ከርሱ-ያገኛሉ-ልጆችም-ባ',
   'am',
   'ያምላክ ታናሽ ጭፍራ',
   'God\''s Children Have a Firm Foundation',
@@ -19356,7 +19356,7 @@ select
   266,
   '{"new_hymnal_number":267,"old_hymnal_number":277,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-s-children-have-a-firm-foundation'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-s-children-have-a-firm-foundation-ያምላክ-ታናሽ-ጭፍራ-ጽኑ-ነው-በሁሉ-ስፍራ-በአምላክ-ይታመናሉ-ሁሉን-ከርሱ-ያገኛሉ-ልጆችም-ባ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19375,7 +19375,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-loves-me',
+  'am-sda-en-lyrics-jesus-loves-me-አውቃለሁ-ይወደኛል-ወንጌሉ-ይነግረኛል-ታናሾች-የርሱ-ናቸው-ሲደክሙ-ያበረታል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-ወንጌሉ-ነ',
   'am',
   'አውቃለሁ ይወደኛል',
   'Jesus Loves Me',
@@ -19434,7 +19434,7 @@ select
   267,
   '{"new_hymnal_number":268,"old_hymnal_number":268,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-loves-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-loves-me-አውቃለሁ-ይወደኛል-ወንጌሉ-ይነግረኛል-ታናሾች-የርሱ-ናቸው-ሲደክሙ-ያበረታል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-ወንጌሉ-ነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19453,7 +19453,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እከተላለሁ',
+  'am-sda-en-lyrics-i-will-follow-thee-የሱስ-ሆይ-ልከተልህ-ስትጠራኝ-እሰማለሁ-በፍቅርህም-አምናለሁ-ወደ-ቤትህ-ምራኝ-እከተላለሁ-እከተላለሁ-እከተላለሁ-ወደሚመራኝ',
   'am',
   'እከተላለሁ',
   'I Will Follow Thee',
@@ -19502,7 +19502,7 @@ select
   268,
   '{"new_hymnal_number":269,"old_hymnal_number":269,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እከተላለሁ'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-follow-thee-የሱስ-ሆይ-ልከተልህ-ስትጠራኝ-እሰማለሁ-በፍቅርህም-አምናለሁ-ወደ-ቤትህ-ምራኝ-እከተላለሁ-እከተላለሁ-እከተላለሁ-ወደሚመራኝ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19521,7 +19521,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-he-cometh',
+  'am-sda-en-lyrics-when-he-cometh-ወደኛ-የሱስ-ሲመጣ-ልጆቹን-ሊጠራ-የርሱ-ዕንቁዎች-ክቡር-ዕንቁዎች-ውዶቹ-ልጆች-አ-እንደማለዳ-ከዋክብት-ዝ-በሰማይ-ሊበሩ-ማ-ለዘላለ',
   'am',
   'ወደኛ የሱስ ሲመጣ',
   'When He Cometh',
@@ -19575,7 +19575,7 @@ select
   269,
   '{"new_hymnal_number":270,"old_hymnal_number":270,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-he-cometh'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-he-cometh-ወደኛ-የሱስ-ሲመጣ-ልጆቹን-ሊጠራ-የርሱ-ዕንቁዎች-ክቡር-ዕንቁዎች-ውዶቹ-ልጆች-አ-እንደማለዳ-ከዋክብት-ዝ-በሰማይ-ሊበሩ-ማ-ለዘላለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19594,7 +19594,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-like-a-little-candle',
+  'am-sda-en-lyrics-like-a-little-candle-እንድናበራ-የሱስ-ያዘናል-እንደ-ትንሽ-ሻማ-ሌት-የሚያበራ-በጨለማ-ዓለም-እናብራ-ባለህበቱ-ባለሁበት-እንድናበራ-ሁልጊዜ-ለ',
   'am',
   'እንድናበራ የሱስ ያዘናል',
   'Like a Little Candle',
@@ -19647,7 +19647,7 @@ select
   270,
   '{"new_hymnal_number":271,"old_hymnal_number":276,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-like-a-little-candle'
+join works w on w.canonical_key = 'am-sda-en-lyrics-like-a-little-candle-እንድናበራ-የሱስ-ያዘናል-እንደ-ትንሽ-ሻማ-ሌት-የሚያበራ-በጨለማ-ዓለም-እናብራ-ባለህበቱ-ባለሁበት-እንድናበራ-ሁልጊዜ-ለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19666,7 +19666,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-ll-be-a-sunbeam',
+  'am-sda-en-lyrics-i-ll-be-a-sunbeam-እንድንሆን-የፀሀይ-ጮራ-የሱስ-ይፈልጋል-እንዲደሰትብኝ-በኔ-ስማር-ስጫወትም-ደግ-የፀሀይ-ጮራ-የሱስ-የሚፈልግብኝ-ደግ-የፀሀይ',
   'am',
   'እንድንሆን የፀሀይ ጮራ',
   'I\''ll be a Sunbeam',
@@ -19721,7 +19721,7 @@ select
   271,
   '{"new_hymnal_number":272,"old_hymnal_number":273,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-ll-be-a-sunbeam'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-ll-be-a-sunbeam-እንድንሆን-የፀሀይ-ጮራ-የሱስ-ይፈልጋል-እንዲደሰትብኝ-በኔ-ስማር-ስጫወትም-ደግ-የፀሀይ-ጮራ-የሱስ-የሚፈልግብኝ-ደግ-የፀሀይ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19740,7 +19740,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-let-the-little-ones-come',
+  'am-sda-en-lyrics-let-the-little-ones-come-ጣፋጭ-ጥንታዊ-ታሪክ-ሳነብ-ሳለሁ-የሱስ-በዚህ-ዓለም-ሕፃናትን-በክንዱ-ሲያቅፋቸው-ከርሱ-ጋር-ብሆን-ያን-ጊዜ-እጆቹ',
   'am',
   'ሕፃናት ወደኔ ይምጡ',
   'Let the Little Ones Come',
@@ -19788,7 +19788,7 @@ select
   272,
   '{"new_hymnal_number":273,"old_hymnal_number":272,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-let-the-little-ones-come'
+join works w on w.canonical_key = 'am-sda-en-lyrics-let-the-little-ones-come-ጣፋጭ-ጥንታዊ-ታሪክ-ሳነብ-ሳለሁ-የሱስ-በዚህ-ዓለም-ሕፃናትን-በክንዱ-ሲያቅፋቸው-ከርሱ-ጋር-ብሆን-ያን-ጊዜ-እጆቹ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19807,7 +19807,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-master-hast-thou-work-for-me',
+  'am-sda-en-lyrics-master-hast-thou-work-for-me-ሥራ-አለህ-ወይ-ጌታ-በደስታ-እሰራለሁ-ኃይል-ዕውቀትም-የለኝም-ግን-ልሠራ-እወዳለሁ-እጆቼ-ቢደክሙብኝ-ግን-ት',
   'am',
   'ሥራ አለህ ወይ ጌታ ?',
   'Master, Hast Thou Work for Me',
@@ -19856,7 +19856,7 @@ select
   273,
   '{"new_hymnal_number":274,"old_hymnal_number":274,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-master-hast-thou-work-for-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-master-hast-thou-work-for-me-ሥራ-አለህ-ወይ-ጌታ-በደስታ-እሰራለሁ-ኃይል-ዕውቀትም-የለኝም-ግን-ልሠራ-እወዳለሁ-እጆቼ-ቢደክሙብኝ-ግን-ት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19875,7 +19875,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-toiling-for-jesus',
+  'am-sda-en-lyrics-toiling-for-jesus-በደስታ-ለየሱስ-እንሠራለን-ልናደርግ-የምንችለውን-ሁሉ-ከአምላክ-የተሰጠንን-ተግባር-በእምነት-ሥራችን-እንፈጽም-አ-ለየሱስ-ስራ',
   'am',
   'ለየሱስ ስራ',
   'Toiling for Jesus',
@@ -19929,7 +19929,7 @@ select
   274,
   '{"new_hymnal_number":275,"old_hymnal_number":275,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-toiling-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-toiling-for-jesus-በደስታ-ለየሱስ-እንሠራለን-ልናደርግ-የምንችለውን-ሁሉ-ከአምላክ-የተሰጠንን-ተግባር-በእምነት-ሥራችን-እንፈጽም-አ-ለየሱስ-ስራ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -19948,7 +19948,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-perfect-love',
+  'am-sda-en-lyrics-o-perfect-love-ፍጹም-ፍቅር-ሊታሰብ-የማይቻል-ልንለምንህ-ተንበርክከናል-ፍቅራቸው-ወሰን-የሌለው-እንዲሆን-አንተ-ለዘላለም-አስማማቸው-ፍጹም-ሕይወት',
   'am',
   'ፍጹም ፍቅር',
   'O Perfect Love',
@@ -19996,7 +19996,7 @@ select
   275,
   '{"new_hymnal_number":276,"old_hymnal_number":267,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-perfect-love'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-perfect-love-ፍጹም-ፍቅር-ሊታሰብ-የማይቻል-ልንለምንህ-ተንበርክከናል-ፍቅራቸው-ወሰን-የሌለው-እንዲሆን-አንተ-ለዘላለም-አስማማቸው-ፍጹም-ሕይወት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20215,7 +20215,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-holy-night',
+  'am-sda-en-lyrics-o-holy-night-ኦ-ቅዱስ-ሌት-ከዋክብት-ያበራሉ-ያዳኛችን-ልደት-ስለ-ለሆነ-ዓለም-በኃጢዓት-ስትጨማለቅ-መጣላት-ተስፋዋን-ስትጠብቅ-ግሩም-ተስፋው-ነፍሶ',
   'am',
   'ኦ ቅዱስ ሌት',
   'O Holy Night',
@@ -20278,7 +20278,7 @@ select
   279,
   '{"new_hymnal_number":280,"old_hymnal_number":280,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-holy-night'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-holy-night-ኦ-ቅዱስ-ሌት-ከዋክብት-ያበራሉ-ያዳኛችን-ልደት-ስለ-ለሆነ-ዓለም-በኃጢዓት-ስትጨማለቅ-መጣላት-ተስፋዋን-ስትጠብቅ-ግሩም-ተስፋው-ነፍሶ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20297,7 +20297,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ኦ-የቤተልሔም-ከተማ',
+  'am-sda-am-lyrics-ኦ-የቤተልሔም-ከተማ-ኦ-የቤተልሔም-ከተማ-እንዴት-ፀጥ-ብለሻል-በጣም-እንቅልፍ-ተጭኖሽ-ሳል-ከዋክብት-ያልፉሻል-ግን-ጨለማው-መንገድሽ-ለዘላለም-በራ-የዘመና',
   'am',
   'ኦ የቤተልሔም ከተማ',
   'O Little Town of Bethlehem',
@@ -20351,7 +20351,7 @@ select
   280,
   '{"new_hymnal_number":281,"old_hymnal_number":281,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ኦ-የቤተልሔም-ከተማ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ኦ-የቤተልሔም-ከተማ-ኦ-የቤተልሔም-ከተማ-እንዴት-ፀጥ-ብለሻል-በጣም-እንቅልፍ-ተጭኖሽ-ሳል-ከዋክብት-ያልፉሻል-ግን-ጨለማው-መንገድሽ-ለዘላለም-በራ-የዘመና'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20370,7 +20370,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-shining-still',
+  'am-sda-en-lyrics-tis-shining-still-ያማረ-ኮከብ-ወጣ-አንድ-ሌት-አበራልን-የጠራ-መብራት-ጠቢባን-መራ-ግሩሙ-ጮራ-እስኪደርሱ-የጌታን-አልጋ-አ-ያማረው-ኮከብ-ዛሬም',
   'am',
   'ያማረ ኮከብ',
   '\''Tis Shining Still',
@@ -20425,7 +20425,7 @@ select
   281,
   '{"new_hymnal_number":282,"old_hymnal_number":282,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-shining-still'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-shining-still-ያማረ-ኮከብ-ወጣ-አንድ-ሌት-አበራልን-የጠራ-መብራት-ጠቢባን-መራ-ግሩሙ-ጮራ-እስኪደርሱ-የጌታን-አልጋ-አ-ያማረው-ኮከብ-ዛሬም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20444,7 +20444,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-come-all-ye-faithful',
+  'am-sda-en-lyrics-o-come-all-ye-faithful-ኑ-የታመናችሁ-በደስታ-ዕልልታ-ቅረቡ-ቅረቡ-ወደ-ቤተልሔም-ኦ-ተመልከቱት-መሲሁ-ተወልዷል-ኦ-ኑ-እናክብረው-ኦ-ኑ-እናክ',
   'am',
   'ኑ የታመናችሁ',
   'O Come, All Ye Faithful',
@@ -20497,7 +20497,7 @@ select
   282,
   '{"new_hymnal_number":283,"old_hymnal_number":283,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-come-all-ye-faithful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-come-all-ye-faithful-ኑ-የታመናችሁ-በደስታ-ዕልልታ-ቅረቡ-ቅረቡ-ወደ-ቤተልሔም-ኦ-ተመልከቱት-መሲሁ-ተወልዷል-ኦ-ኑ-እናክብረው-ኦ-ኑ-እናክ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20516,7 +20516,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-christmas-song',
+  'am-sda-en-lyrics-a-christmas-song-የማይነገር-ነው-የማይታሰብ-ነው-ታላቅ-ደስታ-የልደት-ቀን-አቅርቡ-ክብር-በሁሉ-ምድር-የአምላክን-ፍቅር-እናመስግን-መሲህ-መጣልን',
   'am',
   'የማይነገር ነው',
   'A Christmas Song',
@@ -20565,7 +20565,7 @@ select
   283,
   '{"new_hymnal_number":284,"old_hymnal_number":284,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-christmas-song'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-christmas-song-የማይነገር-ነው-የማይታሰብ-ነው-ታላቅ-ደስታ-የልደት-ቀን-አቅርቡ-ክብር-በሁሉ-ምድር-የአምላክን-ፍቅር-እናመስግን-መሲህ-መጣልን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20584,7 +20584,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ስማ-መላዕክት-ዘመሩ',
+  'am-sda-am-lyrics-ስማ-መላዕክት-ዘመሩ-ስማ-መላዕክት-ዘመሩ-ክብር-ለአምላክ-እያሉ-ሰላምም-በምድር-ላይ-ኃጥዕ-አምላኩን-እንዲያይ-ነገዶች-በደስታ-ቃል-አሁን-እልል-እንበል-ን',
   'am',
   'ስማ መላዕክት ዘመሩ',
   'Hark! the Herald Angel Sing',
@@ -20632,7 +20632,7 @@ select
   284,
   '{"new_hymnal_number":285,"old_hymnal_number":285,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ስማ-መላዕክት-ዘመሩ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ስማ-መላዕክት-ዘመሩ-ስማ-መላዕክት-ዘመሩ-ክብር-ለአምላክ-እያሉ-ሰላምም-በምድር-ላይ-ኃጥዕ-አምላኩን-እንዲያይ-ነገዶች-በደስታ-ቃል-አሁን-እልል-እንበል-ን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20651,7 +20651,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-silent-night-holy-night',
+  'am-sda-en-lyrics-silent-night-holy-night-ብፁዕ-ሌት-ቅዱስ-ሌት-በሰላም-የሞላ-በሕፃኑ-በእናቲቱም-ላይ-ክብር-ታየ-ሲወርድ-ከሰማይ-ያ-ሌት-በቤተልሔም-ያ-ሌት',
   'am',
   'ብፁዕ ሌት',
   'Silent Night, Holy Night',
@@ -20696,7 +20696,7 @@ select
   285,
   '{"new_hymnal_number":286,"old_hymnal_number":286,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-silent-night-holy-night'
+join works w on w.canonical_key = 'am-sda-en-lyrics-silent-night-holy-night-ብፁዕ-ሌት-ቅዱስ-ሌት-በሰላም-የሞላ-በሕፃኑ-በእናቲቱም-ላይ-ክብር-ታየ-ሲወርድ-ከሰማይ-ያ-ሌት-በቤተልሔም-ያ-ሌት'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20715,7 +20715,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-christmas-morning',
+  'am-sda-en-lyrics-a-christmas-morning-የልደት-ቀን-ሲመጣ-የቤትልሔም-ህፃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በመውረድህ',
   'am',
   'የልደት ቀን ሲመጣ',
   'A Christmas Morning',
@@ -20760,7 +20760,7 @@ select
   286,
   '{"new_hymnal_number":287,"old_hymnal_number":287,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-christmas-morning'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-christmas-morning-የልደት-ቀን-ሲመጣ-የቤትልሔም-ህፃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በመውረድህ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20779,7 +20779,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-joy-to-the-world',
+  'am-sda-en-lyrics-joy-to-the-world-ደስታ-ለዓለም-ጌታ-መጥቷል-ምድር-ተቀበይው-ልባችሁን-አዘጋጁ-ሰማይና-ምድር-ባንድነት-ዘምሩ-መዝሙር-መዝሙር-ለህፃኑ-ደስታ-ለዓለ',
   'am',
   'ደስታ ለዓለም',
   'Joy to the World',
@@ -20837,7 +20837,7 @@ select
   287,
   '{"new_hymnal_number":288,"old_hymnal_number":289,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-joy-to-the-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-joy-to-the-world-ደስታ-ለዓለም-ጌታ-መጥቷል-ምድር-ተቀበይው-ልባችሁን-አዘጋጁ-ሰማይና-ምድር-ባንድነት-ዘምሩ-መዝሙር-መዝሙር-ለህፃኑ-ደስታ-ለዓለ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -20930,7 +20930,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-as-with-gladness-men-of-old',
+  'am-sda-en-lyrics-as-with-gladness-men-of-old-በደስታ-የጥንት-ሰዎች-መሪውን-ኮከብ-አዩት-በብርሃኑ-ተመርተው-እስኪቆም-ተከተሉት-እኛም-ባንተ-ቸር-ጌታ-እንድ',
   'am',
   'በደስታ የጥንት ሰዎች',
   'As With Gladness Men of Old',
@@ -20984,7 +20984,7 @@ select
   289,
   '{"new_hymnal_number":290,"old_hymnal_number":290,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-as-with-gladness-men-of-old'
+join works w on w.canonical_key = 'am-sda-en-lyrics-as-with-gladness-men-of-old-በደስታ-የጥንት-ሰዎች-መሪውን-ኮከብ-አዩት-በብርሃኑ-ተመርተው-እስኪቆም-ተከተሉት-እኛም-ባንተ-ቸር-ጌታ-እንድ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21003,7 +21003,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በዚያ-ሌሊት-ተዘምሯል',
+  'am-sda-am-lyrics-በዚያ-ሌሊት-ተዘምሯል-በዚያ-ሌሊት-ተዘምሯል-ሰማያዊ-መዝሙር-በመላዕክት-ወርቅ-በገና-ላለንባት-ምድር-ሲሉ-ሰላም-ለሁላችሁ-መልካም-ፈቃድ-ከላይ-ዓለምም-በሰ',
   'am',
   'በዚያ ሌሊት ተዘምሯል',
   'It Come Upon the Midnight Clear',
@@ -21057,7 +21057,7 @@ select
   290,
   '{"new_hymnal_number":291,"old_hymnal_number":291,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በዚያ-ሌሊት-ተዘምሯል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በዚያ-ሌሊት-ተዘምሯል-በዚያ-ሌሊት-ተዘምሯል-ሰማያዊ-መዝሙር-በመላዕክት-ወርቅ-በገና-ላለንባት-ምድር-ሲሉ-ሰላም-ለሁላችሁ-መልካም-ፈቃድ-ከላይ-ዓለምም-በሰ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21222,7 +21222,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-never-fails',
+  'am-sda-en-lyrics-jesus-never-fails-ወዳጆችህ-ቢክዱህ-ፍርሃት-ቢከብህ-አይተውህም-አይጥልህም-የሱስ-ጌታችን-የሱስ-አይጥልም-የሱስ-አይጥልም-ሰማይና-ምድር-ያልፋሉ',
   'am',
   'የሱስ አይጥልም',
   'Jesus Never Fails',
@@ -21272,7 +21272,7 @@ select
   293,
   '{"new_hymnal_number":294,"old_hymnal_number":120,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-never-fails'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-never-fails-ወዳጆችህ-ቢክዱህ-ፍርሃት-ቢከብህ-አይተውህም-አይጥልህም-የሱስ-ጌታችን-የሱስ-አይጥልም-የሱስ-አይጥልም-ሰማይና-ምድር-ያልፋሉ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21291,7 +21291,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በእግዚአብሔር-ልብ-አጠገብ',
+  'am-sda-am-lyrics-በእግዚአብሔር-ልብ-አጠገብ-በእግዚአብሔር-ልብ-አጠገብ-ጸጥታ-ይገኛል-በእግዚአብሔር-ልብ-አጠገብ-ኃጢዓት-አይጎዳንም-ኦ-የሱስ-ብሩክ-አዳኜ-ከአብ-ዘንድ-የተ',
   'am',
   'በእግዚአብሔር ልብ አጠገብ',
   'There is a Place of Quiet Rest',
@@ -21340,7 +21340,7 @@ select
   294,
   '{"new_hymnal_number":295,"old_hymnal_number":108,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በእግዚአብሔር-ልብ-አጠገብ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በእግዚአብሔር-ልብ-አጠገብ-በእግዚአብሔር-ልብ-አጠገብ-ጸጥታ-ይገኛል-በእግዚአብሔር-ልብ-አጠገብ-ኃጢዓት-አይጎዳንም-ኦ-የሱስ-ብሩክ-አዳኜ-ከአብ-ዘንድ-የተ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21359,7 +21359,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-faith-looks-up-to-thee',
+  'am-sda-en-lyrics-my-faith-looks-up-to-thee-እምነቴ-ባንተ-ነው-የቀራኒዮ-በግ-መድኃኒቴ-ስጸልይ-ና-ስማኝ-ኃጢዓቴን-ፋቅልኝ-ኦ-ከዛሬ-ይዘህ-ላንተ-አድርገኝ-የ',
   'am',
   'እምነቴ ባንተ ነው',
   'My Faith Looks Up to Thee',
@@ -21405,7 +21405,7 @@ select
   295,
   '{"new_hymnal_number":296,"old_hymnal_number":109,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-faith-looks-up-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-faith-looks-up-to-thee-እምነቴ-ባንተ-ነው-የቀራኒዮ-በግ-መድኃኒቴ-ስጸልይ-ና-ስማኝ-ኃጢዓቴን-ፋቅልኝ-ኦ-ከዛሬ-ይዘህ-ላንተ-አድርገኝ-የ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21424,7 +21424,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-will-your-anchor-hold',
+  'am-sda-en-lyrics-will-your-anchor-hold-መልህቅህ-ጸንቶ-ይይዘን-ይሆን-በጭንቅ-ሞገድ-ስትከበብ-ሞገድ-ሲነሳ-ኃብል-ሲገተር-መልህቅህ-ይይዛል-ይለቃል-አ-የነፍሴ',
   'am',
   'መልህቅህ ጸንቶ ይይዘን ይሆን',
   'Will Your Anchor Hold?',
@@ -21483,7 +21483,7 @@ select
   296,
   '{"new_hymnal_number":297,"old_hymnal_number":110,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-will-your-anchor-hold'
+join works w on w.canonical_key = 'am-sda-en-lyrics-will-your-anchor-hold-መልህቅህ-ጸንቶ-ይይዘን-ይሆን-በጭንቅ-ሞገድ-ስትከበብ-ሞገድ-ሲነሳ-ኃብል-ሲገተር-መልህቅህ-ይይዛል-ይለቃል-አ-የነፍሴ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21502,7 +21502,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-so-sweet-to-trust-in-jesus',
+  'am-sda-en-lyrics-tis-so-sweet-to-trust-in-jesus-ጌታን-ማመን-ደስ-ያሰኛል-ቃሎቹንም-መቀበል-ወደ-ተስፋው-ይጠራናል-እርሱም-ብሎዋል-እወቅ-የሱስ-የሱስ-አም',
   'am',
   'ጌታን ማመን',
   '\''Tis So Sweet to Trust In Jesus',
@@ -21567,7 +21567,7 @@ select
   297,
   '{"new_hymnal_number":298,"old_hymnal_number":111,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-so-sweet-to-trust-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-so-sweet-to-trust-in-jesus-ጌታን-ማመን-ደስ-ያሰኛል-ቃሎቹንም-መቀበል-ወደ-ተስፋው-ይጠራናል-እርሱም-ብሎዋል-እወቅ-የሱስ-የሱስ-አም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21586,7 +21586,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-need-thee-every-hour',
+  'am-sda-en-lyrics-i-need-thee-every-hour-ሁል-ጊዜ-እሻሃለሁ-ጸጋ-ሰጭ-አምላክ-ሆይ-እንዳንተ-ድምፅ-የለም-ሰላምን-የሚሰጥ-እሻሃለሁ-ኦ-ጌታ-በየሰዓቱ-እሻለሁ-መ',
   'am',
   'ሁል ጊዜ እሻሃለሁ',
   'I Need Thee Every Hour',
@@ -21640,7 +21640,7 @@ select
   298,
   '{"new_hymnal_number":299,"old_hymnal_number":112,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-need-thee-every-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-need-thee-every-hour-ሁል-ጊዜ-እሻሃለሁ-ጸጋ-ሰጭ-አምላክ-ሆይ-እንዳንተ-ድምፅ-የለም-ሰላምን-የሚሰጥ-እሻሃለሁ-ኦ-ጌታ-በየሰዓቱ-እሻለሁ-መ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21659,7 +21659,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ያምላክን-ጸጋ-አላውቅም',
+  'am-sda-am-lyrics-ያምላክን-ጸጋ-አላውቅም-ያምላክን-ጸጋ-አላውቅም-የገለጠልኝን-የክርስቶስን-ፍቅርም-ለርሱ-የዋጀኝን-ግን-አውቃለሁ-የአመንሁትን-አውቃለሁ-ችሎት-እንደተሰጠው',
   'am',
   'ያምላክን ጸጋ አላውቅም',
   'I Know Whom I Have Belived',
@@ -21716,7 +21716,7 @@ select
   299,
   '{"new_hymnal_number":300,"old_hymnal_number":113,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ያምላክን-ጸጋ-አላውቅም'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ያምላክን-ጸጋ-አላውቅም-ያምላክን-ጸጋ-አላውቅም-የገለጠልኝን-የክርስቶስን-ፍቅርም-ለርሱ-የዋጀኝን-ግን-አውቃለሁ-የአመንሁትን-አውቃለሁ-ችሎት-እንደተሰጠው'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21735,7 +21735,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ወደሚመራኝ',
+  'am-sda-am-lyrics-ወደሚመራኝ-ወደሚመራኝ-እሄዳለሁ-ልታመነው-ተምሬአለሁ-ለኔ-መሆኑን-አስባለሁ-በቀራኒዮ-ሞተልኝ-ሌትም-ቀንም-ይመራኛል-ጌታ-የሱስ-ይመራኛል-የታመነው-ወዳጄ-ነ',
   'am',
   'ወደሚመራኝ',
   'I Rememr the Calvary',
@@ -21784,7 +21784,7 @@ select
   300,
   '{"new_hymnal_number":301,"old_hymnal_number":117,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ወደሚመራኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ወደሚመራኝ-ወደሚመራኝ-እሄዳለሁ-ልታመነው-ተምሬአለሁ-ለኔ-መሆኑን-አስባለሁ-በቀራኒዮ-ሞተልኝ-ሌትም-ቀንም-ይመራኛል-ጌታ-የሱስ-ይመራኛል-የታመነው-ወዳጄ-ነ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21803,7 +21803,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-standing-on-the-promises',
+  'am-sda-en-lyrics-standing-on-the-promises-በጌታዬ-በክርስቶስ-ቃል-ላይ-ቆሜ-ለዘላለም-እርሱን-ሳመሰግነው-ክብር-በላይ-ይሁን-እያልኩ-ስዘምር-በአምላክ-ተስፋ',
   'am',
   'በጌታ ተስፋ እቆማለሁ',
   'Standing on the Promises',
@@ -21863,7 +21863,7 @@ select
   301,
   '{"new_hymnal_number":302,"old_hymnal_number":114,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-standing-on-the-promises'
+join works w on w.canonical_key = 'am-sda-en-lyrics-standing-on-the-promises-በጌታዬ-በክርስቶስ-ቃል-ላይ-ቆሜ-ለዘላለም-እርሱን-ሳመሰግነው-ክብር-በላይ-ይሁን-እያልኩ-ስዘምር-በአምላክ-ተስፋ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21882,7 +21882,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-ll-build-on-the-rock',
+  'am-sda-en-lyrics-we-ll-build-on-the-rock-እንገባለን-በሕንፃው-ላይ-በሕያው-ህንፃ-በየሱስ-ስንፈራ-እንጠጋ-ከርሱ-የፈተና-ቀን-ሲደርስ-በሕንፃው-እንግባ-በሕንፃ',
   'am',
   'በሕንፃው እንግባ',
   'We\''ll Build on the Rock',
@@ -21931,7 +21931,7 @@ select
   302,
   '{"new_hymnal_number":303,"old_hymnal_number":116,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-ll-build-on-the-rock'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-ll-build-on-the-rock-እንገባለን-በሕንፃው-ላይ-በሕያው-ህንፃ-በየሱስ-ስንፈራ-እንጠጋ-ከርሱ-የፈተና-ቀን-ሲደርስ-በሕንፃው-እንግባ-በሕንፃ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -21950,7 +21950,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-the-way-my-saviour-leads-me',
+  'am-sda-en-lyrics-all-the-way-my-saviour-leads-me-የሱስ-እየመራኝ-ሳለ-ምን-መጠየቅ-ያሻኛል-ምህረቱን-እንዴት-ልካደው-እስካሁን-የመራኝን-ሰማያዊ-ሰላም-ም',
   'am',
   'የሱስ እየመራኝ ሳለ',
   'All the Way my Saviour Leads Me',
@@ -22002,7 +22002,7 @@ select
   303,
   '{"new_hymnal_number":304,"old_hymnal_number":119,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-the-way-my-saviour-leads-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-the-way-my-saviour-leads-me-የሱስ-እየመራኝ-ሳለ-ምን-መጠየቅ-ያሻኛል-ምህረቱን-እንዴት-ልካደው-እስካሁን-የመራኝን-ሰማያዊ-ሰላም-ም'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22021,7 +22021,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-don-t-know-about-tomorrow',
+  'am-sda-en-lyrics-i-don-t-know-about-tomorrow-ስለ-ነገው-ምንም-አላውቅ-በየቀኑ-እኖራለሁ-ብርሃኑንም-አልዋስም-ሰማዩ-እንዳይጨልም-ስለመጪው-አላስብም-የጌታን',
   'am',
   'ስለ ነገው ምንም አላውቅ',
   'I Don\''t Know About Tomorrow',
@@ -22077,7 +22077,7 @@ select
   304,
   '{"new_hymnal_number":305,"old_hymnal_number":121,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-don-t-know-about-tomorrow'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-don-t-know-about-tomorrow-ስለ-ነገው-ምንም-አላውቅ-በየቀኑ-እኖራለሁ-ብርሃኑንም-አልዋስም-ሰማዩ-እንዳይጨልም-ስለመጪው-አላስብም-የጌታን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22096,7 +22096,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-we-walk-with-the-lord',
+  'am-sda-en-lyrics-when-we-walk-with-the-lord-ከጌታ-ጋር-ስንሄድ-ቃሉ-እያበራልን-እንዴት-ያለ-ክብር-ይሰጣል-ፈቃዱን-ስንፈጽም-አብሮን-ይኖራል-ከሚያምኑት-ሁሉ',
   'am',
   'ከጌታ ጋር ስንሄድ',
   'When We Walk With the Lord',
@@ -22160,7 +22160,7 @@ select
   305,
   '{"new_hymnal_number":306,"old_hymnal_number":118,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-we-walk-with-the-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-we-walk-with-the-lord-ከጌታ-ጋር-ስንሄድ-ቃሉ-እያበራልን-እንዴት-ያለ-ክብር-ይሰጣል-ፈቃዱን-ስንፈጽም-አብሮን-ይኖራል-ከሚያምኑት-ሁሉ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22179,7 +22179,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-lord-s-our-rock',
+  'am-sda-en-lyrics-the-lord-s-our-rock-ጌታ-መሸሸጊያችን-ነው-ማዕበሉ-ሲነሳብን-ወደርሱ-እንጠጋለን-ማዕበሉ-ሲነሳብን-ማረፊያችን-ስንደክም-መጠጊያችን-ስንፈራ-አይጥ',
   'am',
   'ጌታ መሸሸጊያችን ነው',
   'The Lord\''s Our Rock',
@@ -22228,7 +22228,7 @@ select
   306,
   '{"new_hymnal_number":307,"old_hymnal_number":122,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-lord-s-our-rock'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-lord-s-our-rock-ጌታ-መሸሸጊያችን-ነው-ማዕበሉ-ሲነሳብን-ወደርሱ-እንጠጋለን-ማዕበሉ-ሲነሳብን-ማረፊያችን-ስንደክም-መጠጊያችን-ስንፈራ-አይጥ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22522,7 +22522,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-hear-thy-welcome-voice',
+  'am-sda-en-lyrics-i-hear-thy-welcome-voice-ድምፅህን-እሰማለሁ-ወዳንተ-የሚጠራኝ-በክቡር-ደምህ-ለመንፃት-ካንተ-በፈሰሰው-ጌታ-ሆይ-አሁን-ወዳንተ-መጣሁ-አንፃኝ',
   'am',
   'ድምፅህን እሰማለሁ',
   'I Hear Thy Welcome Voice',
@@ -22577,7 +22577,7 @@ select
   311,
   '{"new_hymnal_number":312,"old_hymnal_number":185,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-hear-thy-welcome-voice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-hear-thy-welcome-voice-ድምፅህን-እሰማለሁ-ወዳንተ-የሚጠራኝ-በክቡር-ደምህ-ለመንፃት-ካንተ-በፈሰሰው-ጌታ-ሆይ-አሁን-ወዳንተ-መጣሁ-አንፃኝ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22596,7 +22596,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-a-fountain',
+  'am-sda-en-lyrics-there-is-a-fountain-በደም-የመላ-ምንጭ-አለ-ተቀዳ-ከክርስቶስ-ከዚያ-የታጠቡ-ኃጢዓን-ከበል-ሊነፁ-ከበል-ሊነፁ-ከበል-ሊነፁ-ከዚያ-የታጠቡ-ኃጢዓ',
   'am',
   'በደም የመላ ምንጭ አለ',
   'There is a Fountain',
@@ -22651,7 +22651,7 @@ select
   312,
   '{"new_hymnal_number":313,"old_hymnal_number":186,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-a-fountain'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-a-fountain-በደም-የመላ-ምንጭ-አለ-ተቀዳ-ከክርስቶስ-ከዚያ-የታጠቡ-ኃጢዓን-ከበል-ሊነፁ-ከበል-ሊነፁ-ከበል-ሊነፁ-ከዚያ-የታጠቡ-ኃጢዓ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22670,7 +22670,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-rock-of-age',
+  'am-sda-en-lyrics-rock-of-age-የጥንት-አምባ-የሱስ-ነው-ስለኔ-ተከፈለ-ወደ-እርሱ-ልሸሸግ-ከርሱ-ጎን-የወጣ-ደም-ከኃጢዓቴ-አጠራኝ-ስለዚህ-ነው-ያዳነኝ-ሕግህን-አልፈፀ',
   'am',
   'የጥንት አምባ የሱስ ነው',
   'Rock of Age',
@@ -22720,7 +22720,7 @@ select
   313,
   '{"new_hymnal_number":314,"old_hymnal_number":187,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-rock-of-age'
+join works w on w.canonical_key = 'am-sda-en-lyrics-rock-of-age-የጥንት-አምባ-የሱስ-ነው-ስለኔ-ተከፈለ-ወደ-እርሱ-ልሸሸግ-ከርሱ-ጎን-የወጣ-ደም-ከኃጢዓቴ-አጠራኝ-ስለዚህ-ነው-ያዳነኝ-ሕግህን-አልፈፀ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22739,7 +22739,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-beyond-the-sunset',
+  'am-sda-en-lyrics-beyond-the-sunset-ጸሀይዋ-ጠልቃ-መንጋት-ሲጀምር-ከመድኃኒቴ-የሱስ-ጋር-ስራዬ-አልቆ-በሰማይ-ልኖር-ጸሀይዋ-ጠልቃ-ቀን-ሲጀምር-ጸሀይዋ-ጠልቃ-ደመ',
   'am',
   'ጸሀይዋ ጠልቃ',
   'Beyond the Sunset',
@@ -22788,7 +22788,7 @@ select
   314,
   '{"new_hymnal_number":315,"old_hymnal_number":190,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-beyond-the-sunset'
+join works w on w.canonical_key = 'am-sda-en-lyrics-beyond-the-sunset-ጸሀይዋ-ጠልቃ-መንጋት-ሲጀምር-ከመድኃኒቴ-የሱስ-ጋር-ስራዬ-አልቆ-በሰማይ-ልኖር-ጸሀይዋ-ጠልቃ-ቀን-ሲጀምር-ጸሀይዋ-ጠልቃ-ደመ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22807,7 +22807,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-christ-is-risen-today',
+  'am-sda-en-lyrics-jesus-christ-is-risen-today-የሱስ-ክርስቶስ-ተነስቷል-ሃሌሉያ-የድል-ቀን-ተዘጋጅቷል-ሃሌሉያ-በመስቀል-የሞተልን-ሃሌሉያ-ከጥፋት-ሊያድነን',
   'am',
   'የሱስ ክርስቶስ ተነስቷል',
   'Jesus Christ is Risen Today',
@@ -22861,7 +22861,7 @@ select
   315,
   '{"new_hymnal_number":316,"old_hymnal_number":188,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-christ-is-risen-today'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-christ-is-risen-today-የሱስ-ክርስቶስ-ተነስቷል-ሃሌሉያ-የድል-ቀን-ተዘጋጅቷል-ሃሌሉያ-በመስቀል-የሞተልን-ሃሌሉያ-ከጥፋት-ሊያድነን'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22880,7 +22880,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-lives',
+  'am-sda-en-lyrics-he-lives-ልሥራ-ለሕያው-አምላክ-በዓለም-ላይ-ላለው-አምናለሁ-መኖሩንም-ሌሎችም-ባያምኑም-የምህረት-እጁን-አየሁ-መልካም-ድምፁን-በፈለግሁ-ጊዜ-ይቀርበኛ',
   'am',
   'ሕያው ክርስቶስ',
   'He Lives',
@@ -22937,7 +22937,7 @@ select
   316,
   '{"new_hymnal_number":317,"old_hymnal_number":189,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-lives'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-lives-ልሥራ-ለሕያው-አምላክ-በዓለም-ላይ-ላለው-አምናለሁ-መኖሩንም-ሌሎችም-ባያምኑም-የምህረት-እጁን-አየሁ-መልካም-ድምፁን-በፈለግሁ-ጊዜ-ይቀርበኛ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -22956,7 +22956,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-christ-arose',
+  'am-sda-en-lyrics-christ-arose-በመቃብር-ተኛ-የዓለም-መድህን-ከዚያ-ወጣ-ለኛ-መድኅናችን-ከመቃብር-ተነሳ-ድል-ነስቶልን-በጠላቱ-ላይ-ተነሳ-ድል-ነስቶ-ለኛ-ተነሳ-ለዘ',
   'am',
   'ከመቃብር ተነሳ',
   'Christ Arose',
@@ -23006,7 +23006,7 @@ select
   317,
   '{"new_hymnal_number":318,"old_hymnal_number":191,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-christ-arose'
+join works w on w.canonical_key = 'am-sda-en-lyrics-christ-arose-በመቃብር-ተኛ-የዓለም-መድህን-ከዚያ-ወጣ-ለኛ-መድኅናችን-ከመቃብር-ተነሳ-ድል-ነስቶልን-በጠላቱ-ላይ-ተነሳ-ድል-ነስቶ-ለኛ-ተነሳ-ለዘ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23025,7 +23025,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lift-your-glad-voice',
+  'am-sda-en-lyrics-lift-your-glad-voice-የ-አምላክ-ልጆች-ደስ-ይበላችሁ-ሞትን-አሸንፎ-የሱስ-ተነስቷል-የከበቡትን-ጠላቶች-ድል-ነስቶ-በሞትና-በሲኦል-ላይ-ነገሰ',
   'am',
   'ያምላክ ልጆች ደስ ይበላችሁ',
   'Lift Your Glad Voice',
@@ -23074,7 +23074,7 @@ select
   318,
   '{"new_hymnal_number":319,"old_hymnal_number":192,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lift-your-glad-voice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lift-your-glad-voice-የ-አምላክ-ልጆች-ደስ-ይበላችሁ-ሞትን-አሸንፎ-የሱስ-ተነስቷል-የከበቡትን-ጠላቶች-ድል-ነስቶ-በሞትና-በሲኦል-ላይ-ነገሰ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23160,7 +23160,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በኤደን-አንድ-ቀን',
+  'am-sda-am-lyrics-በኤደን-አንድ-ቀን-ስንሰባሰብ-በኤደን-አንድ-ቀን-በሰማያዊው-አገር-በላይ-መከራና-ኃዘን-ይጨረሳል-በሰማይ-ዳርቻ-ስንቆም-በኤደን-አንድ-ቀን-በኤደን-አንድ',
   'am',
   'በኤደን አንድ ቀን',
   'In Eden Our Trouble Will End',
@@ -23209,7 +23209,7 @@ select
   320,
   '{"new_hymnal_number":321,"old_hymnal_number":64,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በኤደን-አንድ-ቀን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በኤደን-አንድ-ቀን-ስንሰባሰብ-በኤደን-አንድ-ቀን-በሰማያዊው-አገር-በላይ-መከራና-ኃዘን-ይጨረሳል-በሰማይ-ዳርቻ-ስንቆም-በኤደን-አንድ-ቀን-በኤደን-አንድ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23228,7 +23228,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-be-with-you',
+  'am-sda-en-lyrics-god-be-with-you-እግዚአብሔር-ከላንተ-ጋር-ይሁን-በትሁት-ምክሩ-ይምራችሁ-በፍቅሩ-ይሸከማችሁ-እስክንገናኝ-በየሱስ-ፊት-በሰማይ-በሰማይ-በሰማይ-እስ',
   'am',
   'እግዚአብሔር ከላንተ ጋር ይሁን',
   'God Be With You',
@@ -23284,7 +23284,7 @@ select
   321,
   '{"new_hymnal_number":322,"old_hymnal_number":169,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-be-with-you'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-be-with-you-እግዚአብሔር-ከላንተ-ጋር-ይሁን-በትሁት-ምክሩ-ይምራችሁ-በፍቅሩ-ይሸከማችሁ-እስክንገናኝ-በየሱስ-ፊት-በሰማይ-በሰማይ-በሰማይ-እስ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23303,7 +23303,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ከዚህ-መሄዴ-ይደርሳል',
+  'am-sda-am-lyrics-ከዚህ-መሄዴ-ይደርሳል-ከዚህ-መሄዴ-ይደርሳል-እንዳሁንም-አልዘምርም-ባምላኬ-ፊት-ስነሳ-ግን-ደስታዬ-እጅግ-ይሆናል-አ-ፊት-ለፊትም-አየዋለሁ-ዝ-የፀጋ-ታሪክ',
   'am',
   'ከዚህ መሄዴ ይደርሳል',
   'Some Day the Silver Core Will Break',
@@ -23362,7 +23362,7 @@ select
   322,
   '{"new_hymnal_number":323,"old_hymnal_number":292,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ከዚህ-መሄዴ-ይደርሳል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ከዚህ-መሄዴ-ይደርሳል-ከዚህ-መሄዴ-ይደርሳል-እንዳሁንም-አልዘምርም-ባምላኬ-ፊት-ስነሳ-ግን-ደስታዬ-እጅግ-ይሆናል-አ-ፊት-ለፊትም-አየዋለሁ-ዝ-የፀጋ-ታሪክ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23381,7 +23381,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-never-part-again',
+  'am-sda-en-lyrics-never-part-again-የደስታ-ስፍራ-አለን-ቤታችን-ያለበት-ብርሃን-ጨለማን-ያጠፋል-ኃዘንንም-ደስታ-በዓለም-ላይ-ስንራመድ-የርሱን-ድምፅ-እንሰማለን-ከ',
   'am',
   'አንለያይም',
   'Never Part Again',
@@ -23434,7 +23434,7 @@ select
   323,
   '{"new_hymnal_number":324,"old_hymnal_number":293,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-never-part-again'
+join works w on w.canonical_key = 'am-sda-en-lyrics-never-part-again-የደስታ-ስፍራ-አለን-ቤታችን-ያለበት-ብርሃን-ጨለማን-ያጠፋል-ኃዘንንም-ደስታ-በዓለም-ላይ-ስንራመድ-የርሱን-ድምፅ-እንሰማለን-ከ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23453,7 +23453,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-asleep-in-jesus',
+  'am-sda-en-lyrics-asleep-in-jesus-በየሱስ-ተኙ-መልካም-ነው-ልቅሶየለውም-ትንሳኤ-ዕረፍትህም-ጸጥ-ያለ-ነው-ጠላት-የማያበላሸው-በየሱስ-ተኙ-ይሻላል-ዕረፍትን-ከእጁ',
   'am',
   'በየሱስ ተኙ',
   'Asleep in Jesus',
@@ -23500,7 +23500,7 @@ select
   324,
   '{"new_hymnal_number":325,"old_hymnal_number":294,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-asleep-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-asleep-in-jesus-በየሱስ-ተኙ-መልካም-ነው-ልቅሶየለውም-ትንሳኤ-ዕረፍትህም-ጸጥ-ያለ-ነው-ጠላት-የማያበላሸው-በየሱስ-ተኙ-ይሻላል-ዕረፍትን-ከእጁ'
 where be.slug = 'am-sda-hymnal-new'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23579,7 +23579,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-hear-our-prayer-o-lord',
+  'am-sda-en-lyrics-hear-our-prayer-o-lord-ፀሎታችንን-ስማ-ጌታ-ሆይ-ጆሮህን-አዘንብል-ሰላምን-ስጠን-አሜን',
   'am',
   'ፀሎታችንን ስማ',
   'Hear Our Prayer, O Lord',
@@ -23616,7 +23616,7 @@ select
   1,
   '{"new_hymnal_number":66,"old_hymnal_number":2,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-hear-our-prayer-o-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-hear-our-prayer-o-lord-ፀሎታችንን-ስማ-ጌታ-ሆይ-ጆሮህን-አዘንብል-ሰላምን-ስጠን-አሜን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23635,7 +23635,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-holy-holy',
+  'am-sda-en-lyrics-holy-holy-holy-ቅዱስ-ቅዱስ-ቅዱስ-ኃያል-ጌታችን-በየጧቱ-ላንተ-እንዘምራለን-ቅዱስ-ቅዱስ-ቅዱስ-መኃሪና-ኃያል-እግዚአብሔር-የዘላለም-ገዥ-ቅዱስ-ቅ',
   'am',
   'ቅዱስ ቅዱስ ቅዱስ',
   'Holy Holy Holy',
@@ -23683,7 +23683,7 @@ select
   2,
   '{"new_hymnal_number":3,"old_hymnal_number":3,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-holy-holy'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-holy-holy-ቅዱስ-ቅዱስ-ቅዱስ-ኃያል-ጌታችን-በየጧቱ-ላንተ-እንዘምራለን-ቅዱስ-ቅዱስ-ቅዱስ-መኃሪና-ኃያል-እግዚአብሔር-የዘላለም-ገዥ-ቅዱስ-ቅ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23774,7 +23774,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ለየሱስ-ስም-እልል-በሉ',
+  'am-sda-am-lyrics-ለየሱስ-ስም-እልል-በሉ-ለየሱስ-ስም-እልል-በሉ-መላዕክት-ስገዱ-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-እላ',
   'am',
   'ለየሱስ ስም እልል በሉ',
   'All Hail the Power of Jesus\'' Name',
@@ -23828,7 +23828,7 @@ select
   4,
   '{"new_hymnal_number":5,"old_hymnal_number":5,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ለየሱስ-ስም-እልል-በሉ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ለየሱስ-ስም-እልል-በሉ-ለየሱስ-ስም-እልል-በሉ-መላዕክት-ስገዱ-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-የመንግሥትን-አክሊል-አምጡ-የሱስ-ይቀዳጀው-እላ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23847,7 +23847,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-praise-to-jesus',
+  'am-sda-en-lyrics-praise-to-jesus-ጌታችን-አመስግኑት-በደስታ-ዝማሬ-ሕፃናት-ያመስግኑት-የሱስ-ጌታችንን-ታናሾችን-ወደደ-ወደርሱም-ጠራቸው-በክንዱም-አቀፋቸው-ነፍሱን',
   'am',
   'ጌታችን አመስግኑት',
   'Praise to Jesus',
@@ -23901,7 +23901,7 @@ select
   5,
   '{"new_hymnal_number":6,"old_hymnal_number":6,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-praise-to-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-praise-to-jesus-ጌታችን-አመስግኑት-በደስታ-ዝማሬ-ሕፃናት-ያመስግኑት-የሱስ-ጌታችንን-ታናሾችን-ወደደ-ወደርሱም-ጠራቸው-በክንዱም-አቀፋቸው-ነፍሱን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -23987,7 +23987,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tell-me-that-old-old-story',
+  'am-sda-en-lyrics-tell-me-that-old-old-story-የጥንት-ታሪክ-ንገረኝ-ስላዲሷ-አገር-ስለ-የሱስ-ፍቅር-ስለ-የሱስ-ክብር-እንዲባኝ-አድርገህ-ታሪኩን-ንገረኝ-ኃጢ',
   'am',
   'የጥንት ታሪክ ንገረኝ',
   'Tell me that Old, Old Story',
@@ -24042,7 +24042,7 @@ select
   7,
   '{"new_hymnal_number":8,"old_hymnal_number":8,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tell-me-that-old-old-story'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tell-me-that-old-old-story-የጥንት-ታሪክ-ንገረኝ-ስላዲሷ-አገር-ስለ-የሱስ-ፍቅር-ስለ-የሱስ-ክብር-እንዲባኝ-አድርገህ-ታሪኩን-ንገረኝ-ኃጢ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24061,7 +24061,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-redeemer',
+  'am-sda-en-lyrics-my-redeemer-እዘምራለሁ-ላዳኜ-ላስደናቂው-ፍቅሩ-ስል-ተሰቃየልኝ-በመስቀል-ከመርገም-እኔን-ሊያድን-ዘምሩ-ላዳኜ-ክብር-ላዳኜ-ክብር-ዘምሩ-ላዳኜ-ክብር',
   'am',
   'ላዳኜ እዘምራለው',
   'My Redeemer',
@@ -24122,7 +24122,7 @@ select
   8,
   '{"new_hymnal_number":9,"old_hymnal_number":9,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-redeemer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-redeemer-እዘምራለሁ-ላዳኜ-ላስደናቂው-ፍቅሩ-ስል-ተሰቃየልኝ-በመስቀል-ከመርገም-እኔን-ሊያድን-ዘምሩ-ላዳኜ-ክብር-ላዳኜ-ክብር-ዘምሩ-ላዳኜ-ክብር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24141,7 +24141,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-maker-and-my-king',
+  'am-sda-en-lyrics-my-maker-and-my-king-ፈጣሪ-ንጉሤ-ሁሉን-የሰጠኸኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-እኔ-የእጅህ-ፍ',
   'am',
   'ፈጣሪ ንጉሤ',
   'My Maker and My King',
@@ -24190,7 +24190,7 @@ select
   9,
   '{"new_hymnal_number":10,"old_hymnal_number":10,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-maker-and-my-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-maker-and-my-king-ፈጣሪ-ንጉሤ-ሁሉን-የሰጠኸኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-በረከት-ይፈልቅልኛል-አንተ-የላክህልኝ-እኔ-የእጅህ-ፍ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24209,7 +24209,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-mighty-fortress-is-our-god',
+  'am-sda-en-lyrics-a-mighty-fortress-is-our-god-አምባችን-አምላካችን-ነው-ብርቱ-ዕቃ-ጦራችን-በመከራችን-እርሱ-ነው-ጽኑ-መጠጊያችን-የጥንት-ጠላትችን-ሊያጠፋ',
   'am',
   'አምባችን አምላካችን ነው',
   'A Mighty Fortress is Our God',
@@ -24257,7 +24257,7 @@ select
   10,
   '{"new_hymnal_number":11,"old_hymnal_number":11,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-mighty-fortress-is-our-god'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-mighty-fortress-is-our-god-አምባችን-አምላካችን-ነው-ብርቱ-ዕቃ-ጦራችን-በመከራችን-እርሱ-ነው-ጽኑ-መጠጊያችን-የጥንት-ጠላትችን-ሊያጠፋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24276,7 +24276,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-did-he-do',
+  'am-sda-en-lyrics-what-did-he-do-አስደናቂውን-ታሪክ-ስሙ-ያምላክ-ልጅ-የሰራውን-ክብሩን-ትቶ-ተዋረደልን-በክቡር-ደሙ-ገዛን-ማነው-ከጥፋት-ያዳነኝ-ምን-ሠራልኝ-የት',
   'am',
   'ምን ሠራልን',
   'What Did He Do?',
@@ -24328,7 +24328,7 @@ select
   11,
   '{"new_hymnal_number":13,"old_hymnal_number":12,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-did-he-do'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-did-he-do-አስደናቂውን-ታሪክ-ስሙ-ያምላክ-ልጅ-የሰራውን-ክብሩን-ትቶ-ተዋረደልን-በክቡር-ደሙ-ገዛን-ማነው-ከጥፋት-ያዳነኝ-ምን-ሠራልኝ-የት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24347,7 +24347,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ተመስገን',
+  'am-sda-am-lyrics-ተመስገን-ሁሉን-የፈጠረ-አምላክ-ይመስገን-ዓለምን-ወዶ-ልጁን-እስኪሰጠን-ከኃጢዓት-ሊያነፃን-ሕይወቱን-ሰጠን-የሕይወት-መንገድ-ደግሞ-ከፈተልን-ተመስገን-ተመ',
   'am',
   'ተመስገን',
   'We Thank Thee',
@@ -24404,7 +24404,7 @@ select
   12,
   '{"new_hymnal_number":12,"old_hymnal_number":13,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ተመስገን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ተመስገን-ሁሉን-የፈጠረ-አምላክ-ይመስገን-ዓለምን-ወዶ-ልጁን-እስኪሰጠን-ከኃጢዓት-ሊያነፃን-ሕይወቱን-ሰጠን-የሕይወት-መንገድ-ደግሞ-ከፈተልን-ተመስገን-ተመ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24487,7 +24487,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-worthy-worthy-is-the-lamb',
+  'am-sda-en-lyrics-worthy-worthy-is-the-lamb-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ለሞተው-ክብር-ሃሌሉያ-ስብሐት-ሃሌሉያ-ክብር-ሃሌሉያ-ለ',
   'am',
   'ክብር ለበጉ ይሁን',
   'Worthy, Worthy, Is the Lamb',
@@ -24536,7 +24536,7 @@ select
   14,
   '{"new_hymnal_number":15,"old_hymnal_number":15,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-worthy-worthy-is-the-lamb'
+join works w on w.canonical_key = 'am-sda-en-lyrics-worthy-worthy-is-the-lamb-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ክብር-ለበጉ-ይሁን-ለሞተው-ክብር-ሃሌሉያ-ስብሐት-ሃሌሉያ-ክብር-ሃሌሉያ-ለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24555,7 +24555,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-praise-to-the-lord',
+  'am-sda-en-lyrics-praise-to-the-lord-ምስጋና-ላምላክ-ኃያሉ-የፍጥረታት-ንጉሥ-አወድሱት-ፈቃር-ነውና-ቸርና-ቅዱስ-የምትሰሙ-ወደ-መቅደስ-ቅረቡ-ምስጋና-በደስታ-ስጡ',
   'am',
   'ምስጋና ላምላክ',
   'Praise to the Lord',
@@ -24604,7 +24604,7 @@ select
   15,
   '{"new_hymnal_number":16,"old_hymnal_number":16,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-praise-to-the-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-praise-to-the-lord-ምስጋና-ላምላክ-ኃያሉ-የፍጥረታት-ንጉሥ-አወድሱት-ፈቃር-ነውና-ቸርና-ቅዱስ-የምትሰሙ-ወደ-መቅደስ-ቅረቡ-ምስጋና-በደስታ-ስጡ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24707,7 +24707,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-the-very-thought-of-thee',
+  'am-sda-en-lyrics-jesus-the-very-thought-of-thee-ኦ-የሱስ-ሆይ-አንተን-ሳስብ-ልቤ-ይደሰታል-ፊትህን-ማየት-ግን-ይበልጣል-ዕረፍትም-ይሰጣል-የትሁታንም-ፋሆ',
   'am',
   'ኦ የሱስ ሆይ አንተን ሳስብ',
   'Jesus, The Very Thought Of Thee',
@@ -24756,7 +24756,7 @@ select
   17,
   '{"new_hymnal_number":22,"old_hymnal_number":18,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-the-very-thought-of-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-the-very-thought-of-thee-ኦ-የሱስ-ሆይ-አንተን-ሳስብ-ልቤ-ይደሰታል-ፊትህን-ማየት-ግን-ይበልጣል-ዕረፍትም-ይሰጣል-የትሁታንም-ፋሆ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24775,7 +24775,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-count-your-blessing',
+  'am-sda-en-lyrics-count-your-blessing-በሕይወት-ማዕበል-ጎርፍ-ስትቀጠቀጥ-ሁሉም-ጠፍቶብህ-ተስፋህም-ሲቆረጥ-ባርኮትህን-ቁጠር-ዘርዝር-በተራ-ወዲያው-ታስባለህ-ያም',
   'am',
   'ባርኮትህን ቁጠር',
   'Count Your Blessing',
@@ -24841,7 +24841,7 @@ select
   18,
   '{"new_hymnal_number":18,"old_hymnal_number":19,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-count-your-blessing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-count-your-blessing-በሕይወት-ማዕበል-ጎርፍ-ስትቀጠቀጥ-ሁሉም-ጠፍቶብህ-ተስፋህም-ሲቆረጥ-ባርኮትህን-ቁጠር-ዘርዝር-በተራ-ወዲያው-ታስባለህ-ያም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -24924,7 +24924,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-will-sing-the-wondrous-story',
+  'am-sda-en-lyrics-i-will-sing-the-wondrous-story-እዘምራለው-ታሪኩን-ለየሱስ-ለሞተልኝ-ክብሩን-ሁሉ-እንደጣለ-በቀራኒዮ-መስቀል-ልዘምር-ያንን-ግሩም-ታሪክ',
   'am',
   'ታሪኩን እዘምራለው',
   'I Will Sing the Wondrous Story',
@@ -24983,7 +24983,7 @@ select
   20,
   '{"new_hymnal_number":21,"old_hymnal_number":21,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-will-sing-the-wondrous-story'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-sing-the-wondrous-story-እዘምራለው-ታሪኩን-ለየሱስ-ለሞተልኝ-ክብሩን-ሁሉ-እንደጣለ-በቀራኒዮ-መስቀል-ልዘምር-ያንን-ግሩም-ታሪክ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25002,7 +25002,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-thou-in-whose-presence',
+  'am-sda-en-lyrics-o-thou-in-whose-presence-ነፍሴ-ደስ-የምትሰኝብህ-ጌታ-በጭንቀቴ-የምጠራህ-አጽናኝ-ደጋፊ-በርቱ-መከታዬ-ተስፋዬ-ሁለንተናዬ-ግሩም-ጣፋጭ-የሆነ',
   'am',
   'ነፍሴ ደስ የምትሰኝብህ ጌታ',
   'O Thou in Whose Presence',
@@ -25056,7 +25056,7 @@ select
   21,
   '{"new_hymnal_number":20,"old_hymnal_number":22,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-thou-in-whose-presence'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-thou-in-whose-presence-ነፍሴ-ደስ-የምትሰኝብህ-ጌታ-በጭንቀቴ-የምጠራህ-አጽናኝ-ደጋፊ-በርቱ-መከታዬ-ተስፋዬ-ሁለንተናዬ-ግሩም-ጣፋጭ-የሆነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25075,7 +25075,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-redeemed',
+  'am-sda-en-lyrics-redeemed-መዳኔን-ላውጅ-እወዳለው-በሞተው-በግ-ደም-ድኛለው-ወሰን-በሌለው-ምህረት-ዳንኩኝ-ለዘላለምም-ልጁ-ነኝ-ዳንኩኝ-ዳንኩኝ-በሞተው-በግ-ደም-ድኛለ',
   'am',
   'ዳንኩኝ',
   'Redeemed',
@@ -25147,7 +25147,7 @@ select
   22,
   '{"new_hymnal_number":24,"old_hymnal_number":23,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-redeemed'
+join works w on w.canonical_key = 'am-sda-en-lyrics-redeemed-መዳኔን-ላውጅ-እወዳለው-በሞተው-በግ-ደም-ድኛለው-ወሰን-በሌለው-ምህረት-ዳንኩኝ-ለዘላለምም-ልጁ-ነኝ-ዳንኩኝ-ዳንኩኝ-በሞተው-በግ-ደም-ድኛለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25166,7 +25166,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ልዑላዊ-ግሩም-ክብሩ',
+  'am-sda-am-lyrics-ልዑላዊ-ግሩም-ክብሩ-ልዑላዊ-ግሩም-ክብሩ-በርሱ-ተገለጠ-የብርሃን-አክሊልን-ለብሷል-ካፉም-ፀጋ-ሞልቷል-ካፉም-ፀጋ-ሞልቷል-ሟች-ከሆኑ-ከሰው-ልጆች-አይወዳደ',
   'am',
   'ልዑላዊ ግሩም ክብሩ',
   'Majestic Sweetness Slits Enthroned No. 1',
@@ -25224,7 +25224,7 @@ select
   23,
   '{"new_hymnal_number":7,"old_hymnal_number":24,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ልዑላዊ-ግሩም-ክብሩ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ልዑላዊ-ግሩም-ክብሩ-ልዑላዊ-ግሩም-ክብሩ-በርሱ-ተገለጠ-የብርሃን-አክሊልን-ለብሷል-ካፉም-ፀጋ-ሞልቷል-ካፉም-ፀጋ-ሞልቷል-ሟች-ከሆኑ-ከሰው-ልጆች-አይወዳደ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25243,7 +25243,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መዝሙሩን-ዘምሩለት',
+  'am-sda-am-lyrics-መዝሙሩን-ዘምሩለት-ክርስቶስ-ኃጢአተኞችን-በፀጋው-ይቀበላል-በላይኛውም-መንገድ-ሊመራቸው-ይወዳል-መዝሙሩን-ዘምሩለት-ደጋግመህ-ዘምር-ደጋግመህ-ዘምር-በፀጋው',
   'am',
   'መዝሙሩን ዘምሩለት',
   'Christ Recievthe Sinful Men',
@@ -25301,7 +25301,7 @@ select
   24,
   '{"new_hymnal_number":23,"old_hymnal_number":25,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መዝሙሩን-ዘምሩለት'
+join works w on w.canonical_key = 'am-sda-am-lyrics-መዝሙሩን-ዘምሩለት-ክርስቶስ-ኃጢአተኞችን-በፀጋው-ይቀበላል-በላይኛውም-መንገድ-ሊመራቸው-ይወዳል-መዝሙሩን-ዘምሩለት-ደጋግመህ-ዘምር-ደጋግመህ-ዘምር-በፀጋው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25320,7 +25320,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-revive-us-again',
+  'am-sda-en-lyrics-revive-us-again-አምላክ-ይመስገን-ልጁን-ስለሰጠን-በክቡር-ደሙ-ስለ-ገዛን-ሃሌሉያ-ክብር-ላንተ-ሃሌሉያ-አሜን-ሃሌሉያ-ክብር-ላንተ-አድሰን-አሁን',
   'am',
   'አምላክ ይመስገን',
   'Revive Us Again',
@@ -25379,7 +25379,7 @@ select
   25,
   '{"new_hymnal_number":19,"old_hymnal_number":26,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-revive-us-again'
+join works w on w.canonical_key = 'am-sda-en-lyrics-revive-us-again-አምላክ-ይመስገን-ልጁን-ስለሰጠን-በክቡር-ደሙ-ስለ-ገዛን-ሃሌሉያ-ክብር-ላንተ-ሃሌሉያ-አሜን-ሃሌሉያ-ክብር-ላንተ-አድሰን-አሁን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25472,7 +25472,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-would-draw-nearer-to-jesus',
+  'am-sda-en-lyrics-i-would-draw-nearer-to-jesus-ወደ-የሱስ-እቀርባለሁ-ባለበት-እኖራለው-ለማገልገል-እየሞከርሁ-በእጁ-እድናለው-ወደ-የሱስ-እቀርባለው-ወደ-እ',
   'am',
   'ወደ የሱስ እቀርባለው',
   'I Would Draw Nearer to Jesus',
@@ -25523,7 +25523,7 @@ select
   27,
   '{"new_hymnal_number":27,"old_hymnal_number":28,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-would-draw-nearer-to-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-would-draw-nearer-to-jesus-ወደ-የሱስ-እቀርባለሁ-ባለበት-እኖራለው-ለማገልገል-እየሞከርሁ-በእጁ-እድናለው-ወደ-የሱስ-እቀርባለው-ወደ-እ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25542,7 +25542,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-we-come-to-hear-his-word',
+  'am-sda-en-lyrics-when-we-come-to-hear-his-word-በተስፋ-ስቀርበው-ለመስማት-ቃሉን-ሲያበራልኝ-የጨለማ-ኃይልም-ይርቃል-ከኔ-የሕይወትም-ብርሃን-ይበራል-በፍቅ',
   'am',
   'በተስፋ ስቀርበው',
   'When We Come to Hear His Word',
@@ -25591,7 +25591,7 @@ select
   28,
   '{"new_hymnal_number":28,"old_hymnal_number":29,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-we-come-to-hear-his-word'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-we-come-to-hear-his-word-በተስፋ-ስቀርበው-ለመስማት-ቃሉን-ሲያበራልኝ-የጨለማ-ኃይልም-ይርቃል-ከኔ-የሕይወትም-ብርሃን-ይበራል-በፍቅ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25610,7 +25610,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የጽዮን-ግንብ-ጠባቂ-ሆይ',
+  'am-sda-am-lyrics-የጽዮን-ግንብ-ጠባቂ-ሆይ-የጽዮን-ግንብ-ጠባቂ-ሆይ-ስለ-ሌቱ-ንገረን-ቀኑ-ሊነጋ-ብሏልን-ንጋቱስ-ሊወጣልን-አብራልን-አሁን-የብርሃን-ጮራ-አብራልን-አሁን-የ',
   'am',
   'የጽዮን ግንብ ጠባቂ ሆይ',
   'Watch-men on the Walls Zion',
@@ -25663,7 +25663,7 @@ select
   29,
   '{"new_hymnal_number":29,"old_hymnal_number":30,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የጽዮን-ግንብ-ጠባቂ-ሆይ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የጽዮን-ግንብ-ጠባቂ-ሆይ-የጽዮን-ግንብ-ጠባቂ-ሆይ-ስለ-ሌቱ-ንገረን-ቀኑ-ሊነጋ-ብሏልን-ንጋቱስ-ሊወጣልን-አብራልን-አሁን-የብርሃን-ጮራ-አብራልን-አሁን-የ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25682,7 +25682,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ግሩም-ድንቁ-የሱስ',
+  'am-sda-am-lyrics-ግሩም-ድንቁ-የሱስ-ግሩም-ድንቁ-የሱስ-የፍጥረታት-ንጉሥ-ኦ-ያምላክ-እና-የሰው-ልጅ-አፈቀርህ-አለሁ-አከብርህ-አለው-አንተ-ነህ-ክብሬ-ደስታዬም-መስክህ-ያም',
   'am',
   'ግሩም ድንቁ የሱስ',
   'Fairest Lord Jesu',
@@ -25727,7 +25727,7 @@ select
   30,
   '{"new_hymnal_number":30,"old_hymnal_number":31,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ግሩም-ድንቁ-የሱስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ግሩም-ድንቁ-የሱስ-ግሩም-ድንቁ-የሱስ-የፍጥረታት-ንጉሥ-ኦ-ያምላክ-እና-የሰው-ልጅ-አፈቀርህ-አለሁ-አከብርህ-አለው-አንተ-ነህ-ክብሬ-ደስታዬም-መስክህ-ያም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25746,7 +25746,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-ye-watchers-and-ye-holy-ones',
+  'am-sda-en-lyrics-ye-watchers-and-ye-holy-ones-እላንት-ተመልካች-ቅዱሳን-ብሩክ-ኪሩቤል-ዙፋናትም-ዘምሩለት-ሃሌሉያ-ጩሁ-ግዛት-ስልጣናትም-ኃያል-መላዕክት-ዘ',
   'am',
   'እላንት ተመልካች ቅዱሳን',
   'Ye Watchers and Ye Holy ones',
@@ -25795,7 +25795,7 @@ select
   31,
   '{"new_hymnal_number":31,"old_hymnal_number":32,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-ye-watchers-and-ye-holy-ones'
+join works w on w.canonical_key = 'am-sda-en-lyrics-ye-watchers-and-ye-holy-ones-እላንት-ተመልካች-ቅዱሳን-ብሩክ-ኪሩቤል-ዙፋናትም-ዘምሩለት-ሃሌሉያ-ጩሁ-ግዛት-ስልጣናትም-ኃያል-መላዕክት-ዘ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25814,7 +25814,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የየሱስን-ስም-ተቀበል',
+  'am-sda-am-lyrics-የየሱስን-ስም-ተቀበል-የየሱስን-ስም-ተቀበል-አንተ-ችግረኛ-ልጅ-መጽናናትን-እንዲሰጥህ-በምትሄድበት-ሁሉ-ክቡር-ስም-ጣፋጭ-ስም-የዘላለም-ደስታ-ነው-ክቡር',
   'am',
   'የየሱስን ስም ተቀበል',
   'Take the Name of Jesus With You',
@@ -25869,7 +25869,7 @@ select
   32,
   '{"new_hymnal_number":33,"old_hymnal_number":33,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የየሱስን-ስም-ተቀበል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የየሱስን-ስም-ተቀበል-የየሱስን-ስም-ተቀበል-አንተ-ችግረኛ-ልጅ-መጽናናትን-እንዲሰጥህ-በምትሄድበት-ሁሉ-ክቡር-ስም-ጣፋጭ-ስም-የዘላለም-ደስታ-ነው-ክቡር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25888,7 +25888,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-every-day-and-every-hour',
+  'am-sda-en-lyrics-every-day-and-every-hour-መድኅኔ-ተቀበለኝ-እጠጋለው-ጌታ-ወዳንተ-ደምህ-እንዲጠብቀኝ-ከመለየት-አምላኬ-ካንተ-አ-በየሰዓት-በየጊዜው-ዝ-በደም',
   'am',
   'በየሰዓት በየጊዜው',
   'Every Day and Every Hour',
@@ -25942,7 +25942,7 @@ select
   33,
   '{"new_hymnal_number":34,"old_hymnal_number":34,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-every-day-and-every-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-every-day-and-every-hour-መድኅኔ-ተቀበለኝ-እጠጋለው-ጌታ-ወዳንተ-ደምህ-እንዲጠብቀኝ-ከመለየት-አምላኬ-ካንተ-አ-በየሰዓት-በየጊዜው-ዝ-በደም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -25961,7 +25961,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-no-other-name-like-jesus',
+  'am-sda-en-lyrics-there-s-no-other-name-like-jesus-እንደ-የሱስ-ስም-አይገኝም-ይህ-የተወደደም-ስም-ለመላዕክትም-ደስታ-ነው-ለክርስቲያንም-ተድላ-ነው-የሱ',
   'am',
   'እንደ የሱስ ስም አይገኝም',
   'There\''s No Other Name Like Jesus',
@@ -26024,7 +26024,7 @@ select
   34,
   '{"new_hymnal_number":35,"old_hymnal_number":35,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-no-other-name-like-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-no-other-name-like-jesus-እንደ-የሱስ-ስም-አይገኝም-ይህ-የተወደደም-ስም-ለመላዕክትም-ደስታ-ነው-ለክርስቲያንም-ተድላ-ነው-የሱ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26043,7 +26043,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-spirit-faithful-guide',
+  'am-sda-en-lyrics-holy-spirit-faithful-guide-ከክርስቲያን-የማይርቀው-መንፈስ-ቅዱስ-መሪያችን-በበረሃ-ስንመንን-እጃችን-ይዘህ-ምራን-ስንሰማ-መልካም-ቃልህን',
   'am',
   'መንፈስ ቅዱስ መሪያችን',
   'Holy Spirit, Faithful Guide',
@@ -26091,7 +26091,7 @@ select
   35,
   '{"new_hymnal_number":36,"old_hymnal_number":36,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-spirit-faithful-guide'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-spirit-faithful-guide-ከክርስቲያን-የማይርቀው-መንፈስ-ቅዱስ-መሪያችን-በበረሃ-ስንመንን-እጃችን-ይዘህ-ምራን-ስንሰማ-መልካም-ቃልህን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26110,7 +26110,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-abide-with-me',
+  'am-sda-en-lyrics-abide-with-me-ከኔ-ጋር-ሁን-በጨለመ-ጊዜ-ጨልሟልና-ከኔ-ጋር-እደር-ያላንተ-ረዳት-በታጣ-ጊዜ-የረዳተቢስ-ረጅ-አትለየኝ-የሕይወት-ቀን-ቶሎ-ይቸኩላል',
   'am',
   'ከኔ ጋር ሁን',
   'Abide With Me',
@@ -26163,7 +26163,7 @@ select
   36,
   '{"new_hymnal_number":37,"old_hymnal_number":37,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-abide-with-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-abide-with-me-ከኔ-ጋር-ሁን-በጨለመ-ጊዜ-ጨልሟልና-ከኔ-ጋር-እደር-ያላንተ-ረዳት-በታጣ-ጊዜ-የረዳተቢስ-ረጅ-አትለየኝ-የሕይወት-ቀን-ቶሎ-ይቸኩላል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26182,7 +26182,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-day-is-dying-in-the-west',
+  'am-sda-en-lyrics-day-is-dying-in-the-west-ፀሀዩ-ሊገባ-ነው-ጨለማ-ሊመጣ-ነው-ትጋ-ስገድ-ፀልይም-የሌሊት-ፀዳል-ሲታይ-በሰማያት-ቅዱስ-ቅዱስ-ቅዱስ-ልዑል-አም',
   'am',
   'ፀሀዩ ሊገባ ነው',
   'Day is Dying in the West',
@@ -26247,7 +26247,7 @@ select
   37,
   '{"new_hymnal_number":38,"old_hymnal_number":38,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-day-is-dying-in-the-west'
+join works w on w.canonical_key = 'am-sda-en-lyrics-day-is-dying-in-the-west-ፀሀዩ-ሊገባ-ነው-ጨለማ-ሊመጣ-ነው-ትጋ-ስገድ-ፀልይም-የሌሊት-ፀዳል-ሲታይ-በሰማያት-ቅዱስ-ቅዱስ-ቅዱስ-ልዑል-አም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26266,7 +26266,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የበረከት-ዝናብ-አለ',
+  'am-sda-am-lyrics-የበረከት-ዝናብ-አለ-የበረከት-ዝናብ-አለ-ግሩም-የፍቅር-ተስፋ-የመታደስ-ወራት-አለ-ከአዳኙ-የሚላክ-አ-ባርኮት-ያዘንባል-ዝ-የሚያሻንንም-ሁሉ-ማ-በጠብታ-ሲ',
   'am',
   'የበረከት ዝናብ አለ',
   'There Shall be Showers of Blessing',
@@ -26325,7 +26325,7 @@ select
   38,
   '{"new_hymnal_number":39,"old_hymnal_number":39,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የበረከት-ዝናብ-አለ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የበረከት-ዝናብ-አለ-የበረከት-ዝናብ-አለ-ግሩም-የፍቅር-ተስፋ-የመታደስ-ወራት-አለ-ከአዳኙ-የሚላክ-አ-ባርኮት-ያዘንባል-ዝ-የሚያሻንንም-ሁሉ-ማ-በጠብታ-ሲ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26344,7 +26344,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-worship-the-king',
+  'am-sda-en-lyrics-o-worship-the-king-እንስገድ-ላምላክ-ለክብር-ጌታ-እንዘምርም-ፍቅሩን-በደስታ-መጠጊያ-ጋሻችን-ፈጣሪያችን-ግርማን-ተላብሷል-እንዲሁም-ምስጋናን-ኃ',
   'am',
   'እንስገድ ላምላክ',
   'O Worship the King',
@@ -26398,7 +26398,7 @@ select
   39,
   '{"new_hymnal_number":40,"old_hymnal_number":40,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-worship-the-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-worship-the-king-እንስገድ-ላምላክ-ለክብር-ጌታ-እንዘምርም-ፍቅሩን-በደስታ-መጠጊያ-ጋሻችን-ፈጣሪያችን-ግርማን-ተላብሷል-እንዲሁም-ምስጋናን-ኃ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26417,7 +26417,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-how-great-thou-art',
+  'am-sda-en-lyrics-how-great-thou-art-ጌታ-አምላኬ-እንዴት-እገረማለው-ሳስብ-ሳለው-የጆችህን-ፍጥረት-ከዋክብትን-ሳይ-ነጎድጓድን-ስሰማ-ያንተ-ስልጣን-በሕዋ-ውስጥ',
   'am',
   'ጌታ አምላኬ',
   'How Great Thou Art',
@@ -26482,7 +26482,7 @@ select
   40,
   '{"new_hymnal_number":41,"old_hymnal_number":41,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-how-great-thou-art'
+join works w on w.canonical_key = 'am-sda-en-lyrics-how-great-thou-art-ጌታ-አምላኬ-እንዴት-እገረማለው-ሳስብ-ሳለው-የጆችህን-ፍጥረት-ከዋክብትን-ሳይ-ነጎድጓድን-ስሰማ-ያንተ-ስልጣን-በሕዋ-ውስጥ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26501,7 +26501,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-is-tenderly-calling',
+  'am-sda-en-lyrics-jesus-is-tenderly-calling-የሱስ-በገርነት-ይጠራል-ዛሬውኑ-ይጠራሃል-ስለምንስ-ከሚያበራው-ፍቅር-በጣሙን-ትርቃለህ-ዛሬውኑ-ይጠራሃል-የሱስ-ይ',
   'am',
   'የሱስ ይጠራሃል',
   'Jesus is Tenderly Calling',
@@ -26556,7 +26556,7 @@ select
   41,
   '{"new_hymnal_number":44,"old_hymnal_number":42,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-is-tenderly-calling'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-is-tenderly-calling-የሱስ-በገርነት-ይጠራል-ዛሬውኑ-ይጠራሃል-ስለምንስ-ከሚያበራው-ፍቅር-በጣሙን-ትርቃለህ-ዛሬውኑ-ይጠራሃል-የሱስ-ይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26575,7 +26575,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ከበረዶ-እነፃለሁ',
+  'am-sda-am-lyrics-ከበረዶ-እነፃለሁ-ፍፁም-መሆንን-እወዳለው-የሱስ-ለዘላለም-በውስጤ-እንድትኖር-ጣዖትን-ስበር-ጠላትን-አርቀው-እጠበኝ-ከበረዶ-እነፃለሁ-እነፃለሁ-ከበረዶ-ይል',
   'am',
   'ከበረዶ እነፃለሁ',
   'Lord Jesus I Long to be Perfe',
@@ -26634,7 +26634,7 @@ select
   42,
   '{"new_hymnal_number":43,"old_hymnal_number":43,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ከበረዶ-እነፃለሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ከበረዶ-እነፃለሁ-ፍፁም-መሆንን-እወዳለው-የሱስ-ለዘላለም-በውስጤ-እንድትኖር-ጣዖትን-ስበር-ጠላትን-አርቀው-እጠበኝ-ከበረዶ-እነፃለሁ-እነፃለሁ-ከበረዶ-ይል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26653,7 +26653,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ካለህ-የበለጠውን-ስጥ',
+  'am-sda-am-lyrics-ካለህ-የበለጠውን-ስጥ-ካለህ-የበለጠውን-ስጥ-ወጣትነትህንም-ሁለመናህን-አስረክብ-ለእውነት-ወታደር-ሁን-የሱስም-ምሳሌህ-ሆኖ-ራስህን-ላምላክ-አስገዛ-አንተም',
   'am',
   'ካለህ የበለጠውን ስጥ',
   'Give of Your Best to the Master',
@@ -26710,7 +26710,7 @@ select
   43,
   '{"new_hymnal_number":55,"old_hymnal_number":44,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ካለህ-የበለጠውን-ስጥ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ካለህ-የበለጠውን-ስጥ-ካለህ-የበለጠውን-ስጥ-ወጣትነትህንም-ሁለመናህን-አስረክብ-ለእውነት-ወታደር-ሁን-የሱስም-ምሳሌህ-ሆኖ-ራስህን-ላምላክ-አስገዛ-አንተም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26729,7 +26729,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-just-as-i-am',
+  'am-sda-en-lyrics-just-as-i-am-ያለ-ደስታ-ስኖር-ሳለው-ክቡር-ደምህ-ፈሰሰልኝ-ምህረትህን-ላገኝ-መጣሁ-የአምላክ-በግ-መጣሁ-እርዳኝ-ከጨለማ-ልዳን-ብዬ-ሳልዘጋጅ-ለጌታ',
   'am',
   'ያለ ደስታ ስኖር',
   'Just as I Am',
@@ -26777,7 +26777,7 @@ select
   44,
   '{"new_hymnal_number":45,"old_hymnal_number":45,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-just-as-i-am'
+join works w on w.canonical_key = 'am-sda-en-lyrics-just-as-i-am-ያለ-ደስታ-ስኖር-ሳለው-ክቡር-ደምህ-ፈሰሰልኝ-ምህረትህን-ላገኝ-መጣሁ-የአምላክ-በግ-መጣሁ-እርዳኝ-ከጨለማ-ልዳን-ብዬ-ሳልዘጋጅ-ለጌታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26796,7 +26796,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-comes-to-us',
+  'am-sda-en-lyrics-jesus-comes-to-us-ቸሩ-አባት-መድኃኒታችን-በፀጋህ-ኃይል-ወዶኛልና-በልጆችህ-መካከል-ደግሞ-የመንፈስህን-ብርሃን-አብራ-የሱስ-አሁን-ወደ-ሁላችን',
   'am',
   'ቸሩ አባት መድኃኒታችን',
   'Jesus Comes to Us',
@@ -26838,7 +26838,7 @@ select
   45,
   '{"new_hymnal_number":46,"old_hymnal_number":46,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-comes-to-us'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-comes-to-us-ቸሩ-አባት-መድኃኒታችን-በፀጋህ-ኃይል-ወዶኛልና-በልጆችህ-መካከል-ደግሞ-የመንፈስህን-ብርሃን-አብራ-የሱስ-አሁን-ወደ-ሁላችን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26857,7 +26857,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lord-i-m-coming-home',
+  'am-sda-en-lyrics-lord-i-m-coming-home-ከአምላክ-ርቄ-ዙሪያለሁ-አሁን-ተመለስሁ-በኃጢአት-መንገድ-ሄጃለው-ጌታ-ሆይ-መጣሁ-ወደ-ቤትህ-መጣሁኝ-አልዞርም-በቃኝ-እጆ',
   'am',
   'ወደ ቤትህ መጣሁ',
   'Lord, I\''m Coming Home',
@@ -26911,7 +26911,7 @@ select
   46,
   '{"new_hymnal_number":47,"old_hymnal_number":47,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lord-i-m-coming-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lord-i-m-coming-home-ከአምላክ-ርቄ-ዙሪያለሁ-አሁን-ተመለስሁ-በኃጢአት-መንገድ-ሄጃለው-ጌታ-ሆይ-መጣሁ-ወደ-ቤትህ-መጣሁኝ-አልዞርም-በቃኝ-እጆ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26930,7 +26930,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ',
+  'am-sda-am-lyrics-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-ና-ወደ-ዕረፍቴ-አንተ-የደክምህ-ሆይ-ዕረፍ-በብብቴ-ወደርሱ-መጣሁ-በድካም-በኃዘን-ሳለሁ-እርሱ-ደስታ',
   'am',
   'የየሱስ ድምፅ ሲለኝ ሰማሁ',
   'I Heard the Voice Jesus Say',
@@ -26978,7 +26978,7 @@ select
   47,
   '{"new_hymnal_number":48,"old_hymnal_number":48,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-የየሱስ-ድምፅ-ሲለኝ-ሰማሁ-ና-ወደ-ዕረፍቴ-አንተ-የደክምህ-ሆይ-ዕረፍ-በብብቴ-ወደርሱ-መጣሁ-በድካም-በኃዘን-ሳለሁ-እርሱ-ደስታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -26997,7 +26997,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እንግዳ-አለ-በደጅ',
+  'am-sda-am-lyrics-እንግዳ-አለ-በደጅ-እንግዳ-አለ-በደጅ-አስገባው-ከዚያ-ብዙ-ቆይቷል-አስገባው-አስገባው-ሳይሄድብህ-አስገባው-ቅዱስ-ጌታህን-የሱስን-የአብን-ልጅ-አስገባው-ል',
   'am',
   'እንግዳ አለ በደጅ',
   'There\''s Stranger at the Door',
@@ -27050,7 +27050,7 @@ select
   48,
   '{"new_hymnal_number":49,"old_hymnal_number":49,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እንግዳ-አለ-በደጅ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-እንግዳ-አለ-በደጅ-እንግዳ-አለ-በደጅ-አስገባው-ከዚያ-ብዙ-ቆይቷል-አስገባው-አስገባው-ሳይሄድብህ-አስገባው-ቅዱስ-ጌታህን-የሱስን-የአብን-ልጅ-አስገባው-ል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27069,7 +27069,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-to-jesus-i-surrender',
+  'am-sda-en-lyrics-all-to-jesus-i-surrender-ለየሱስ-አስረክባለሁ-በነፃ-እሰጣለሁ-ሁልጊዜ-እውደዋለሁ-በፊቱ-እኖራለሁ-አስረክባለሁ-አስረክባለሁ-ሁሉን-ላንተ-መድ',
   'am',
   'ለየሱስ አስረክባለሁ',
   'All to Jesus I Surrender',
@@ -27124,7 +27124,7 @@ select
   49,
   '{"new_hymnal_number":50,"old_hymnal_number":50,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-to-jesus-i-surrender'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-to-jesus-i-surrender-ለየሱስ-አስረክባለሁ-በነፃ-እሰጣለሁ-ሁልጊዜ-እውደዋለሁ-በፊቱ-እኖራለሁ-አስረክባለሁ-አስረክባለሁ-ሁሉን-ላንተ-መድ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27143,7 +27143,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-pass-me-not-o-gentle-saviour',
+  'am-sda-en-lyrics-pass-me-not-o-gentle-saviour-የሱስ-ሆይ-አትለፍብኝ-ፀሎቴን-ስማኝ-ሌሎች-ፀጋህን-ሲያገኙ-አትለፍብኝ-የሱስ-ክርስቶስ-ፀሎቴን-ስማኝ-ሌሎች',
   'am',
   'የሱስ ሆይ አትለፍብኝ',
   'Pass Me Not,O Gentle Saviour',
@@ -27197,7 +27197,7 @@ select
   50,
   '{"new_hymnal_number":51,"old_hymnal_number":51,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-pass-me-not-o-gentle-saviour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-pass-me-not-o-gentle-saviour-የሱስ-ሆይ-አትለፍብኝ-ፀሎቴን-ስማኝ-ሌሎች-ፀጋህን-ሲያገኙ-አትለፍብኝ-የሱስ-ክርስቶስ-ፀሎቴን-ስማኝ-ሌሎች'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27216,7 +27216,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-power-in-the-blood',
+  'am-sda-en-lyrics-there-is-power-in-the-blood-ከኃጢዓት-መንፃት-ትወዳለህን-ባፈሰሰልህ-ክቡር-ደሙ-ክፉን-ማሸነፍ-ምኞትህ-ነውን-መልካም-ሀይል-አለው-በደሙ-ክ',
   'am',
   'ኃይል አለው በደሙ',
   'There is Power in the Blood',
@@ -27281,7 +27281,7 @@ select
   51,
   '{"new_hymnal_number":52,"old_hymnal_number":52,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-power-in-the-blood'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-power-in-the-blood-ከኃጢዓት-መንፃት-ትወዳለህን-ባፈሰሰልህ-ክቡር-ደሙ-ክፉን-ማሸነፍ-ምኞትህ-ነውን-መልካም-ሀይል-አለው-በደሙ-ክ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27300,7 +27300,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-am-coming-to-the-cross',
+  'am-sda-en-lyrics-i-am-coming-to-the-cross-መጣሁ-ወደ-መስቀልህ-ምስኪን-ነኝ-ደካማም-ነኝ-ሁሉን-ነገር-ትቻለሁ-መደኀንን-አገኛለው-ባንተ-አምንብሀለው-ኦ-የቀራ',
   'am',
   'መጣሁ ወደ መስቀልህ',
   'I Am Coming to the Cross',
@@ -27355,7 +27355,7 @@ select
   52,
   '{"new_hymnal_number":53,"old_hymnal_number":53,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-am-coming-to-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-am-coming-to-the-cross-መጣሁ-ወደ-መስቀልህ-ምስኪን-ነኝ-ደካማም-ነኝ-ሁሉን-ነገር-ትቻለሁ-መደኀንን-አገኛለው-ባንተ-አምንብሀለው-ኦ-የቀራ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27374,7 +27374,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brightly-beams-our-father-s-mercy',
+  'am-sda-en-lyrics-brightly-beams-our-father-s-mercy-እኔ-የሱስን-ለማየት-ከቶ-አይሆንልኝም-የኔ-ጠባይ-ደካማ-ነው-የሚመራኝ-ለጥፋት-ብርሃንን-ለሁሉ-ፍጥረ',
   'am',
   'እኔ የሱስን ለማየት',
   'Brightly Beams Our Father\''s Mercy',
@@ -27422,7 +27422,7 @@ select
   53,
   '{"new_hymnal_number":54,"old_hymnal_number":54,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brightly-beams-our-father-s-mercy'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brightly-beams-our-father-s-mercy-እኔ-የሱስን-ለማየት-ከቶ-አይሆንልኝም-የኔ-ጠባይ-ደካማ-ነው-የሚመራኝ-ለጥፋት-ብርሃንን-ለሁሉ-ፍጥረ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27441,7 +27441,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-though-your-sins-be-as-scarlet',
+  'am-sda-en-lyrics-though-your-sins-be-as-scarlet-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ግን-ቢቀላ-እንደ-ደም-እ',
   'am',
   'ኃጢአትህ ቢቀላብህ',
   'Though Your Sins be as Scarlet',
@@ -27492,7 +27492,7 @@ select
   54,
   '{"new_hymnal_number":56,"old_hymnal_number":55,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-though-your-sins-be-as-scarlet'
+join works w on w.canonical_key = 'am-sda-en-lyrics-though-your-sins-be-as-scarlet-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ኃጢአትህ-ቢቀላብህ-እንደ-በረድ-ይነፃል-ግን-ቢቀላ-እንደ-ደም-እ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27578,7 +27578,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-take-my-life-and-let-it-be',
+  'am-sda-en-lyrics-take-my-life-and-let-it-be-ሕይወቴን-ውሰድና-የተቀደሰ-ይሁን-እጆቼን-ውሰድና-ባንተ-ይታዘዙልኝ-ባንተ-ይታዘዙልኝ-እግሬንም-አንተው-እዘዝ-አ',
   'am',
   'ሕይወቴን ውሰድ',
   'Take My Life and Let it Be',
@@ -27623,7 +27623,7 @@ select
   56,
   '{"new_hymnal_number":117,"old_hymnal_number":57,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-take-my-life-and-let-it-be'
+join works w on w.canonical_key = 'am-sda-en-lyrics-take-my-life-and-let-it-be-ሕይወቴን-ውሰድና-የተቀደሰ-ይሁን-እጆቼን-ውሰድና-ባንተ-ይታዘዙልኝ-ባንተ-ይታዘዙልኝ-እግሬንም-አንተው-እዘዝ-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27642,7 +27642,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sweet-hour-of-prayer',
+  'am-sda-en-lyrics-sweet-hour-of-prayer-የጸሎት-ሰዓት-የደስታ-ሰዓት-ከዓለም-የምሸሽበት-አባቴን-የምሻበት-ምኞቴን-የምነግርበት-ከመከራ-እርቃለሁ-ጽናቴንም-አገኛለ',
   'am',
   'የጸሎት ሰዓት',
   'Sweet Hour of Prayer',
@@ -27690,7 +27690,7 @@ select
   57,
   '{"new_hymnal_number":63,"old_hymnal_number":58,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sweet-hour-of-prayer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sweet-hour-of-prayer-የጸሎት-ሰዓት-የደስታ-ሰዓት-ከዓለም-የምሸሽበት-አባቴን-የምሻበት-ምኞቴን-የምነግርበት-ከመከራ-እርቃለሁ-ጽናቴንም-አገኛለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27709,7 +27709,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሕይወት-እንጀራ',
+  'am-sda-am-lyrics-የሕይወት-እንጀራ-የሕይወት-እንጀራ-ቁረስልኝ-በባህር-ዳር-ምግብ-እንደቆረስህ-በተቀደሰው-ገጽ-እሻህአለሁ-መንፈሴ-ናፍቆሃል-ሕያው-ቃል-ሆይ-እውነቱን-ባርክል',
   'am',
   'የሕይወት እንጀራ',
   'Break Thou the Bread of Life',
@@ -27763,7 +27763,7 @@ select
   58,
   '{"new_hymnal_number":59,"old_hymnal_number":59,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሕይወት-እንጀራ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሕይወት-እንጀራ-የሕይወት-እንጀራ-ቁረስልኝ-በባህር-ዳር-ምግብ-እንደቆረስህ-በተቀደሰው-ገጽ-እሻህአለሁ-መንፈሴ-ናፍቆሃል-ሕያው-ቃል-ሆይ-እውነቱን-ባርክል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27782,7 +27782,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-beautiful-garden-of-prayer',
+  'am-sda-en-lyrics-the-beautiful-garden-of-prayer-የሱስ-ለጸሎት-ይጠብቀናል-አስገራሚ-ከሆነው-ሥፍራ-በየሱስ-ብርሃን-ይበራልናል-ከተዋበው-የፀሎት-ስፍራ-አስ',
   'am',
   'የጸሎት ስፍራ',
   'The Beautiful Garden of Prayer',
@@ -27835,7 +27835,7 @@ select
   59,
   '{"new_hymnal_number":60,"old_hymnal_number":60,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-beautiful-garden-of-prayer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-beautiful-garden-of-prayer-የሱስ-ለጸሎት-ይጠብቀናል-አስገራሚ-ከሆነው-ሥፍራ-በየሱስ-ብርሃን-ይበራልናል-ከተዋበው-የፀሎት-ስፍራ-አስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27854,7 +27854,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-nearer-still-nearer',
+  'am-sda-en-lyrics-nearer-still-nearer-ጥግ-ሁነኝ-ጌታ-ቅረበኝም-ቅዱስ-ነህ-መድኃኒቴ-አስጠጋኝ-እቀፈኝ-ያዘኝ-በደረትህ-የሱስ-ጋርደኝ-በዚያ-ልረፍበት-የሱስ-ጋርደ',
   'am',
   'ጥግ ሁነኝ',
   'Nearer, Still Nearer',
@@ -27906,7 +27906,7 @@ select
   60,
   '{"new_hymnal_number":61,"old_hymnal_number":61,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-nearer-still-nearer'
+join works w on w.canonical_key = 'am-sda-en-lyrics-nearer-still-nearer-ጥግ-ሁነኝ-ጌታ-ቅረበኝም-ቅዱስ-ነህ-መድኃኒቴ-አስጠጋኝ-እቀፈኝ-ያዘኝ-በደረትህ-የሱስ-ጋርደኝ-በዚያ-ልረፍበት-የሱስ-ጋርደ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -27925,7 +27925,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የተባረከ-ሰዓት-ነው',
+  'am-sda-am-lyrics-የተባረከ-ሰዓት-ነው-የተባረከ-ሰዓት-ነው-የምንፀልይበት-ወዳምላካችን-የሱስ-የምንቀርብበት-በሃይማኖት-ብንቀርበው-እርሱ-ያስጠጋናል-እንዴት-ጣፋጭ-ዕረፍት-ነ',
   'am',
   'የተባረከ ሰዓት ነው',
   '\''Tis the Blessed Hour of Prayer',
@@ -27984,7 +27984,7 @@ select
   61,
   '{"new_hymnal_number":62,"old_hymnal_number":62,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የተባረከ-ሰዓት-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የተባረከ-ሰዓት-ነው-የተባረከ-ሰዓት-ነው-የምንፀልይበት-ወዳምላካችን-የሱስ-የምንቀርብበት-በሃይማኖት-ብንቀርበው-እርሱ-ያስጠጋናል-እንዴት-ጣፋጭ-ዕረፍት-ነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28080,7 +28080,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በኤደን-አንድ-ቀን',
+  'am-sda-am-lyrics-በኤደን-አንድ-ቀን-ስንሰባሰብ-በኤደን-አንድ-ቀን-በሰማያዊው-አገር-በላይ-መከራና-ኃዘን-ይጨረሳል-በሰማይ-ዳርቻ-ስንቆም-በኤደን-አንድ-ቀን-በኤደን-አንድ',
   'am',
   'በኤደን አንድ ቀን',
   'In Eden Our Troubles Will End',
@@ -28129,7 +28129,7 @@ select
   63,
   '{"new_hymnal_number":321,"old_hymnal_number":64,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በኤደን-አንድ-ቀን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በኤደን-አንድ-ቀን-ስንሰባሰብ-በኤደን-አንድ-ቀን-በሰማያዊው-አገር-በላይ-መከራና-ኃዘን-ይጨረሳል-በሰማይ-ዳርቻ-ስንቆም-በኤደን-አንድ-ቀን-በኤደን-አንድ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28148,7 +28148,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ፈቃድህን-አድርግ',
+  'am-sda-am-lyrics-ፈቃድህን-አድርግ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ-አንተ-ሰሪ-ነህ-እኔ-ሸክላ-አብጀኝ-ስራኝ-እንደምትወድ-ስጠብቅህ-ሳል-በፈቃዴ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ',
   'am',
   'ፈቃድህን አድርግ',
   'Have Thin Own Way Lord',
@@ -28201,7 +28201,7 @@ select
   64,
   '{"new_hymnal_number":64,"old_hymnal_number":65,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ፈቃድህን-አድርግ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ፈቃድህን-አድርግ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ-አንተ-ሰሪ-ነህ-እኔ-ሸክላ-አብጀኝ-ስራኝ-እንደምትወድ-ስጠብቅህ-ሳል-በፈቃዴ-ፈቃድህን-አድርግ-ኦ-ጌታ-ሆይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28287,7 +28287,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-with-thy-spirit-fill-me',
+  'am-sda-en-lyrics-with-thy-spirit-fill-me-በመንፈስህ-ሙላኝ-በመንፈስህ-ሙላኝ-ሁሉን-ልስጥህ-እርዳኝ-በመንፈስህ-ሙላኝ',
   'am',
   'በመንፈስህ ሙላኝ',
   'With Thy Spirit Fill Me',
@@ -28328,7 +28328,7 @@ select
   66,
   '{"new_hymnal_number":74,"old_hymnal_number":67,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-with-thy-spirit-fill-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-with-thy-spirit-fill-me-በመንፈስህ-ሙላኝ-በመንፈስህ-ሙላኝ-ሁሉን-ልስጥህ-እርዳኝ-በመንፈስህ-ሙላኝ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28347,7 +28347,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-am-thine-o-lord',
+  'am-sda-en-lyrics-i-am-thine-o-lord-ድምፅህን-ሰማሁ-ጌታ-ያንተ-ነኝ-ፍቅርህን-የነገረኝ-እጄን-ዘርግቼ-ወደ-ጌታዬ-ወደ-አንተ-እንድቀርብ-ወደ-አንተ-አቅርበኝ-ጌታ',
   'am',
   'ወዳንተ አቅርበኝ',
   'I Am Thine, O Lord',
@@ -28412,7 +28412,7 @@ select
   67,
   '{"new_hymnal_number":67,"old_hymnal_number":68,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-am-thine-o-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-am-thine-o-lord-ድምፅህን-ሰማሁ-ጌታ-ያንተ-ነኝ-ፍቅርህን-የነገረኝ-እጄን-ዘርግቼ-ወደ-ጌታዬ-ወደ-አንተ-እንድቀርብ-ወደ-አንተ-አቅርበኝ-ጌታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28431,7 +28431,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-nearer-my-god-to-thee',
+  'am-sda-en-lyrics-nearer-my-god-to-thee-አምላኬ-ወዳንተ-እቀርባለሁ-ሸክሜን-እንኳ-ቢከብድ-ከነ-ሸክሜ-አሁንም-መዝሙሬን-ወዳንተ-መቅረብ-ነው-ወዳንተ-መቅረብ-ነው',
   'am',
   'አምላኬ ወዳንተ',
   'Nearer My God to Thee',
@@ -28490,7 +28490,7 @@ select
   68,
   '{"new_hymnal_number":68,"old_hymnal_number":69,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-nearer-my-god-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-nearer-my-god-to-thee-አምላኬ-ወዳንተ-እቀርባለሁ-ሸክሜን-እንኳ-ቢከብድ-ከነ-ሸክሜ-አሁንም-መዝሙሬን-ወዳንተ-መቅረብ-ነው-ወዳንተ-መቅረብ-ነው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28509,7 +28509,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-the-hour-of-trial',
+  'am-sda-en-lyrics-in-the-hour-of-trial-በመከራ-ጊዜ-የሱስ-አስበኝ-በክህደቴም-ምክኒያት-እንዳትለየኝ-እምነቴ-መድከሙ-በመልኬ-ሲታይ-አትተወኝ-ጌታ-ካንተ-እንዳልለ',
   'am',
   'በመከራ ጊዜ',
   'In the Hour of Trial',
@@ -28557,7 +28557,7 @@ select
   69,
   '{"new_hymnal_number":69,"old_hymnal_number":70,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-the-hour-of-trial'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-the-hour-of-trial-በመከራ-ጊዜ-የሱስ-አስበኝ-በክህደቴም-ምክኒያት-እንዳትለየኝ-እምነቴ-መድከሙ-በመልኬ-ሲታይ-አትተወኝ-ጌታ-ካንተ-እንዳልለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28576,7 +28576,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-speak-to-my-soul',
+  'am-sda-en-lyrics-speak-to-my-soul-ነፍሴን-ተናገር-የሱስ-ቀስ-ብለህ-ንገረኝ-በቸርነት-አስታዉቀኝ-አልተዉህም-በለኝ-እንዳዳምጥህ-ልብ-ስጠኝ-ቃልህን-እንድሰማ-ነፍሴ',
   'am',
   'ነፍሴን ተናገር',
   'Speak to My Soul',
@@ -28634,7 +28634,7 @@ select
   70,
   '{"new_hymnal_number":70,"old_hymnal_number":71,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-speak-to-my-soul'
+join works w on w.canonical_key = 'am-sda-en-lyrics-speak-to-my-soul-ነፍሴን-ተናገር-የሱስ-ቀስ-ብለህ-ንገረኝ-በቸርነት-አስታዉቀኝ-አልተዉህም-በለኝ-እንዳዳምጥህ-ልብ-ስጠኝ-ቃልህን-እንድሰማ-ነፍሴ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28653,7 +28653,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-now-spread-thy-wings-of-love',
+  'am-sda-en-lyrics-now-spread-thy-wings-of-love-ኦ-የሱስ-ቅዱስ-እጅህ-በኔ-ላይ-ይስፈር-በሀዘንም-በደስታም-ከአንተ-ዘንድ-ልረፍ-ጥበቤም-ሃይሌም-ጥጌም-ሁሉም',
   'am',
   'የሱስ ቅዱስ እጅህ',
   'Now Spread Thy Wings of Love',
@@ -28696,7 +28696,7 @@ select
   71,
   '{"new_hymnal_number":71,"old_hymnal_number":72,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-now-spread-thy-wings-of-love'
+join works w on w.canonical_key = 'am-sda-en-lyrics-now-spread-thy-wings-of-love-ኦ-የሱስ-ቅዱስ-እጅህ-በኔ-ላይ-ይስፈር-በሀዘንም-በደስታም-ከአንተ-ዘንድ-ልረፍ-ጥበቤም-ሃይሌም-ጥጌም-ሁሉም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28715,7 +28715,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-amazing-grace',
+  'am-sda-am-lyrics-ኦ-ጌታ-ሆይ-በምህረትህ-ኦ-ጌታ-ሆይ-በምህረትህ-ወዳንተ-አቅርበን-በሥራችን-የጠፋን-ነን-በጸጋህ-አድነን-ኃጢአታችን-ይቅር-በለን-አሁን-ተቀበለን-በዚህ-ዓለ',
   'am',
   'ኦ ጌታ ሆይ በምህረትህ',
   'Amazing Grace',
@@ -28767,9 +28767,9 @@ select
 ',
   'sda_old',
   72,
-  '{"new_hymnal_number":65,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
+  '{"new_hymnal_number":72,"old_hymnal_number":73,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-amazing-grace'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ኦ-ጌታ-ሆይ-በምህረትህ-ኦ-ጌታ-ሆይ-በምህረትህ-ወዳንተ-አቅርበን-በሥራችን-የጠፋን-ነን-በጸጋህ-አድነን-ኃጢአታችን-ይቅር-በለን-አሁን-ተቀበለን-በዚህ-ዓለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28906,7 +28906,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-አባታችን-ጌታችን-ሆይ',
+  'am-sda-am-lyrics-አባታችን-ጌታችን-ሆይ-አባታችን-ጌታችን-ሆይ-የምትኖር-በሰማይ-መንግስትህ-ትምጣልን-ከላይ-ክብርህን-እንድናይ-ክብርህን-እንድናይ-ፈቃድህ-በሰማይ-ቀድሞ-ሕይ',
   'am',
   'አባታችን ጌታችን ሆይ',
   'Majestic Sweetness Sits Enthroned No. 3',
@@ -28960,7 +28960,7 @@ select
   75,
   '{"new_hymnal_number":75,"old_hymnal_number":76,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-አባታችን-ጌታችን-ሆይ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-አባታችን-ጌታችን-ሆይ-አባታችን-ጌታችን-ሆይ-የምትኖር-በሰማይ-መንግስትህ-ትምጣልን-ከላይ-ክብርህን-እንድናይ-ክብርህን-እንድናይ-ፈቃድህ-በሰማይ-ቀድሞ-ሕይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -28979,7 +28979,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-re-marching-to-zion',
+  'am-sda-en-lyrics-we-re-marching-to-zion-ያምላክ-ወዳጆች-ኑ-ደስታችሁ-ትታወቅ-ኑ-ባንድነት-እንዘምር-ላምላካችን-ቅዱስ-መዝሙር-የርሱን-ዙፋን-ከበን-እናንግሠው',
   'am',
   'ወደ ጽዮን እንጓዝ',
   'We\''re Marching To Zion',
@@ -29039,7 +29039,7 @@ select
   76,
   '{"new_hymnal_number":91,"old_hymnal_number":77,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-re-marching-to-zion'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-re-marching-to-zion-ያምላክ-ወዳጆች-ኑ-ደስታችሁ-ትታወቅ-ኑ-ባንድነት-እንዘምር-ላምላካችን-ቅዱስ-መዝሙር-የርሱን-ዙፋን-ከበን-እናንግሠው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29058,7 +29058,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-saviour-with-me',
+  'am-sda-en-lyrics-the-saviour-with-me-መድኃኒቴ-አልለይም-መንገዱ-እንዳይጠፋኝ-ከፊቱ-እንድዘምር-አልርቅም-በክንዶቹ-እንዲ-አቅፈኝ-አሁን-ነፍሴ-አትፈራም-የሱሴ-አ',
   'am',
   'መድኃኒቴ አልለይም',
   'The Saviour With Me',
@@ -29116,7 +29116,7 @@ select
   77,
   '{"new_hymnal_number":92,"old_hymnal_number":78,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-saviour-with-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-saviour-with-me-መድኃኒቴ-አልለይም-መንገዱ-እንዳይጠፋኝ-ከፊቱ-እንድዘምር-አልርቅም-በክንዶቹ-እንዲ-አቅፈኝ-አሁን-ነፍሴ-አትፈራም-የሱሴ-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29135,7 +29135,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-yield-not-to-temptation',
+  'am-sda-en-lyrics-yield-not-to-temptation-ፈተናን-አሸንፍ-በአምላክ-ጸጋ-በየጊዜው-ተግተህ-በእምነት-ተቋቋም-ልብህም-በአንዳች-አያመንታ-የየሱስን-ብቻ-እይ-ከቶ',
   'am',
   'ፈተናን አሸንፍ',
   'Yield not to Temptation',
@@ -29191,7 +29191,7 @@ select
   78,
   '{"new_hymnal_number":107,"old_hymnal_number":79,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-yield-not-to-temptation'
+join works w on w.canonical_key = 'am-sda-en-lyrics-yield-not-to-temptation-ፈተናን-አሸንፍ-በአምላክ-ጸጋ-በየጊዜው-ተግተህ-በእምነት-ተቋቋም-ልብህም-በአንዳች-አያመንታ-የየሱስን-ብቻ-እይ-ከቶ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29282,7 +29282,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ለየሱስ-ንገር',
+  'am-sda-am-lyrics-ለየሱስ-ንገር-ደክሞህ-እንደሁ-ከብዶ-እንደሁ-ልብህ-ለየሱስ-ንገር-ለየሱስ-ንገር-ሐዘን-ቢሰማህ-ደስታም-ቢለይህ-ብቻ-ለየሱስ-ንገር-ለየሱስ-ንገር-ለየሱስ-ን',
   'am',
   'ለየሱስ ንገር',
   'Tell it To Jesus',
@@ -29342,7 +29342,7 @@ select
   80,
   '{"new_hymnal_number":109,"old_hymnal_number":81,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ለየሱስ-ንገር'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ለየሱስ-ንገር-ደክሞህ-እንደሁ-ከብዶ-እንደሁ-ልብህ-ለየሱስ-ንገር-ለየሱስ-ንገር-ሐዘን-ቢሰማህ-ደስታም-ቢለይህ-ብቻ-ለየሱስ-ንገር-ለየሱስ-ንገር-ለየሱስ-ን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29361,7 +29361,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-ve-found-a-friend',
+  'am-sda-en-lyrics-i-ve-found-a-friend-እንዴት-ያለ-ወዳጅ-አለኝ-አስቀድሞ-ወደደኝ-በፍቅሩ-ወደርሱ-ሳበኝ-ወደርሱ-አቀረበኝ-በፍቅሩ-ገመድ-አሰረኝ-ሊፈታ-በማይቻል',
   'am',
   'እንዴት ያለ ወዳጅ አለኝ',
   'I\''ve found a friend',
@@ -29414,7 +29414,7 @@ select
   81,
   '{"new_hymnal_number":110,"old_hymnal_number":82,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-ve-found-a-friend'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-ve-found-a-friend-እንዴት-ያለ-ወዳጅ-አለኝ-አስቀድሞ-ወደደኝ-በፍቅሩ-ወደርሱ-ሳበኝ-ወደርሱ-አቀረበኝ-በፍቅሩ-ገመድ-አሰረኝ-ሊፈታ-በማይቻል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29433,7 +29433,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-does-jesus-care',
+  'am-sda-en-lyrics-does-jesus-care-የሱስ-ያውቃል-ልቤ-ሲጨነቅ-ደስታና-መዝሙር-ስናፍቅ-ሸክም-ሲበዛ-ደግሞም-ስጨነቅ-ደክሞኝ-ታክቶኝ-ጉዞው-ሲርቅ-አዎን-ያውቃል-ይጨነ',
   'am',
   'የሱስ ያውቃል',
   'Does Jesus Care?',
@@ -29498,7 +29498,7 @@ select
   82,
   '{"new_hymnal_number":111,"old_hymnal_number":83,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-does-jesus-care'
+join works w on w.canonical_key = 'am-sda-en-lyrics-does-jesus-care-የሱስ-ያውቃል-ልቤ-ሲጨነቅ-ደስታና-መዝሙር-ስናፍቅ-ሸክም-ሲበዛ-ደግሞም-ስጨነቅ-ደክሞኝ-ታክቶኝ-ጉዞው-ሲርቅ-አዎን-ያውቃል-ይጨነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29517,7 +29517,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-a-friend-we-have-in-jesus',
+  'am-sda-en-lyrics-what-a-friend-we-have-in-jesus-የሱስ-ክርስቶስ-የኔ-ወዳጅ-እንደ-እርሱ-የለኝም-ሌሎችም-እንኳ-ቢተወኝ-እርሱስ-አያደርገውም-ማን-ነው-አሁ',
   'am',
   'የሱስ ክርስቶስ የኔ ወዳጅ',
   'What a Friend We Have in Jesus',
@@ -29566,7 +29566,7 @@ select
   83,
   '{"new_hymnal_number":112,"old_hymnal_number":84,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-a-friend-we-have-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-a-friend-we-have-in-jesus-የሱስ-ክርስቶስ-የኔ-ወዳጅ-እንደ-እርሱ-የለኝም-ሌሎችም-እንኳ-ቢተወኝ-እርሱስ-አያደርገውም-ማን-ነው-አሁ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29585,7 +29585,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-safe-in-the-arms-of-jesus',
+  'am-sda-en-lyrics-safe-in-the-arms-of-jesus-ልረፍ-በየሱስ-ክንዶች-ልረፍ-በብብቱ-በፍቅሩ-ከከለለኝ-ነፍሤ-አትፈራም-ከቶ-ስማ-ከሰማይ-መዝሙር-በመላዕክት-ሲዘመ',
   'am',
   'ልረፍ በየሱስ ክንዶች',
   'Safe in the Arms of Jesus',
@@ -29640,7 +29640,7 @@ select
   84,
   '{"new_hymnal_number":85,"old_hymnal_number":85,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-safe-in-the-arms-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-safe-in-the-arms-of-jesus-ልረፍ-በየሱስ-ክንዶች-ልረፍ-በብብቱ-በፍቅሩ-ከከለለኝ-ነፍሤ-አትፈራም-ከቶ-ስማ-ከሰማይ-መዝሙር-በመላዕክት-ሲዘመ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29659,7 +29659,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-የልቤ-ወዳጅ',
+  'am-sda-am-lyrics-የሱስ-የልቤ-ወዳጅ-የሱስ-የልቤ-ወዳጅ-ወደአንተ-አስጠጋኝ-መከራ-ሲመጣብኝ-ሞገዱ-ሲነሳብኝ-ሸሽገኝ-ልዑል-አምላክ-የህይወት-ችግር-እስኪያልፍ-ወደ-ሰማይ-አድ',
   'am',
   'የሱስ የልቤ ወዳጅ',
   'Jesus, Lover of my Soul',
@@ -29713,7 +29713,7 @@ select
   85,
   '{"new_hymnal_number":86,"old_hymnal_number":86,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-የልቤ-ወዳጅ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-የልቤ-ወዳጅ-የሱስ-የልቤ-ወዳጅ-ወደአንተ-አስጠጋኝ-መከራ-ሲመጣብኝ-ሞገዱ-ሲነሳብኝ-ሸሽገኝ-ልዑል-አምላክ-የህይወት-ችግር-እስኪያልፍ-ወደ-ሰማይ-አድ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29732,7 +29732,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-any-where-with-jesus',
+  'am-sda-en-lyrics-any-where-with-jesus-ከየሱስ-ጋር-በደኅና-እሔዳለው-በዚህ-ዓለም-ላይ-በርሱ-ከተመራሁ-ያለርሱ-ደስታዬ-ከንቱ-ይሆናል-እርሱ-ግን-ፍርሀትን-ሁሉ',
   'am',
   'ከየሱስ ጋር በደኅና እሔዳለው',
   'Any Where With Jesus',
@@ -29787,7 +29787,7 @@ select
   86,
   '{"new_hymnal_number":87,"old_hymnal_number":87,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-any-where-with-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-any-where-with-jesus-ከየሱስ-ጋር-በደኅና-እሔዳለው-በዚህ-ዓለም-ላይ-በርሱ-ከተመራሁ-ያለርሱ-ደስታዬ-ከንቱ-ይሆናል-እርሱ-ግን-ፍርሀትን-ሁሉ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29806,7 +29806,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ትጉ-አድርገኝ',
+  'am-sda-am-lyrics-ትጉ-አድርገኝ-ጊዜ-እንዳይጠፋ-ትጉ-አድርገኝ-ኃጢዓተኛ-አይሙት-ተስፋ-ሳያገኝ-እንዴት-ስራ-ልፍታ-ክርስቶስን-ያወቅሁ-ፍቅርህን-እንድነግር-ትጋትን-ስጠኝ-ለጠ',
   'am',
   'ትጉ አድርገኝ',
   'More Diligence',
@@ -29859,7 +29859,7 @@ select
   87,
   '{"new_hymnal_number":88,"old_hymnal_number":88,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ትጉ-አድርገኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ትጉ-አድርገኝ-ጊዜ-እንዳይጠፋ-ትጉ-አድርገኝ-ኃጢዓተኛ-አይሙት-ተስፋ-ሳያገኝ-እንዴት-ስራ-ልፍታ-ክርስቶስን-ያወቅሁ-ፍቅርህን-እንድነግር-ትጋትን-ስጠኝ-ለጠ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -29878,7 +29878,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-if-i-gained-the-world',
+  'am-sda-en-lyrics-if-i-gained-the-world-የሱስ-ትቼ-ዓለምን-ባተርፍ-የዕለት-ሕይወቴ-ጥቅመቢስ-ነው-በሃብቴ-ብዛት-እረፍት-የለኝም-ልቤም-ሰላምን-አያገኝም-የሱስ',
   'am',
   'የሱስ ትቼ ዓለምን ባተርፍ',
   'If I Gained the World',
@@ -29936,7 +29936,7 @@ select
   88,
   '{"new_hymnal_number":90,"old_hymnal_number":89,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-if-i-gained-the-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-if-i-gained-the-world-የሱስ-ትቼ-ዓለምን-ባተርፍ-የዕለት-ሕይወቴ-ጥቅመቢስ-ነው-በሃብቴ-ብዛት-እረፍት-የለኝም-ልቤም-ሰላምን-አያገኝም-የሱስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30174,7 +30174,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-call-to-jesus-in-trouble',
+  'am-sda-en-lyrics-call-to-jesus-in-trouble-ስትጨነቅ-ሳለ-ጥራ-የሱስን-ከጥፋት-ሁሉ-ለማዳን-ያለህን-ድካም-ግለፅለት-አሁን-ችግርህን-ሁሉ-ነገረው-በአዳኝ-ፀጋው',
   'am',
   'ስትጨነቅ ሳለ የሱስን ጥራ',
   'Call to Jesus in Trouble',
@@ -30223,7 +30223,7 @@ select
   92,
   '{"new_hymnal_number":93,"old_hymnal_number":93,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-call-to-jesus-in-trouble'
+join works w on w.canonical_key = 'am-sda-en-lyrics-call-to-jesus-in-trouble-ስትጨነቅ-ሳለ-ጥራ-የሱስን-ከጥፋት-ሁሉ-ለማዳን-ያለህን-ድካም-ግለፅለት-አሁን-ችግርህን-ሁሉ-ነገረው-በአዳኝ-ፀጋው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30242,7 +30242,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-m-pressing-on-the-upward-way',
+  'am-sda-en-lyrics-i-m-pressing-on-the-upward-way-አቀበቱ-እወጣለሁ-በየቀኑም-አዘግማለሁ-እየጸለይሁ-እጓዛለሁ-አምላክ-ሆይ-አዝልቀኝ-እያልሁ-አምላኬ-ሆይ-ና',
   'am',
   'አቀበቱ እወጣለሁ',
   'I\''m Pressing on the Upward Way',
@@ -30297,7 +30297,7 @@ select
   93,
   '{"new_hymnal_number":94,"old_hymnal_number":94,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-m-pressing-on-the-upward-way'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-m-pressing-on-the-upward-way-አቀበቱ-እወጣለሁ-በየቀኑም-አዘግማለሁ-እየጸለይሁ-እጓዛለሁ-አምላክ-ሆይ-አዝልቀኝ-እያልሁ-አምላኬ-ሆይ-ና'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30316,7 +30316,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስን-ማገልገል',
+  'am-sda-am-lyrics-የሱስን-ማገልገል-የሱስን-ማገልገል-ዋጋ-ይሰጣል-ፍፁም-ደስታ-ከርሱ-ይገኛል-በቃሉ-መታመን-ታላቅ-ዕረፍት-ነው-ስለዚህ-ና-አገልግለው-የሱስን-አገልግል-ዕድሜ',
   'am',
   'የሱስን ማገልገል',
   'It Paves to Serve Jesus',
@@ -30366,7 +30366,7 @@ select
   94,
   '{"new_hymnal_number":95,"old_hymnal_number":95,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስን-ማገልገል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስን-ማገልገል-የሱስን-ማገልገል-ዋጋ-ይሰጣል-ፍፁም-ደስታ-ከርሱ-ይገኛል-በቃሉ-መታመን-ታላቅ-ዕረፍት-ነው-ስለዚህ-ና-አገልግለው-የሱስን-አገልግል-ዕድሜ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30385,7 +30385,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-leadeth-me',
+  'am-sda-en-lyrics-he-leadeth-me-ይመራኛል-ይመራኛል-በቃሉ-ኃይል-ያፅናናኛል-በሥራዬ-በኑሮዬ-ምራኝ-በእጅህ-ኦ-ጌታ-ሆይ-ይመራኛል-ይመራኛል-በገዛ-እጁ-ይመራኛል-ተከታ',
   'am',
   'ይመራኛል',
   'He Leadeth Me',
@@ -30434,7 +30434,7 @@ select
   95,
   '{"new_hymnal_number":96,"old_hymnal_number":96,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-leadeth-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-leadeth-me-ይመራኛል-ይመራኛል-በቃሉ-ኃይል-ያፅናናኛል-በሥራዬ-በኑሮዬ-ምራኝ-በእጅህ-ኦ-ጌታ-ሆይ-ይመራኛል-ይመራኛል-በገዛ-እጁ-ይመራኛል-ተከታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30453,7 +30453,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ወደ-ጸሎት-ስፍራ-መጣሁ',
+  'am-sda-am-lyrics-ወደ-ጸሎት-ስፍራ-መጣሁ-ወደ-ጸሎት-ስፍራ-መጣሁ-ማለድ-ብዬ-ጤዛው-ሣይረግፍ-ከዚያ-ስገባ-ድምፅህን-ሰማሁ-ያምላክ-ልጅ-ሲመጣ-አየሁ-ከኔ-ጋር-ሲጓዝ-ሲያነጋግ',
   'am',
   'ወደ ጸሎት ስፍራ መጣሁ',
   'I Came to the Garden Alone',
@@ -30506,7 +30506,7 @@ select
   96,
   '{"new_hymnal_number":97,"old_hymnal_number":97,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ወደ-ጸሎት-ስፍራ-መጣሁ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ወደ-ጸሎት-ስፍራ-መጣሁ-ወደ-ጸሎት-ስፍራ-መጣሁ-ማለድ-ብዬ-ጤዛው-ሣይረግፍ-ከዚያ-ስገባ-ድምፅህን-ሰማሁ-ያምላክ-ልጅ-ሲመጣ-አየሁ-ከኔ-ጋር-ሲጓዝ-ሲያነጋግ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30525,7 +30525,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-blessed-lord-how-i-need-thee',
+  'am-sda-en-lyrics-blessed-lord-how-i-need-thee-ጌታ-ሆይ-ናፍቄህ-አለሁ-ደካማ-ዕውር-ሣለሁ-ኃይልና-ማየት-አገኘሁ-ባንተ-እታመናለሁ-በየሰዓት-በየሰዓቱ-መድኃ',
   'am',
   'ጌታ ሆይ ናፍቄሃለሁ',
   'Blessed Lord How I Need Thee',
@@ -30579,7 +30579,7 @@ select
   97,
   '{"new_hymnal_number":98,"old_hymnal_number":98,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-blessed-lord-how-i-need-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-blessed-lord-how-i-need-thee-ጌታ-ሆይ-ናፍቄህ-አለሁ-ደካማ-ዕውር-ሣለሁ-ኃይልና-ማየት-አገኘሁ-ባንተ-እታመናለሁ-በየሰዓት-በየሰዓቱ-መድኃ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30598,7 +30598,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brighten-the-way-with-a-smile',
+  'am-sda-en-lyrics-brighten-the-way-with-a-smile-ዛሬ-በጣም-የሚያዝኑትን-ልቦች-ሁሉ-ሁልጊዜም-ባዘን-የተሞሉ-የአምላክን-ተስፋ-ሰባኮች-ንገሩ-በደስታ-መንገዱ',
   'am',
   'መንገዱን በደስታ አብሩ',
   'Brighten the Way With a Smile',
@@ -30652,7 +30652,7 @@ select
   98,
   '{"new_hymnal_number":100,"old_hymnal_number":99,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brighten-the-way-with-a-smile'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brighten-the-way-with-a-smile-ዛሬ-በጣም-የሚያዝኑትን-ልቦች-ሁሉ-ሁልጊዜም-ባዘን-የተሞሉ-የአምላክን-ተስፋ-ሰባኮች-ንገሩ-በደስታ-መንገዱ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30671,7 +30671,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-hold-the-fort',
+  'am-sda-en-lyrics-hold-the-fort-ወንድሞቼ-ተመልከቱ-ባንዲራችንን-ኃይላችን-ተጨምሯል-ድል-ልንነሳ-ነን-ጠንክሩ-እየመጣሁ-ነኝ-ይላል-ጌታችን-እንሰራለን-ጌታ-የሱስ-በፀ',
   'am',
   'ጠንክሩ',
   'Hold the Fort',
@@ -30726,7 +30726,7 @@ select
   99,
   '{"new_hymnal_number":99,"old_hymnal_number":100,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-hold-the-fort'
+join works w on w.canonical_key = 'am-sda-en-lyrics-hold-the-fort-ወንድሞቼ-ተመልከቱ-ባንዲራችንን-ኃይላችን-ተጨምሯል-ድል-ልንነሳ-ነን-ጠንክሩ-እየመጣሁ-ነኝ-ይላል-ጌታችን-እንሰራለን-ጌታ-የሱስ-በፀ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30745,7 +30745,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-ስሻው',
+  'am-sda-am-lyrics-የሱስ-ስሻው-የሱስ-ስሻው-ከኔ-ጋር-ነው-ሥፈራና-ጭንቀት-ሲይዘኝ-እኔን-ለመርዳት-ዝግጁ-ነው-እጅግ-ስፈልገው-እርሱን-ስፈልገው-እጅግ-ስፈልገው-ሊያፅናናኝ-ተ',
   'am',
   'የሱስ ስሻው',
   'Just When I need Him Most',
@@ -30805,7 +30805,7 @@ select
   100,
   '{"new_hymnal_number":101,"old_hymnal_number":101,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-ስሻው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-ስሻው-የሱስ-ስሻው-ከኔ-ጋር-ነው-ሥፈራና-ጭንቀት-ሲይዘኝ-እኔን-ለመርዳት-ዝግጁ-ነው-እጅግ-ስፈልገው-እርሱን-ስፈልገው-እጅግ-ስፈልገው-ሊያፅናናኝ-ተ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30895,7 +30895,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-leaning-on-the-everlasting-arms',
+  'am-sda-en-lyrics-leaning-on-the-everlasting-arms-እንዴት-ጸጋ-ነው-እንዴት-ደስታ-ነው-ለዘላለም-በየሱስ-ማረፍ-እንዴት-መባረክ-እና-ሰላም-ነው-ለዘላለም',
   'am',
   'እንዴት ጸጋ ነው',
   'Leaning on the Everlasting Arms',
@@ -30950,7 +30950,7 @@ select
   102,
   '{"new_hymnal_number":103,"old_hymnal_number":103,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-leaning-on-the-everlasting-arms'
+join works w on w.canonical_key = 'am-sda-en-lyrics-leaning-on-the-everlasting-arms-እንዴት-ጸጋ-ነው-እንዴት-ደስታ-ነው-ለዘላለም-በየሱስ-ማረፍ-እንዴት-መባረክ-እና-ሰላም-ነው-ለዘላለም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -30969,7 +30969,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-i-my-cross-have-taken',
+  'am-sda-en-lyrics-jesus-i-my-cross-have-taken-መስቀሌን-ተሸክሜአለሁ-የሱስ-ሆይ-ልከተልህ-ያለኝን-ሁሉ-ትቻለሁ-አንተ-የኔ-ትሆን-ዘንድ-የዓለምን-ምኞትና-ተስ',
   'am',
   'መስቀሌን ተሸክሜአለሁ',
   'Jesus, I My Cross Have Taken',
@@ -31017,7 +31017,7 @@ select
   103,
   '{"new_hymnal_number":104,"old_hymnal_number":104,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-i-my-cross-have-taken'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-i-my-cross-have-taken-መስቀሌን-ተሸክሜአለሁ-የሱስ-ሆይ-ልከተልህ-ያለኝን-ሁሉ-ትቻለሁ-አንተ-የኔ-ትሆን-ዘንድ-የዓለምን-ምኞትና-ተስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31036,7 +31036,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-living-for-jesus',
+  'am-sda-en-lyrics-living-for-jesus-ልኑር-ለየሱስ-የእውነት-ኑሮ-እርሱ-ደስ-ስላሰኘኝ-በሁሉ-ነገር-የልብ-ደስታና-መታመን-ሣሣይ-ይህ-ነው-በረከት-የማገኝበት-ኦ-የሱ',
   'am',
   'ልኑር ለየሱስ',
   'Living for Jesus',
@@ -31100,7 +31100,7 @@ select
   104,
   '{"new_hymnal_number":106,"old_hymnal_number":105,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-living-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-living-for-jesus-ልኑር-ለየሱስ-የእውነት-ኑሮ-እርሱ-ደስ-ስላሰኘኝ-በሁሉ-ነገር-የልብ-ደስታና-መታመን-ሣሣይ-ይህ-ነው-በረከት-የማገኝበት-ኦ-የሱ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31119,7 +31119,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lead-me-to-calvary',
+  'am-sda-en-lyrics-lead-me-to-calvary-የሕይወቴ-ገዥ-ላንግስህ-ምስጋናህን-ልስጥህ-እንዳልረሳ-ሾህ-አክሊልህን-አስታውሰኝ-ቀራኒዮን-እንዳልረሳ-ጌትሰማኔን-እንዳልረሳ',
   'am',
   'አስታውሰኝ ቀራኒዮን',
   'Lead me to Calvary',
@@ -31173,7 +31173,7 @@ select
   105,
   '{"new_hymnal_number":105,"old_hymnal_number":106,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lead-me-to-calvary'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lead-me-to-calvary-የሕይወቴ-ገዥ-ላንግስህ-ምስጋናህን-ልስጥህ-እንዳልረሳ-ሾህ-አክሊልህን-አስታውሰኝ-ቀራኒዮን-እንዳልረሳ-ጌትሰማኔን-እንዳልረሳ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31267,7 +31267,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በእግዚአብሔር-ልብ-አጠገብ',
+  'am-sda-am-lyrics-በእግዚአብሔር-ልብ-አጠገብ-በእግዚአብሔር-ልብ-አጠገብ-ጸጥታ-ይገኛል-በእግዚአብሔር-ልብ-አጠገብ-ኃጢዓት-አይጎዳንም-ኦ-የሱስ-ብሩክ-አዳኜ-ከአብ-ዘንድ-የተ',
   'am',
   'በእግዚአብሔር ልብ አጠገብ',
   'There is a Peace of Quiet Rest',
@@ -31316,7 +31316,7 @@ select
   107,
   '{"new_hymnal_number":295,"old_hymnal_number":108,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በእግዚአብሔር-ልብ-አጠገብ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በእግዚአብሔር-ልብ-አጠገብ-በእግዚአብሔር-ልብ-አጠገብ-ጸጥታ-ይገኛል-በእግዚአብሔር-ልብ-አጠገብ-ኃጢዓት-አይጎዳንም-ኦ-የሱስ-ብሩክ-አዳኜ-ከአብ-ዘንድ-የተ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31335,7 +31335,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-faith-looks-up-to-thee',
+  'am-sda-en-lyrics-my-faith-looks-up-to-thee-እምነቴ-ባንተ-ነው-የቀራኒዮ-በግ-መድኃኒቴ-ስጸልይ-ና-ስማኝ-ኃጢዓቴን-ፋቅልኝ-ኦ-ከዛሬ-ይዘህ-ላንተ-አድርገኝ-የ',
   'am',
   'እምነቴ ባንተ ነው',
   'My Faith Looks Up to Thee',
@@ -31381,7 +31381,7 @@ select
   108,
   '{"new_hymnal_number":296,"old_hymnal_number":109,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-faith-looks-up-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-faith-looks-up-to-thee-እምነቴ-ባንተ-ነው-የቀራኒዮ-በግ-መድኃኒቴ-ስጸልይ-ና-ስማኝ-ኃጢዓቴን-ፋቅልኝ-ኦ-ከዛሬ-ይዘህ-ላንተ-አድርገኝ-የ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31400,7 +31400,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-will-your-anchor-hold',
+  'am-sda-en-lyrics-will-your-anchor-hold-መልህቅህ-ጸንቶ-ይይዘን-ይሆን-በጭንቅ-ሞገድ-ስትከበብ-ሞገድ-ሲነሳ-ኃብል-ሲገተር-መልህቅህ-ይይዛል-ይለቃል-አ-የነፍሴ',
   'am',
   'መልህቅህ ጸንቶ ይይዘን ይሆን',
   'Will Your Anchor Hold?',
@@ -31462,7 +31462,7 @@ select
   109,
   '{"new_hymnal_number":297,"old_hymnal_number":110,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-will-your-anchor-hold'
+join works w on w.canonical_key = 'am-sda-en-lyrics-will-your-anchor-hold-መልህቅህ-ጸንቶ-ይይዘን-ይሆን-በጭንቅ-ሞገድ-ስትከበብ-ሞገድ-ሲነሳ-ኃብል-ሲገተር-መልህቅህ-ይይዛል-ይለቃል-አ-የነፍሴ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31481,7 +31481,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-so-sweet-to-trust-in-jesus',
+  'am-sda-en-lyrics-tis-so-sweet-to-trust-in-jesus-ጌታን-ማመን-ደስ-ያሰኛል-ቃሎቹንም-መቀበል-ወደ-ተስፋው-ይጠራናል-እርሱም-ብሎዋል-እወቅ-የሱስ-የሱስ-አም',
   'am',
   'ጌታን ማመን',
   'Tis So Sweet to Trust in Jesus',
@@ -31536,7 +31536,7 @@ select
   110,
   '{"new_hymnal_number":298,"old_hymnal_number":111,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-so-sweet-to-trust-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-so-sweet-to-trust-in-jesus-ጌታን-ማመን-ደስ-ያሰኛል-ቃሎቹንም-መቀበል-ወደ-ተስፋው-ይጠራናል-እርሱም-ብሎዋል-እወቅ-የሱስ-የሱስ-አም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31555,7 +31555,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-need-thee-every-hour',
+  'am-sda-en-lyrics-i-need-thee-every-hour-ሁል-ጊዜ-እሻሃለሁ-ጸጋ-ሰጭ-አምላክ-ሆይ-እንዳንተ-ድምፅ-የለም-ሰላምን-የሚሰጥ-እሻሃለሁ-ኦ-ጌታ-በየሰዓቱ-እሻለሁ-መ',
   'am',
   'ሁል ጊዜ እሻሃለሁ',
   'I Need Thee Every Hour',
@@ -31610,7 +31610,7 @@ select
   111,
   '{"new_hymnal_number":299,"old_hymnal_number":112,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-need-thee-every-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-need-thee-every-hour-ሁል-ጊዜ-እሻሃለሁ-ጸጋ-ሰጭ-አምላክ-ሆይ-እንዳንተ-ድምፅ-የለም-ሰላምን-የሚሰጥ-እሻሃለሁ-ኦ-ጌታ-በየሰዓቱ-እሻለሁ-መ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31629,7 +31629,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ያምላክን-ጸጋ-አላውቅም',
+  'am-sda-am-lyrics-ያምላክን-ጸጋ-አላውቅም-ያምላክን-ጸጋ-አላውቅም-የገለጠልኝን-የክርስቶስን-ፍቅርም-ለርሱ-የዋጀኝን-ግን-አውቃለሁ-የአመንሁትን-አውቃለሁ-ችሎት-እንደተሰጠው',
   'am',
   'ያምላክን ጸጋ አላውቅም',
   'I Know Whom I have Believed',
@@ -31686,7 +31686,7 @@ select
   112,
   '{"new_hymnal_number":300,"old_hymnal_number":113,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ያምላክን-ጸጋ-አላውቅም'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ያምላክን-ጸጋ-አላውቅም-ያምላክን-ጸጋ-አላውቅም-የገለጠልኝን-የክርስቶስን-ፍቅርም-ለርሱ-የዋጀኝን-ግን-አውቃለሁ-የአመንሁትን-አውቃለሁ-ችሎት-እንደተሰጠው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31705,7 +31705,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-standing-on-the-promises',
+  'am-sda-en-lyrics-standing-on-the-promises-በጌታዬ-በክርስቶስ-ቃል-ላይ-ቆሜ-ለዘላለም-እርሱን-ሳመሰግነው-ክብር-በላይ-ይሁን-እያልኩ-ስዘምር-በአምላክ-ተስፋ',
   'am',
   'በጌታ ተስፋ እቆማለሁ',
   'Standing on the Promises',
@@ -31765,7 +31765,7 @@ select
   113,
   '{"new_hymnal_number":302,"old_hymnal_number":114,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-standing-on-the-promises'
+join works w on w.canonical_key = 'am-sda-en-lyrics-standing-on-the-promises-በጌታዬ-በክርስቶስ-ቃል-ላይ-ቆሜ-ለዘላለም-እርሱን-ሳመሰግነው-ክብር-በላይ-ይሁን-እያልኩ-ስዘምር-በአምላክ-ተስፋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31851,7 +31851,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-ll-build-on-the-rock',
+  'am-sda-en-lyrics-we-ll-build-on-the-rock-እንገባለን-በሕንፃው-ላይ-በሕያው-ህንፃ-በየሱስ-ስንፈራ-እንጠጋ-ከርሱ-የፈተና-ቀን-ሲደርስ-በሕንፃው-እንግባ-በሕንፃ',
   'am',
   'በሕንፃው እንግባ',
   'We\''ll Build on the Rock',
@@ -31900,7 +31900,7 @@ select
   115,
   '{"new_hymnal_number":303,"old_hymnal_number":116,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-ll-build-on-the-rock'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-ll-build-on-the-rock-እንገባለን-በሕንፃው-ላይ-በሕያው-ህንፃ-በየሱስ-ስንፈራ-እንጠጋ-ከርሱ-የፈተና-ቀን-ሲደርስ-በሕንፃው-እንግባ-በሕንፃ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31919,7 +31919,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ወደሚመራኝ',
+  'am-sda-am-lyrics-ወደሚመራኝ-ወደሚመራኝ-እሄዳለሁ-ልታመነው-ተምሬአለሁ-ለኔ-መሆኑን-አስባለሁ-በቀራኒዮ-ሞተልኝ-ሌትም-ቀንም-ይመራኛል-ጌታ-የሱስ-ይመራኛል-የታመነው-ወዳጄ-ነ',
   'am',
   'ወደሚመራኝ',
   'I Remember Calvery',
@@ -31968,7 +31968,7 @@ select
   116,
   '{"new_hymnal_number":301,"old_hymnal_number":117,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ወደሚመራኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ወደሚመራኝ-ወደሚመራኝ-እሄዳለሁ-ልታመነው-ተምሬአለሁ-ለኔ-መሆኑን-አስባለሁ-በቀራኒዮ-ሞተልኝ-ሌትም-ቀንም-ይመራኛል-ጌታ-የሱስ-ይመራኛል-የታመነው-ወዳጄ-ነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -31987,7 +31987,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-we-walk-with-the-lord',
+  'am-sda-en-lyrics-when-we-walk-with-the-lord-ከጌታ-ጋር-ስንሄድ-ቃሉ-እያበራልን-እንዴት-ያለ-ክብር-ይሰጣል-ፈቃዱን-ስንፈጽም-አብሮን-ይኖራል-ከሚያምኑት-ሁሉ',
   'am',
   'ከጌታ ጋር ስንሄድ',
   'When We Walk with the Lord',
@@ -32051,7 +32051,7 @@ select
   117,
   '{"new_hymnal_number":306,"old_hymnal_number":118,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-we-walk-with-the-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-we-walk-with-the-lord-ከጌታ-ጋር-ስንሄድ-ቃሉ-እያበራልን-እንዴት-ያለ-ክብር-ይሰጣል-ፈቃዱን-ስንፈጽም-አብሮን-ይኖራል-ከሚያምኑት-ሁሉ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32070,7 +32070,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-the-way-my-saviour-leads-me',
+  'am-sda-en-lyrics-all-the-way-my-saviour-leads-me-የሱስ-እየመራኝ-ሳለ-ምን-መጠየቅ-ያሻኛል-ምህረቱን-እንዴት-ልካደው-እስካሁን-የመራኝን-ሰማያዊ-ሰላም-ም',
   'am',
   'የሱስ እየመራኝ ሳለ',
   'All the Way my Saviour Leads Me',
@@ -32122,7 +32122,7 @@ select
   118,
   '{"new_hymnal_number":304,"old_hymnal_number":119,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-the-way-my-saviour-leads-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-the-way-my-saviour-leads-me-የሱስ-እየመራኝ-ሳለ-ምን-መጠየቅ-ያሻኛል-ምህረቱን-እንዴት-ልካደው-እስካሁን-የመራኝን-ሰማያዊ-ሰላም-ም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32141,7 +32141,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-never-fails',
+  'am-sda-en-lyrics-jesus-never-fails-ወዳጆችህ-ቢክዱህ-ፍርሃት-ቢከብህ-አይተውህም-አይጥልህም-የሱስ-ጌታችን-የሱስ-አይጥልም-የሱስ-አይጥልም-ሰማይና-ምድር-ያልፋሉ',
   'am',
   'የሱስ አይጥልም',
   'Jesus Never Fails',
@@ -32191,7 +32191,7 @@ select
   119,
   '{"new_hymnal_number":294,"old_hymnal_number":120,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-never-fails'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-never-fails-ወዳጆችህ-ቢክዱህ-ፍርሃት-ቢከብህ-አይተውህም-አይጥልህም-የሱስ-ጌታችን-የሱስ-አይጥልም-የሱስ-አይጥልም-ሰማይና-ምድር-ያልፋሉ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32210,7 +32210,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-don-t-know-about-tomorrow',
+  'am-sda-en-lyrics-i-don-t-know-about-tomorrow-ስለ-ነገው-ምንም-አላውቅ-በየቀኑ-እኖራለሁ-ብርሃኑንም-አልዋስም-ሰማዩ-እንዳይጨልም-ስለመጪው-አላስብም-የጌታን',
   'am',
   'ስለ ነገው ምንም አላውቅ',
   'I Don\''t Know About Tomorrow',
@@ -32266,7 +32266,7 @@ select
   120,
   '{"new_hymnal_number":305,"old_hymnal_number":121,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-don-t-know-about-tomorrow'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-don-t-know-about-tomorrow-ስለ-ነገው-ምንም-አላውቅ-በየቀኑ-እኖራለሁ-ብርሃኑንም-አልዋስም-ሰማዩ-እንዳይጨልም-ስለመጪው-አላስብም-የጌታን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32285,7 +32285,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-lord-s-our-rock',
+  'am-sda-en-lyrics-the-lord-s-our-rock-ጌታ-መሸሸጊያችን-ነው-ማዕበሉ-ሲነሳብን-ወደርሱ-እንጠጋለን-ማዕበሉ-ሲነሳብን-ማረፊያችን-ስንደክም-መጠጊያችን-ስንፈራ-አይጥ',
   'am',
   'ጌታ መሸሸጊያችን ነው',
   'The Lord\''s Our Rock',
@@ -32334,7 +32334,7 @@ select
   121,
   '{"new_hymnal_number":307,"old_hymnal_number":122,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-lord-s-our-rock'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-lord-s-our-rock-ጌታ-መሸሸጊያችን-ነው-ማዕበሉ-ሲነሳብን-ወደርሱ-እንጠጋለን-ማዕበሉ-ሲነሳብን-ማረፊያችን-ስንደክም-መጠጊያችን-ስንፈራ-አይጥ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32425,7 +32425,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-brother-be-faithful',
+  'am-sda-en-lyrics-o-brother-be-faithful-ወንድሜ-ታማኝ-ሁን-የሱስ-ይመጣል-እስከ-ዛሬ-የጠበቅነው-በቅርብ-ወደቤታችን-እንገባለን-የድል-መዝሙር-ልንዘምር-ወንድሜ',
   'am',
   'ወንድሜ ታማኝ ሁን',
   'O Brother be Faithful',
@@ -32486,7 +32486,7 @@ select
   123,
   '{"new_hymnal_number":125,"old_hymnal_number":124,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-brother-be-faithful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-brother-be-faithful-ወንድሜ-ታማኝ-ሁን-የሱስ-ይመጣል-እስከ-ዛሬ-የጠበቅነው-በቅርብ-ወደቤታችን-እንገባለን-የድል-መዝሙር-ልንዘምር-ወንድሜ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32505,7 +32505,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መድኃኒቴ-ልከተልህ',
+  'am-sda-en-lyrics-i-will-follow-thee-መድኃኒቴ-ልከተልህ-በታዘዝሁበት-ሁሉ-በምትሄደው-ልከተልህ-ልከተልህ-በሁሉ-ልከተልህ-መድኃኔቴ-ደምህን-አፈሰስህ-ለኔ-ሰው-ሁሉ',
   'am',
   'መድኃኒቴ ልከተልህ',
   'I Will Follow Thee',
@@ -32564,7 +32564,7 @@ select
   124,
   '{"new_hymnal_number":123,"old_hymnal_number":125,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መድኃኒቴ-ልከተልህ'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-follow-thee-መድኃኒቴ-ልከተልህ-በታዘዝሁበት-ሁሉ-በምትሄደው-ልከተልህ-ልከተልህ-በሁሉ-ልከተልህ-መድኃኔቴ-ደምህን-አፈሰስህ-ለኔ-ሰው-ሁሉ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32583,7 +32583,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wholly-thine',
+  'am-sda-en-lyrics-wholly-thine-ወዳጅህ-እንድሆን-ሁልጊዜ-አስተምረኝ-አስተምረኝ-ፈቃድህን-ላድርግ-የኔን-ትቼ-እርዳኝ-ና-እርዳኝ-ሁሉ-ላንት-ሁሉ-ላንት-ሁሉ-ላንት-ይህ',
   'am',
   'ወዳጅህ እንድሆን',
   'Wholly Thine',
@@ -32632,7 +32632,7 @@ select
   125,
   '{"new_hymnal_number":124,"old_hymnal_number":126,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wholly-thine'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wholly-thine-ወዳጅህ-እንድሆን-ሁልጊዜ-አስተምረኝ-አስተምረኝ-ፈቃድህን-ላድርግ-የኔን-ትቼ-እርዳኝ-ና-እርዳኝ-ሁሉ-ላንት-ሁሉ-ላንት-ሁሉ-ላንት-ይህ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32651,7 +32651,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ክቡር-መድኃኒት-አለኝ',
+  'am-sda-am-lyrics-ክቡር-መድኃኒት-አለኝ-ክቡር-መድኃኒት-አለኝ-በጣም-የምወደው-በርኅራኄው-ይወደኛል-በውነት-ያፈቅረኛል-ያለርሱ-ልኖር-አልችልም-እርሱን-እጠጋለሁ-ስለዚህ-ከጌ',
   'am',
   'ክቡር መድኃኒት አለኝ',
   'I Have a Friend So Percious',
@@ -32705,7 +32705,7 @@ select
   126,
   '{"new_hymnal_number":127,"old_hymnal_number":127,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ክቡር-መድኃኒት-አለኝ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ክቡር-መድኃኒት-አለኝ-ክቡር-መድኃኒት-አለኝ-በጣም-የምወደው-በርኅራኄው-ይወደኛል-በውነት-ያፈቅረኛል-ያለርሱ-ልኖር-አልችልም-እርሱን-እጠጋለሁ-ስለዚህ-ከጌ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32724,7 +32724,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-faith-of-our-fathers',
+  'am-sda-en-lyrics-faith-of-our-fathers-እሥራት-ሰይፍና-እሳትም-ቢኖር-ያባቶች-ሃይማኖት-አለን-ልባችን-በጣም-ይደሰታል-ይህን-ግሩም-ቃል-ሲሰማ-ያባቶች-እምነት-ፅ',
   'am',
   'ያባቶች ሃይማኖት',
   'Faith of Our Fathers',
@@ -32775,7 +32775,7 @@ select
   127,
   '{"new_hymnal_number":128,"old_hymnal_number":128,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-faith-of-our-fathers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-faith-of-our-fathers-እሥራት-ሰይፍና-እሳትም-ቢኖር-ያባቶች-ሃይማኖት-አለን-ልባችን-በጣም-ይደሰታል-ይህን-ግሩም-ቃል-ሲሰማ-ያባቶች-እምነት-ፅ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32794,7 +32794,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-longing',
+  'am-sda-en-lyrics-longing-የተወደደ-አዳኜ-የሱስ-ከሁሉ-የከበረ-ነው-በረከቱንም-ስለዚህ-ነው-የምናፍቀው-መድኃኒቴ-ሆይ-ናፍቄህአለሁ-አንተን-ለማየት-እቸኩላለሁ-መድኃኒቴ',
   'am',
   'የተወደደ አዳኜ የሱስ',
   'Longing',
@@ -32850,7 +32850,7 @@ select
   128,
   '{"new_hymnal_number":131,"old_hymnal_number":129,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-longing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-longing-የተወደደ-አዳኜ-የሱስ-ከሁሉ-የከበረ-ነው-በረከቱንም-ስለዚህ-ነው-የምናፍቀው-መድኃኒቴ-ሆይ-ናፍቄህአለሁ-አንተን-ለማየት-እቸኩላለሁ-መድኃኒቴ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32869,7 +32869,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-longing-to-be-with-jesus',
+  'am-sda-en-lyrics-longing-to-be-with-jesus-ወዳንተ-የሱስ-ሆይ-ልቤ-ይናፍቃል-የአምላክ-በግ-ሁነህ-ስለኔ-ሞተሀል-ሰላም-ለኔ-ሰጠህ-ተሸክመህ-ቅጣት-ጠባቂዬ-ሆነ',
   'am',
   'ወዳንተ የሱስ ሆይ',
   'Longing to be With Jesus',
@@ -32914,7 +32914,7 @@ select
   129,
   '{"new_hymnal_number":132,"old_hymnal_number":130,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-longing-to-be-with-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-longing-to-be-with-jesus-ወዳንተ-የሱስ-ሆይ-ልቤ-ይናፍቃል-የአምላክ-በግ-ሁነህ-ስለኔ-ሞተሀል-ሰላም-ለኔ-ሰጠህ-ተሸክመህ-ቅጣት-ጠባቂዬ-ሆነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -32933,7 +32933,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-hope-is-built',
+  'am-sda-en-lyrics-my-hope-is-built-የኔ-ተስፋ-የተሰራው-በየሱስ-ደም-በፅድቁም-ነው-በቅዱስ-የሱስ-ስም-በቀር-ሌላ-የለኝም-የማምነው-በየሱስ-ላይ-እቆማለሁ-ሌላው-መ',
   'am',
   'የኔ ተስፋ የተሰራው',
   'My Hope is Built',
@@ -32988,7 +32988,7 @@ select
   130,
   '{"new_hymnal_number":129,"old_hymnal_number":131,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-hope-is-built'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-hope-is-built-የኔ-ተስፋ-የተሰራው-በየሱስ-ደም-በፅድቁም-ነው-በቅዱስ-የሱስ-ስም-በቀር-ሌላ-የለኝም-የማምነው-በየሱስ-ላይ-እቆማለሁ-ሌላው-መ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33007,7 +33007,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-lift-me-up',
+  'am-sda-en-lyrics-jesus-lift-me-up-ከዓለም-ከንቱ-ወደላይ-ስሻገር-ቶሎ-ደከምሁኝ-የሱስ-ግን-አስነሳኝ-በእጁ-ያዘኝ-በፍቅሩ-ረዳኝ-በፍቅሩ-ረዳኝ-ስራመድ-ሳለሁ-በሲና',
   'am',
   'የሱስ አነሳኝ',
   'Jesus Lift Me Up',
@@ -33056,7 +33056,7 @@ select
   131,
   '{"new_hymnal_number":130,"old_hymnal_number":132,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-lift-me-up'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-lift-me-up-ከዓለም-ከንቱ-ወደላይ-ስሻገር-ቶሎ-ደከምሁኝ-የሱስ-ግን-አስነሳኝ-በእጁ-ያዘኝ-በፍቅሩ-ረዳኝ-በፍቅሩ-ረዳኝ-ስራመድ-ሳለሁ-በሲና'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33075,7 +33075,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-will-take-care-of-you',
+  'am-sda-en-lyrics-god-will-take-care-of-you-ምንም-ቢሆን-ተስፋ-አትቁረጥ-አምላክ-ይረዳሃል-በፍቅር-ክንፉ-ስር-ብትኖር-አምላክ-ይረዳሃል-አምላክ-ይረዳሃል-ቀኑ',
   'am',
   'አምላክ ይረዳሃል',
   'God Will Take Care of You',
@@ -33130,7 +33130,7 @@ select
   132,
   '{"new_hymnal_number":133,"old_hymnal_number":133,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-will-take-care-of-you'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-will-take-care-of-you-ምንም-ቢሆን-ተስፋ-አትቁረጥ-አምላክ-ይረዳሃል-በፍቅር-ክንፉ-ስር-ብትኖር-አምላክ-ይረዳሃል-አምላክ-ይረዳሃል-ቀኑ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33149,7 +33149,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-blessed-assurance',
+  'am-sda-en-lyrics-blessed-assurance-የሱስ-የኔ-ነው-መልካም-ተስፋ-መለኮታዊ-ክብሩ-ይስፋፋ-የህይወት-ወራሽ-ልንሆን-ገዛን-በመንፈሱና-በደም-አጥቦን-አ-ይህ-ነው-ታ',
   'am',
   'የሱስ የኔ ነው',
   'Blessed Assurance',
@@ -33205,7 +33205,7 @@ select
   133,
   '{"new_hymnal_number":137,"old_hymnal_number":134,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-blessed-assurance'
+join works w on w.canonical_key = 'am-sda-en-lyrics-blessed-assurance-የሱስ-የኔ-ነው-መልካም-ተስፋ-መለኮታዊ-ክብሩ-ይስፋፋ-የህይወት-ወራሽ-ልንሆን-ገዛን-በመንፈሱና-በደም-አጥቦን-አ-ይህ-ነው-ታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33224,7 +33224,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-happy-day-that-fixed-my-choice',
+  'am-sda-en-lyrics-o-happy-day-that-fixed-my-choice-በደስታ-ቀን-የመረጠኝ-አዳኜና-አምላኬ-ነው-ልቤን-እጅግ-ደስ-ያሰኛል-ያረገውን-እነግራለሁ-ደስታ-ቀን',
   'am',
   'በደስታ ቀን',
   'O Happy Day! That Fixed My Choice',
@@ -33275,7 +33275,7 @@ select
   134,
   '{"new_hymnal_number":135,"old_hymnal_number":135,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-happy-day-that-fixed-my-choice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-happy-day-that-fixed-my-choice-በደስታ-ቀን-የመረጠኝ-አዳኜና-አምላኬ-ነው-ልቤን-እጅግ-ደስ-ያሰኛል-ያረገውን-እነግራለሁ-ደስታ-ቀን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33294,7 +33294,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-my-heart-there-rings-a-melody',
+  'am-sda-en-lyrics-in-my-heart-there-rings-a-melody-የሱስ-የሰጠኝ-መዝሙር-አለኝ-ከሰማይ-የተላከ-ከሱ-የተሻለ-ዜማ-የለም-የፍቅሩ-ዜማ-ነው-በልቤ-ዜማ-ይሰ',
   'am',
   'በልቤ ዜማ ይሰማኛል',
   'In My Heart There Rings a Melody',
@@ -33344,7 +33344,7 @@ select
   135,
   '{"new_hymnal_number":136,"old_hymnal_number":136,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-my-heart-there-rings-a-melody'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-my-heart-there-rings-a-melody-የሱስ-የሰጠኝ-መዝሙር-አለኝ-ከሰማይ-የተላከ-ከሱ-የተሻለ-ዜማ-የለም-የፍቅሩ-ዜማ-ነው-በልቤ-ዜማ-ይሰ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33363,7 +33363,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-sunshine-in-my-soul-today',
+  'am-sda-en-lyrics-there-s-sunshine-in-my-soul-today-በልቤ-ፀሐይ-ታበራለች-በክብር-በብራሃንዋ-ብርሃኑም-ሁሉ-ያበራል-የሱስ-የኔ-ብርሃን-ብርሃን-አለኝ-ብ',
   'am',
   'በልቤ ፀሐይ ታበራለች',
   'There\''s Sunshine in My Soul Today',
@@ -33419,7 +33419,7 @@ select
   136,
   '{"new_hymnal_number":139,"old_hymnal_number":137,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-sunshine-in-my-soul-today'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-sunshine-in-my-soul-today-በልቤ-ፀሐይ-ታበራለች-በክብር-በብራሃንዋ-ብርሃኑም-ሁሉ-ያበራል-የሱስ-የኔ-ብርሃን-ብርሃን-አለኝ-ብ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33438,7 +33438,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-is-your-all-on-the-altar',
+  'am-sda-en-lyrics-is-your-all-on-the-altar-ሰላም-ፈልገሃል-እምነትህን-ለማከል-በናፍቆት-በትጋት-ጸልየሀል-ግን-መባረክና-ማረፍ-ያቅትሀል-ሁሉንም-በመሰውያው-ጣ',
   'am',
   'ሰላም ፈልገሃል',
   'Is Your all on the Altar',
@@ -33498,7 +33498,7 @@ select
   137,
   '{"new_hymnal_number":144,"old_hymnal_number":138,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-is-your-all-on-the-altar'
+join works w on w.canonical_key = 'am-sda-en-lyrics-is-your-all-on-the-altar-ሰላም-ፈልገሃል-እምነትህን-ለማከል-በናፍቆት-በትጋት-ጸልየሀል-ግን-መባረክና-ማረፍ-ያቅትሀል-ሁሉንም-በመሰውያው-ጣ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33517,7 +33517,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-peace',
+  'am-sda-en-lyrics-wonderful-peace-በመንፈሴ-ጠልቆ-አሁን-ዛሬ-ማታ-ይሰማል-የሚጣፍጥ-ዜማ-የሰማዩ-ዜማ-ሣያቋርጥ-ሲወርድ-ነፍሴ-አያገኛትም-ሞገድ-ሰላም-ግሩም-ሰላም',
   'am',
   'ግሩም ሰላም',
   'Wonderful Peace',
@@ -33582,7 +33582,7 @@ select
   138,
   '{"new_hymnal_number":145,"old_hymnal_number":139,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-peace'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-peace-በመንፈሴ-ጠልቆ-አሁን-ዛሬ-ማታ-ይሰማል-የሚጣፍጥ-ዜማ-የሰማዩ-ዜማ-ሣያቋርጥ-ሲወርድ-ነፍሴ-አያገኛትም-ሞገድ-ሰላም-ግሩም-ሰላም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33601,7 +33601,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-peace-like-a-river',
+  'am-sda-en-lyrics-when-peace-like-a-river-ሰላም-እንደ-ወንዝ-በመንገዱ-ሲወርድ-ኃዘን-ሲመጣ-እንደ-ማዕበል-የሆነ-ቢሆን-ካንተ-ተምሬአለሁ-ህይወቴ-ደህና-ነው-እ',
   'am',
   'ሰላም እንደ ወንዝ',
   'When Peace, Like a River',
@@ -33659,7 +33659,7 @@ select
   139,
   '{"new_hymnal_number":142,"old_hymnal_number":140,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-peace-like-a-river'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-peace-like-a-river-ሰላም-እንደ-ወንዝ-በመንገዱ-ሲወርድ-ኃዘን-ሲመጣ-እንደ-ማዕበል-የሆነ-ቢሆን-ካንተ-ተምሬአለሁ-ህይወቴ-ደህና-ነው-እ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33678,7 +33678,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-give-me-your-peace',
+  'am-sda-en-lyrics-give-me-your-peace-ያንተን-ሰላም-ኦ-የሱስ-አውርድልን-በሁከት-የሚያድል-ፀጥታን-በእንግድነት-ተስፋን-የሚሰጠን-በገነት-የሚሰጠነ-ብርሃን-ባጭር',
   'am',
   'ያንተን ሰላም',
   'Give me Your Peace',
@@ -33731,7 +33731,7 @@ select
   140,
   '{"new_hymnal_number":141,"old_hymnal_number":141,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-give-me-your-peace'
+join works w on w.canonical_key = 'am-sda-en-lyrics-give-me-your-peace-ያንተን-ሰላም-ኦ-የሱስ-አውርድልን-በሁከት-የሚያድል-ፀጥታን-በእንግድነት-ተስፋን-የሚሰጠን-በገነት-የሚሰጠነ-ብርሃን-ባጭር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33750,7 +33750,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሚያስደንቅ-መድህን',
+  'am-sda-am-lyrics-የሚያስደንቅ-መድህን-የሚያስደንቅ-መድህን-ነው-የሱስ-ጌታ-አስደናቂ-አዳኜ-ነው-ለነፍሴ-ደግሞ-መጠጊያዋ-ነው-የደስታን-ወንዝ-ባየሁ-ጊዜ-ለነፍሴ-መጠጊያ-ይሆ',
   'am',
   'የሚያስደንቅ መድህን',
   'A Wonderful Saviour in Jesus My Lord',
@@ -33815,7 +33815,7 @@ select
   141,
   '{"new_hymnal_number":143,"old_hymnal_number":142,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሚያስደንቅ-መድህን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሚያስደንቅ-መድህን-የሚያስደንቅ-መድህን-ነው-የሱስ-ጌታ-አስደናቂ-አዳኜ-ነው-ለነፍሴ-ደግሞ-መጠጊያዋ-ነው-የደስታን-ወንዝ-ባየሁ-ጊዜ-ለነፍሴ-መጠጊያ-ይሆ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33834,7 +33834,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-ll-love-to-the-end',
+  'am-sda-en-lyrics-he-ll-love-to-the-end-ወደደኝ-ወደደኝ-መድህን-ወዳጄ-ጥንቃቄውና-ፀጋው-ብዙ-ነው-ከርሱ-ይመጣልኛል-በረከቴ-ለእግሬም-መንገዴን-ይጠርግልኛል-ወደ',
   'am',
   'ወደደኝ ወደደኝ',
   'He\''ll Love to the End',
@@ -33887,7 +33887,7 @@ select
   142,
   '{"new_hymnal_number":150,"old_hymnal_number":143,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-ll-love-to-the-end'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-ll-love-to-the-end-ወደደኝ-ወደደኝ-መድህን-ወዳጄ-ጥንቃቄውና-ፀጋው-ብዙ-ነው-ከርሱ-ይመጣልኛል-በረከቴ-ለእግሬም-መንገዴን-ይጠርግልኛል-ወደ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -33981,7 +33981,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-jesus-i-love-thee',
+  'am-sda-en-lyrics-my-jesus-i-love-thee-የሱስ-ሆይ-ወደድሁህ-የኔ-ነህና-ኃጢዓቴንም-ሁሉ-እተወዋለሁ-ክቡር-አዳኜና-መድኃኒቴ-ነህ-ከቀድሞውም-ይልቅ-አሁን-ወደድሁህ',
   'am',
   'የሱስ ሆይ ወደድሁህ',
   'My Jesus I Love Thee',
@@ -34035,7 +34035,7 @@ select
   144,
   '{"new_hymnal_number":151,"old_hymnal_number":145,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-jesus-i-love-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-jesus-i-love-thee-የሱስ-ሆይ-ወደድሁህ-የኔ-ነህና-ኃጢዓቴንም-ሁሉ-እተወዋለሁ-ክቡር-አዳኜና-መድኃኒቴ-ነህ-ከቀድሞውም-ይልቅ-አሁን-ወደድሁህ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34054,7 +34054,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-love-thee',
+  'am-sda-en-lyrics-i-love-thee-ወደድሁህ-ወደድሁህ-ወደድሁህ-ጌታ-ወደድሁህ-አዳኜ-ወደድሁህ-ጌታዬ-ወደድሁህ-ወደድሁህ-ታላቅ-አምላክ-ነህ-ሕይወትህን-ሰዋህ-እኔን-ለማዳን',
   'am',
   'ወደድሁህ ወደድሁህ',
   'I Love Thee',
@@ -34102,7 +34102,7 @@ select
   145,
   '{"new_hymnal_number":152,"old_hymnal_number":146,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-love-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-love-thee-ወደድሁህ-ወደድሁህ-ወደድሁህ-ጌታ-ወደድሁህ-አዳኜ-ወደድሁህ-ጌታዬ-ወደድሁህ-ወደድሁህ-ታላቅ-አምላክ-ነህ-ሕይወትህን-ሰዋህ-እኔን-ለማዳን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34121,7 +34121,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-like-as-a-father',
+  'am-sda-en-lyrics-like-as-a-father-አባት-ለልጁ-እንዲራራ-አምላክ-ለኃጠአተኛ-ይራራል-ይጠብቀናል-ያስብልናል-በታላቅ-ፍቅሩ-ይናፍቀናል-እንደ-አባታችን-ብናምነው-በም',
   'am',
   'አባት ለልጁ እንዲራራ',
   'Like as a Father',
@@ -34175,7 +34175,7 @@ select
   146,
   '{"new_hymnal_number":154,"old_hymnal_number":147,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-like-as-a-father'
+join works w on w.canonical_key = 'am-sda-en-lyrics-like-as-a-father-አባት-ለልጁ-እንዲራራ-አምላክ-ለኃጠአተኛ-ይራራል-ይጠብቀናል-ያስብልናል-በታላቅ-ፍቅሩ-ይናፍቀናል-እንደ-አባታችን-ብናምነው-በም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34194,7 +34194,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-know-i-love-thee-better-lord',
+  'am-sda-en-lyrics-i-know-i-love-thee-better-lord-እወድህአለሁ-ኦ-ጌታ-ከምድራዊ-ደስታ-ኦ-ያንተን-ሰላም-ሰጠኸኝ-የማይጠፋብኝን-እኩሉም-አልተነገረም-የፍቅሩ',
   'am',
   'እወድሃለሁ ኦ ጌታ',
   'I Know I Love Thee Better Lord',
@@ -34248,7 +34248,7 @@ select
   147,
   '{"new_hymnal_number":148,"old_hymnal_number":148,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-know-i-love-thee-better-lord'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-know-i-love-thee-better-lord-እወድህአለሁ-ኦ-ጌታ-ከምድራዊ-ደስታ-ኦ-ያንተን-ሰላም-ሰጠኸኝ-የማይጠፋብኝን-እኩሉም-አልተነገረም-የፍቅሩ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34267,7 +34267,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-more-love-to-thee',
+  'am-sda-en-lyrics-more-love-to-thee-በብዙው-ላፍቅርህ-ኦ-የሱስ-ሆይ-ልመናዬን-ስማ-ስፀልይ-ሣል-ይህ-ነው-የኔ-ምኞት-ፍቅር-ኦ-የሱስ-ላንት-ፍቅር-ላንተ-ፍቅር-ላን',
   'am',
   'ፍቅር ኦ የሱስ ላንት',
   'More Love to Thee',
@@ -34316,7 +34316,7 @@ select
   148,
   '{"new_hymnal_number":149,"old_hymnal_number":149,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-more-love-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-more-love-to-thee-በብዙው-ላፍቅርህ-ኦ-የሱስ-ሆይ-ልመናዬን-ስማ-ስፀልይ-ሣል-ይህ-ነው-የኔ-ምኞት-ፍቅር-ኦ-የሱስ-ላንት-ፍቅር-ላንተ-ፍቅር-ላን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34335,7 +34335,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-do-thy-work-lovingly',
+  'am-sda-en-lyrics-do-thy-work-lovingly-ሥራህን-ስትሰራ-ባምላክህ-ታመን-መንገድህን-ስትሄድ-ጨብጥ-ቃሉን-የአምላክን-ልጆች-ጠብቅ-ተግተህ-በፍቅር-ከዘራህ-መከር-አ',
   'am',
   'ሥራህን ስትሰራ',
   'Do Thy Work Lovingly',
@@ -34383,7 +34383,7 @@ select
   149,
   '{"new_hymnal_number":119,"old_hymnal_number":150,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-do-thy-work-lovingly'
+join works w on w.canonical_key = 'am-sda-en-lyrics-do-thy-work-lovingly-ሥራህን-ስትሰራ-ባምላክህ-ታመን-መንገድህን-ስትሄድ-ጨብጥ-ቃሉን-የአምላክን-ልጆች-ጠብቅ-ተግተህ-በፍቅር-ከዘራህ-መከር-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34475,7 +34475,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-work-for-the-night-is-coming',
+  'am-sda-en-lyrics-work-for-the-night-is-coming-ቀርቧል-ሌሊቱ-ሥሩ-ማልዳችሁ-ተነሱ-ጤዛው-ሳይረግፍ-ስሩ-ባበቦች-ዙሪያ-ቀኑ-እንዳይሔድባችሁ-ብርሃን-ሣለ-ሥሩ',
   'am',
   'ቀርቧል ሌሊቱ',
   'Work, for the Night is Coming',
@@ -34523,7 +34523,7 @@ select
   151,
   '{"new_hymnal_number":121,"old_hymnal_number":152,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-work-for-the-night-is-coming'
+join works w on w.canonical_key = 'am-sda-en-lyrics-work-for-the-night-is-coming-ቀርቧል-ሌሊቱ-ሥሩ-ማልዳችሁ-ተነሱ-ጤዛው-ሳይረግፍ-ስሩ-ባበቦች-ዙሪያ-ቀኑ-እንዳይሔድባችሁ-ብርሃን-ሣለ-ሥሩ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34542,7 +34542,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-more-about-jesus',
+  'am-sda-en-lyrics-more-about-jesus-ስለ-የሱስ-ባወቅሁ-ፀጋውን-ባካፈልሁ-የማዳኑን-ሙላት-ባየሁ-የፍቅሩ-ሞቱን-ባወራሁ-ጌታ-በወደድሁት-ፍቅሩን-በተማርሁት-የማዳኑን',
   'am',
   'ስለ የሱስ ባወቅሁ',
   'More About Jesus',
@@ -34596,7 +34596,7 @@ select
   152,
   '{"new_hymnal_number":163,"old_hymnal_number":153,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-more-about-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-more-about-jesus-ስለ-የሱስ-ባወቅሁ-ፀጋውን-ባካፈልሁ-የማዳኑን-ሙላት-ባየሁ-የፍቅሩ-ሞቱን-ባወራሁ-ጌታ-በወደድሁት-ፍቅሩን-በተማርሁት-የማዳኑን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34615,7 +34615,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-መጣ',
+  'am-sda-am-lyrics-የሱስ-መጣ-ተቀምጦ-በመንገድ-ዳር-ሲለምን-ዓይኑ-ጠፍቶ-አላየም-ብርሃን-ተራቁቶ-በብርድ-ሲንቀጠቀጥ-የሱስ-መጣ-ጨለማን-ሊያስወግድ-የሱስ-መጥቶ-የሰይጣንን-ኃ',
   'am',
   'የሱስ መጣ',
   'The Jesus Came',
@@ -34675,7 +34675,7 @@ select
   153,
   '{"new_hymnal_number":171,"old_hymnal_number":154,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-መጣ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-መጣ-ተቀምጦ-በመንገድ-ዳር-ሲለምን-ዓይኑ-ጠፍቶ-አላየም-ብርሃን-ተራቁቶ-በብርድ-ሲንቀጠቀጥ-የሱስ-መጣ-ጨለማን-ሊያስወግድ-የሱስ-መጥቶ-የሰይጣንን-ኃ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34767,7 +34767,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-have-a-song-i-love-to-sing',
+  'am-sda-en-lyrics-i-have-a-song-i-love-to-sing-መዝሙር-አለኝ-የምወደው-ጌታ-ስላዳነኝ-ለጌታዬ-ልዘምረው-እርሱ-ስላዳነኝ-ጌታ-ስላዳነኝ-ጌታ-ስላዳነኝ-ስሙንም',
   'am',
   'ጌታ ስላዳነኝ',
   'I Have a Song I Love to Sing',
@@ -34822,7 +34822,7 @@ select
   155,
   '{"new_hymnal_number":170,"old_hymnal_number":156,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-have-a-song-i-love-to-sing'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-have-a-song-i-love-to-sing-መዝሙር-አለኝ-የምወደው-ጌታ-ስላዳነኝ-ለጌታዬ-ልዘምረው-እርሱ-ስላዳነኝ-ጌታ-ስላዳነኝ-ጌታ-ስላዳነኝ-ስሙንም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34915,7 +34915,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ያባትህ-እጅ-ተዘርግቷል',
+  'am-sda-am-lyrics-ያባትህ-እጅ-ተዘርግቷል-ያባትህ-እጅ-ተዘርግቷል-ልጁን-ሊቀበልህ-ገና-በስምህ-ይጠራል-ወደርሱም-ይስብሃል-ገና-ከፍ-ያለ-የምክር-ድምፁ-ይነግርሃል-እያለ-ልጄ',
   'am',
   'ያባትህ እጅ ተዘርግቷል',
   'Jesus Bids us Come',
@@ -34969,7 +34969,7 @@ select
   157,
   '{"new_hymnal_number":172,"old_hymnal_number":158,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ያባትህ-እጅ-ተዘርግቷል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ያባትህ-እጅ-ተዘርግቷል-ያባትህ-እጅ-ተዘርግቷል-ልጁን-ሊቀበልህ-ገና-በስምህ-ይጠራል-ወደርሱም-ይስብሃል-ገና-ከፍ-ያለ-የምክር-ድምፁ-ይነግርሃል-እያለ-ልጄ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -34988,7 +34988,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-now-i-ve-found-a-jewel',
+  'am-sda-en-lyrics-now-i-ve-found-a-jewel-አሁን-ድንቅ-እንቁ-አገኘሁ-ነፍሴን-ደስ-የሚያሰኝ-ማነው-ብለህ-ብትጠይቀኝ-የሱስ-አዳኜ-ነው-ተነሽ-ዘምሪ-ነፍሴ-ሆይ-ጌ',
   'am',
   'አሁን ድንቅ እንቁ አገኘሁ',
   'Now I\''ve Found a Jewel',
@@ -35042,7 +35042,7 @@ select
   158,
   '{"new_hymnal_number":173,"old_hymnal_number":159,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-now-i-ve-found-a-jewel'
+join works w on w.canonical_key = 'am-sda-en-lyrics-now-i-ve-found-a-jewel-አሁን-ድንቅ-እንቁ-አገኘሁ-ነፍሴን-ደስ-የሚያሰኝ-ማነው-ብለህ-ብትጠይቀኝ-የሱስ-አዳኜ-ነው-ተነሽ-ዘምሪ-ነፍሴ-ሆይ-ጌ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35061,7 +35061,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-come-to-jesus-he-ll-teach-the-way',
+  'am-sda-en-lyrics-come-to-jesus-he-ll-teach-the-way-ቶሎ-ወደ-የሱስ-ና-መንገዱን-ያስተምርሃል-ከኛ-ጋር-ይቆማል-ይጮሃልምና-ደስታ-ደስታ-ይሆናልና-ኃጢአታ',
   'am',
   'ቶሎ ወደ የሱስ ና',
   'Come to Jesus, He\''ll Teach the Way',
@@ -35111,7 +35111,7 @@ select
   159,
   '{"new_hymnal_number":160,"old_hymnal_number":160,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-come-to-jesus-he-ll-teach-the-way'
+join works w on w.canonical_key = 'am-sda-en-lyrics-come-to-jesus-he-ll-teach-the-way-ቶሎ-ወደ-የሱስ-ና-መንገዱን-ያስተምርሃል-ከኛ-ጋር-ይቆማል-ይጮሃልምና-ደስታ-ደስታ-ይሆናልና-ኃጢአታ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35204,7 +35204,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-close-to-thee',
+  'am-sda-en-lyrics-close-to-thee-የዘላለም-ምርጫዬ-ነህ-ወዳጄና-ሕይወቴ-በጉዞዬ-ካንተ-ጋራ-ልራመድ-መድኃኒቴ-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-በጉዞዬ-ካን',
   'am',
   'ካንተ ጋር',
   'Close to Thee',
@@ -35252,7 +35252,7 @@ select
   161,
   '{"new_hymnal_number":162,"old_hymnal_number":162,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-close-to-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-close-to-thee-የዘላለም-ምርጫዬ-ነህ-ወዳጄና-ሕይወቴ-በጉዞዬ-ካንተ-ጋራ-ልራመድ-መድኃኒቴ-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-ካንተ-ጋር-በጉዞዬ-ካን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35271,7 +35271,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የክርስቶስ-ደም-ብቻ-ነው',
+  'am-sda-am-lyrics-የክርስቶስ-ደም-ብቻ-ነው-ኃጢአቴን-ምን-ያጥበዋል-የክርስቶስ-ደም-ብቻ-ነው-ምን-ንፁህ-ያደርገኛል-የክርስቶስ-ደም-ብቻ-ነው-ኦ-ፍፁም-ብሩክ-ምንጭ-ኃጢአቴን',
   'am',
   'የክርስቶስ ደም ብቻ ነው',
   'Noting But the Blood',
@@ -35349,7 +35349,7 @@ select
   162,
   '{"new_hymnal_number":164,"old_hymnal_number":163,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የክርስቶስ-ደም-ብቻ-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የክርስቶስ-ደም-ብቻ-ነው-ኃጢአቴን-ምን-ያጥበዋል-የክርስቶስ-ደም-ብቻ-ነው-ምን-ንፁህ-ያደርገኛል-የክርስቶስ-ደም-ብቻ-ነው-ኦ-ፍፁም-ብሩክ-ምንጭ-ኃጢአቴን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35436,7 +35436,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በርሱ-ጽኑ',
+  'am-sda-am-lyrics-በርሱ-ጽኑ-ነፍሶች-ሁሉ-በኃጢአት-የተጨቆናችሁ-በውነት-ጌታችን-ፈዋሽ-ነው-በቃሉ-ብታምኑ-በርሱ-ጽኑ-በርሱ-ጽኑ-በጌታ-ጽኑ-ይቅር-ባይ-ነው-ይቅር-ባይ-ነው',
   'am',
   'በርሱ ጽኑ',
   'Come, Ev\''ry Soul by Sin Oporessed',
@@ -35491,7 +35491,7 @@ select
   164,
   '{"new_hymnal_number":165,"old_hymnal_number":165,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በርሱ-ጽኑ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በርሱ-ጽኑ-ነፍሶች-ሁሉ-በኃጢአት-የተጨቆናችሁ-በውነት-ጌታችን-ፈዋሽ-ነው-በቃሉ-ብታምኑ-በርሱ-ጽኑ-በርሱ-ጽኑ-በጌታ-ጽኑ-ይቅር-ባይ-ነው-ይቅር-ባይ-ነው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35510,7 +35510,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-give-my-life-for-thee',
+  'am-sda-en-lyrics-i-give-my-life-for-thee-ሕይወቴን-ለወጥሁልህ-ልገዛ-ነፍስህን-ሰማይን-ልከፍትልህ-ልሰጥህ-ርስትህን-ትድን-ዘንድ-ደሜ-ፈሶልሃል-ምን-መልሰህልኛ',
   'am',
   'ሕይወቴን ለወጥሁልህ',
   'I Give my Life for Thee',
@@ -35558,7 +35558,7 @@ select
   165,
   '{"new_hymnal_number":166,"old_hymnal_number":166,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-give-my-life-for-thee'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-give-my-life-for-thee-ሕይወቴን-ለወጥሁልህ-ልገዛ-ነፍስህን-ሰማይን-ልከፍትልህ-ልሰጥህ-ርስትህን-ትድን-ዘንድ-ደሜ-ፈሶልሃል-ምን-መልሰህልኛ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35577,7 +35577,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-the-pearly-gates-will-open',
+  'am-sda-en-lyrics-he-the-pearly-gates-will-open-ታላቅ-የመለኮት-ፍቅር-ጥልቅና-ኃያል-ቅዱስ-ከየሱስ-ልብ-ይመነጫል-የማያልቅ-ግሩም-ፍቅር-አ-ድንቅ-የፀጋ-በ',
   'am',
   'ድንቅ የፀጋ በር ከፈተ',
   'He the Pearly Gates Will Open',
@@ -35636,7 +35636,7 @@ select
   166,
   '{"new_hymnal_number":167,"old_hymnal_number":167,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-the-pearly-gates-will-open'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-the-pearly-gates-will-open-ታላቅ-የመለኮት-ፍቅር-ጥልቅና-ኃያል-ቅዱስ-ከየሱስ-ልብ-ይመነጫል-የማያልቅ-ግሩም-ፍቅር-አ-ድንቅ-የፀጋ-በ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35655,7 +35655,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ቸሩ-የሱስ',
+  'am-sda-am-lyrics-ቸሩ-የሱስ-ቸሩ-ጠባቂ-ምራን-በጥሩ-ቃልህ-ብርሃን-ከመከራ-ጠብቀን-በምህረትህ-መግበን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕለት-ጠብቅ-መንጋህን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕ',
   'am',
   'ቸሩ የሱስ',
   'Saviour, Like a Shepherd Lead Us',
@@ -35708,7 +35708,7 @@ select
   167,
   '{"new_hymnal_number":168,"old_hymnal_number":168,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ቸሩ-የሱስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ቸሩ-የሱስ-ቸሩ-ጠባቂ-ምራን-በጥሩ-ቃልህ-ብርሃን-ከመከራ-ጠብቀን-በምህረትህ-መግበን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕለት-ጠብቅ-መንጋህን-ቸሩ-የሱስ-ቸሩ-የሱስ-ዕ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35727,7 +35727,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-be-with-you',
+  'am-sda-en-lyrics-god-be-with-you-እግዚአብሔር-ከላንተ-ጋር-ይሁን-በትሁት-ምክሩ-ይምራችሁ-በፍቅሩ-ይሸከማችሁ-እስክንገናኝ-በየሱስ-ፊት-በሰማይ-በሰማይ-በሰማይ-እስ',
   'am',
   'እግዚአብሔር ከላንተ ጋር ይሁን',
   'God Be With You',
@@ -35783,7 +35783,7 @@ select
   168,
   '{"new_hymnal_number":322,"old_hymnal_number":169,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-be-with-you'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-be-with-you-እግዚአብሔር-ከላንተ-ጋር-ይሁን-በትሁት-ምክሩ-ይምራችሁ-በፍቅሩ-ይሸከማችሁ-እስክንገናኝ-በየሱስ-ፊት-በሰማይ-በሰማይ-በሰማይ-እስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35802,7 +35802,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-great-physician-now-is-near',
+  'am-sda-en-lyrics-the-great-physician-now-is-near-ታላቁ-ሐኪም-መጥቷል-አዛኝ-የሆነው-የሱስ-ያዘነን-ልብ-ያስደስታል-እንስማ-የጌታን-ቃል-ስሙ-ይላቅ-ለቅዱ',
   'am',
   'ታላቁ ሐኪም መጥቷል',
   'The Great Physician Now is Near',
@@ -35861,7 +35861,7 @@ select
   169,
   '{"new_hymnal_number":175,"old_hymnal_number":170,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-great-physician-now-is-near'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-great-physician-now-is-near-ታላቁ-ሐኪም-መጥቷል-አዛኝ-የሆነው-የሱስ-ያዘነን-ልብ-ያስደስታል-እንስማ-የጌታን-ቃል-ስሙ-ይላቅ-ለቅዱ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35880,7 +35880,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ስመለከት-ያን-ድንቅ-መስቀል',
+  'am-sda-am-lyrics-ስመለከት-ያን-ድንቅ-መስቀል-ስመለከት-ያን-ድንቅ-መስቀል-መድኅኔ-የሞተበትን-እንቀዋለሁ-ህይወቴን-ትምክቴ-ከንቱ-ይሆናል-በቅዱስ-መስቀልህ-በቀር-እንዳልመካ',
   'am',
   'ስመለከት ያን ድንቅ መስቀል',
   'When I Survery the Woundrous Cross',
@@ -35925,7 +35925,7 @@ select
   170,
   '{"new_hymnal_number":179,"old_hymnal_number":171,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ስመለከት-ያን-ድንቅ-መስቀል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ስመለከት-ያን-ድንቅ-መስቀል-ስመለከት-ያን-ድንቅ-መስቀል-መድኅኔ-የሞተበትን-እንቀዋለሁ-ህይወቴን-ትምክቴ-ከንቱ-ይሆናል-በቅዱስ-መስቀልህ-በቀር-እንዳልመካ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -35944,7 +35944,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-go-to-dark-gethesemane',
+  'am-sda-en-lyrics-go-to-dark-gethesemane-ሂድ-ወደ-ጌተሴማኔ-ፈተናን-ፈሪ-ሰው-ሆይ-ላንዲት-መራራ-ሰዓት-ያዳኝህን-ስቃይ-እይ-ከኀዘኑም-ሳትርቅ-ከርሱ-ጸሎትን-ተ',
   'am',
   'ሂድ ወደ ጌተሴማኔ',
   'Go to Dark Gethesemane',
@@ -35989,7 +35989,7 @@ select
   171,
   '{"new_hymnal_number":183,"old_hymnal_number":172,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-go-to-dark-gethesemane'
+join works w on w.canonical_key = 'am-sda-en-lyrics-go-to-dark-gethesemane-ሂድ-ወደ-ጌተሴማኔ-ፈተናን-ፈሪ-ሰው-ሆይ-ላንዲት-መራራ-ሰዓት-ያዳኝህን-ስቃይ-እይ-ከኀዘኑም-ሳትርቅ-ከርሱ-ጸሎትን-ተ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36072,7 +36072,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-በደሙ-ገዛን',
+  'am-sda-am-lyrics-የሱስ-በደሙ-ገዛን-ዕዳ-ተከፍሎ-ድልም-ተሰጠ-ለኛ-ሲል-የሱስ-ክርስቶስ-ሞተ-ከኦሪት-መርገም-ከኃጢአት-ክርስቶስ-አዳነን-ሁላችን-አሁንም-ሰው-ሆይ-ይህንን-እ',
   'am',
   'የሱስ በደሙ ገዛን',
   'Jesus Brought Us by His Blood',
@@ -36126,7 +36126,7 @@ select
   173,
   '{"new_hymnal_number":185,"old_hymnal_number":174,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-በደሙ-ገዛን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-በደሙ-ገዛን-ዕዳ-ተከፍሎ-ድልም-ተሰጠ-ለኛ-ሲል-የሱስ-ክርስቶስ-ሞተ-ከኦሪት-መርገም-ከኃጢአት-ክርስቶስ-አዳነን-ሁላችን-አሁንም-ሰው-ሆይ-ይህንን-እ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36145,7 +36145,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-way-of-the-cross-leads-home',
+  'am-sda-en-lyrics-the-way-of-the-cross-leads-home-መስቀሉን-ይዤ-ወደ-ቤቴ-ካልሄድሁ-ሌላ-መንገድ-የለኝም-ላየው-አልችልም-የብርሃኑን-ደጅ-የመስቀሉን-መንገ',
   'am',
   'መስቀሉ እኔን ይምራኝ',
   'The Way of the Cross Leads Home',
@@ -36199,7 +36199,7 @@ select
   174,
   '{"new_hymnal_number":186,"old_hymnal_number":175,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-way-of-the-cross-leads-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-way-of-the-cross-leads-home-መስቀሉን-ይዤ-ወደ-ቤቴ-ካልሄድሁ-ሌላ-መንገድ-የለኝም-ላየው-አልችልም-የብርሃኑን-ደጅ-የመስቀሉን-መንገ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36218,7 +36218,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-at-the-cross',
+  'am-sda-en-lyrics-at-the-cross-አዳኜ-ደሙ-ፈሰሰ-ንጉሤ-ሞተልኝ-ራሱ-ለውርደት-ደረሰ-እኔን-ሊያድነኝ-በመስቀል-በመስቀል-ብርሃን-ባየሁበት-የልቤ-ሸክም-በቀለለበት-በሃ',
   'am',
   'በመስቀል በመስቀል',
   'At the Cross',
@@ -36268,7 +36268,7 @@ select
   175,
   '{"new_hymnal_number":184,"old_hymnal_number":176,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-at-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-at-the-cross-አዳኜ-ደሙ-ፈሰሰ-ንጉሤ-ሞተልኝ-ራሱ-ለውርደት-ደረሰ-እኔን-ሊያድነኝ-በመስቀል-በመስቀል-ብርሃን-ባየሁበት-የልቤ-ሸክም-በቀለለበት-በሃ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36287,7 +36287,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-አልረሳውም',
+  'am-sda-am-lyrics-አልረሳውም-አልረሳውም-ያነን-ጊዜ-በጌተሰማኔ-በጣርህ-ሲያልብህ-ስለኔ-አምላኬ-በዚያ-ስፍራ-በአትክልቱ-በልቤ-አየሁህ-ቤዛ-ሆነህ-የፍርድ-መዓት-እንደ-ተቀበል',
   'am',
   'አልረሳውም',
   'I\''ll Not Forgot Gethesemane',
@@ -36335,7 +36335,7 @@ select
   176,
   '{"new_hymnal_number":193,"old_hymnal_number":177,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-አልረሳውም'
+join works w on w.canonical_key = 'am-sda-am-lyrics-አልረሳውም-አልረሳውም-ያነን-ጊዜ-በጌተሰማኔ-በጣርህ-ሲያልብህ-ስለኔ-አምላኬ-በዚያ-ስፍራ-በአትክልቱ-በልቤ-አየሁህ-ቤዛ-ሆነህ-የፍርድ-መዓት-እንደ-ተቀበል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36496,7 +36496,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በራቀው-ኮረብታ',
+  'am-sda-am-lyrics-በራቀው-ኮረብታ-በራቀው-ኮረብታ-መስቀል-ይታየኛል-የየሱስ-መከራ-መስቀል-ከሁሉ-ይልቅ-ያመስቀል-ደስ-ይለኛል-ለዓለም-ሞቱን-ያሳያል-ስለዚህ-ልውደደው-መስቀሉ',
   'am',
   'በራቀው ኮረብታ',
   'Saved by Rugged Cross',
@@ -36556,7 +36556,7 @@ select
   179,
   '{"new_hymnal_number":182,"old_hymnal_number":180,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በራቀው-ኮረብታ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በራቀው-ኮረብታ-በራቀው-ኮረብታ-መስቀል-ይታየኛል-የየሱስ-መከራ-መስቀል-ከሁሉ-ይልቅ-ያመስቀል-ደስ-ይለኛል-ለዓለም-ሞቱን-ያሳያል-ስለዚህ-ልውደደው-መስቀሉ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36575,7 +36575,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-keep-me-near-the-cross',
+  'am-sda-en-lyrics-jesus-keep-me-near-the-cross-የሱስ-መስቀልህን-ልቅረብ-ያንን-የክብር-ምንጭ-ከዚያ-ነፃ-ምንጭ-አለ-ለሁሉ-ጤና-ሰጭ-መስቀልህ-መስቀልህ-ይሁ',
   'am',
   'መስቀልህ',
   'Jesus, Keep Me Near the Cross',
@@ -36630,7 +36630,7 @@ select
   180,
   '{"new_hymnal_number":180,"old_hymnal_number":181,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-keep-me-near-the-cross'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-keep-me-near-the-cross-የሱስ-መስቀልህን-ልቅረብ-ያንን-የክብር-ምንጭ-ከዚያ-ነፃ-ምንጭ-አለ-ለሁሉ-ጤና-ሰጭ-መስቀልህ-መስቀልህ-ይሁ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36649,7 +36649,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-glory-to-his-name',
+  'am-sda-en-lyrics-glory-to-his-name-በመስቀል-ሞተ-መድኃኒቴ-ሊያድነኝ-ብሎ-ከጥፋቴ-ሊመልሰኝም-ከኃጢአቴ-ክብር-ለስሙ-ክብር-ለስሙ-ክብር-ለስሙ-ነፃ-ስላወጣኝ-በደሙ',
   'am',
   'ክብር ለስሙ',
   'Glory to His Name',
@@ -36712,7 +36712,7 @@ select
   181,
   '{"new_hymnal_number":181,"old_hymnal_number":182,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-glory-to-his-name'
+join works w on w.canonical_key = 'am-sda-en-lyrics-glory-to-his-name-በመስቀል-ሞተ-መድኃኒቴ-ሊያድነኝ-ብሎ-ከጥፋቴ-ሊመልሰኝም-ከኃጢአቴ-ክብር-ለስሙ-ክብር-ለስሙ-ክብር-ለስሙ-ነፃ-ስላወጣኝ-በደሙ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36883,7 +36883,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-hear-thy-welcome-voice',
+  'am-sda-en-lyrics-i-hear-thy-welcome-voice-ድምፅህን-እሰማለሁ-ወዳንተ-የሚጠራኝ-በክቡር-ደምህ-ለመንፃት-ካንተ-በፈሰሰው-ጌታ-ሆይ-አሁን-ወዳንተ-መጣሁ-አንፃኝ',
   'am',
   'ድምፅህን እሰማለሁ',
   'I Hear Thy Welcome Voice',
@@ -36938,7 +36938,7 @@ select
   184,
   '{"new_hymnal_number":312,"old_hymnal_number":185,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-hear-thy-welcome-voice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-hear-thy-welcome-voice-ድምፅህን-እሰማለሁ-ወዳንተ-የሚጠራኝ-በክቡር-ደምህ-ለመንፃት-ካንተ-በፈሰሰው-ጌታ-ሆይ-አሁን-ወዳንተ-መጣሁ-አንፃኝ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -36957,7 +36957,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-a-fountain',
+  'am-sda-en-lyrics-there-is-a-fountain-በደም-የመላ-ምንጭ-አለ-ተቀዳ-ከክርስቶስ-ከዚያ-የታጠቡ-ኃጢዓን-ከበል-ሊነፁ-ከበል-ሊነፁ-ከበል-ሊነፁ-ከዚያ-የታጠቡ-ኃጢዓ',
   'am',
   'በደም የመላ ምንጭ አለ',
   'There is a Fountain',
@@ -37011,7 +37011,7 @@ select
   185,
   '{"new_hymnal_number":313,"old_hymnal_number":186,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-a-fountain'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-a-fountain-በደም-የመላ-ምንጭ-አለ-ተቀዳ-ከክርስቶስ-ከዚያ-የታጠቡ-ኃጢዓን-ከበል-ሊነፁ-ከበል-ሊነፁ-ከበል-ሊነፁ-ከዚያ-የታጠቡ-ኃጢዓ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37030,7 +37030,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-rock-of-age',
+  'am-sda-en-lyrics-rock-of-age-የጥንት-አምባ-የሱስ-ነው-ስለኔ-ተከፈለ-ወደ-እርሱ-ልሸሸግ-ከርሱ-ጎን-የወጣ-ደም-ከኃጢዓቴ-አጠራኝ-ስለዚህ-ነው-ያዳነኝ-ሕግህን-አልፈፀ',
   'am',
   'የጥንት አምባ የሱስ ነው',
   'Rock of Age',
@@ -37079,7 +37079,7 @@ select
   186,
   '{"new_hymnal_number":314,"old_hymnal_number":187,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-rock-of-age'
+join works w on w.canonical_key = 'am-sda-en-lyrics-rock-of-age-የጥንት-አምባ-የሱስ-ነው-ስለኔ-ተከፈለ-ወደ-እርሱ-ልሸሸግ-ከርሱ-ጎን-የወጣ-ደም-ከኃጢዓቴ-አጠራኝ-ስለዚህ-ነው-ያዳነኝ-ሕግህን-አልፈፀ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37098,7 +37098,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-christ-is-risen-today',
+  'am-sda-en-lyrics-jesus-christ-is-risen-today-የሱስ-ክርስቶስ-ተነስቷል-ሃሌሉያ-የድል-ቀን-ተዘጋጅቷል-ሃሌሉያ-በመስቀል-የሞተልን-ሃሌሉያ-ከጥፋት-ሊያድነን',
   'am',
   'የሱስ ክርስቶስ ተነስቷል',
   'Jesus Christ is Risen Today',
@@ -37152,7 +37152,7 @@ select
   187,
   '{"new_hymnal_number":316,"old_hymnal_number":188,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-christ-is-risen-today'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-christ-is-risen-today-የሱስ-ክርስቶስ-ተነስቷል-ሃሌሉያ-የድል-ቀን-ተዘጋጅቷል-ሃሌሉያ-በመስቀል-የሞተልን-ሃሌሉያ-ከጥፋት-ሊያድነን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37171,7 +37171,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-he-lives',
+  'am-sda-en-lyrics-he-lives-ልሥራ-ለሕያው-አምላክ-በዓለም-ላይ-ላለው-አምናለሁ-መኖሩንም-ሌሎችም-ባያምኑም-የምህረት-እጁን-አየሁ-መልካም-ድምፁን-በፈለግሁ-ጊዜ-ይቀርበኛ',
   'am',
   'ሕያው ክርስቶስ',
   'He Lives',
@@ -37227,7 +37227,7 @@ select
   188,
   '{"new_hymnal_number":317,"old_hymnal_number":189,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-he-lives'
+join works w on w.canonical_key = 'am-sda-en-lyrics-he-lives-ልሥራ-ለሕያው-አምላክ-በዓለም-ላይ-ላለው-አምናለሁ-መኖሩንም-ሌሎችም-ባያምኑም-የምህረት-እጁን-አየሁ-መልካም-ድምፁን-በፈለግሁ-ጊዜ-ይቀርበኛ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37246,7 +37246,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-beyond-the-sunset',
+  'am-sda-en-lyrics-beyond-the-sunset-ጸሀይዋ-ጠልቃ-መንጋት-ሲጀምር-ከመድኃኒቴ-የሱስ-ጋር-ስራዬ-አልቆ-በሰማይ-ልኖር-ጸሀይዋ-ጠልቃ-ቀን-ሲጀምር-ጸሀይዋ-ጠልቃ-ደመ',
   'am',
   'ጸሀይዋ ጠልቃ',
   'Beyond the Sunset',
@@ -37295,7 +37295,7 @@ select
   189,
   '{"new_hymnal_number":315,"old_hymnal_number":190,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-beyond-the-sunset'
+join works w on w.canonical_key = 'am-sda-en-lyrics-beyond-the-sunset-ጸሀይዋ-ጠልቃ-መንጋት-ሲጀምር-ከመድኃኒቴ-የሱስ-ጋር-ስራዬ-አልቆ-በሰማይ-ልኖር-ጸሀይዋ-ጠልቃ-ቀን-ሲጀምር-ጸሀይዋ-ጠልቃ-ደመ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37314,7 +37314,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-christ-arose',
+  'am-sda-en-lyrics-christ-arose-በመቃብር-ተኛ-የዓለም-መድህን-ከዚያ-ወጣ-ለኛ-መድኅናችን-ከመቃብር-ተነሳ-ድል-ነስቶልን-በጠላቱ-ላይ-ተነሳ-ድል-ነስቶ-ለኛ-ተነሳ-ለዘ',
   'am',
   'ከመቃብር ተነሳ',
   'Christ Arose',
@@ -37364,7 +37364,7 @@ select
   190,
   '{"new_hymnal_number":318,"old_hymnal_number":191,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-christ-arose'
+join works w on w.canonical_key = 'am-sda-en-lyrics-christ-arose-በመቃብር-ተኛ-የዓለም-መድህን-ከዚያ-ወጣ-ለኛ-መድኅናችን-ከመቃብር-ተነሳ-ድል-ነስቶልን-በጠላቱ-ላይ-ተነሳ-ድል-ነስቶ-ለኛ-ተነሳ-ለዘ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37383,7 +37383,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lift-your-glad-voice',
+  'am-sda-en-lyrics-lift-your-glad-voice-የ-አምላክ-ልጆች-ደስ-ይበላችሁ-ሞትን-አሸንፎ-የሱስ-ተነስቷል-የከበቡትን-ጠላቶች-ድል-ነስቶ-በሞትና-በሲኦል-ላይ-ነገሰ',
   'am',
   'ያምላክ ልጆች ደስ ይበላችሁ',
   'Lift Your Glad Voice',
@@ -37432,7 +37432,7 @@ select
   191,
   '{"new_hymnal_number":319,"old_hymnal_number":192,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lift-your-glad-voice'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lift-your-glad-voice-የ-አምላክ-ልጆች-ደስ-ይበላችሁ-ሞትን-አሸንፎ-የሱስ-ተነስቷል-የከበቡትን-ጠላቶች-ድል-ነስቶ-በሞትና-በሲኦል-ላይ-ነገሰ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37451,7 +37451,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-don-t-forget-the-sabbath',
+  'am-sda-en-lyrics-don-t-forget-the-sabbath-ሰንበትን-አንርሳ-የተባረከች-ነች-ሁሉን-ያበራች-በጣም-የበለጠች-ዕረፍትን-ታመጣለች-ደስታን-ትነግራለች-መለኮታዊ-ብ',
   'am',
   'ሰንበትን አንርሳ',
   'Don\''t Forget the Sabbath',
@@ -37504,7 +37504,7 @@ select
   192,
   '{"new_hymnal_number":196,"old_hymnal_number":193,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-don-t-forget-the-sabbath'
+join works w on w.canonical_key = 'am-sda-en-lyrics-don-t-forget-the-sabbath-ሰንበትን-አንርሳ-የተባረከች-ነች-ሁሉን-ያበራች-በጣም-የበለጠች-ዕረፍትን-ታመጣለች-ደስታን-ትነግራለች-መለኮታዊ-ብ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37523,7 +37523,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-holy-day-jehovah-s-rest',
+  'am-sda-en-lyrics-holy-day-jehovah-s-rest-የአምላክ-የዕረፍት-ቀን-እግዚአብሔር-የባረካት-በሙሉ-የቀደሳት-በሰማይ-ኃይል-የሞላት-እልል-እልል-እልል-እልል-በረከ',
   'am',
   'የአምላክ የዕረፍት ቀን',
   'Holy Day, Jehovah\''s Rest',
@@ -37573,7 +37573,7 @@ select
   193,
   '{"new_hymnal_number":194,"old_hymnal_number":194,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-holy-day-jehovah-s-rest'
+join works w on w.canonical_key = 'am-sda-en-lyrics-holy-day-jehovah-s-rest-የአምላክ-የዕረፍት-ቀን-እግዚአብሔር-የባረካት-በሙሉ-የቀደሳት-በሰማይ-ኃይል-የሞላት-እልል-እልል-እልል-እልል-በረከ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37592,7 +37592,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-day-of-rest-and-gladness',
+  'am-sda-en-lyrics-o-day-of-rest-and-gladness-የደስታ-የዕረፍት-ቀን-የደስታ-የብርሃን-ቀን-የኃዘን-ማራቂያ-በጣን-የተዋበች-በዚያችም-ቀን-ለመስገድ-በዙፋን-ፊ',
   'am',
   'የደስታ የዕረፍት ቀን',
   'O Day of Rest and Gladness',
@@ -37640,7 +37640,7 @@ select
   194,
   '{"new_hymnal_number":195,"old_hymnal_number":195,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-day-of-rest-and-gladness'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-day-of-rest-and-gladness-የደስታ-የዕረፍት-ቀን-የደስታ-የብርሃን-ቀን-የኃዘን-ማራቂያ-በጣን-የተዋበች-በዚያችም-ቀን-ለመስገድ-በዙፋን-ፊ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37732,7 +37732,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-sabbath-home',
+  'am-sda-en-lyrics-my-sabbath-home-የሰንበት-ቀን-ቅዱስ-ቀን-ናት-ከሌላው-ቀን-ይልቅ-ልቤ-በርሷ-ደስ-ይላታል-ስለ-ቅዱስ-ሰንበት-ሰንበት-ቀን-ብሩክ-ቀን-ቅዱስ-ቀን',
   'am',
   'የሰንበት ቀን',
   'My Sabbath Home',
@@ -37781,7 +37781,7 @@ select
   196,
   '{"new_hymnal_number":197,"old_hymnal_number":197,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-sabbath-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-sabbath-home-የሰንበት-ቀን-ቅዱስ-ቀን-ናት-ከሌላው-ቀን-ይልቅ-ልቤ-በርሷ-ደስ-ይላታል-ስለ-ቅዱስ-ሰንበት-ሰንበት-ቀን-ብሩክ-ቀን-ቅዱስ-ቀን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37800,7 +37800,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-may-thy-words-fill-our-hearts',
+  'am-sda-en-lyrics-may-thy-words-fill-our-hearts-ልንሰማ-እንሰብሰብ-ቃልህን-ጌታችን-ሆይ-እንደ-ዝናብ-በድርቅ-ምድር-በልባችን-እንዲቆይ-መንፈስ-ቅዱስህን-ስ',
   'am',
   'ልንሰማ እንሰብሰብ',
   'May Thy Words Fill our Hearts',
@@ -37851,7 +37851,7 @@ select
   197,
   '{"new_hymnal_number":199,"old_hymnal_number":198,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-may-thy-words-fill-our-hearts'
+join works w on w.canonical_key = 'am-sda-en-lyrics-may-thy-words-fill-our-hearts-ልንሰማ-እንሰብሰብ-ቃልህን-ጌታችን-ሆይ-እንደ-ዝናብ-በድርቅ-ምድር-በልባችን-እንዲቆይ-መንፈስ-ቅዱስህን-ስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -37870,7 +37870,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-give-me-the-bible',
+  'am-sda-en-lyrics-give-me-the-bible-መፅሐፉን-ስጠኝ-ብርሃን-እንዲሆነኝ-በችግር-ጊዜ-ደስ-እንዲያሰኘኝ-የሰላም-ጮራ-ማንም-የማይጋርደኝ-የሱስ-መጣልኝ-እኔን-ሊያድነ',
   'am',
   'መፅሐፉን ስጠኝ',
   'Give Me the Bible',
@@ -37929,7 +37929,7 @@ select
   198,
   '{"new_hymnal_number":200,"old_hymnal_number":199,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-give-me-the-bible'
+join works w on w.canonical_key = 'am-sda-en-lyrics-give-me-the-bible-መፅሐፉን-ስጠኝ-ብርሃን-እንዲሆነኝ-በችግር-ጊዜ-ደስ-እንዲያሰኘኝ-የሰላም-ጮራ-ማንም-የማይጋርደኝ-የሱስ-መጣልኝ-እኔን-ሊያድነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38009,7 +38009,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tell-me-the-story-of-jesus',
+  'am-sda-en-lyrics-tell-me-the-story-of-jesus-የጌታን-ታሪክ-ንገረኝ-ቃሎቹን-በልቤ-ፃፍ-የበለጠውን-አስታውቀኝ-ጣፋጭ-ቃል-ያልተሰማ-መላዕክት-ሲያመሰግኑህ-በል',
   'am',
   'የጌታን ታሪክ ንገረኝ',
   'Tell me the Story of Jesus',
@@ -38065,7 +38065,7 @@ select
   200,
   '{"new_hymnal_number":201,"old_hymnal_number":201,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tell-me-the-story-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tell-me-the-story-of-jesus-የጌታን-ታሪክ-ንገረኝ-ቃሎቹን-በልቤ-ፃፍ-የበለጠውን-አስታውቀኝ-ጣፋጭ-ቃል-ያልተሰማ-መላዕክት-ሲያመሰግኑህ-በል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38084,7 +38084,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-words-of-life',
+  'am-sda-en-lyrics-wonderful-words-of-life-ደጋግምና-ዘምርልኝ-ያንን-የሕይወት-ቃል-እኔም-መርምሬ-ልረዳው-ያንን-የሕይወት-ቃል-እምነትና-ሥራን-የሕይወት-ቃል-ይ',
   'am',
   'ደጋግምና ዘምርልኝ',
   'Wonderful Words of Life',
@@ -38136,7 +38136,7 @@ select
   201,
   '{"new_hymnal_number":202,"old_hymnal_number":202,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-words-of-life'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-words-of-life-ደጋግምና-ዘምርልኝ-ያንን-የሕይወት-ቃል-እኔም-መርምሬ-ልረዳው-ያንን-የሕይወት-ቃል-እምነትና-ሥራን-የሕይወት-ቃል-ይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38155,7 +38155,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-onward-christian-soldiers',
+  'am-sda-en-lyrics-onward-christian-soldiers-የክርስቲያን-አርበኞች-ለጦር-ስትሄዱ-የየሱስን-መስቀል-በፊት-አስኪዱ-ክርስቶስ-ነው-መሪያችን-በጦር-ሜዳው-ላይ-ሂ',
   'am',
   'የክርስቲያን አርበኞች',
   'Onward, Christian Soldiers',
@@ -38217,7 +38217,7 @@ select
   202,
   '{"new_hymnal_number":203,"old_hymnal_number":203,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-onward-christian-soldiers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-onward-christian-soldiers-የክርስቲያን-አርበኞች-ለጦር-ስትሄዱ-የየሱስን-መስቀል-በፊት-አስኪዱ-ክርስቶስ-ነው-መሪያችን-በጦር-ሜዳው-ላይ-ሂ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38236,7 +38236,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሰልፉ-መሪ-ጌታ-አምላክ-ነው',
+  'am-sda-am-lyrics-የሰልፉ-መሪ-ጌታ-አምላክ-ነው-ያምላክ-ወገኖች-ለሠልፉ-ውጡ-አምላክ-ሲዋጋ-እንድታዩ-ጠብቁ-ቁሙ-ማዳኑን-እዩ-በርሱ-ማሸነፍ-እንድትረኩ-አ-ንቁ-ቁሙ-ያምላክ',
   'am',
   'የሰልፉ መሪ ጌታ አምላክ ነው',
   'Sound the Battel Cry',
@@ -38290,7 +38290,7 @@ select
   203,
   '{"new_hymnal_number":204,"old_hymnal_number":204,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሰልፉ-መሪ-ጌታ-አምላክ-ነው'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሰልፉ-መሪ-ጌታ-አምላክ-ነው-ያምላክ-ወገኖች-ለሠልፉ-ውጡ-አምላክ-ሲዋጋ-እንድታዩ-ጠብቁ-ቁሙ-ማዳኑን-እዩ-በርሱ-ማሸነፍ-እንድትረኩ-አ-ንቁ-ቁሙ-ያምላክ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38309,7 +38309,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-stand-up-stand-up-for-jesus',
+  'am-sda-en-lyrics-stand-up-stand-up-for-jesus-ተነሱ-ቁሙ-ለየሱስ-እላንተ-ወታደሩ-የጽድቁን-ጥሩር-ልበሱ-በእርሱ-ተመሩ-ከድልም-ወደ-ድልም-በእርሱ-ታምናችሁ',
   'am',
   'ተነሱ ቁሙ ለየሱስ',
   'Stand Up, Stand Up for Jesus',
@@ -38363,7 +38363,7 @@ select
   204,
   '{"new_hymnal_number":205,"old_hymnal_number":205,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-stand-up-stand-up-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-stand-up-stand-up-for-jesus-ተነሱ-ቁሙ-ለየሱስ-እላንተ-ወታደሩ-የጽድቁን-ጥሩር-ልበሱ-በእርሱ-ተመሩ-ከድልም-ወደ-ድልም-በእርሱ-ታምናችሁ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38382,7 +38382,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-soldiers-of-christ-arise',
+  'am-sda-en-lyrics-soldiers-of-christ-arise-የክርስቲያን-አርበኞች-ታጠቁ-ባዋጁ-ጌታ-በሚሰጣችሁ-ኃይል-በዘልዓለም-ልጁ-በሠራዊት-ጌታ-በኃይሉና-በብርታት-በየሱስ',
   'am',
   'የክርስቲያን አርበኞች ታጠቁ',
   'Soldiers of Christ, Arise',
@@ -38431,7 +38431,7 @@ select
   205,
   '{"new_hymnal_number":206,"old_hymnal_number":206,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-soldiers-of-christ-arise'
+join works w on w.canonical_key = 'am-sda-en-lyrics-soldiers-of-christ-arise-የክርስቲያን-አርበኞች-ታጠቁ-ባዋጁ-ጌታ-በሚሰጣችሁ-ኃይል-በዘልዓለም-ልጁ-በሠራዊት-ጌታ-በኃይሉና-በብርታት-በየሱስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38450,7 +38450,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-all-is-vanity',
+  'am-sda-en-lyrics-all-is-vanity-ሰባኪው-አለ-ከንቱ-ከሰማይ-በታች-የሚሰራው-ደስ-የሚለውና-የሚያዝነው-ሁሉ-በቶሎ-ሊያልፍ-ነው-አ-ከንቱ-ነው-ከንቱ-ነው-ዝ-ሰባኪው-አ',
   'am',
   'ሰባኪው አለ ከንቱ',
   'All is Vanity',
@@ -38509,7 +38509,7 @@ select
   206,
   '{"new_hymnal_number":122,"old_hymnal_number":207,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-all-is-vanity'
+join works w on w.canonical_key = 'am-sda-en-lyrics-all-is-vanity-ሰባኪው-አለ-ከንቱ-ከሰማይ-በታች-የሚሰራው-ደስ-የሚለውና-የሚያዝነው-ሁሉ-በቶሎ-ሊያልፍ-ነው-አ-ከንቱ-ነው-ከንቱ-ነው-ዝ-ሰባኪው-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38528,7 +38528,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-የሱስ-የጠራቸው-እለት',
+  'am-sda-am-lyrics-የሱስ-የጠራቸው-እለት-የሱስ-ሕዝቦቹን-የጠራቸው-እለት-በጉባኤው-የቀረቡለት-በፍርዱ-እንዴት-እንቆማለን-ፍርድ-ሊሰጠን-የጠራንለት-አ-ስንዴን-በጎተራው-ያጠራ',
   'am',
   'የሱስ የጠራቸው እለት',
   'When Jesus Shall Gather the Nations',
@@ -38592,7 +38592,7 @@ select
   207,
   '{"new_hymnal_number":207,"old_hymnal_number":208,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-የሱስ-የጠራቸው-እለት'
+join works w on w.canonical_key = 'am-sda-am-lyrics-የሱስ-የጠራቸው-እለት-የሱስ-ሕዝቦቹን-የጠራቸው-እለት-በጉባኤው-የቀረቡለት-በፍርዱ-እንዴት-እንቆማለን-ፍርድ-ሊሰጠን-የጠራንለት-አ-ስንዴን-በጎተራው-ያጠራ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38611,7 +38611,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-is-my-name-written-there',
+  'am-sda-en-lyrics-is-my-name-written-there-የምድር-ኃብት-ወይም-ወርቅ-ምን-ያደርግልኛል-ከሰማያዊ-ቤቴ-ከመንጋው-እሆናለሁ-በሰማያዊ-መዝገብ-ከመፅሐፍቱ-ውስጥ',
   'am',
   'ተጽፏል ወይ ስሜ',
   'Is My Name Written There?',
@@ -38664,7 +38664,7 @@ select
   208,
   '{"new_hymnal_number":208,"old_hymnal_number":209,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-is-my-name-written-there'
+join works w on w.canonical_key = 'am-sda-en-lyrics-is-my-name-written-there-የምድር-ኃብት-ወይም-ወርቅ-ምን-ያደርግልኛል-ከሰማያዊ-ቤቴ-ከመንጋው-እሆናለሁ-በሰማያዊ-መዝገብ-ከመፅሐፍቱ-ውስጥ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38683,7 +38683,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-almost-time-for-the-lord-to-come',
+  'am-sda-en-lyrics-tis-almost-time-for-the-lord-to-come-የአምላክ-መምጫ-ቀን-ቀርቧል-ሲሉ-እሰማለሁ-የጸሐይ-ብርሃን-ሲጨልም-ቀኑ-ሊነጋ-ተቃርቧል-ኦ-ቀኑ',
   'am',
   'የአምላክ መምጫ ቀን ቀርቧል',
   '\''Tis Almost Time for the Lord to Come',
@@ -38740,7 +38740,7 @@ select
   209,
   '{"new_hymnal_number":210,"old_hymnal_number":210,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-almost-time-for-the-lord-to-come'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-almost-time-for-the-lord-to-come-የአምላክ-መምጫ-ቀን-ቀርቧል-ሲሉ-እሰማለሁ-የጸሐይ-ብርሃን-ሲጨልም-ቀኑ-ሊነጋ-ተቃርቧል-ኦ-ቀኑ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38759,7 +38759,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-the-coming-king-is-at-the-door',
+  'am-sda-en-lyrics-the-coming-king-is-at-the-door-የሚመጣው-ንጉሥ-ቀርቧል-ለኃጥዓን-የተሰቀለ-አሁን-ግን-ጻድቃንን-ብቻ-ይዟቸው-ይሄዳል-መጥቷል-መጥቷል-መጥ',
   'am',
   'የሚመጣው ንጉሥ ቀርቧል',
   'The Coming King is at the Door',
@@ -38814,7 +38814,7 @@ select
   210,
   '{"new_hymnal_number":209,"old_hymnal_number":211,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-the-coming-king-is-at-the-door'
+join works w on w.canonical_key = 'am-sda-en-lyrics-the-coming-king-is-at-the-door-የሚመጣው-ንጉሥ-ቀርቧል-ለኃጥዓን-የተሰቀለ-አሁን-ግን-ጻድቃንን-ብቻ-ይዟቸው-ይሄዳል-መጥቷል-መጥቷል-መጥ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38833,7 +38833,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-it-may-be-at-morn',
+  'am-sda-en-lyrics-it-may-be-at-morn-ያ-ቀን-ይመጣል-በጠዋት-በማታ-ጨለማ-ሁሉ-የሚመሽበት-ጊዜ-ያን-ጊዜ-ክርስቶስ-በክብር-ይገለጣል-የርሱን-ከዓለም-ሊወስድ-የሱስ',
   'am',
   'ያ ቀን ይመጣል',
   'It May be at Morn',
@@ -38886,7 +38886,7 @@ select
   211,
   '{"new_hymnal_number":212,"old_hymnal_number":212,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-it-may-be-at-morn'
+join works w on w.canonical_key = 'am-sda-en-lyrics-it-may-be-at-morn-ያ-ቀን-ይመጣል-በጠዋት-በማታ-ጨለማ-ሁሉ-የሚመሽበት-ጊዜ-ያን-ጊዜ-ክርስቶስ-በክብር-ይገለጣል-የርሱን-ከዓለም-ሊወስድ-የሱስ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38905,7 +38905,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lo-he-comes',
+  'am-sda-en-lyrics-lo-he-comes-ክርስቲያናት-ትጉ-ጠብቁ-ምልክት-ከሰማይ-እዩ-ተዘጋጁ-ለመምጣቱ-ይመጣል-በድል-ነሽነት-አ-ይመጣል-አዎን-ይመጣል-ዝ-መምጣቱ-ከመላዕክት-ጋ',
   'am',
   'ክርስቲያናት ትጉ ጠብቁ',
   'Lo He Comes',
@@ -38964,7 +38964,7 @@ select
   212,
   '{"new_hymnal_number":213,"old_hymnal_number":213,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lo-he-comes'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lo-he-comes-ክርስቲያናት-ትጉ-ጠብቁ-ምልክት-ከሰማይ-እዩ-ተዘጋጁ-ለመምጣቱ-ይመጣል-በድል-ነሽነት-አ-ይመጣል-አዎን-ይመጣል-ዝ-መምጣቱ-ከመላዕክት-ጋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -38983,7 +38983,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ዛሬ-ቢመጣሳ',
+  'am-sda-am-lyrics-ዛሬ-ቢመጣሳ-የሱስ-እንደገና-ይመጣል-ዛሬ-ቢመጣሳ-ኃይሉ-እና-ፍቅሩ-ይገዛል-ዛሬ-ቢመጣሳ-ሙሽራይቱን-ለመቀበል-የዳኑትን-የነፁትን-በምድር-ፊት-የሚያድሩትን',
   'am',
   'ዛሬ ቢመጣሳ',
   'What if it were Today',
@@ -39041,7 +39041,7 @@ select
   213,
   '{"new_hymnal_number":214,"old_hymnal_number":214,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ዛሬ-ቢመጣሳ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ዛሬ-ቢመጣሳ-የሱስ-እንደገና-ይመጣል-ዛሬ-ቢመጣሳ-ኃይሉ-እና-ፍቅሩ-ይገዛል-ዛሬ-ቢመጣሳ-ሙሽራይቱን-ለመቀበል-የዳኑትን-የነፁትን-በምድር-ፊት-የሚያድሩትን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39119,7 +39119,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-know-not-the-hour',
+  'am-sda-en-lyrics-we-know-not-the-hour-የጌታችን-መምጫ-ሰዓቱን-አናውቅም-ምልክት-ሁሉ-መቅረቡን-ያሳየናል-ሲመለስ-ሳለ-ተስፋው-ደስ-ያሰኘናል-ጊዜአቱን-አናውቅም',
   'am',
   'ይመጣል',
   'We Know not the Hour',
@@ -39177,7 +39177,7 @@ select
   215,
   '{"new_hymnal_number":217,"old_hymnal_number":216,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-know-not-the-hour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-know-not-the-hour-የጌታችን-መምጫ-ሰዓቱን-አናውቅም-ምልክት-ሁሉ-መቅረቡን-ያሳየናል-ሲመለስ-ሳለ-ተስፋው-ደስ-ያሰኘናል-ጊዜአቱን-አናውቅም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39196,7 +39196,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-lift-up-the-trumpet',
+  'am-sda-en-lyrics-lift-up-the-trumpet-መለከት-ንፉ-ሁሉ-እስኪሰማ-የሱስ-ዳግም-ይመጣል-ደስ-ይበለን-እንዘምርም-የሱስ-ዳግም-ይመጣል-ይመለሳል-ይመለሳል-የሱስ-ዳግ',
   'am',
   'መለከት ንፉ',
   'Lift Up the Trumpet',
@@ -39265,7 +39265,7 @@ select
   216,
   '{"new_hymnal_number":216,"old_hymnal_number":217,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-lift-up-the-trumpet'
+join works w on w.canonical_key = 'am-sda-en-lyrics-lift-up-the-trumpet-መለከት-ንፉ-ሁሉ-እስኪሰማ-የሱስ-ዳግም-ይመጣል-ደስ-ይበለን-እንዘምርም-የሱስ-ዳግም-ይመጣል-ይመለሳል-ይመለሳል-የሱስ-ዳግ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39284,7 +39284,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ሁላችን-ሰማይ-ስንደርስ',
+  'am-sda-am-lyrics-ሁላችን-ሰማይ-ስንደርስ-የየሱስን-ግሩም-ፍቅር-ዘምር-ምህረቱን-ፀጋውንም-ዘምር-በከበረው-ግሩም-ስፍራ-ያዘጋጃል-ቤታችን-ሁላችን-ሰማይ-ስንደርስ-ምን-ዓይነት',
   'am',
   'ሁላችን ሰማይ ስንደርስ',
   'When We All Get to Heaven',
@@ -39349,7 +39349,7 @@ select
   217,
   '{"new_hymnal_number":223,"old_hymnal_number":218,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ሁላችን-ሰማይ-ስንደርስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ሁላችን-ሰማይ-ስንደርስ-የየሱስን-ግሩም-ፍቅር-ዘምር-ምህረቱን-ፀጋውንም-ዘምር-በከበረው-ግሩም-ስፍራ-ያዘጋጃል-ቤታችን-ሁላችን-ሰማይ-ስንደርስ-ምን-ዓይነት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39368,7 +39368,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-is-a-land-of-pure-delight',
+  'am-sda-en-lyrics-there-is-a-land-of-pure-delight-መልካም-የደስታ-አገር-ቅዱሳን-ያሉባት-ቀኑ-ጨለማን-ያርቃል-ደስታም-መከራን-የዘላለም-ምንጭ-ይፈልቃል-አ',
   'am',
   'መልካም የደስታ አገር',
   'There is a Land of Pure Delight',
@@ -39416,7 +39416,7 @@ select
   218,
   '{"new_hymnal_number":231,"old_hymnal_number":219,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-is-a-land-of-pure-delight'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-is-a-land-of-pure-delight-መልካም-የደስታ-አገር-ቅዱሳን-ያሉባት-ቀኑ-ጨለማን-ያርቃል-ደስታም-መከራን-የዘላለም-ምንጭ-ይፈልቃል-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39435,7 +39435,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-on-jordan-s-stromy-banks',
+  'am-sda-en-lyrics-on-jordan-s-stromy-banks-በዮርዳኖስ-ወንዝ-ዳር-ቆሜ-አሻግሬ-ስመኝ-የምታምረውን-ከነዓንን-ለኔ-እመኛታለሁ-ባማረችው-ሥፍራ-ዕረፍት-ስገናኝ-ወ',
   'am',
   'በዮርዳኖስ ወንዝ ዳር ቆሜ',
   'On Jordan\''s Stromy Banks',
@@ -39491,7 +39491,7 @@ select
   219,
   '{"new_hymnal_number":232,"old_hymnal_number":220,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-on-jordan-s-stromy-banks'
+join works w on w.canonical_key = 'am-sda-en-lyrics-on-jordan-s-stromy-banks-በዮርዳኖስ-ወንዝ-ዳር-ቆሜ-አሻግሬ-ስመኝ-የምታምረውን-ከነዓንን-ለኔ-እመኛታለሁ-ባማረችው-ሥፍራ-ዕረፍት-ስገናኝ-ወ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39510,7 +39510,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-there-s-a-land-that-is-fairer-than-day',
+  'am-sda-en-lyrics-there-s-a-land-that-is-fairer-than-day-የምታምረው-ሀገር-ያች-ናት-በእምነት-በሩቅ-የምናያት-አባታችን-በዚያ-ይሆናል-መኖሪያም-ያዘጋ',
   'am',
   'ቅርብ ነው ጊዜው',
   'There\''s a Land that is Fairer than Day',
@@ -39564,7 +39564,7 @@ select
   220,
   '{"new_hymnal_number":221,"old_hymnal_number":221,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-there-s-a-land-that-is-fairer-than-day'
+join works w on w.canonical_key = 'am-sda-en-lyrics-there-s-a-land-that-is-fairer-than-day-የምታምረው-ሀገር-ያች-ናት-በእምነት-በሩቅ-የምናያት-አባታችን-በዚያ-ይሆናል-መኖሪያም-ያዘጋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39583,7 +39583,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በዘውዴ-ከዋክብት-ይኖሩን',
+  'am-sda-am-lyrics-በዘውዴ-ከዋክብት-ይኖሩን-ስላማረችው-ከተማ-አስባለሁ-ጸሐይ-ሲገባ-እደርሳለሁ-ከሚገርመው-ዙፋን-እቀመጣለሁ-በዘውዴ-ከዋክብት-ይኖሩን-ከዋክብት-አሉኝ-ወይ-የ',
   'am',
   'በዘውዴ ከዋክብት ይኖሩን',
   'Will there Any Stars?',
@@ -39641,7 +39641,7 @@ select
   221,
   '{"new_hymnal_number":222,"old_hymnal_number":222,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በዘውዴ-ከዋክብት-ይኖሩን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በዘውዴ-ከዋክብት-ይኖሩን-ስላማረችው-ከተማ-አስባለሁ-ጸሐይ-ሲገባ-እደርሳለሁ-ከሚገርመው-ዙፋን-እቀመጣለሁ-በዘውዴ-ከዋክብት-ይኖሩን-ከዋክብት-አሉኝ-ወይ-የ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39660,7 +39660,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-m-on-my-way-home',
+  'am-sda-en-lyrics-i-m-on-my-way-home-ወደ-ቤት-ልሒድ-ወደ-ሰማይ-ቤት-ወደ-ቤት-ልሒድ-ወደ-የሱስ-ፈተና-ያልፋል-በሰማዩ-በር-ወደ-ቤት-ልሒድ-በሰማይ',
   'am',
   'ወደ ቤት ልሒድ',
   'I\''m on My Way Home',
@@ -39702,7 +39702,7 @@ select
   222,
   '{"new_hymnal_number":218,"old_hymnal_number":223,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-m-on-my-way-home'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-m-on-my-way-home-ወደ-ቤት-ልሒድ-ወደ-ሰማይ-ቤት-ወደ-ቤት-ልሒድ-ወደ-የሱስ-ፈተና-ያልፋል-በሰማዩ-በር-ወደ-ቤት-ልሒድ-በሰማይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39721,7 +39721,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-the-roll-is-called-up-younder',
+  'am-sda-en-lyrics-when-the-roll-is-called-up-younder-የጌታ-መለከት-ሲነፋ-ጊዜውም-ሲፈፀም-የንጋት-ብርሃን-ይብራ-ለዘላለም-የዳኑት-ፃድቃን-ከዚህ-ወደላይ',
   'am',
   'ስሜ ሲጠራ',
   'When the Roll is Called Up Younder',
@@ -39774,7 +39774,7 @@ select
   223,
   '{"new_hymnal_number":225,"old_hymnal_number":224,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-the-roll-is-called-up-younder'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-the-roll-is-called-up-younder-የጌታ-መለከት-ሲነፋ-ጊዜውም-ሲፈፀም-የንጋት-ብርሃን-ይብራ-ለዘላለም-የዳኑት-ፃድቃን-ከዚህ-ወደላይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39793,7 +39793,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በደጅ-ይገባሉ',
+  'am-sda-am-lyrics-በደጅ-ይገባሉ-እሊያ-ማን-ናቸው-የሚኖሩ-ከሞት-ወደ-ህይወት-ተሻገሩ-ጌታን-የሚያከብሩ-ንፁሐን-በበጉ-ደም-በደጅ-ይገባሉ-ወደ-የሩሳሌም-ንፁሐን-በበጉ-ደም-በ',
   'am',
   'በደጅ ይገባሉ',
   'Sweeping Thought the Gates',
@@ -39865,7 +39865,7 @@ select
   224,
   '{"new_hymnal_number":224,"old_hymnal_number":225,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በደጅ-ይገባሉ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በደጅ-ይገባሉ-እሊያ-ማን-ናቸው-የሚኖሩ-ከሞት-ወደ-ህይወት-ተሻገሩ-ጌታን-የሚያከብሩ-ንፁሐን-በበጉ-ደም-በደጅ-ይገባሉ-ወደ-የሩሳሌም-ንፁሐን-በበጉ-ደም-በ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39884,7 +39884,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-few-more-years-shall-roll',
+  'am-sda-en-lyrics-a-few-more-years-shall-roll-ጊዜያቱ-ይሄዳል-ወራቱም-ይመጣል-ወዳጆቻችንን-ልናይ-በቀብር-ያሉትን-ኦ-ጌታ-ሆይ-ነፍሴን-አዘጋጅ-ለዚያ-ቀን-ኦ',
   'am',
   'ጊዜያቱ ይሄዳል',
   'A Few More Years Shall Roll',
@@ -39938,7 +39938,7 @@ select
   225,
   '{"new_hymnal_number":226,"old_hymnal_number":226,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-few-more-years-shall-roll'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-few-more-years-shall-roll-ጊዜያቱ-ይሄዳል-ወራቱም-ይመጣል-ወዳጆቻችንን-ልናይ-በቀብር-ያሉትን-ኦ-ጌታ-ሆይ-ነፍሴን-አዘጋጅ-ለዚያ-ቀን-ኦ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -39957,7 +39957,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ውቧ-የኤደን-ሸለቆ',
+  'am-sda-am-lyrics-ውቧ-የኤደን-ሸለቆ-ውቧ-የኤደን-ሸለቆ-ደኖችሽ-ውበትሽ-ፈውስና-ጠገን-ይሰጣል-ደክመው-ሳል-ልጆችሽ-ውቧ-የኤደን-ሸለቆ-የተቀደሱት-ቤት-በበረሃ-ስመላለስ-ሳል',
   'am',
   'ውቧ የኤደን ሸለቆ',
   'Beautiful Valler of Eden',
@@ -40008,7 +40008,7 @@ select
   226,
   '{"new_hymnal_number":227,"old_hymnal_number":227,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ውቧ-የኤደን-ሸለቆ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ውቧ-የኤደን-ሸለቆ-ውቧ-የኤደን-ሸለቆ-ደኖችሽ-ውበትሽ-ፈውስና-ጠገን-ይሰጣል-ደክመው-ሳል-ልጆችሽ-ውቧ-የኤደን-ሸለቆ-የተቀደሱት-ቤት-በበረሃ-ስመላለስ-ሳል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40027,7 +40027,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-far-beyond-the-sun',
+  'am-sda-en-lyrics-far-beyond-the-sun-ምንም-ኃብት-ባይኖረኝ-በምድራዊ-ጉዞ-በዚህ-ሕይወት-ማዶ-ቤት-ይኖረኛል-ባለም-ባይመቸኝ-የተናቅሁ-ብሆንም-ጌታ-ያድነኛል-ተስፋ',
   'am',
   'ከፀሐይ ማዶ',
   'Far Beyond the Sun',
@@ -40077,7 +40077,7 @@ select
   227,
   '{"new_hymnal_number":228,"old_hymnal_number":228,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-far-beyond-the-sun'
+join works w on w.canonical_key = 'am-sda-en-lyrics-far-beyond-the-sun-ምንም-ኃብት-ባይኖረኝ-በምድራዊ-ጉዞ-በዚህ-ሕይወት-ማዶ-ቤት-ይኖረኛል-ባለም-ባይመቸኝ-የተናቅሁ-ብሆንም-ጌታ-ያድነኛል-ተስፋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40096,7 +40096,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-face-to-face',
+  'am-sda-en-lyrics-face-to-face-ፊት-ለፊት-ከክርስቶስ-ጋር-ፊት-ለፊት-እንዴት-ይሆን-በደስታ-ባየሁት-ጊዜ-የሱስ-የሞተልኝን-አ-ፊት-ለፊትም-አየዋለሁ-ማ-በሰማዩ-ሰማያ',
   'am',
   'ፊት ለፊት',
   'Face to Face',
@@ -40155,7 +40155,7 @@ select
   228,
   '{"new_hymnal_number":229,"old_hymnal_number":229,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-face-to-face'
+join works w on w.canonical_key = 'am-sda-en-lyrics-face-to-face-ፊት-ለፊት-ከክርስቶስ-ጋር-ፊት-ለፊት-እንዴት-ይሆን-በደስታ-ባየሁት-ጊዜ-የሱስ-የሞተልኝን-አ-ፊት-ለፊትም-አየዋለሁ-ማ-በሰማዩ-ሰማያ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40174,7 +40174,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-never-grow-old',
+  'am-sda-en-lyrics-never-grow-old-ስላንድ-አገር-ሰማሁ-ከሩቅ-ጠረፍ-ያለ-መልካም-የተዋበ-ግሩም-ቤት-የሠራው-የሱስ-ነው-ከዚያ-አንሞትም-ከዚያ-ፈፅሞ-አናረጅም-ከዚያ',
   'am',
   'ከዚያ መድከም ማርጀት የለም',
   'Never Grow Old',
@@ -40235,7 +40235,7 @@ select
   229,
   '{"new_hymnal_number":230,"old_hymnal_number":230,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-never-grow-old'
+join works w on w.canonical_key = 'am-sda-en-lyrics-never-grow-old-ስላንድ-አገር-ሰማሁ-ከሩቅ-ጠረፍ-ያለ-መልካም-የተዋበ-ግሩም-ቤት-የሠራው-የሱስ-ነው-ከዚያ-አንሞትም-ከዚያ-ፈፅሞ-አናረጅም-ከዚያ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40254,7 +40254,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-lord-our-saviour',
+  'am-sda-en-lyrics-o-lord-our-saviour-የወጣቶች-አምላክ-ፀሎታችን-ስማ-አንተን-የማይወዱህ-እንዲሹህ-እርዳ-ያለም-ፍቅር-ቢይዛቸውም-ቅሉ-የአንተ-ናቸው-የአንተ-ናቸው',
   'am',
   'የወጣቶች አምላክ',
   'O Lord Our Saviour',
@@ -40303,7 +40303,7 @@ select
   230,
   '{"new_hymnal_number":246,"old_hymnal_number":231,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-lord-our-saviour'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-lord-our-saviour-የወጣቶች-አምላክ-ፀሎታችን-ስማ-አንተን-የማይወዱህ-እንዲሹህ-እርዳ-ያለም-ፍቅር-ቢይዛቸውም-ቅሉ-የአንተ-ናቸው-የአንተ-ናቸው'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40322,7 +40322,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እንደ-ዳንኤል-ሁን',
+  'am-sda-am-lyrics-እንደ-ዳንኤል-ሁን-በኃሳብ-ጽኑ-ሁነህ-በትዕዛዙ-ሒድ-ክብር-ለታማኝ-ሰዎች-ክብር-ለዳንኤል-ጓድ-እንደ-ዳንኤል-ሁን-በድፍረትም-ቁም-ድፈር-ባሳብህ-ጽና-በድፍ',
   'am',
   'እንደ ዳንኤል ሁን',
   'Dare to Be a Daniel',
@@ -40377,7 +40377,7 @@ select
   231,
   '{"new_hymnal_number":248,"old_hymnal_number":232,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እንደ-ዳንኤል-ሁን'
+join works w on w.canonical_key = 'am-sda-am-lyrics-እንደ-ዳንኤል-ሁን-በኃሳብ-ጽኑ-ሁነህ-በትዕዛዙ-ሒድ-ክብር-ለታማኝ-ሰዎች-ክብር-ለዳንኤል-ጓድ-እንደ-ዳንኤል-ሁን-በድፍረትም-ቁም-ድፈር-ባሳብህ-ጽና-በድፍ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40396,7 +40396,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful-grace-of-jesus',
+  'am-sda-en-lyrics-wonderful-grace-of-jesus-የየሱስ-ግሩም-ፀጋ-ኃጢዓቴን-ሸፈነው-ምላሴስ-እንዴት-ትድፈር-ክብሩን-ለመናገር-ሸክሜን-ከላዬ-አነሳ-እኔም-ነፃ-ወጣ',
   'am',
   'የየሱስ ግሩም ፀጋ',
   'Wonderful Grace of Jesus',
@@ -40461,7 +40461,7 @@ select
   232,
   '{"new_hymnal_number":250,"old_hymnal_number":233,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful-grace-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-grace-of-jesus-የየሱስ-ግሩም-ፀጋ-ኃጢዓቴን-ሸፈነው-ምላሴስ-እንዴት-ትድፈር-ክብሩን-ለመናገር-ሸክሜን-ከላዬ-አነሳ-እኔም-ነፃ-ወጣ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40480,7 +40480,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-would-be-true',
+  'am-sda-en-lyrics-i-would-be-true-ታማኝ-ልሁን-ለሚያምኑብኝ-ሁሉ-ንፁህ-ልሁን-ከንፁሀን-ጋራ-ብርቱ-ልሁን-የሚመጣብኝ-ሥቃይ-ደፋር-ልሁን-ድፍረት-ስለ-ሚያሻኝ-ደፋር',
   'am',
   'ታማኝ ልሁን',
   'I Would Be True',
@@ -40532,7 +40532,7 @@ select
   233,
   '{"new_hymnal_number":249,"old_hymnal_number":234,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-would-be-true'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-would-be-true-ታማኝ-ልሁን-ለሚያምኑብኝ-ሁሉ-ንፁህ-ልሁን-ከንፁሀን-ጋራ-ብርቱ-ልሁን-የሚመጣብኝ-ሥቃይ-ደፋር-ልሁን-ድፍረት-ስለ-ሚያሻኝ-ደፋር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40551,7 +40551,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-መዝሙር-እንዘምር',
+  'am-sda-am-lyrics-መዝሙር-እንዘምር-መዝሙር-እንዘምር-በየመንገድ-የሚረዳን-ወደ-ቤታችን-ስንገሰግሥ-ሌሊቱ-ያልፋል-በብርሃን-ይለወጣል-ወደ-ቤታችን-እንገሥግስ-ባጭሩ-ጊዜ-ባጭሩ',
   'am',
   'መዝሙር እንዘምር',
   'In a Little While We\''re Going Home',
@@ -40611,7 +40611,7 @@ select
   234,
   '{"new_hymnal_number":251,"old_hymnal_number":235,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-መዝሙር-እንዘምር'
+join works w on w.canonical_key = 'am-sda-am-lyrics-መዝሙር-እንዘምር-መዝሙር-እንዘምር-በየመንገድ-የሚረዳን-ወደ-ቤታችን-ስንገሰግሥ-ሌሊቱ-ያልፋል-በብርሃን-ይለወጣል-ወደ-ቤታችን-እንገሥግስ-ባጭሩ-ጊዜ-ባጭሩ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40630,7 +40630,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-brighten-the-corner-where-you-are',
+  'am-sda-en-lyrics-brighten-the-corner-where-you-are-አንድን-ታላቅ-በመፈለግ-አትታክቱ-በሩቅ-አገር-መልካም-ልትሰራ-ባጠገብህ-ባለው-ሥራ-ታማኝ-ሁንና-ባለ',
   'am',
   'ባለህበት ማዕዘን አብራ',
   'Brighten the Corner Where you Are',
@@ -40684,7 +40684,7 @@ select
   235,
   '{"new_hymnal_number":252,"old_hymnal_number":236,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-brighten-the-corner-where-you-are'
+join works w on w.canonical_key = 'am-sda-en-lyrics-brighten-the-corner-where-you-are-አንድን-ታላቅ-በመፈለግ-አትታክቱ-በሩቅ-አገር-መልካም-ልትሰራ-ባጠገብህ-ባለው-ሥራ-ታማኝ-ሁንና-ባለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40703,7 +40703,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-in-the-heart-of-jesus',
+  'am-sda-en-lyrics-in-the-heart-of-jesus-በጌታ-የሱስ-ልብ-ፍቅር-አለልን-ገር-የሆነ-ፍቅር-እንዳያመልጠን-ለምን-ስለ-ወዳጅ-እንቸገራለን-በጌታ-የሱስ-ልብ-ውስጥ',
   'am',
   'በጌታ የሱስ ልብ',
   'In the Heart of Jesus',
@@ -40757,7 +40757,7 @@ select
   236,
   '{"new_hymnal_number":255,"old_hymnal_number":237,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-in-the-heart-of-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-in-the-heart-of-jesus-በጌታ-የሱስ-ልብ-ፍቅር-አለልን-ገር-የሆነ-ፍቅር-እንዳያመልጠን-ለምን-ስለ-ወዳጅ-እንቸገራለን-በጌታ-የሱስ-ልብ-ውስጥ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40776,7 +40776,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-it-is-morning-in-my-heart',
+  'am-sda-en-lyrics-it-is-morning-in-my-heart-የሌሊቱ-ጨለማ-ተወግዷል-ንጋት-ሁኗል-በልቤ-ብርሃን-ባለበቱ-ቀን-እኖራለሁ-ንጋት-ሁኗል-በልቤ-ፀሀይ-ወጥቷል-ጸሐይ',
   'am',
   'ጸሐይ ወጥቷል በልቤ',
   'It is Morning in My Heart',
@@ -40834,7 +40834,7 @@ select
   237,
   '{"new_hymnal_number":257,"old_hymnal_number":238,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-it-is-morning-in-my-heart'
+join works w on w.canonical_key = 'am-sda-en-lyrics-it-is-morning-in-my-heart-የሌሊቱ-ጨለማ-ተወግዷል-ንጋት-ሁኗል-በልቤ-ብርሃን-ባለበቱ-ቀን-እኖራለሁ-ንጋት-ሁኗል-በልቤ-ፀሀይ-ወጥቷል-ጸሐይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40853,7 +40853,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-missionary-volunteers',
+  'am-sda-en-lyrics-missionary-volunteers-ፈቃደኛ-ሰባኮች-የእውነት-ታዛዦች-ወንጌልንም-የሚሰብኩ-ለዓለም-ሰዎች-ታዛዦች-ታዛዦች-ያምራል-ስማችን-ታዛዦች-ታዛዦች-ያ',
   'am',
   'ፈቃደኛ ሰባኮች',
   'Missionary Volunteers',
@@ -40909,7 +40909,7 @@ select
   238,
   '{"new_hymnal_number":259,"old_hymnal_number":239,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-missionary-volunteers'
+join works w on w.canonical_key = 'am-sda-en-lyrics-missionary-volunteers-ፈቃደኛ-ሰባኮች-የእውነት-ታዛዦች-ወንጌልንም-የሚሰብኩ-ለዓለም-ሰዎች-ታዛዦች-ታዛዦች-ያምራል-ስማችን-ታዛዦች-ታዛዦች-ያ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -40928,7 +40928,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-where-the-gates-swing-outward-never',
+  'am-sda-en-lyrics-where-the-gates-swing-outward-never-ጥቂት-ቀን-ቀርቷል-ጌታን-ልናከብር-ታሪኩንም-ልንናገር-ጸሐይ-ሲገባ-መድኅን-ሊጠራ-በክብርም-እቀር',
   'am',
   'ጥቂት ቀን ቀርቷል',
   'Where the Gates Swing Outward Never',
@@ -40989,7 +40989,7 @@ select
   239,
   '{"new_hymnal_number":263,"old_hymnal_number":240,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-where-the-gates-swing-outward-never'
+join works w on w.canonical_key = 'am-sda-en-lyrics-where-the-gates-swing-outward-never-ጥቂት-ቀን-ቀርቷል-ጌታን-ልናከብር-ታሪኩንም-ልንናገር-ጸሐይ-ሲገባ-መድኅን-ሊጠራ-በክብርም-እቀር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41008,7 +41008,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-shall-we-gather-at-the-river',
+  'am-sda-en-lyrics-shall-we-gather-at-the-river-በወንዙ-ዳር-እንሰብሰብ-መላዕክት-በሔዱት-ለዘላለም-የሚያበራ-የአምላክ-ዙፋን-ያለበት-በወንዙ-ዳር-እንሰብሰብ',
   'am',
   'በወንዙ ዳር እንሰብሰብ',
   'Shall we Gather at the River?',
@@ -41073,7 +41073,7 @@ select
   240,
   '{"new_hymnal_number":264,"old_hymnal_number":241,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-shall-we-gather-at-the-river'
+join works w on w.canonical_key = 'am-sda-en-lyrics-shall-we-gather-at-the-river-በወንዙ-ዳር-እንሰብሰብ-መላዕክት-በሔዱት-ለዘላለም-የሚያበራ-የአምላክ-ዙፋን-ያለበት-በወንዙ-ዳር-እንሰብሰብ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41092,7 +41092,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-saviour-lead-me-lest-i-stray',
+  'am-sda-en-lyrics-saviour-lead-me-lest-i-stray-የሱስ-ሆይ-ምራኝ-ና-ምራኝ-እንዳልጠፋም-ጠብቀኝ-ጠብቀን-በፍቅር-እጅህ-ምራኝ-ና-ምራኝ-ከጎንህም-አትለየኝ-አ',
   'am',
   'ምራኝ',
   'Saviour Lead Me, Lest I Stray',
@@ -41157,7 +41157,7 @@ select
   241,
   '{"new_hymnal_number":243,"old_hymnal_number":242,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-saviour-lead-me-lest-i-stray'
+join works w on w.canonical_key = 'am-sda-en-lyrics-saviour-lead-me-lest-i-stray-የሱስ-ሆይ-ምራኝ-ና-ምራኝ-እንዳልጠፋም-ጠብቀኝ-ጠብቀን-በፍቅር-እጅህ-ምራኝ-ና-ምራኝ-ከጎንህም-አትለየኝ-አ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41176,7 +41176,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sing-and-smile-and-pray',
+  'am-sda-en-lyrics-sing-and-smile-and-pray-ዘምር-በደስታ-በቀን-በማታ-ስትዘምር-ስታወድስ-ይርቃል-መከራህ-ኑር-በፈገግታ-በቀን-በማታ-ስትዘምር-ደስም-ሲልህ-ይር',
   'am',
   'ዘምር በደስታ',
   'Sing and Smile and Pray',
@@ -41221,7 +41221,7 @@ select
   242,
   '{"new_hymnal_number":242,"old_hymnal_number":243,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sing-and-smile-and-pray'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sing-and-smile-and-pray-ዘምር-በደስታ-በቀን-በማታ-ስትዘምር-ስታወድስ-ይርቃል-መከራህ-ኑር-በፈገግታ-በቀን-በማታ-ስትዘምር-ደስም-ሲልህ-ይር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41240,7 +41240,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-child-of-the-king',
+  'am-sda-en-lyrics-a-child-of-the-king-አባቴ-ተርፎት-ቤትና-መሬት-በጁ-ጨብጧል-ዓለምን-ንብረት-በሉል-በአልማዝ-በብር-በወርቅም-ሣጥኑ-ሞልቷል-መማያልቅ-ኃብቱ-የን',
   'am',
   'የንጉሡ ልጅ ነኝ 1',
   'A Child of the King',
@@ -41303,7 +41303,7 @@ select
   243,
   '{"new_hymnal_number":244,"old_hymnal_number":244,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-child-of-the-king'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-child-of-the-king-አባቴ-ተርፎት-ቤትና-መሬት-በጁ-ጨብጧል-ዓለምን-ንብረት-በሉል-በአልማዝ-በብር-በወርቅም-ሣጥኑ-ሞልቷል-መማያልቅ-ኃብቱ-የን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41322,7 +41322,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-my-lord-and-i',
+  'am-sda-en-lyrics-my-lord-and-i-አምላኬ-ለኔ-ቸር-እረኛዬ-ነው-ታማኝ-ወዳጅ-የለኝም-እንደርሱ-እጄን-ይዞ-መንገዱን-ያሳኛል-ከመከራም-ጉድጓድ-ያወጣኛል-እጄን-ይዞ-መን',
   'am',
   'ቸር አምላክ',
   'My Lord and I',
@@ -41377,7 +41377,7 @@ select
   244,
   '{"new_hymnal_number":245,"old_hymnal_number":245,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-my-lord-and-i'
+join works w on w.canonical_key = 'am-sda-en-lyrics-my-lord-and-i-አምላኬ-ለኔ-ቸር-እረኛዬ-ነው-ታማኝ-ወዳጅ-የለኝም-እንደርሱ-እጄን-ይዞ-መንገዱን-ያሳኛል-ከመከራም-ጉድጓድ-ያወጣኛል-እጄን-ይዞ-መን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41597,7 +41597,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-you-must-open-the-door',
+  'am-sda-en-lyrics-you-must-open-the-door-በሩን-ክፈቱለት-በሩን-ክፈቱለት-የሱስ-ሲገባ-አርነት-ያወጣል-ግን-በሩን-ክፈቱለት',
   'am',
   'በሩን ክፈቱለት',
   'You Must Open the Door',
@@ -41636,7 +41636,7 @@ select
   248,
   '{"new_hymnal_number":32,"old_hymnal_number":249,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-you-must-open-the-door'
+join works w on w.canonical_key = 'am-sda-en-lyrics-you-must-open-the-door-በሩን-ክፈቱለት-በሩን-ክፈቱለት-የሱስ-ሲገባ-አርነት-ያወጣል-ግን-በሩን-ክፈቱለት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41655,7 +41655,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ምስጋና-ይገባሃል',
+  'am-sda-en-lyrics-we-thank-thee-ምስጋና-ለአንተ-ይገባሃል-ለስጦታህ-ከቀን-ወደ-ቀን-ለምህረትህ-ምስጋና-ይድረስህ-በየቀኑ-ለምትሰጠን',
   'am',
   'ምስጋና ይገባሃል',
   'We Thank Thee',
@@ -41695,9 +41695,9 @@ select
 ',
   'sda_old',
   249,
-  '{"new_hymnal_number":null,"old_hymnal_number":250,"match_status":"missing_new"}'::jsonb
+  '{"new_hymnal_number":14,"old_hymnal_number":250,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ምስጋና-ይገባሃል'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-thank-thee-ምስጋና-ለአንተ-ይገባሃል-ለስጦታህ-ከቀን-ወደ-ቀን-ለምህረትህ-ምስጋና-ይድረስህ-በየቀኑ-ለምትሰጠን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41716,7 +41716,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-we-have-this-hope',
+  'am-sda-en-lyrics-we-have-this-hope-ይህ-ተስፋ-አለን-ልብን-የሚያሞቅ-የጌታ-መምጣት-ተስፋችን-እምነት-አለን-ክርስቶስ-የሰጠን-በቃሉ-ተስፋ-መታመን-አሁን-ቀኑ-ቀር',
   'am',
   'ይህ ተስፋ አለን',
   'We Have This Hope',
@@ -41765,7 +41765,7 @@ select
   250,
   '{"new_hymnal_number":211,"old_hymnal_number":251,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-we-have-this-hope'
+join works w on w.canonical_key = 'am-sda-en-lyrics-we-have-this-hope-ይህ-ተስፋ-አለን-ልብን-የሚያሞቅ-የጌታ-መምጣት-ተስፋችን-እምነት-አለን-ክርስቶስ-የሰጠን-በቃሉ-ተስፋ-መታመን-አሁን-ቀኑ-ቀር'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41784,7 +41784,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ጥልቅ-እንደ-ውቂያኖስ',
+  'am-sda-am-lyrics-ጥልቅ-እንደ-ውቂያኖስ-ጥልቅ-እንደ-ውቂያኖስ-ከፍ-ያለ-እንደ-ጠፈር-ከምድር-የሰፋ-ነው-የየሱስ-ፍቅር-ይደግፈኛልም-ኃጢአተኛም-ብሆን-ቃሉ-ይነግረኛል-ፍቅሩ',
   'am',
   'ጥልቅ እንደ ውቂያኖስ',
   'Wide, Wide as the Ocean',
@@ -41826,7 +41826,7 @@ select
   251,
   '{"new_hymnal_number":159,"old_hymnal_number":252,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ጥልቅ-እንደ-ውቂያኖስ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ጥልቅ-እንደ-ውቂያኖስ-ጥልቅ-እንደ-ውቂያኖስ-ከፍ-ያለ-እንደ-ጠፈር-ከምድር-የሰፋ-ነው-የየሱስ-ፍቅር-ይደግፈኛልም-ኃጢአተኛም-ብሆን-ቃሉ-ይነግረኛል-ፍቅሩ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41906,7 +41906,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-what-the-world-needs-is-jesus',
+  'am-sda-en-lyrics-what-the-world-needs-is-jesus-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ሰላም-ደስታ-ይሰጣል-ሐዘንንም-ያጠፋል',
   'am',
   'ዓለም የሱስን ይሻል',
   'What the World Needs is Jesus',
@@ -41948,7 +41948,7 @@ select
   253,
   '{"new_hymnal_number":253,"old_hymnal_number":254,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-what-the-world-needs-is-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-what-the-world-needs-is-jesus-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ዓለም-የሱስን-ይሻል-የሱስን-ብቻ-ሰላም-ደስታ-ይሰጣል-ሐዘንንም-ያጠፋል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -41967,7 +41967,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-sing-along',
+  'am-sda-en-lyrics-sing-along-ስንጓዝ-እንዘምር-የሱስን-ጨብጠን-ብርሃኑን-እናብራ-እርሱ-የሰጠንን-ሌሎች-እንዲከተሉን-የደስታ-ድምጽ-ሲሰማ-ስንጓዝ-እንዘምር-የሱስን-ጨብ',
   'am',
   'ስንጓዝ እንዘምር',
   'Sing Along',
@@ -42009,7 +42009,7 @@ select
   254,
   '{"new_hymnal_number":254,"old_hymnal_number":255,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-sing-along'
+join works w on w.canonical_key = 'am-sda-en-lyrics-sing-along-ስንጓዝ-እንዘምር-የሱስን-ጨብጠን-ብርሃኑን-እናብራ-እርሱ-የሰጠንን-ሌሎች-እንዲከተሉን-የደስታ-ድምጽ-ሲሰማ-ስንጓዝ-እንዘምር-የሱስን-ጨብ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42028,7 +42028,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-into-my-heart',
+  'am-sda-en-lyrics-into-my-heart-በልቤ-ውስጥ-በልቤ-ውስጥ-አንተ-ግባበት-ኦ-የሱስ-ግባ-ዛሬ-ከኔ-ጋር-ሁን-በልቤ-ግባ-ኦ-የሱስ-በልቤ-ውስጥ-በልቤ-ውስጥ-ብርሃንህ-ይ',
   'am',
   'በልቤ ውስጥ',
   'Into My Heart',
@@ -42072,7 +42072,7 @@ select
   255,
   '{"new_hymnal_number":83,"old_hymnal_number":256,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-into-my-heart'
+join works w on w.canonical_key = 'am-sda-en-lyrics-into-my-heart-በልቤ-ውስጥ-በልቤ-ውስጥ-አንተ-ግባበት-ኦ-የሱስ-ግባ-ዛሬ-ከኔ-ጋር-ሁን-በልቤ-ግባ-ኦ-የሱስ-በልቤ-ውስጥ-በልቤ-ውስጥ-ብርሃንህ-ይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42152,7 +42152,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-see-jesus',
+  'am-sda-en-lyrics-i-see-jesus-በየጧቱ-ይታየኛል-በየማታው-ትዝ-ይለኛል-በጨለማ-ይሰማኛል-በየቦታው-የሱስ-ይታያል',
   'am',
   'የሱስ ይታያል',
   'I See Jesus',
@@ -42193,7 +42193,7 @@ select
   257,
   '{"new_hymnal_number":256,"old_hymnal_number":258,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-see-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-see-jesus-በየጧቱ-ይታየኛል-በየማታው-ትዝ-ይለኛል-በጨለማ-ይሰማኛል-በየቦታው-የሱስ-ይታያል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42335,7 +42335,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ይበራል',
+  'am-sda-am-lyrics-ይበራል-ይበራል-ይበራል-መብራትህን-ከፍ-አድርገው-ይበራል-ዓለም-ሁሉ-ጨልሟል-ልታበራ-ያሻሃል-መንገድህን-ያሳያል-ይበራል',
   'am',
   'ይበራል',
   'Let It Shine',
@@ -42375,7 +42375,7 @@ select
   260,
   '{"new_hymnal_number":261,"old_hymnal_number":261,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ይበራል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ይበራል-ይበራል-ይበራል-መብራትህን-ከፍ-አድርገው-ይበራል-ዓለም-ሁሉ-ጨልሟል-ልታበራ-ያሻሃል-መንገድህን-ያሳያል-ይበራል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42394,7 +42394,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-want-to-be-ready',
+  'am-sda-en-lyrics-i-want-to-be-ready-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-የሱስ-ሳይመጣ-ያለምን-ደስታ-ተው-ተጠንቀቅ-እስኪመጣ',
   'am',
   'ዛሬ ተዘጋጅ',
   'I Want to Be Ready',
@@ -42436,7 +42436,7 @@ select
   261,
   '{"new_hymnal_number":215,"old_hymnal_number":262,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-want-to-be-ready'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-want-to-be-ready-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-ዛሬ-ተዘጋጅ-ለጌታ-ምጽዓት-የሱስ-ሳይመጣ-ያለምን-ደስታ-ተው-ተጠንቀቅ-እስኪመጣ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42455,7 +42455,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-wonderful',
+  'am-sda-en-lyrics-wonderful-መልካም-ስምን-ይዟል-መልካም-ዘውድም-ደፍቷል-ድሉ-ግሩም-በረከት-ያስገኛል-ግሩሙ-ቀራኒዮ-ግሩም-ጸጋው-ለኔ-ፍቅሩን-ለሁላችን-ይሰጠናል',
   'am',
   'መልካም ስም',
   'Wonderful',
@@ -42501,7 +42501,7 @@ select
   262,
   '{"new_hymnal_number":176,"old_hymnal_number":263,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-wonderful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-wonderful-መልካም-ስምን-ይዟል-መልካም-ዘውድም-ደፍቷል-ድሉ-ግሩም-በረከት-ያስገኛል-ግሩሙ-ቀራኒዮ-ግሩም-ጸጋው-ለኔ-ፍቅሩን-ለሁላችን-ይሰጠናል'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42642,7 +42642,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-trun-your-eyes-upon-jesus',
+  'am-sda-en-lyrics-trun-your-eyes-upon-jesus-ወደ-የሱስ-ተመልከት-ግሩም-አስደናቂ-ፊቱን-የዚህ-ዓለም-ኃብት-ሁሉ-ጠፊ-ነው-ሁሉም-ያልፋል-ግርማውን-ስናይ',
   'am',
   'ወደ የሱስ ተመልከት',
   'Trun Your Eyes Upon Jesus',
@@ -42682,7 +42682,7 @@ select
   265,
   '{"new_hymnal_number":80,"old_hymnal_number":266,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-trun-your-eyes-upon-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-trun-your-eyes-upon-jesus-ወደ-የሱስ-ተመልከት-ግሩም-አስደናቂ-ፊቱን-የዚህ-ዓለም-ኃብት-ሁሉ-ጠፊ-ነው-ሁሉም-ያልፋል-ግርማውን-ስናይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42701,7 +42701,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-perfect-love',
+  'am-sda-en-lyrics-o-perfect-love-ፍጹም-ፍቅር-ሊታሰብ-የማይቻል-ልንለምንህ-ተንበርክከናል-ፍቅራቸው-ወሰን-የሌለው-እንዲሆን-አንተ-ለዘላለም-አስማማቸው-ፍጹም-ሕይወት',
   'am',
   'ፍጹም ፍቅር',
   'O Perfect Love',
@@ -42749,7 +42749,7 @@ select
   266,
   '{"new_hymnal_number":276,"old_hymnal_number":267,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-perfect-love'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-perfect-love-ፍጹም-ፍቅር-ሊታሰብ-የማይቻል-ልንለምንህ-ተንበርክከናል-ፍቅራቸው-ወሰን-የሌለው-እንዲሆን-አንተ-ለዘላለም-አስማማቸው-ፍጹም-ሕይወት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42768,7 +42768,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-jesus-loves-me',
+  'am-sda-en-lyrics-jesus-loves-me-አውቃለሁ-ይወደኛል-ወንጌሉ-ይነግረኛል-ታናሾች-የርሱ-ናቸው-ሲደክሙ-ያበረታል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-ወንጌሉ-ነ',
   'am',
   'አውቃለሁ ይወደኛል',
   'Jesus Loves Me',
@@ -42826,7 +42826,7 @@ select
   267,
   '{"new_hymnal_number":268,"old_hymnal_number":268,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-jesus-loves-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-jesus-loves-me-አውቃለሁ-ይወደኛል-ወንጌሉ-ይነግረኛል-ታናሾች-የርሱ-ናቸው-ሲደክሙ-ያበረታል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-የሱስ-ወዶኛል-ወንጌሉ-ነ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42845,7 +42845,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-እከተላለሁ',
+  'am-sda-en-lyrics-i-will-follow-thee-የሱስ-ሆይ-ልከተልህ-ስትጠራኝ-እሰማለሁ-በፍቅርህም-አምናለሁ-ወደ-ቤትህ-ምራኝ-እከተላለሁ-እከተላለሁ-እከተላለሁ-ወደሚመራኝ',
   'am',
   'እከተላለሁ',
   'I Will Follow Thee',
@@ -42894,7 +42894,7 @@ select
   268,
   '{"new_hymnal_number":269,"old_hymnal_number":269,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-እከተላለሁ'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-will-follow-thee-የሱስ-ሆይ-ልከተልህ-ስትጠራኝ-እሰማለሁ-በፍቅርህም-አምናለሁ-ወደ-ቤትህ-ምራኝ-እከተላለሁ-እከተላለሁ-እከተላለሁ-ወደሚመራኝ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -42913,7 +42913,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-when-he-cometh',
+  'am-sda-en-lyrics-when-he-cometh-ወደኛ-የሱስ-ሲመጣ-ልጆቹን-ሊጠራ-የርሱ-ዕንቁዎች-ክቡር-ዕንቁዎች-ውዶቹ-ልጆች-አ-እንደማለዳ-ከዋክብት-ዝ-በሰማይ-ሊበሩ-ማ-ለዘላለ',
   'am',
   'ወደኛ የሱስ ሲመጣ',
   'When He Cometh',
@@ -42967,7 +42967,7 @@ select
   269,
   '{"new_hymnal_number":270,"old_hymnal_number":270,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-when-he-cometh'
+join works w on w.canonical_key = 'am-sda-en-lyrics-when-he-cometh-ወደኛ-የሱስ-ሲመጣ-ልጆቹን-ሊጠራ-የርሱ-ዕንቁዎች-ክቡር-ዕንቁዎች-ውዶቹ-ልጆች-አ-እንደማለዳ-ከዋክብት-ዝ-በሰማይ-ሊበሩ-ማ-ለዘላለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43061,7 +43061,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-let-the-little-ones-come',
+  'am-sda-en-lyrics-let-the-little-ones-come-ጣፋጭ-ጥንታዊ-ታሪክ-ሳነብ-ሳለሁ-የሱስ-በዚህ-ዓለም-ሕፃናትን-በክንዱ-ሲያቅፋቸው-ከርሱ-ጋር-ብሆን-ያን-ጊዜ-እጆቹ',
   'am',
   'ሕፃናት ወደኔ ይምጡ',
   'Let the Little Ones Come',
@@ -43109,7 +43109,7 @@ select
   271,
   '{"new_hymnal_number":273,"old_hymnal_number":272,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-let-the-little-ones-come'
+join works w on w.canonical_key = 'am-sda-en-lyrics-let-the-little-ones-come-ጣፋጭ-ጥንታዊ-ታሪክ-ሳነብ-ሳለሁ-የሱስ-በዚህ-ዓለም-ሕፃናትን-በክንዱ-ሲያቅፋቸው-ከርሱ-ጋር-ብሆን-ያን-ጊዜ-እጆቹ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43128,7 +43128,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-ll-be-a-sunbeam',
+  'am-sda-en-lyrics-i-ll-be-a-sunbeam-እንድንሆን-የፀሀይ-ጮራ-የሱስ-ይፈልጋል-እንዲደሰትብኝ-በኔ-ስማር-ስጫወትም-ደግ-የፀሀይ-ጮራ-የሱስ-የሚፈልግብኝ-ደግ-የፀሀይ',
   'am',
   'እንድንሆን የፀሀይ ጮራ',
   'I\''ll Be a Sunbeam',
@@ -43183,7 +43183,7 @@ select
   272,
   '{"new_hymnal_number":272,"old_hymnal_number":273,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-ll-be-a-sunbeam'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-ll-be-a-sunbeam-እንድንሆን-የፀሀይ-ጮራ-የሱስ-ይፈልጋል-እንዲደሰትብኝ-በኔ-ስማር-ስጫወትም-ደግ-የፀሀይ-ጮራ-የሱስ-የሚፈልግብኝ-ደግ-የፀሀይ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43202,7 +43202,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-master-hast-thou-work-for-me',
+  'am-sda-en-lyrics-master-hast-thou-work-for-me-ሥራ-አለህ-ወይ-ጌታ-በደስታ-እሰራለሁ-ኃይል-ዕውቀትም-የለኝም-ግን-ልሠራ-እወዳለሁ-እጆቼ-ቢደክሙብኝ-ግን-ት',
   'am',
   'ሥራ አለህ ወይ ጌታ ?',
   'Master, Hast Thou Work for Me',
@@ -43251,7 +43251,7 @@ select
   273,
   '{"new_hymnal_number":274,"old_hymnal_number":274,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-master-hast-thou-work-for-me'
+join works w on w.canonical_key = 'am-sda-en-lyrics-master-hast-thou-work-for-me-ሥራ-አለህ-ወይ-ጌታ-በደስታ-እሰራለሁ-ኃይል-ዕውቀትም-የለኝም-ግን-ልሠራ-እወዳለሁ-እጆቼ-ቢደክሙብኝ-ግን-ት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43270,7 +43270,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-toiling-for-jesus',
+  'am-sda-en-lyrics-toiling-for-jesus-በደስታ-ለየሱስ-እንሠራለን-ልናደርግ-የምንችለውን-ሁሉ-ከአምላክ-የተሰጠንን-ተግባር-በእምነት-ሥራችን-እንፈጽም-አ-ለየሱስ-ስራ',
   'am',
   'ለየሱስ ስራ',
   'Toiling for Jesus',
@@ -43324,7 +43324,7 @@ select
   274,
   '{"new_hymnal_number":275,"old_hymnal_number":275,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-toiling-for-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-toiling-for-jesus-በደስታ-ለየሱስ-እንሠራለን-ልናደርግ-የምንችለውን-ሁሉ-ከአምላክ-የተሰጠንን-ተግባር-በእምነት-ሥራችን-እንፈጽም-አ-ለየሱስ-ስራ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43343,7 +43343,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-like-a-little-candle',
+  'am-sda-en-lyrics-like-a-little-candle-እንድናበራ-የሱስ-ያዘናል-እንደ-ትንሽ-ሻማ-ሌት-የሚያበራ-በጨለማ-ዓለም-እናብራ-ባለህበቱ-ባለሁበት-እንድናበራ-ሁልጊዜ-ለ',
   'am',
   'እንድናበራ የሱስ ያዘናል',
   'Like a Little Candle',
@@ -43396,7 +43396,7 @@ select
   275,
   '{"new_hymnal_number":271,"old_hymnal_number":276,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-like-a-little-candle'
+join works w on w.canonical_key = 'am-sda-en-lyrics-like-a-little-candle-እንድናበራ-የሱስ-ያዘናል-እንደ-ትንሽ-ሻማ-ሌት-የሚያበራ-በጨለማ-ዓለም-እናብራ-ባለህበቱ-ባለሁበት-እንድናበራ-ሁልጊዜ-ለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43415,7 +43415,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-god-s-children-have-a-firm-foundation',
+  'am-sda-en-lyrics-god-s-children-have-a-firm-foundation-ያምላክ-ታናሽ-ጭፍራ-ጽኑ-ነው-በሁሉ-ስፍራ-በአምላክ-ይታመናሉ-ሁሉን-ከርሱ-ያገኛሉ-ልጆችም-ባ',
   'am',
   'ያምላክ ታናሽ ጭፍራ',
   'God\''s Children Have a Firm Foundation',
@@ -43478,7 +43478,7 @@ select
   276,
   '{"new_hymnal_number":267,"old_hymnal_number":277,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-god-s-children-have-a-firm-foundation'
+join works w on w.canonical_key = 'am-sda-en-lyrics-god-s-children-have-a-firm-foundation-ያምላክ-ታናሽ-ጭፍራ-ጽኑ-ነው-በሁሉ-ስፍራ-በአምላክ-ይታመናሉ-ሁሉን-ከርሱ-ያገኛሉ-ልጆችም-ባ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43497,7 +43497,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-this-is-my-father-s-world',
+  'am-sda-en-lyrics-this-is-my-father-s-world-ይህ-ዓለም-የአብ-ነው-ጆሮዬም-ሲሰማ-ይዘምራል-ፍጥረት-ሁሉ-የሰማይን-ዜማ-ይህ-ዓለም-የአብ-ነው-ያረካል-አሣቤ-ቋ',
   'am',
   'ይህ ዓለም የአብ ነው',
   'This is My Father\''s World',
@@ -43546,7 +43546,7 @@ select
   277,
   '{"new_hymnal_number":265,"old_hymnal_number":278,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-this-is-my-father-s-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-this-is-my-father-s-world-ይህ-ዓለም-የአብ-ነው-ጆሮዬም-ሲሰማ-ይዘምራል-ፍጥረት-ሁሉ-የሰማይን-ዜማ-ይህ-ዓለም-የአብ-ነው-ያረካል-አሣቤ-ቋ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43565,7 +43565,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-i-sing-the-mighty-power-of-god',
+  'am-sda-en-lyrics-i-sing-the-mighty-power-of-god-ያምላክን-ኃይል-ልዘምረው-ጋራ-የሰራውን-ባሕርን-የዘረጋውን-ሰማይን-ያረጋውን-ፀሀይ-በቀን-ያወጣውን-በሌት',
   'am',
   'ያምላክን ኃይል ልዘምረው',
   'I Sing the Mighty Power of God',
@@ -43613,7 +43613,7 @@ select
   278,
   '{"new_hymnal_number":266,"old_hymnal_number":279,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-i-sing-the-mighty-power-of-god'
+join works w on w.canonical_key = 'am-sda-en-lyrics-i-sing-the-mighty-power-of-god-ያምላክን-ኃይል-ልዘምረው-ጋራ-የሰራውን-ባሕርን-የዘረጋውን-ሰማይን-ያረጋውን-ፀሀይ-በቀን-ያወጣውን-በሌት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43632,7 +43632,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-holy-night',
+  'am-sda-en-lyrics-o-holy-night-ኦ-ቅዱስ-ሌት-ከዋክብት-ያበራሉ-ያዳኛችን-ልደት-ስለ-ለሆነ-ዓለም-በኃጢዓት-ስትጨማለቅ-መጣላት-ተስፋዋን-ስትጠብቅ-ግሩም-ተስፋው-ነፍሶ',
   'am',
   'ኦ ቅዱስ ሌት',
   'O Holy Night',
@@ -43695,7 +43695,7 @@ select
   279,
   '{"new_hymnal_number":280,"old_hymnal_number":280,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-holy-night'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-holy-night-ኦ-ቅዱስ-ሌት-ከዋክብት-ያበራሉ-ያዳኛችን-ልደት-ስለ-ለሆነ-ዓለም-በኃጢዓት-ስትጨማለቅ-መጣላት-ተስፋዋን-ስትጠብቅ-ግሩም-ተስፋው-ነፍሶ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43714,7 +43714,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ኦ-የቤተልሔም-ከተማ',
+  'am-sda-am-lyrics-ኦ-የቤተልሔም-ከተማ-ኦ-የቤተልሔም-ከተማ-እንዴት-ፀጥ-ብለሻል-በጣም-እንቅልፍ-ተጭኖሽ-ሳል-ከዋክብት-ያልፉሻል-ግን-ጨለማው-መንገድሽ-ለዘላለም-በራ-የዘመና',
   'am',
   'ኦ የቤተልሔም ከተማ',
   'O Little Town of Bethelehem',
@@ -43768,7 +43768,7 @@ select
   280,
   '{"new_hymnal_number":281,"old_hymnal_number":281,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ኦ-የቤተልሔም-ከተማ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ኦ-የቤተልሔም-ከተማ-ኦ-የቤተልሔም-ከተማ-እንዴት-ፀጥ-ብለሻል-በጣም-እንቅልፍ-ተጭኖሽ-ሳል-ከዋክብት-ያልፉሻል-ግን-ጨለማው-መንገድሽ-ለዘላለም-በራ-የዘመና'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43787,7 +43787,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-tis-shining-still',
+  'am-sda-en-lyrics-tis-shining-still-ያማረ-ኮከብ-ወጣ-አንድ-ሌት-አበራልን-የጠራ-መብራት-ጠቢባን-መራ-ግሩሙ-ጮራ-እስኪደርሱ-የጌታን-አልጋ-አ-ያማረው-ኮከብ-ዛሬም',
   'am',
   'ያማረ ኮከብ',
   '\''Tis Shining Still',
@@ -43842,7 +43842,7 @@ select
   281,
   '{"new_hymnal_number":282,"old_hymnal_number":282,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-tis-shining-still'
+join works w on w.canonical_key = 'am-sda-en-lyrics-tis-shining-still-ያማረ-ኮከብ-ወጣ-አንድ-ሌት-አበራልን-የጠራ-መብራት-ጠቢባን-መራ-ግሩሙ-ጮራ-እስኪደርሱ-የጌታን-አልጋ-አ-ያማረው-ኮከብ-ዛሬም'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43861,7 +43861,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-o-come-all-ye-faithful',
+  'am-sda-en-lyrics-o-come-all-ye-faithful-ኑ-የታመናችሁ-በደስታ-ዕልልታ-ቅረቡ-ቅረቡ-ወደ-ቤተልሔም-ኦ-ተመልከቱት-መሲሁ-ተወልዷል-ኦ-ኑ-እናክብረው-ኦ-ኑ-እናክ',
   'am',
   'ኑ የታመናችሁ',
   'O Come, All Ye Faithful',
@@ -43914,7 +43914,7 @@ select
   282,
   '{"new_hymnal_number":283,"old_hymnal_number":283,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-o-come-all-ye-faithful'
+join works w on w.canonical_key = 'am-sda-en-lyrics-o-come-all-ye-faithful-ኑ-የታመናችሁ-በደስታ-ዕልልታ-ቅረቡ-ቅረቡ-ወደ-ቤተልሔም-ኦ-ተመልከቱት-መሲሁ-ተወልዷል-ኦ-ኑ-እናክብረው-ኦ-ኑ-እናክ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -43933,7 +43933,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-christmas-song',
+  'am-sda-en-lyrics-a-christmas-song-የማይነገር-ነው-የማይታሰብ-ነው-ታላቅ-ደስታ-የልደት-ቀን-አቅርቡ-ክብር-በሁሉ-ምድር-የአምላክን-ፍቅር-እናመስግን-መሲህ-መጣልን',
   'am',
   'የማይነገር ነው',
   'A Christmas Song',
@@ -43982,7 +43982,7 @@ select
   283,
   '{"new_hymnal_number":284,"old_hymnal_number":284,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-christmas-song'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-christmas-song-የማይነገር-ነው-የማይታሰብ-ነው-ታላቅ-ደስታ-የልደት-ቀን-አቅርቡ-ክብር-በሁሉ-ምድር-የአምላክን-ፍቅር-እናመስግን-መሲህ-መጣልን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44001,7 +44001,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ስማ-መላዕክት-ዘመሩ',
+  'am-sda-am-lyrics-ስማ-መላዕክት-ዘመሩ-ስማ-መላዕክት-ዘመሩ-ክብር-ለአምላክ-እያሉ-ሰላምም-በምድር-ላይ-ኃጥዕ-አምላኩን-እንዲያይ-ነገዶች-በደስታ-ቃል-አሁን-እልል-እንበል-ን',
   'am',
   'ስማ መላዕክት ዘመሩ',
   'Hark! the Herald Angels Sing',
@@ -44049,7 +44049,7 @@ select
   284,
   '{"new_hymnal_number":285,"old_hymnal_number":285,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ስማ-መላዕክት-ዘመሩ'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ስማ-መላዕክት-ዘመሩ-ስማ-መላዕክት-ዘመሩ-ክብር-ለአምላክ-እያሉ-ሰላምም-በምድር-ላይ-ኃጥዕ-አምላኩን-እንዲያይ-ነገዶች-በደስታ-ቃል-አሁን-እልል-እንበል-ን'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44068,7 +44068,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-silent-night-holy-night',
+  'am-sda-en-lyrics-silent-night-holy-night-ብፁዕ-ሌት-ቅዱስ-ሌት-በሰላም-የሞላ-በሕፃኑ-በእናቲቱም-ላይ-ክብር-ታየ-ሲወርድ-ከሰማይ-ያ-ሌት-በቤተልሔም-ያ-ሌት',
   'am',
   'ብፁዕ ሌት',
   'Silent Night, Holy Night',
@@ -44113,7 +44113,7 @@ select
   285,
   '{"new_hymnal_number":286,"old_hymnal_number":286,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-silent-night-holy-night'
+join works w on w.canonical_key = 'am-sda-en-lyrics-silent-night-holy-night-ብፁዕ-ሌት-ቅዱስ-ሌት-በሰላም-የሞላ-በሕፃኑ-በእናቲቱም-ላይ-ክብር-ታየ-ሲወርድ-ከሰማይ-ያ-ሌት-በቤተልሔም-ያ-ሌት'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44132,7 +44132,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-a-christmas-morning',
+  'am-sda-en-lyrics-a-christmas-morning-የልደት-ቀን-ሲመጣ-የቤትልሔም-ህፃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በመውረድህ',
   'am',
   'የልደት ቀን ሲመጣ',
   'A Christmas Morning',
@@ -44177,7 +44177,7 @@ select
   286,
   '{"new_hymnal_number":287,"old_hymnal_number":287,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-a-christmas-morning'
+join works w on w.canonical_key = 'am-sda-en-lyrics-a-christmas-morning-የልደት-ቀን-ሲመጣ-የቤትልሔም-ህፃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በበረት-ላይ-የተኛ-ይሰጠናል-ብርሃን-በመውረድህ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44264,7 +44264,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-joy-to-the-world',
+  'am-sda-en-lyrics-joy-to-the-world-ደስታ-ለዓለም-ጌታ-መጥቷል-ምድር-ተቀበይው-ልባችሁን-አዘጋጁ-ሰማይና-ምድር-ባንድነት-ዘምሩ-መዝሙር-መዝሙር-ለህፃኑ-ደስታ-ለዓለ',
   'am',
   'ደስታ ለዓለም',
   'Joy to the World',
@@ -44322,7 +44322,7 @@ select
   288,
   '{"new_hymnal_number":288,"old_hymnal_number":289,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-joy-to-the-world'
+join works w on w.canonical_key = 'am-sda-en-lyrics-joy-to-the-world-ደስታ-ለዓለም-ጌታ-መጥቷል-ምድር-ተቀበይው-ልባችሁን-አዘጋጁ-ሰማይና-ምድር-ባንድነት-ዘምሩ-መዝሙር-መዝሙር-ለህፃኑ-ደስታ-ለዓለ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44341,7 +44341,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-as-with-gladness-men-of-old',
+  'am-sda-en-lyrics-as-with-gladness-men-of-old-በደስታ-የጥንት-ሰዎች-መሪውን-ኮከብ-አዩት-በብርሃኑ-ተመርተው-እስኪቆም-ተከተሉት-እኛም-ባንተ-ቸር-ጌታ-እንድ',
   'am',
   'በደስታ የጥንት ሰዎች',
   'As With Gladness Men of Old',
@@ -44395,7 +44395,7 @@ select
   289,
   '{"new_hymnal_number":290,"old_hymnal_number":290,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-as-with-gladness-men-of-old'
+join works w on w.canonical_key = 'am-sda-en-lyrics-as-with-gladness-men-of-old-በደስታ-የጥንት-ሰዎች-መሪውን-ኮከብ-አዩት-በብርሃኑ-ተመርተው-እስኪቆም-ተከተሉት-እኛም-ባንተ-ቸር-ጌታ-እንድ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44414,7 +44414,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-በዚያ-ሌሊት-ተዘምሯል',
+  'am-sda-am-lyrics-በዚያ-ሌሊት-ተዘምሯል-በዚያ-ሌሊት-ተዘምሯል-ሰማያዊ-መዝሙር-በመላዕክት-ወርቅ-በገና-ላለንባት-ምድር-ሲሉ-ሰላም-ለሁላችሁ-መልካም-ፈቃድ-ከላይ-ዓለምም-በሰ',
   'am',
   'በዚያ ሌሊት ተዘምሯል',
   'It Came Upon the Midnight Clear',
@@ -44468,7 +44468,7 @@ select
   290,
   '{"new_hymnal_number":291,"old_hymnal_number":291,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-በዚያ-ሌሊት-ተዘምሯል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-በዚያ-ሌሊት-ተዘምሯል-በዚያ-ሌሊት-ተዘምሯል-ሰማያዊ-መዝሙር-በመላዕክት-ወርቅ-በገና-ላለንባት-ምድር-ሲሉ-ሰላም-ለሁላችሁ-መልካም-ፈቃድ-ከላይ-ዓለምም-በሰ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44487,7 +44487,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-am-ከዚህ-መሄዴ-ይደርሳል',
+  'am-sda-am-lyrics-ከዚህ-መሄዴ-ይደርሳል-ከዚህ-መሄዴ-ይደርሳል-እንዳሁንም-አልዘምርም-ባምላኬ-ፊት-ስነሳ-ግን-ደስታዬ-እጅግ-ይሆናል-አ-ፊት-ለፊትም-አየዋለሁ-ዝ-የፀጋ-ታሪክ',
   'am',
   'ከዚህ መሄዴ ይደርሳል',
   'Some Day the Silver Cord Will Break',
@@ -44546,7 +44546,7 @@ select
   291,
   '{"new_hymnal_number":323,"old_hymnal_number":292,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-am-ከዚህ-መሄዴ-ይደርሳል'
+join works w on w.canonical_key = 'am-sda-am-lyrics-ከዚህ-መሄዴ-ይደርሳል-ከዚህ-መሄዴ-ይደርሳል-እንዳሁንም-አልዘምርም-ባምላኬ-ፊት-ስነሳ-ግን-ደስታዬ-እጅግ-ይሆናል-አ-ፊት-ለፊትም-አየዋለሁ-ዝ-የፀጋ-ታሪክ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44565,7 +44565,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-never-part-again',
+  'am-sda-en-lyrics-never-part-again-የደስታ-ስፍራ-አለን-ቤታችን-ያለበት-ብርሃን-ጨለማን-ያጠፋል-ኃዘንንም-ደስታ-በዓለም-ላይ-ስንራመድ-የርሱን-ድምፅ-እንሰማለን-ከ',
   'am',
   'አንለያይም',
   'Never part Again',
@@ -44618,7 +44618,7 @@ select
   292,
   '{"new_hymnal_number":324,"old_hymnal_number":293,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-never-part-again'
+join works w on w.canonical_key = 'am-sda-en-lyrics-never-part-again-የደስታ-ስፍራ-አለን-ቤታችን-ያለበት-ብርሃን-ጨለማን-ያጠፋል-ኃዘንንም-ደስታ-በዓለም-ላይ-ስንራመድ-የርሱን-ድምፅ-እንሰማለን-ከ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44637,7 +44637,7 @@ insert into works (
   notes
 )
 values (
-  'am-sda-en-asleep-in-jesus',
+  'am-sda-en-lyrics-asleep-in-jesus-በየሱስ-ተኙ-መልካም-ነው-ልቅሶየለውም-ትንሳኤ-ዕረፍትህም-ጸጥ-ያለ-ነው-ጠላት-የማያበላሸው-በየሱስ-ተኙ-ይሻላል-ዕረፍትን-ከእጁ',
   'am',
   'በየሱስ ተኙ',
   'Asleep in Jesus',
@@ -44684,7 +44684,7 @@ select
   293,
   '{"new_hymnal_number":325,"old_hymnal_number":294,"match_status":"matched"}'::jsonb
 from book_editions be
-join works w on w.canonical_key = 'am-sda-en-asleep-in-jesus'
+join works w on w.canonical_key = 'am-sda-en-lyrics-asleep-in-jesus-በየሱስ-ተኙ-መልካም-ነው-ልቅሶየለውም-ትንሳኤ-ዕረፍትህም-ጸጥ-ያለ-ነው-ጠላት-የማያበላሸው-በየሱስ-ተኙ-ይሻላል-ዕረፍትን-ከእጁ'
 where be.slug = 'am-sda-hymnal-old'
 on conflict (edition_id, source_key, source_index) do update set
   work_id = excluded.work_id,
@@ -44704,11 +44704,11 @@ insert into content_import_issues (
 )
 values (
   'sda_hymnal_json',
-  'missing_old:am-sda-en-this-is-the-day',
+  'missing_old:am-sda-en-holy-holy-holy',
   'warning',
   'missing_old_hymnal_entry',
   'SDA song has a new hymnal number but no matched old hymnal number.',
-  '{"canonical_key":"am-sda-en-this-is-the-day","new_hymnal_number":4}'::jsonb
+  '{"canonical_key":"am-sda-en-holy-holy-holy","new_hymnal_number":2}'::jsonb
 )
 on conflict (source_name, issue_key) do update set
   severity = excluded.severity,
@@ -44727,11 +44727,11 @@ insert into content_import_issues (
 )
 values (
   'sda_hymnal_json',
-  'missing_old:am-sda-en-we-thank-thee',
+  'missing_old:am-sda-en-this-is-the-day',
   'warning',
   'missing_old_hymnal_entry',
   'SDA song has a new hymnal number but no matched old hymnal number.',
-  '{"canonical_key":"am-sda-en-we-thank-thee","new_hymnal_number":14}'::jsonb
+  '{"canonical_key":"am-sda-en-this-is-the-day","new_hymnal_number":4}'::jsonb
 )
 on conflict (source_name, issue_key) do update set
   severity = excluded.severity,
@@ -44842,11 +44842,11 @@ insert into content_import_issues (
 )
 values (
   'sda_hymnal_json',
-  'missing_old:am-sda-am-ኦ-ጌታ-ሆይ-በምህረትህ',
+  'missing_old:am-sda-en-amazing-grace',
   'warning',
   'missing_old_hymnal_entry',
   'SDA song has a new hymnal number but no matched old hymnal number.',
-  '{"canonical_key":"am-sda-am-ኦ-ጌታ-ሆይ-በምህረትህ","new_hymnal_number":72}'::jsonb
+  '{"canonical_key":"am-sda-en-amazing-grace","new_hymnal_number":65}'::jsonb
 )
 on conflict (source_name, issue_key) do update set
   severity = excluded.severity,
@@ -46526,29 +46526,6 @@ values (
   'missing_new_hymnal_entry',
   'SDA song has an old hymnal number but no matched new hymnal number.',
   '{"canonical_key":"am-sda-en-jesus-is-the-sweetest-name-i-know","old_hymnal_number":248}'::jsonb
-)
-on conflict (source_name, issue_key) do update set
-  severity = excluded.severity,
-  issue_type = excluded.issue_type,
-  message = excluded.message,
-  metadata = excluded.metadata,
-  resolved_at = null,
-  updated_at = now();
-insert into content_import_issues (
-  source_name,
-  issue_key,
-  severity,
-  issue_type,
-  message,
-  metadata
-)
-values (
-  'sda_hymnal_json',
-  'missing_new:am-sda-am-ምስጋና-ይገባሃል',
-  'warning',
-  'missing_new_hymnal_entry',
-  'SDA song has an old hymnal number but no matched new hymnal number.',
-  '{"canonical_key":"am-sda-am-ምስጋና-ይገባሃል","old_hymnal_number":250}'::jsonb
 )
 on conflict (source_name, issue_key) do update set
   severity = excluded.severity,

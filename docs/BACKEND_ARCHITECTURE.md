@@ -169,9 +169,9 @@ The seeds create:
 
 Sheet music and audio are not created from the JSON because the JSON does not contain reliable media metadata. Add them later as `media_assets`, then connect them through `media_links`.
 
-Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, which returns `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
+Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map` and `sda_hymnal_songs`, which return `new_hymnal_number`, `old_hymnal_number`, and `match_status` per reusable work.
 
-The SDA importer reuses a `works` row when either the normalized English title or normalized Amharic title matches across old and new editions. This prevents the same song from becoming two rows only because it appears in both editions.
+The SDA importer reuses a `works` row when the normalized English title and normalized lyrics match across old and new editions. It can fall back to normalized Amharic title plus lyrics, then to title-only matching only when the title is unique in both editions. This prevents the same song from becoming two rows while avoiding false merges when one English title is reused for different lyrics.
 
 The importer also writes `content_import_issues` rows when a song has only a new number or only an old number. This keeps migration quality reviewable without blocking valid one-edition songs.
 

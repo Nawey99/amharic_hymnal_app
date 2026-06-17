@@ -76,16 +76,18 @@ SDA old and new hymnal numbers are stored in the same SDA content database as ve
 For API/read convenience, `backend/content/schema.sql` also defines:
 
 - `sda_hymnal_number_map`
+- `sda_hymnal_songs`
 
-That view exposes one row per reusable work with:
+Those views expose one row per reusable work with:
 
 - `new_hymnal_number`
 - `old_hymnal_number`
 - `match_status`
+- old/new entry IDs and lyrics in `sda_hymnal_songs`
 
 The seed exporter also writes both numbers into SDA entry metadata when known.
 
-Similar songs in the old and new SDA editions are reused through one shared `works` row. The importer matches them by normalized English title first, then normalized Amharic title when the English title differs or has source typos.
+Similar songs in the old and new SDA editions are reused through one shared `works` row. The importer first matches by normalized English title plus normalized lyrics. If that is not available, it matches by title only when the title is unique in both editions.
 
 When a song exists in one SDA edition but cannot be matched to the other edition, the exporter writes a row to:
 
