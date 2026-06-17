@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CONTENT_DATABASE_URL")
+}
+
+model Language {
+  code        String   @id
+  nativeName  String   @map("native_name")
+  englishName String   @map("english_name")
+  scriptCode  String   @default("Ethi") @map("script_code")
+  direction   String   @default("ltr")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  books      Book[]
+  categories Category[]
+  works      Work[]
+
+  @@map("languages")
+}
+
+model Book {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug         String   @unique
+  languageCode String  @map("language_code")
+  title        String
+  subtitle     String?
+  bookType     String  @map("book_type")
+  sourceNote   String? @map("source_note")
+  isActive     Boolean @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  language Language      @relation(fields: [languageCode], references: [code])
+  editions BookEdition[]
+
+  @@index([languageCode])
+  @@map("books")
+}
+
+model BookEdition {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookId      String   @map("book_id") @db.Uuid
+  slug        String   @unique
+  title       String
+  editionType String   @default("primary") @map("edition_type")
+  sortOrder   Int      @default(0) @map("sort_order")
+  sourceNote  String?  @map("source_note")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  book    Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  entries BookEntry[]
+
+  @@index([bookId])
+  @@map("book_editions")
+}
+
+model Category {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug         String   @unique
+  languageCode String  @map("language_code")
+  name         String
+  englishName  String? @map("english_name")
+  description  String?
+  sortOrder    Int     @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  language Language    @relation(fields: [languageCode], references: [code])
+  entries  BookEntry[]
+
+  @@map("categories")
+}
+
+model Work {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  canonicalKey        String   @unique @map("canonical_key")
+  primaryLanguageCode String   @map("primary_language_code")
+  defaultTitle        String   @map("default_title")
+  defaultEnglishTitle String?  @map("default_english_title")
+  normalizedTitle     String?  @map("normalized_title")
+  notes               String?
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  primaryLanguage Language    @relation(fields: [primaryLanguageCode], references: [code])
+  entries         BookEntry[]
+  mediaLinks      MediaLink[]
+
+  @@index([primaryLanguageCode])
+  @@map("works")
+}
+
+model BookEntry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  editionId   String   @map("edition_id") @db.Uuid
+  workId      String   @map("work_id") @db.Uuid
+  entryNumber Int      @map("entry_number")
+  title       String
+  englishTitle String? @map("english_title")
+  lyrics      String   @default("")
+  categoryId  String?  @map("category_id") @db.Uuid
+  sourceKey   String   @map("source_key")
+  sourceIndex Int      @map("source_index")
+  metadata    Json     @default("{}")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  edition   BookEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  work      Work        @relation(fields: [workId], references: [id])
+  category  Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  mediaLinks MediaLink[]
+
+  @@unique([editionId, entryNumber])
+  @@unique([editionId, sourceKey, sourceIndex])
+  @@index([workId])
+  @@index([categoryId])
+  @@map("book_entries")
+}
+
+model MediaAsset {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mediaType      String   @map("media_type")
+  storageProvider String  @default("external") @map("storage_provider")
+  storageKey     String   @map("storage_key")
+  publicUrl      String?  @map("public_url")
+  mimeType       String   @map("mime_type")
+  fileSizeBytes  BigInt?  @map("file_size_bytes")
+  checksumSha256 String?  @map("checksum_sha256")
+  pageLabel      String?  @map("page_label")
+  durationSeconds Int?    @map("duration_seconds")
+  widthPx        Int?     @map("width_px")
+  heightPx       Int?     @map("height_px")
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  links MediaLink[]
+
+  @@unique([storageProvider, storageKey])
+  @@index([mediaType])
+  @@map("media_assets")
+}
+
+model MediaLink {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mediaAssetId String   @map("media_asset_id") @db.Uuid
+  workId       String?  @map("work_id") @db.Uuid
+  bookEntryId  String?  @map("book_entry_id") @db.Uuid
+  relationType String   @map("relation_type")
+  sortOrder    Int      @default(0) @map("sort_order")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  mediaAsset MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  work       Work?      @relation(fields: [workId], references: [id], onDelete: Cascade)
+  bookEntry  BookEntry? @relation(fields: [bookEntryId], references: [id], onDelete: Cascade)
+
+  @@index([workId])
+  @@index([bookEntryId])
+  @@map("media_links")
+}
+
+model ContentRelease {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  releaseKey   String   @unique @map("release_key")
+  versionLabel String   @map("version_label")
+  description  String?
+  publishedAt  DateTime? @map("published_at") @db.Timestamptz(6)
+  isCurrent    Boolean   @default(false) @map("is_current")
+  metadata     Json      @default("{}")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("content_releases")
+}

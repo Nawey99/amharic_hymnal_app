@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("USER_APP_DATABASE_URL")
+}
+
+model AppUser {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authProvider    String    @default("anonymous") @map("auth_provider")
+  providerSubject String?   @map("provider_subject")
+  displayName     String?   @map("display_name")
+  email           String?
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastSeenAt      DateTime? @map("last_seen_at") @db.Timestamptz(6)
+
+  devices      Device[]
+  favorites    UserFavorite[]
+  history      UserHistory[]
+  settings     UserSettings?
+  lyricReports LyricReport[]
+  bugReports   BugReport[]
+
+  @@unique([authProvider, providerSubject])
+  @@map("app_users")
+}
+
+model Device {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  installId   String    @unique @map("install_id")
+  platform    String
+  appVersion  String?   @map("app_version")
+  locale      String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastSeenAt  DateTime? @map("last_seen_at") @db.Timestamptz(6)
+
+  user         AppUser?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lyricReports LyricReport[]
+  bugReports   BugReport[]
+
+  @@index([userId])
+  @@map("devices")
+}
+
+model UserFavorite {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  contentEntryId String   @map("content_entry_id") @db.Uuid
+  contentWorkId  String?  @map("content_work_id") @db.Uuid
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentEntryId])
+  @@index([userId, sortOrder])
+  @@map("user_favorites")
+}
+
+model UserHistory {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String   @map("user_id") @db.Uuid
+  contentEntryId         String  @map("content_entry_id") @db.Uuid
+  contentWorkId          String? @map("content_work_id") @db.Uuid
+  viewedAt               DateTime @default(now()) @map("viewed_at") @db.Timestamptz(6)
+  listenPositionSeconds  Int?    @map("listen_position_seconds")
+  metadata               Json    @default("{}")
+
+  user AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, viewedAt])
+  @@map("user_history")
+}
+
+model UserSettings {
+  userId                 String   @id @map("user_id") @db.Uuid
+  selectedLanguageCode    String  @default("am") @map("selected_language_code")
+  selectedBookSlug        String? @map("selected_book_slug")
+  selectedEditionSlug     String? @map("selected_edition_slug")
+  themeMode               String  @default("system") @map("theme_mode")
+  fontScale               Decimal @default(1.00) @map("font_scale") @db.Decimal(4, 2)
+  keepScreenOn            Boolean @default(false) @map("keep_screen_on")
+  backgroundImageEnabled  Boolean @default(true) @map("background_image_enabled")
+  dataCollectionEnabled   Boolean @default(true) @map("data_collection_enabled")
+  settings                Json    @default("{}")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+model LyricReport {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  deviceId       String?  @map("device_id") @db.Uuid
+  contentEntryId String?  @map("content_entry_id") @db.Uuid
+  contentWorkId  String?  @map("content_work_id") @db.Uuid
+  reportedText   String?  @map("reported_text")
+  suggestedText  String?  @map("suggested_text")
+  note           String?
+  status         String   @default("open")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user   AppUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  device Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("lyric_reports")
+}
+
+model BugReport {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  deviceId    String?  @map("device_id") @db.Uuid
+  title       String
+  description String
+  severity    String   @default("normal")
+  status      String   @default("open")
+  appVersion  String?  @map("app_version")
+  platform    String?
+  diagnostics Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user   AppUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  device Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("bug_reports")
+}
+
+model AppConfig {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("app_config")
+}

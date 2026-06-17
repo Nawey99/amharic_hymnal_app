@@ -7,21 +7,40 @@ This folder contains the planned backend database foundation.
 - `content/`: content catalog, lyrics, categories, reusable sheet music/audio metadata, and content releases.
 - `user_app/`: accounts or anonymous users, favorites, history, settings sync, reports, and app configuration.
 
+## ORM
+
+Use Prisma ORM for both backend services:
+
+- `backend/content/prisma/schema.prisma`
+- `backend/user_app/prisma/schema.prisma`
+
+Each service has its own Prisma client and database URL so it can be deployed separately.
+
 ## PostgreSQL Setup Order
 
-Run the content backend files in this order:
+For the content backend:
 
 ```powershell
+cd backend/content
+npm install
+npm run db:generate
+cd ../..
 psql $env:DATABASE_URL -f backend/content/schema.sql
 dart tool/export_postgres_seed.dart
 psql $env:DATABASE_URL -f backend/content/seed_from_current_json.sql
 ```
 
-Run the user/app backend schema separately against the user/app database:
+For the user/app backend:
 
 ```powershell
+cd backend/user_app
+npm install
+npm run db:generate
+cd ../..
 psql $env:USER_APP_DATABASE_URL -f backend/user_app/schema.sql
 ```
+
+The raw SQL files remain useful for PostgreSQL-specific constraints, extensions, views, and first database bootstrap. Prisma is the application access layer.
 
 ## Current JSON Import
 
@@ -32,4 +51,3 @@ The current Flutter JSON files are column-based resource arrays. The exporter re
 - Hagerigna: 121 book entries
 
 The exporter does not invent media rows. Sheet music and audio should be added as real `media_assets` and linked through `media_links`.
-

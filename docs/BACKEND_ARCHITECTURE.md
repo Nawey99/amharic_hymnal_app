@@ -16,6 +16,11 @@ Initial PostgreSQL schema files live in:
 - `backend/content/schema.sql`
 - `backend/user_app/schema.sql`
 
+Prisma ORM schemas live in:
+
+- `backend/content/prisma/schema.prisma`
+- `backend/user_app/prisma/schema.prisma`
+
 The current JSON-to-PostgreSQL seed exporter is:
 
 - `tool/export_postgres_seed.dart`
@@ -61,6 +66,7 @@ GET /api/v1/content-version
 Recommended storage:
 
 - Database: Postgres or similar relational database
+- ORM: Prisma
 - Files: object storage/CDN such as Cloudflare R2, S3, Supabase Storage, Firebase Storage, or another CDN-backed storage
 - Search: start with database/search index generated for the app; add server search later only if needed
 
@@ -108,6 +114,7 @@ GET /api/v1/app-config
 Recommended storage:
 
 - Database: Postgres, Firebase/Firestore, or Supabase
+- ORM: Prisma when using PostgreSQL
 - Auth: optional at launch; anonymous device identity is enough for first sync-ready design
 - Secure values: backend environment variables only, never Flutter source
 
