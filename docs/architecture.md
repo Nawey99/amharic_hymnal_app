@@ -4,6 +4,15 @@
 
 The Amharic Hymnal app follows Clean Architecture principles with clear separation between Data, Domain, and Presentation layers. This document provides a comprehensive overview of the architecture, data flow, and design decisions.
 
+## 2026 Stabilization Notes
+
+- Public content versions are `sda_new`, `sda_old`, and `hagerigna`; `hymnal` is a compatibility alias for `sda_new`.
+- Flutter talks to two separate deployable backends: content on port 8787 and user/app state on port 8790.
+- SDA old/new songs reuse merged backend works while exposing version-specific display number, title, and lyrics.
+- SDA categories are defined once in `HymnCategories` and reused by UI and fallback mapping.
+- Sheet music is protected by Android `FLAG_SECURE` while visible; unsupported platforms no-op gracefully.
+- Bug reports post to the user/app backend and queue locally when the backend is unavailable.
+
 ## Architecture Layers
 
 ### 1. Presentation Layer
@@ -666,4 +675,3 @@ If migrating from a different architecture:
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [BLoC Pattern](https://bloclibrary.dev/)
 - [Drift Documentation](https://drift.simonbinder.eu/)
-

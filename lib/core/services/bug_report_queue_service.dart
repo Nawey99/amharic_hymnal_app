@@ -1,7 +1,11 @@
 // lib/core/services/bug_report_queue_service.dart
 import 'dart:convert';
+import 'package:amharic_hymnal_app/core/config/user_app_api_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kDebugMode, kIsWeb, debugPrint;
+import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Service for managing bug report queue (offline support)
 ///
@@ -29,7 +33,13 @@ class BugReportQueueService {
   /// [title] - Bug report title
   /// [description] - Bug report description
   /// Returns true if successfully queued
-  Future<bool> queueBugReport(String title, String description) async {
+  Future<bool> queueBugReport(
+    String title,
+    String description, {
+    String? contactEmail,
+    String severity = 'normal',
+    Map<String, dynamic>? diagnostics,
+  }) async {
     await init();
     try {
       final reports = await getQueuedReports();
@@ -37,6 +47,9 @@ class BugReportQueueService {
         'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'title': title,
         'description': description,
+        'contact_email': contactEmail,
+        'severity': severity,
+        'diagnostics': diagnostics ?? {},
         'timestamp': DateTime.now().toIso8601String(),
         'submitted': false,
       };
@@ -157,34 +170,48 @@ class BugReportQueueService {
     return pending.length;
   }
 
-  /// Submit a bug report (placeholder for future API integration)
-  ///
-  /// [title] - Bug report title
-  /// [description] - Bug report description
-  /// Returns true if successfully submitted, false otherwise
-  ///
-  /// Note: When API endpoint is available, implement actual submission here.
-  /// For now, this is a placeholder that demonstrates the structure.
-  Future<bool> submitBugReport(String title, String description) async {
-    // TODO: Implement actual API call when endpoint is available
-    // Example structure:
-    // try {
-    //   final response = await http.post(
-    //     Uri.parse('https://api.example.com/bug-reports'),
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode({
-    //       'title': title,
-    //       'description': description,
-    //       'timestamp': DateTime.now().toIso8601String(),
-    //     }),
-    //   );
-    //   return response.statusCode == 200 || response.statusCode == 201;
-    // } catch (e) {
-    //   return false;
-    // }
+  Future<bool> submitBugReport(
+    String title,
+    String description, {
+    String? contactEmail,
+    String severity = 'normal',
+    Map<String, dynamic>? diagnostics,
+  }) async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final payload = {
+        'title': title,
+        'description': description,
+        'severity': severity,
+        'appVersion': '${packageInfo.version}+${packageInfo.buildNumber}',
+        'platform': _platformName,
+        'diagnostics': {
+          ...?diagnostics,
+          if (contactEmail != null && contactEmail.trim().isNotEmpty)
+            'contact_email': contactEmail.trim(),
+          'submitted_at': DateTime.now().toIso8601String(),
+        },
+      };
 
-    // For now, simulate submission
-    await Future.delayed(const Duration(milliseconds: 500));
-    return true;
+      final response = await http
+          .post(
+            Uri.parse('${UserAppApiConfig.baseUrl}/api/bug-reports'),
+            headers: {'content-type': 'application/json; charset=utf-8'},
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 8));
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Bug report submit failed, queueing locally: $e');
+      }
+      return false;
+    }
+  }
+
+  String get _platformName {
+    if (kIsWeb) return 'web';
+    return defaultTargetPlatform.name;
   }
 }

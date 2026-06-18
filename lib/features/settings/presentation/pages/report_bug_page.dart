@@ -19,6 +19,7 @@ class ReportBugPage extends StatefulWidget {
 class _ReportBugPageState extends State<ReportBugPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
 
@@ -26,6 +27,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _contactController.dispose();
     super.dispose();
   }
 
@@ -40,11 +42,26 @@ class _ReportBugPageState extends State<ReportBugPage> {
 
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
+    final contactEmail = _contactController.text.trim();
     final queueService = BugReportQueueService.instance;
+    final settingsRepository = sl<SettingsRepository>();
+    final diagnostics = {
+      'selected_language': settingsRepository.getSelectedLanguage(),
+      'selected_version': settingsRepository.getSelectedVersion(),
+      'font_size': settingsRepository.getFontSize(),
+      'background_image_enabled':
+          settingsRepository.getBackgroundImageEnabled(),
+      'keep_screen_on': settingsRepository.getKeepScreenOn(),
+    };
 
     try {
       // Try to submit immediately (when API is available)
-      final submitted = await queueService.submitBugReport(title, description);
+      final submitted = await queueService.submitBugReport(
+        title,
+        description,
+        contactEmail: contactEmail.isEmpty ? null : contactEmail,
+        diagnostics: diagnostics,
+      );
 
       if (submitted) {
         // Successfully submitted
@@ -61,9 +78,15 @@ class _ReportBugPageState extends State<ReportBugPage> {
         // Clear form
         _titleController.clear();
         _descriptionController.clear();
+        _contactController.clear();
       } else {
         // Failed to submit, queue for later
-        final queued = await queueService.queueBugReport(title, description);
+        final queued = await queueService.queueBugReport(
+          title,
+          description,
+          contactEmail: contactEmail.isEmpty ? null : contactEmail,
+          diagnostics: diagnostics,
+        );
         if (queued && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -77,10 +100,16 @@ class _ReportBugPageState extends State<ReportBugPage> {
         // Clear form even if queued
         _titleController.clear();
         _descriptionController.clear();
+        _contactController.clear();
       }
     } catch (e) {
       // Error occurred, queue for later
-      final queued = await queueService.queueBugReport(title, description);
+      final queued = await queueService.queueBugReport(
+        title,
+        description,
+        contactEmail: contactEmail.isEmpty ? null : contactEmail,
+        diagnostics: diagnostics,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -99,6 +128,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
         // Clear form if queued successfully
         _titleController.clear();
         _descriptionController.clear();
+        _contactController.clear();
       }
     } finally {
       if (mounted) {
@@ -207,6 +237,73 @@ class _ReportBugPageState extends State<ReportBugPage> {
                             return null;
                           },
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GlassContainer(
+                  borderRadius: 16,
+                  blurSigma: 12,
+                  opacity: 0.12,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Contact Email (Optional)',
+                        style: TextStyle(
+                          fontSize: settingsRepository.getFontSize() * 0.9,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryText,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _contactController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: TextStyle(
+                          color: AppColors.primaryText,
+                          fontSize: settingsRepository.getFontSize(),
+                          fontFamily: 'NotoSansEthiopic',
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'you@example.com',
+                          hintStyle: TextStyle(
+                            color: AppColors.tertiaryText,
+                            fontSize: settingsRepository.getFontSize() * 0.9,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.surface.withValues(alpha: 0.3),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.divider,
+                              width: 1,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.divider,
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.accentGreen,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          final email = value?.trim() ?? '';
+                          if (email.isEmpty) return null;
+                          final isValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                              .hasMatch(email);
+                          return isValid ? null : 'Enter a valid email';
+                        },
                       ),
                     ],
                   ),

@@ -96,7 +96,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   void _checkCurrentState() {
     // Check if this hymn is currently playing
     final currentHymn = _audioService.currentHymnNumber;
-    final isThisHymnPlaying = currentHymn == widget.hymnNumber;
 
     setState(() {
       _currentPlayingHymn = currentHymn;
@@ -105,10 +104,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       _playbackState = _audioService.playbackState;
     });
 
-    // If this hymn is not playing but should be, start playback
-    if (!isThisHymnPlaying && mounted) {
-      _loadAudio();
-    }
+    // Do not auto-start audio when the widget appears; playback is user-driven.
   }
 
   Future<void> _loadAudio() async {

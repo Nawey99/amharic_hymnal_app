@@ -1,5 +1,6 @@
 // lib/features/hymns/presentation/pages/donate_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -31,61 +32,59 @@ class DonatePage extends StatelessWidget {
           elevation: 0,
         ),
         body: SafeArea(
-          child: Padding(
+          child: ListView(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const GlassContainer(
-                  borderRadius: 16.0,
-                  blurSigma: 12.0,
-                  opacity: 0.12,
-                  padding: EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.favorite,
-                        color: AppColors.accentGreen,
-                        size: 64,
+            children: [
+              const GlassContainer(
+                borderRadius: 16.0,
+                blurSigma: 12.0,
+                opacity: 0.12,
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: AppColors.accentGreen,
+                      size: 64,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Support This App',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryText,
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Support This App',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryText,
-                        ),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Your support helps us continue developing and improving this app. Thank you for your generosity!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.secondaryText,
                       ),
-                      SizedBox(height: 12),
-                      Text(
-                        'Your support helps us continue developing and improving this app. Thank you for your generosity!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.secondaryText,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                _buildDonateOption(
-                  context,
-                  'PayPal',
-                  'Donate via PayPal',
-                  Icons.payment,
-                  'https://paypal.me/example',
-                ),
-                const SizedBox(height: 12),
-                _buildDonateOption(
-                  context,
-                  'Bank Transfer',
-                  'Direct bank transfer',
-                  Icons.account_balance,
-                  null,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+              _buildDonateOption(
+                context,
+                'PayPal',
+                'Donate via PayPal',
+                Icons.payment,
+                'https://www.paypal.com/donate',
+              ),
+              const SizedBox(height: 12),
+              _buildDonateOption(
+                context,
+                'National Bank',
+                'Bank transfer details',
+                Icons.account_balance,
+                null,
+              ),
+            ],
           ),
         ),
       ),
@@ -125,14 +124,21 @@ class DonatePage extends StatelessWidget {
       opacity: 0.12,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
-        onTap: url != null
-            ? () async {
-                final uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              }
-            : null,
+        onTap: () async {
+          if (url != null) {
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const NationalBankDonationPage(),
+            ),
+          );
+        },
         child: Row(
           children: [
             Icon(
@@ -164,13 +170,141 @@ class DonatePage extends StatelessWidget {
                 ],
               ),
             ),
-            if (url != null)
-              const Icon(
-                Icons.chevron_right,
-                color: AppColors.secondaryText,
-              ),
+            const Icon(
+              Icons.chevron_right,
+              color: AppColors.secondaryText,
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NationalBankDonationPage extends StatelessWidget {
+  const NationalBankDonationPage({super.key});
+
+  static const _fields = [
+    ('Bank', 'National Bank of Ethiopia'),
+    ('Account Name', 'Wudase App Support'),
+    ('Account Number', 'To be provided'),
+    ('Branch', 'To be provided'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: BackgroundImageService(),
+      builder: (context, _) {
+        final bgService = BackgroundImageService();
+        return Container(
+          decoration: BoxDecoration(
+            image: bgService.isEnabled
+                ? DecorationImage(
+                    image: const AssetImage('assets/images/background.jpg'),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withValues(alpha: 0.8),
+                      BlendMode.darken,
+                    ),
+                  )
+                : null,
+            color: bgService.isEnabled ? null : AppColors.primaryBackground,
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: const Text('National Bank'),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  const GlassContainer(
+                    borderRadius: 16,
+                    blurSigma: 12,
+                    opacity: 0.12,
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'Bank transfer details are prepared here so they can be enabled when the official account is ready.',
+                      style: TextStyle(
+                        color: AppColors.secondaryText,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  for (final field in _fields) ...[
+                    _BankField(label: field.$1, value: field.$2),
+                    const SizedBox(height: 12),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _BankField extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _BankField({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassContainer(
+      borderRadius: 14,
+      blurSigma: 12,
+      opacity: 0.12,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.secondaryText,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: AppColors.primaryText,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'Copy',
+            icon: const Icon(Icons.copy, color: AppColors.accentGreen),
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: value));
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('$label copied')),
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
   }
