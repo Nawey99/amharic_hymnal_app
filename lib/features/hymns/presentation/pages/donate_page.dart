@@ -1,7 +1,6 @@
 // lib/features/hymns/presentation/pages/donate_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
@@ -72,9 +71,9 @@ class DonatePage extends StatelessWidget {
               _buildDonateOption(
                 context,
                 'PayPal',
-                'Donate via PayPal',
+                'Coming soon',
                 Icons.payment,
-                'https://www.paypal.com/donate',
+                _DonationAction.paypal,
               ),
               const SizedBox(height: 12),
               _buildDonateOption(
@@ -82,7 +81,7 @@ class DonatePage extends StatelessWidget {
                 'National Bank',
                 'Bank transfer details',
                 Icons.account_balance,
-                null,
+                _DonationAction.bank,
               ),
             ],
           ),
@@ -116,7 +115,7 @@ class DonatePage extends StatelessWidget {
     String title,
     String subtitle,
     IconData icon,
-    String? url,
+    _DonationAction action,
   ) {
     return GlassContainer(
       borderRadius: 16.0,
@@ -125,11 +124,20 @@ class DonatePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () async {
-          if (url != null) {
-            final uri = Uri.parse(url);
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
-            }
+          if (action == _DonationAction.paypal) {
+            await showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('PayPal'),
+                content: const Text('PayPal donations are coming soon.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
             return;
           }
           Navigator.push(
@@ -180,6 +188,8 @@ class DonatePage extends StatelessWidget {
     );
   }
 }
+
+enum _DonationAction { paypal, bank }
 
 class NationalBankDonationPage extends StatelessWidget {
   const NationalBankDonationPage({super.key});

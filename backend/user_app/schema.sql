@@ -83,13 +83,29 @@ create table if not exists bug_reports (
   title text not null,
   description text not null,
   severity text not null default 'normal' check (severity in ('low', 'normal', 'high', 'critical')),
-  status text not null default 'open' check (status in ('open', 'reviewing', 'fixed', 'closed', 'duplicate')),
+  status text not null default 'open' check (status in ('open', 'reviewed', 'resolved')),
   app_version text,
   platform text,
   diagnostics jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+update bug_reports
+set status = case
+  when status in ('fixed', 'closed') then 'resolved'
+  when status in ('reviewing', 'duplicate') then 'reviewed'
+  when status in ('open', 'reviewed', 'resolved') then status
+  else 'open'
+end
+where status not in ('open', 'reviewed', 'resolved');
+
+alter table if exists bug_reports
+  drop constraint if exists bug_reports_status_check;
+
+alter table if exists bug_reports
+  add constraint bug_reports_status_check
+  check (status in ('open', 'reviewed', 'resolved'));
 
 create table if not exists app_config (
   key text primary key,
@@ -103,4 +119,3 @@ create index if not exists idx_user_favorites_user_sort on user_favorites(user_i
 create index if not exists idx_user_history_user_viewed on user_history(user_id, viewed_at desc);
 create index if not exists idx_lyric_reports_status on lyric_reports(status, created_at);
 create index if not exists idx_bug_reports_status on bug_reports(status, created_at);
-

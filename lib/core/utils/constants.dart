@@ -25,9 +25,9 @@ class AppConstants {
   static const bool defaultDataCollectionEnabled = true;
 
   // Zoom scale constants (font scale multipliers)
-  static const double minZoomScale = 0.8; // Minimum 0.8x font scale
+  static const double minZoomScale = 0.85; // Minimum 0.85x font scale
   static const double maxZoomScale =
-      2.0; // Maximum 2.0x font scale (per requirements)
+      1.8; // Maximum 1.8x font scale for readable lyrics
   static const double defaultZoomScale = 1.0;
   static const double scaleSensitivity = 1.0; // Multiplier for responsiveness
   static const Duration animationDurationOnRelease =

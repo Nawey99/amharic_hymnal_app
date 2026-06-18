@@ -51,14 +51,14 @@ This document summarizes all fixes, improvements, and refactoring completed as p
 **File**: `lib/core/utils/constants.dart`
 
 **Changes**:
-- Updated `maxZoomScale` from `2.0` to `1.6` for better UX
-- Maintained `minZoomScale` at `0.8`
+- Updated `maxZoomScale` to `1.8` for readable lyrics zoom
+- Updated `minZoomScale` to `0.85`
 - Updated comments to reflect new limits
 
 **File**: `lib/features/hymns/presentation/pages/hymn_detail_page.dart`
 
 **Changes**:
-- Updated comment from "0.8x-2.0x" to "0.8x-1.6x"
+- Updated comment from "0.8x-2.0x" to "0.85x-1.8x"
 - Zoom limits properly enforced in `InteractiveViewer`
 - Smooth zoom performance maintained
 
@@ -275,7 +275,7 @@ flutter analyze lib/ --no-fatal-infos
 ## 🎯 Success Criteria Met
 
 ✅ Zero layout exceptions in debug and release modes  
-✅ Smooth pinch-to-zoom with proper min/max limits (0.8x-1.6x)  
+✅ Smooth pinch-to-zoom with proper min/max limits (0.85x-1.8x)  
 ✅ All pages use SafeArea and proper constraints  
 ✅ Performance improvements measurable (faster scrolling, smoother animations)  
 ✅ Clean architecture structure maintained  

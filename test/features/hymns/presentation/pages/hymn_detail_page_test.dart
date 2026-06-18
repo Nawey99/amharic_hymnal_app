@@ -46,5 +46,10 @@ void main() {
       fontSizeService.initialize(20.0);
       expect(fontSizeService.getFontSize(), 20.0);
     });
+
+    test('lyrics zoom clamp constants stay within QA bounds', () {
+      expect(AppConstants.minZoomScale, 0.85);
+      expect(AppConstants.maxZoomScale, 1.8);
+    });
   });
 }

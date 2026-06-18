@@ -50,7 +50,7 @@ void main() async {
 - Integrates sheet music viewer
 
 **Key Features**:
-- Pinch-to-zoom (0.8x - 2.0x)
+- Pinch-to-zoom (0.85x - 1.8x)
 - Swipe navigation between hymns
 - Share functionality
 
@@ -361,4 +361,3 @@ Before committing:
 - **State Management**: BLoC pattern throughout
 - **Architecture**: Clean Architecture with 3 layers
 - **Performance**: Optimized for low-tier devices
-

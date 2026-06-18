@@ -48,4 +48,28 @@ void main() {
 
     expect(results.single.matchType, MatchType.number);
   });
+
+  test('title matches rank before lyric-only matches', () {
+    final results = SearchEngine().search(
+      hymns: const [
+        Hymn(
+          id: 'lyrics',
+          number: 2,
+          title: 'Different Hymn',
+          lyrics: 'The word revival appears only in these lyrics.',
+        ),
+        Hymn(
+          id: 'title',
+          number: 9,
+          title: 'Revival Song',
+          englishTitleOld: 'Revival Song',
+          lyrics: 'Different text',
+        ),
+      ],
+      query: 'revival',
+    );
+
+    expect(results.first.hymn.displayNumber, 9);
+    expect(results.first.matchType, MatchType.partialTitle);
+  });
 }

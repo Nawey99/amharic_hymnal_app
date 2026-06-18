@@ -10,7 +10,7 @@
 - Sheet music viewing with Android screenshot protection.
 - Dummy audio player support for hymn 1.
 - Bug report submission with offline queue fallback.
-- PayPal donation link and National Bank placeholder details.
+- PayPal coming-soon dialog and National Bank placeholder details.
 
 ## Prepared For Later
 

@@ -17,10 +17,8 @@ const prisma = new PrismaClient({
 
 const allowedStatuses = new Set([
   'open',
-  'reviewing',
-  'fixed',
-  'closed',
-  'duplicate',
+  'reviewed',
+  'resolved',
 ]);
 
 const sendJson = (response, statusCode, body) => {

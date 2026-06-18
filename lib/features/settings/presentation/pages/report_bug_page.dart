@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/features/settings/data/repositories/bug_report_repository_impl.dart';
+import 'package:amharic_hymnal_app/features/settings/domain/repositories/bug_report_repository.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class ReportBugPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final BugReportRepository _bugReportRepository = BugReportRepositoryImpl();
   bool _isSubmitting = false;
 
   @override
@@ -43,7 +45,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
     final contactEmail = _contactController.text.trim();
-    final queueService = BugReportQueueService.instance;
     final settingsRepository = sl<SettingsRepository>();
     final diagnostics = {
       'selected_language': settingsRepository.getSelectedLanguage(),
@@ -55,80 +56,39 @@ class _ReportBugPageState extends State<ReportBugPage> {
     };
 
     try {
-      // Try to submit immediately (when API is available)
-      final submitted = await queueService.submitBugReport(
-        title,
-        description,
-        contactEmail: contactEmail.isEmpty ? null : contactEmail,
-        diagnostics: diagnostics,
-      );
-
-      if (submitted) {
-        // Successfully submitted
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Bug report submitted successfully!'),
-              backgroundColor: AppColors.accentGreen,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-
-        // Clear form
-        _titleController.clear();
-        _descriptionController.clear();
-        _contactController.clear();
-      } else {
-        // Failed to submit, queue for later
-        final queued = await queueService.queueBugReport(
-          title,
-          description,
+      final result = await _bugReportRepository.submit(
+        BugReportPayload(
+          title: title,
+          description: description,
           contactEmail: contactEmail.isEmpty ? null : contactEmail,
           diagnostics: diagnostics,
-        );
-        if (queued && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Bug report queued. Will submit when online.'),
-              backgroundColor: AppColors.accentGreen,
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
+        ),
+      );
 
-        // Clear form even if queued
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor:
+                result.isSuccess ? AppColors.accentGreen : Colors.red,
+            duration: Duration(seconds: result.submitted ? 2 : 3),
+          ),
+        );
+      }
+      if (result.isSuccess) {
         _titleController.clear();
         _descriptionController.clear();
         _contactController.clear();
       }
     } catch (e) {
-      // Error occurred, queue for later
-      final queued = await queueService.queueBugReport(
-        title,
-        description,
-        contactEmail: contactEmail.isEmpty ? null : contactEmail,
-        diagnostics: diagnostics,
-      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              queued
-                  ? 'Bug report queued. Will submit when online.'
-                  : 'Failed to submit bug report. Please try again.',
-            ),
-            backgroundColor: queued ? AppColors.accentGreen : Colors.red,
-            duration: const Duration(seconds: 3),
+          const SnackBar(
+            content: Text('Failed to submit bug report. Please try again.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
           ),
         );
-      }
-
-      if (queued) {
-        // Clear form if queued successfully
-        _titleController.clear();
-        _descriptionController.clear();
-        _contactController.clear();
       }
     } finally {
       if (mounted) {

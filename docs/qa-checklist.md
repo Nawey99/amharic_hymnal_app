@@ -18,7 +18,7 @@
 - Hymn 1 shows dummy audio; other hymns show audio unavailable.
 - Sheet music displays and screenshots are blocked on Android.
 - Bug report submits to backend or queues offline.
-- Donate PayPal opens externally and bank fields copy.
+- Donate PayPal shows a coming-soon dialog and bank fields copy.
 
 ## Backend
 

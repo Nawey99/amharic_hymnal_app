@@ -649,14 +649,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
               // Removed RepaintBoundary from InteractiveViewer to prevent layout exceptions
               // Keep InteractiveViewer properly constrained
-              // Calculate min/max scale based on zoom scale constants (0.8x-2.0x font scale)
-              const minScale = 0.85;
-              const maxScale = 1.8;
-
               return InteractiveViewer(
                 transformationController: _transformationController,
-                minScale: minScale,
-                maxScale: maxScale,
+                minScale: AppConstants.minZoomScale,
+                maxScale: AppConstants.maxZoomScale,
                 onInteractionEnd: (_) => _handleZoomInteraction(),
                 // Only allow panning when zoomed in - this prevents horizontal swipes from being captured
                 // when not zoomed, allowing navigation swipes to work
@@ -727,11 +723,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       final fontSizeService = FontSizeService();
 
       // Update font size based on zoom level (only when zoom ends for smoothness)
-      // Map InteractiveViewer scale (0.8x-1.6x) to font size multiplier
+      // Map InteractiveViewer scale to the clamped lyrics zoom multiplier.
       // FontSizeService.setFontSize() will clamp to 12-30 range automatically
       if ((currentScale - _initialScale).abs() > 0.01 &&
           _initialScale > 0 &&
-          _initialScale >= 0.85) {
+          _initialScale >= AppConstants.minZoomScale) {
         // Scale ratio represents the change in zoom (e.g., 1.0 -> 1.5 means 1.5x zoom)
         final scaleRatio = currentScale / _initialScale;
         // Calculate new font size based on scale ratio
@@ -757,7 +753,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
       // Update scale reference for next interaction
       // Ensure scale is within valid bounds
-      _initialScale = currentScale.clamp(0.85, 1.8);
+      _initialScale = currentScale.clamp(
+        AppConstants.minZoomScale,
+        AppConstants.maxZoomScale,
+      );
       // Sync local state with service (getFontSize() already clamps)
       if (mounted) {
         setState(() {
@@ -794,6 +793,20 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          hymn.displayTitle.isNotEmpty
+              ? hymn.displayTitle
+              : 'መዝሙር ${hymn.displayNumber}',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.secondaryText,
+            fontSize: 14,
+            fontFamily: 'NotoSansEthiopic',
+            height: 1.3,
+          ),
         ),
         const SizedBox(height: 12),
         FutureBuilder<List<String>>(

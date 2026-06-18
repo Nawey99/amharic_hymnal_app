@@ -190,6 +190,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     final fileName = widget.sheetMusicFiles[index];
     final assetPath = _getAssetPath(fileName);
     final label = _getFileLabel(index);
+    final controller = _transformationControllers[index];
 
     return GlassCard(
       borderRadius: 12.0,
@@ -216,31 +217,39 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
           // Sheet music image with zoom
           // Use 2.0 max scale for sheet music (per requirements), 0.8 min scale
           Expanded(
-            child: InteractiveViewer(
-              transformationController: _transformationControllers[index],
-              minScale: 0.8, // Minimum zoom for sheet music
-              maxScale: 2.0, // Maximum zoom for sheet music (per requirements)
-              panEnabled: true,
-              boundaryMargin: const EdgeInsets.all(100),
-              constrained: true,
-              onInteractionEnd: (_) {
-                // Smooth animation on release with elastic clamp
-                final controller = _transformationControllers[index];
-                final currentScale = controller.value.getMaxScaleOnAxis();
-                if (currentScale < 0.8) {
-                  controller.value = Matrix4.identity()..scale(0.8);
-                } else if (currentScale > 2.0) {
-                  controller.value = Matrix4.identity()..scale(2.0);
-                }
-              },
-              child: RepaintBoundary(
-                child: _buildSheetMusicImage(assetPath),
+            child: GestureDetector(
+              onDoubleTap: () => _togglePageZoom(controller),
+              child: InteractiveViewer(
+                transformationController: controller,
+                minScale: 0.8, // Minimum zoom for sheet music
+                maxScale: 2.0, // Maximum zoom for sheet music
+                panEnabled: true,
+                boundaryMargin: const EdgeInsets.all(100),
+                constrained: true,
+                onInteractionEnd: (_) {
+                  final currentScale = controller.value.getMaxScaleOnAxis();
+                  if (currentScale < 0.8) {
+                    controller.value = Matrix4.identity()..scale(0.8);
+                  } else if (currentScale > 2.0) {
+                    controller.value = Matrix4.identity()..scale(2.0);
+                  }
+                },
+                child: RepaintBoundary(
+                  child: _buildSheetMusicImage(assetPath),
+                ),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _togglePageZoom(TransformationController controller) {
+    final currentScale = controller.value.getMaxScaleOnAxis();
+    controller.value = currentScale > 1.01
+        ? Matrix4.identity()
+        : (Matrix4.identity()..scale(1.6));
   }
 
   Widget _buildSheetMusicImage(String assetPath) {

@@ -14,7 +14,7 @@ The lyrics feature is the core functionality of the Amharic Hymnal app, allowing
   - **Responsibility**: Main lyrics display page
   - **Key Features**:
     - Displays Amharic and English titles
-    - Pinch-to-zoom functionality (0.8x - 2.0x)
+    - Pinch-to-zoom functionality (0.85x - 1.8x)
     - Favorite toggle
     - Share functionality
     - Sheet music integration
@@ -326,8 +326,8 @@ Sheet music files are located in `assets/sheet_music/` and follow these patterns
 **File**: `lib/core/utils/constants.dart`
 
 ```dart
-static const double minZoomScale = 0.8;  // Minimum zoom
-static const double maxZoomScale = 2.0;  // Maximum zoom
+static const double minZoomScale = 0.85; // Minimum zoom
+static const double maxZoomScale = 1.8;  // Maximum zoom
 static const double scaleSensitivity = 1.0;  // Responsiveness multiplier
 static const Duration animationDurationOnRelease = Duration(milliseconds: 200);
 ```
@@ -602,4 +602,3 @@ flutter pub run build_runner build
 - [ ] Pinch-to-zoom tested
 - [ ] Favorite toggle tested
 - [ ] Search independence verified
-
