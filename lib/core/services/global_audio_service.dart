@@ -16,7 +16,11 @@ class GlobalAudioService {
   factory GlobalAudioService() => _instance;
   GlobalAudioService._internal();
 
+  static const String dummyAudioScheme = 'dummy://';
+  static const Duration dummyDuration = Duration(seconds: 30);
+
   AudioPlayer? _player;
+  Timer? _dummyPlaybackTimer;
 
   String? _apiKey;
   String? _baseUrl;
@@ -40,6 +44,7 @@ class GlobalAudioService {
 
   bool _isInitialized = false;
   bool _audioBackendAvailable = true;
+  bool _isDummyPlayback = false;
 
   /// Initialize the audio service with API configuration
   ///
@@ -119,6 +124,10 @@ class GlobalAudioService {
   /// API format: {baseUrl}/audio/{hymnNumber}?apiKey={apiKey}
   /// Can be customized based on actual API structure
   Future<String?> resolveAudioUrl(int hymnNumber) async {
+    if (hymnNumber == 1) {
+      return '${dummyAudioScheme}hymn-1';
+    }
+
     if (_baseUrl == null || _baseUrl!.isEmpty) {
       if (kDebugMode) {
         debugPrint('⚠️ Base URL not configured for audio API');
@@ -203,11 +212,6 @@ class GlobalAudioService {
     String? artist,
   }) async {
     try {
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        throw Exception('Audio playback is not available on this platform');
-      }
-
       // Stop previous hymn if different
       if (_currentHymnNumber != null &&
           _currentHymnNumber != hymnNumber &&
@@ -222,6 +226,16 @@ class GlobalAudioService {
           debugPrint('⚠️ No audio URL found for hymn #$hymnNumber');
         }
         throw Exception('Audio not available for hymn #$hymnNumber');
+      }
+
+      if (audioUrl.startsWith(dummyAudioScheme)) {
+        _playDummyTrack(hymnNumber, audioUrl);
+        return;
+      }
+
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        throw Exception('Audio playback is not available on this platform');
       }
 
       await player.stop();
@@ -242,9 +256,54 @@ class GlobalAudioService {
     }
   }
 
+  void _playDummyTrack(int hymnNumber, String audioUrl) {
+    _dummyPlaybackTimer?.cancel();
+    _isDummyPlayback = true;
+    _currentHymnNumber = hymnNumber;
+    _currentAudioUrl = audioUrl;
+    _currentPosition = Duration.zero;
+    _totalDuration = dummyDuration;
+    _playbackState = PlayerState.playing;
+    _currentHymnController.add(hymnNumber);
+    _positionController.add(_currentPosition);
+    _durationController.add(_totalDuration);
+    _playbackStateController.add(_playbackState);
+    _startDummyTimer();
+  }
+
+  void _startDummyTimer() {
+    _dummyPlaybackTimer?.cancel();
+    _dummyPlaybackTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (_playbackState != PlayerState.playing || !_isDummyPlayback) {
+        return;
+      }
+
+      final next = _currentPosition + const Duration(milliseconds: 500);
+      if (next >= dummyDuration) {
+        _currentPosition = dummyDuration;
+        _positionController.add(_currentPosition);
+        _playbackState = PlayerState.completed;
+        _playbackStateController.add(_playbackState);
+        _dummyPlaybackTimer?.cancel();
+        return;
+      }
+
+      _currentPosition = next;
+      _positionController.add(_currentPosition);
+    });
+  }
+
   /// Pause playback
   Future<void> pause() async {
     try {
+      if (_isDummyPlayback) {
+        _dummyPlaybackTimer?.cancel();
+        _playbackState = PlayerState.paused;
+        _playbackStateController.add(_playbackState);
+        return;
+      }
+
       final player = _player;
       if (!_audioBackendAvailable || player == null) {
         return;
@@ -263,6 +322,17 @@ class GlobalAudioService {
   /// Resume playback
   Future<void> resume() async {
     try {
+      if (_isDummyPlayback) {
+        if (_playbackState == PlayerState.completed) {
+          _currentPosition = Duration.zero;
+          _positionController.add(_currentPosition);
+        }
+        _playbackState = PlayerState.playing;
+        _playbackStateController.add(_playbackState);
+        _startDummyTimer();
+        return;
+      }
+
       final player = _player;
       if (!_audioBackendAvailable || player == null) {
         return;
@@ -281,6 +351,21 @@ class GlobalAudioService {
   /// Stop playback and reset state
   Future<void> stop() async {
     try {
+      if (_isDummyPlayback) {
+        _dummyPlaybackTimer?.cancel();
+        _isDummyPlayback = false;
+        _currentPosition = Duration.zero;
+        _positionController.add(_currentPosition);
+        _totalDuration = null;
+        _durationController.add(_totalDuration);
+        _playbackState = PlayerState.stopped;
+        _playbackStateController.add(_playbackState);
+        _currentHymnNumber = null;
+        _currentAudioUrl = null;
+        _currentHymnController.add(null);
+        return;
+      }
+
       final player = _player;
       if (!_audioBackendAvailable || player == null) {
         return;
@@ -305,6 +390,18 @@ class GlobalAudioService {
   /// Seek to a specific position
   Future<void> seek(Duration position) async {
     try {
+      if (_isDummyPlayback) {
+        final clamped = Duration(
+          milliseconds: position.inMilliseconds.clamp(
+            0,
+            dummyDuration.inMilliseconds,
+          ),
+        );
+        _currentPosition = clamped;
+        _positionController.add(_currentPosition);
+        return;
+      }
+
       final player = _player;
       if (!_audioBackendAvailable || player == null) {
         return;
@@ -355,6 +452,7 @@ class GlobalAudioService {
 
   /// Dispose resources
   void dispose() {
+    _dummyPlaybackTimer?.cancel();
     _positionController.close();
     _durationController.close();
     _playbackStateController.close();

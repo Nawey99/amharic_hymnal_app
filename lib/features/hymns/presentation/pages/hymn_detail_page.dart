@@ -9,12 +9,14 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
+import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_viewer.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -40,6 +42,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   bool _isHorizontalDrag = false;
   bool _isExpectingNewHymn =
       false; // Track if we're expecting a new hymn from swipe
+  final Map<int, bool> _favoriteOverrides = {};
+  final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
 
   @override
   void initState() {
@@ -220,7 +224,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
     final settingsRepository = sl<SettingsRepository>();
-    final isFavorite = settingsRepository.isFavorite(hymn.displayNumber);
+    final isFavorite = _favoriteOverrides[hymn.displayNumber] ??
+        settingsRepository.isFavorite(hymn.displayNumber);
     final languageCode = _getLanguageCode();
     final version = _getVersion();
 
@@ -471,6 +476,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       ),
       tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       onPressed: () {
+        setState(() {
+          _favoriteOverrides[hymn.displayNumber] = !isFavorite;
+        });
         // Dispatch the toggle event - UI updates instantly via BLoC
         context.read<HymnsBloc>().add(ToggleFavorite(hymn.displayNumber));
       },
@@ -497,24 +505,31 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildBody(Hymn hymn, double fontSize) {
-    // Use CustomScrollView to avoid nested scroll conflicts
-    // InteractiveViewer handles its own scrolling when zoomed
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              _buildTitleSection(hymn, fontSize),
-              const SizedBox(height: 8),
-              _buildLyricsSection(hymn, fontSize),
-              const SizedBox(height: 12),
-              if (!hymn.isHagerigna) ...[
-                _buildSheetMusicSection(context, hymn),
-                const SizedBox(height: 16),
-                _buildAudioSection(context, hymn),
-              ],
-            ]),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: _buildTitleSection(hymn, fontSize),
+        ),
+        Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildLyricsSection(hymn, fontSize),
+                    const SizedBox(height: 12),
+                    if (!hymn.isHagerigna) ...[
+                      _buildSheetMusicSection(context, hymn),
+                      const SizedBox(height: 16),
+                      _buildAudioSection(context, hymn),
+                    ],
+                  ]),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -635,8 +650,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               // Removed RepaintBoundary from InteractiveViewer to prevent layout exceptions
               // Keep InteractiveViewer properly constrained
               // Calculate min/max scale based on zoom scale constants (0.8x-2.0x font scale)
-              final minScale = AppConstants.minZoomScale;
-              final maxScale = AppConstants.maxZoomScale;
+              const minScale = 0.85;
+              const maxScale = 1.8;
 
               return InteractiveViewer(
                 transformationController: _transformationController,
@@ -716,7 +731,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       // FontSizeService.setFontSize() will clamp to 12-30 range automatically
       if ((currentScale - _initialScale).abs() > 0.01 &&
           _initialScale > 0 &&
-          _initialScale >= AppConstants.minZoomScale) {
+          _initialScale >= 0.85) {
         // Scale ratio represents the change in zoom (e.g., 1.0 -> 1.5 means 1.5x zoom)
         final scaleRatio = currentScale / _initialScale;
         // Calculate new font size based on scale ratio
@@ -742,8 +757,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
       // Update scale reference for next interaction
       // Ensure scale is within valid bounds
-      _initialScale = currentScale.clamp(
-          AppConstants.minZoomScale, AppConstants.maxZoomScale);
+      _initialScale = currentScale.clamp(0.85, 1.8);
       // Sync local state with service (getFontSize() already clamps)
       if (mounted) {
         setState(() {
@@ -782,10 +796,26 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           ],
         ),
         const SizedBox(height: 12),
-        // Sheet music viewer with zoom and pagination support
-        SheetMusicViewer(
-          sheetMusicFiles: hymn.sheetMusic ?? [],
-          hymnNumber: hymn.displayNumber,
+        FutureBuilder<List<String>>(
+          future: _sheetMusicRepository.getFilesForHymn(hymn),
+          builder: (context, snapshot) {
+            final files = snapshot.data ?? const <String>[];
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 120,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                  ),
+                ),
+              );
+            }
+            return SheetMusicViewer(
+              sheetMusicFiles: files,
+              hymnNumber: hymn.displayNumber,
+            );
+          },
         ),
       ],
     );
@@ -818,63 +848,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           ],
         ),
         const SizedBox(height: 12),
-        // Glass card placeholder for audio player
-        GlassCard(
-          borderRadius: 12.0,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.play_circle_outline,
-                    color: AppColors.primaryText,
-                    size: 48,
-                  ),
-                  onPressed: () {
-                    // Future: Audio playback functionality via API
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)
-                                ?.audioPlayerComingSoon ??
-                            'Audio player feature coming soon'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min, // Prevent overflow
-                    children: [
-                      Text(
-                        'መዝሙር ${hymn.displayNumber} ድምፅ',
-                        style: const TextStyle(
-                          color: AppColors.primaryText,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'NotoSansEthiopic',
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        (hymn.audioUrl?.isNotEmpty ?? false)
-                            ? 'Audio: ${hymn.audioUrl} (API integration coming soon)'
-                            : 'Tap to play (API integration coming soon)',
-                        style: const TextStyle(
-                          color: AppColors.secondaryText,
-                          fontSize: 12,
-                          fontFamily: 'NotoSansEthiopic',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+        AudioSectionWidget(
+          hymnNumber: hymn.displayNumber,
+          hymnTitle: hymn.displayTitle.isNotEmpty
+              ? hymn.displayTitle
+              : 'መዝሙር ${hymn.displayNumber}',
         ),
       ],
     );

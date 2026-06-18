@@ -1,6 +1,7 @@
 // lib/features/hymns/presentation/widgets/audio_section_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -28,6 +29,7 @@ class AudioSectionWidget extends StatefulWidget {
 
 class _AudioSectionWidgetState extends State<AudioSectionWidget> {
   final GlobalAudioService _audioService = GlobalAudioService();
+  final AudioRepository _audioRepository = AudioRepository();
   bool _isChecking = true;
   bool _hasAudio = false;
   StreamSubscription<int?>? _currentHymnSubscription;
@@ -57,13 +59,15 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
     });
 
     try {
-      // Try to resolve audio URL
-      final audioUrl = await _audioService.resolveAudioUrl(widget.hymnNumber);
+      final track = await _audioRepository.getTrackForNumber(
+        widget.hymnNumber,
+        title: widget.hymnTitle,
+      );
 
       if (mounted) {
         setState(() {
           _isChecking = false;
-          _hasAudio = audioUrl != null && audioUrl.isNotEmpty;
+          _hasAudio = track != null;
         });
       }
     } catch (e) {

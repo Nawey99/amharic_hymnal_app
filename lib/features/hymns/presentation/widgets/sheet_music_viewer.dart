@@ -1,6 +1,7 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
@@ -34,6 +35,23 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
       _transformationControllers.add(TransformationController());
     }
+    SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
+  }
+
+  @override
+  void didUpdateWidget(covariant SheetMusicViewer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sheetMusicFiles.length != widget.sheetMusicFiles.length) {
+      while (
+          _transformationControllers.length < widget.sheetMusicFiles.length) {
+        _transformationControllers.add(TransformationController());
+      }
+      while (
+          _transformationControllers.length > widget.sheetMusicFiles.length) {
+        _transformationControllers.removeLast().dispose();
+      }
+      SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
+    }
   }
 
   @override
@@ -42,6 +60,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     for (final controller in _transformationControllers) {
       controller.dispose();
     }
+    SecureScreenService.setProtected(false);
     super.dispose();
   }
 
