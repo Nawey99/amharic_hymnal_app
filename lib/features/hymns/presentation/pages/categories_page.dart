@@ -242,17 +242,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         height: 1.25,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'መዝሙር $startNumber-$endNumber',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.secondaryText,
-                        fontSize: 13,
-                        fontFamily: 'NotoSansEthiopic',
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -292,13 +281,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
               Container(color: AppColors.surface),
             Container(
               color: Colors.black.withValues(alpha: 0.22),
-            ),
-            const Center(
-              child: Icon(
-                Icons.category_outlined,
-                color: Colors.white,
-                size: 24,
-              ),
             ),
           ],
         ),
