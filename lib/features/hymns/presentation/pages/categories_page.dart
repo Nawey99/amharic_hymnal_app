@@ -8,8 +8,9 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_image_loader.dart';
-import 'package:amharic_hymnal_app/core/utils/category_ranges.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
 
@@ -52,10 +53,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
         appBar: AppBar(
           title: BlocBuilder<HymnsBloc, HymnsState>(
             builder: (context, state) {
-              final title =
-                  (state is HymnsLoaded && state.version == 'hagerigna')
-                      ? 'Authors'
-                      : 'Categories';
+              final title = (state is HymnsLoaded &&
+                      state.version == HymnalVersions.hagerigna)
+                  ? 'Authors'
+                  : 'Categories';
               return Text(
                 title,
                 style: const TextStyle(
@@ -100,9 +101,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
               }
 
               if (state is HymnsLoaded) {
-                if (state.version == 'hymnal') {
+                if (HymnalVersions.hasCategories(state.version)) {
                   // Use exact category ranges for hymnal
-                  final categories = CategoryRanges.allCategories;
+                  final categories = HymnCategories.all;
 
                   if (categories.isEmpty) {
                     return const EmptyStateWidget(
@@ -141,18 +142,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
                             final category = categories[index];
-                            final range = CategoryRanges.getRange(category);
                             return SizedBox(
                               width: cardWidth,
-                              child: _buildCategoryCard(context, category,
-                                  range, state.languageCode, state.version),
+                              child: _buildCategoryCard(
+                                context,
+                                category.nameAmharic,
+                                [
+                                  category.startNumber,
+                                  category.endNumber,
+                                ],
+                                state.languageCode,
+                                state.version,
+                              ),
                             );
                           },
                         ),
                       );
                     },
                   );
-                } else if (state.version == 'hagerigna') {
+                } else if (state.version == HymnalVersions.hagerigna) {
                   // Show authors for Hagerigna mode
                   final authors = _extractAuthors(state.hymns);
 

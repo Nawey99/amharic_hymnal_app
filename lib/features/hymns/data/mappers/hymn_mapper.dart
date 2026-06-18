@@ -22,6 +22,8 @@ class HymnMapper {
       newHymnalLyrics: model.newHymnalLyrics,
       englishTitleOld: model.englishTitleOld,
       oldHymnalLyrics: model.oldHymnalLyrics,
+      newHymnalNumber: model.newHymnalNumber,
+      oldHymnalNumber: model.oldHymnalNumber,
       isFavorite: model.isFavorite,
     );
   }
@@ -49,6 +51,8 @@ class HymnMapper {
       newHymnalLyrics: hymn.newHymnalLyrics,
       englishTitleOld: hymn.englishTitleOld,
       oldHymnalLyrics: hymn.oldHymnalLyrics,
+      newHymnalNumber: hymn.newHymnalNumber,
+      oldHymnalNumber: hymn.oldHymnalNumber,
       isFavorite: hymn.isFavorite,
     );
   }

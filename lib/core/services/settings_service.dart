@@ -1,6 +1,7 @@
 // lib/core/services/settings_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 class SettingsService {
@@ -34,12 +35,16 @@ class SettingsService {
 
   // Version
   static String getSelectedVersion() {
-    return _prefs?.getString(AppConstants.keySelectedVersion) ??
+    final stored = _prefs?.getString(AppConstants.keySelectedVersion) ??
         AppConstants.defaultVersion;
+    return HymnalVersions.normalizeId(stored);
   }
 
   static Future<bool> setSelectedVersion(String version) async {
-    return await _prefs?.setString(AppConstants.keySelectedVersion, version) ??
+    return await _prefs?.setString(
+          AppConstants.keySelectedVersion,
+          HymnalVersions.normalizeId(version),
+        ) ??
         false;
   }
 

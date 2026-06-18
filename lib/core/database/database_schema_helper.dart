@@ -114,6 +114,27 @@ class DatabaseSchemaHelper {
     }
   }
 
+  /// Upgrade schema from version 3 to 4 - Add old/new hymnal number metadata.
+  Future<void> upgradeFromV3() async {
+    try {
+      await database.customStatement('''
+        ALTER TABLE hymns ADD COLUMN new_hymnal_number INTEGER
+      ''');
+    } catch (e) {
+      // Column might already exist, ignore error
+    }
+
+    try {
+      await database.customStatement('''
+        ALTER TABLE hymns ADD COLUMN old_hymnal_number INTEGER
+      ''');
+    } catch (e) {
+      // Column might already exist, ignore error
+    }
+
+    await createIndexes();
+  }
+
   /// Migrate favorites from SharedPreferences to database
   Future<void> _migrateFavoritesFromSharedPreferences() async {
     try {

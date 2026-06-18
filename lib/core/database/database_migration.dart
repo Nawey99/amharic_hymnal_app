@@ -7,6 +7,7 @@ import 'package:amharic_hymnal_app/core/database/database_helper.dart';
 import 'package:amharic_hymnal_app/core/services/cache_service.dart';
 import 'package:amharic_hymnal_app/core/database/parsers/hagerigna_parser.dart';
 import 'package:amharic_hymnal_app/core/database/parsers/sda_parser.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 
 class DatabaseMigration {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
@@ -59,11 +60,22 @@ class DatabaseMigration {
       // Migrate SDA data
       await _migrateSDA();
       // Verify data was inserted before marking cache
-      final hymnalCount = await _verifyDataInserted('am', 'hymnal');
-      if (hymnalCount > 0) {
-        await CacheService.markCacheUpdated('am', 'hymnal');
+      final newHymnalCount =
+          await _verifyDataInserted('am', HymnalVersions.sdaNew);
+      if (newHymnalCount > 0) {
+        await CacheService.markCacheUpdated('am', HymnalVersions.sdaNew);
         if (kDebugMode) {
-          debugPrint('✅ SDA Hymnal migration completed: $hymnalCount hymns');
+          debugPrint(
+              '✅ New SDA Hymnal migration completed: $newHymnalCount hymns');
+        }
+      }
+      final oldHymnalCount =
+          await _verifyDataInserted('am', HymnalVersions.sdaOld);
+      if (oldHymnalCount > 0) {
+        await CacheService.markCacheUpdated('am', HymnalVersions.sdaOld);
+        if (kDebugMode) {
+          debugPrint(
+              '✅ Old SDA Hymnal migration completed: $oldHymnalCount hymns');
         }
       }
 
@@ -91,9 +103,15 @@ class DatabaseMigration {
         await CacheService.markCacheUpdated('am', 'hagerigna');
       }
 
-      final hymnalCount = await _verifyDataInserted('am', 'hymnal');
-      if (hymnalCount > 0) {
-        await CacheService.markCacheUpdated('am', 'hymnal');
+      final newHymnalCount =
+          await _verifyDataInserted('am', HymnalVersions.sdaNew);
+      if (newHymnalCount > 0) {
+        await CacheService.markCacheUpdated('am', HymnalVersions.sdaNew);
+      }
+      final oldHymnalCount =
+          await _verifyDataInserted('am', HymnalVersions.sdaOld);
+      if (oldHymnalCount > 0) {
+        await CacheService.markCacheUpdated('am', HymnalVersions.sdaOld);
       }
     } catch (e) {
       if (kDebugMode) {
@@ -157,11 +175,14 @@ class DatabaseMigration {
 
       if (jsonData is Map<String, dynamic> &&
           jsonData.containsKey('resources')) {
-        final hymns = SdaParser.parse(jsonData);
+        final hymns = [
+          ...SdaParser.parse(jsonData, version: HymnalVersions.sdaNew),
+          ...SdaParser.parse(jsonData, version: HymnalVersions.sdaOld),
+        ];
         if (kDebugMode) {
           debugPrint('📦 Parsed ${hymns.length} SDA Hymnal hymns');
         }
-        await _insertHymns(hymns, 'am', 'hymnal');
+        await _insertHymns(hymns, 'am', HymnalVersions.sdaNew);
       } else {
         throw Exception('Invalid SDA JSON format: missing resources');
       }

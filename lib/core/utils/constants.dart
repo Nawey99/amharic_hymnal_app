@@ -17,8 +17,8 @@ class AppConstants {
 
   // Default values
   static const String defaultLanguage = 'am'; // Default to Amharic
-  static const String defaultVersion = 'hymnal'; // Default to Hymnal
-  static const String defaultSortType = 'name';
+  static const String defaultVersion = 'sda_new'; // Default to New SDA Hymnal
+  static const String defaultSortType = 'number';
   static const double defaultFontSize = 20.0;
   static const bool defaultKeepScreenOn = false;
   static const bool defaultBackgroundImageEnabled = true;

@@ -1,4 +1,5 @@
 // lib/core/utils/category_ranges.dart
+import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 
 /// Exact category ranges for SDA Hymnal
 ///
@@ -10,38 +11,9 @@ class CategoryRanges {
   /// Category name to range mapping
   /// Key: Category name (Amharic)
   /// Value: List of two integers [fromNumber, toNumber]
-  static const Map<String, List<int>> ranges = {
-    'ምስጋና': [1, 24],
-    'ስግደት': [25, 42],
-    'መነቃቃት': [43, 44],
-    'ንሥሐ': [45, 58],
-    'ጸሎት': [59, 84],
-    'የክርስቲያን ኑሮ': [85, 116],
-    'ራስን ቀድሶ መስጠት': [117, 118],
-    'ሥራ': [119, 121],
-    'ሕዝብ': [122, 122],
-    'ታማኝነት': [123, 128],
-    'ተስፋ': [129, 134],
-    'ደስታ': [135, 140],
-    'ሰላም': [141, 146],
-    'ፍቅር': [147, 159],
-    'መድህን': [160, 178],
-    'መስቀል': [179, 193],
-    'ሰንበት': [194, 197],
-    'የእግዚአብሔር ቃል': [198, 203],
-    'የክርስቲያን ተጋድሎ': [204, 206],
-    'ፍርድ': [207, 208],
-    'ዳግም ምፅአት': [209, 220],
-    'የሰማይ ቤት': [221, 241],
-    'ወጣቶች': [242, 264],
-    'ተፈጥሮ': [265, 266],
-    'የልጆች መዝሙር': [267, 275],
-    'ጋብቻ': [276, 277],
-    'ልደት': [278, 292],
-    'መታመን': [293, 310],
-    'ቁርባን': [311, 314],
-    'ትንሣኤ': [315, 320],
-    'መሰናበቻ': [321, 325],
+  static final Map<String, List<int>> ranges = {
+    for (final category in HymnCategories.all)
+      category.nameAmharic: [category.startNumber, category.endNumber],
   };
 
   /// Get all category names sorted by starting hymn number (ascending)

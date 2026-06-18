@@ -1,6 +1,7 @@
 // lib/core/services/cache_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amharic_hymnal_app/core/database/database_helper.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 /// Service to manage and monitor offline data caching
@@ -30,8 +31,11 @@ class CacheService {
       final amHagerigna = await isCached('am', 'hagerigna');
       if (amHagerigna) status['am_hagerigna'] = true;
 
-      final amHymnal = await isCached('am', 'hymnal');
-      if (amHymnal) status['am_hymnal'] = true;
+      final amNewHymnal = await isCached('am', HymnalVersions.sdaNew);
+      if (amNewHymnal) status['am_sda_new'] = true;
+
+      final amOldHymnal = await isCached('am', HymnalVersions.sdaOld);
+      if (amOldHymnal) status['am_sda_old'] = true;
     } catch (e) {
       // Return empty map on error
     }
@@ -139,7 +143,8 @@ class CacheService {
     try {
       // Clear all known language/version combinations
       await clearCache('am', 'hagerigna');
-      await clearCache('am', 'hymnal');
+      await clearCache('am', HymnalVersions.sdaNew);
+      await clearCache('am', HymnalVersions.sdaOld);
       // Clear all cache update timestamps
       final keys = _prefs?.getKeys() ?? {};
       for (final key in keys) {

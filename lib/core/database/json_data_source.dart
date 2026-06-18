@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:amharic_hymnal_app/core/database/parsers/hagerigna_parser.dart';
 import 'package:amharic_hymnal_app/core/database/parsers/sda_parser.dart';
 import 'package:amharic_hymnal_app/core/models/database_config.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 
 /// Fast JSON-based data source that loads directly from assets
 /// Used for immediate data access while database migration runs in background
@@ -24,7 +25,8 @@ class JsonDataSource {
     String languageCode,
     String version,
   ) async {
-    final cacheKey = '${languageCode}_$version';
+    final normalizedVersion = HymnalVersions.normalizeId(version);
+    final cacheKey = '${languageCode}_$normalizedVersion';
 
     // Return cached data if available
     if (_cache.containsKey(cacheKey)) {
@@ -48,7 +50,8 @@ class JsonDataSource {
       _isLoading = true;
 
       // Get database config to find the JSON file path
-      final dbConfig = DatabaseRegistry.getDatabase(languageCode, version);
+      final dbConfig =
+          DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
       if (dbConfig == null) {
         if (kDebugMode) {
           debugPrint('⚠️ No database config found for $languageCode/$version');
@@ -66,13 +69,13 @@ class JsonDataSource {
 
       // Parse based on version
       List<Map<String, dynamic>> hymns;
-      if (version == 'hagerigna') {
+      if (normalizedVersion == HymnalVersions.hagerigna) {
         hymns = HagerignaParser.parse(jsonData);
-      } else if (version == 'hymnal') {
-        hymns = SdaParser.parse(jsonData);
+      } else if (HymnalVersions.isSda(normalizedVersion)) {
+        hymns = SdaParser.parse(jsonData, version: normalizedVersion);
       } else {
         if (kDebugMode) {
-          debugPrint('⚠️ Unknown version: $version');
+          debugPrint('⚠️ Unknown version: $normalizedVersion');
         }
         return [];
       }
@@ -82,7 +85,7 @@ class JsonDataSource {
 
       if (kDebugMode) {
         debugPrint(
-            '✅ Loaded ${hymns.length} hymns from JSON for $languageCode/$version');
+            '✅ Loaded ${hymns.length} hymns from JSON for $languageCode/$normalizedVersion');
       }
 
       return hymns;
@@ -106,7 +109,7 @@ class JsonDataSource {
 
   /// Check if data is cached
   bool isCached(String languageCode, String version) {
-    final cacheKey = '${languageCode}_$version';
+    final cacheKey = '${languageCode}_${HymnalVersions.normalizeId(version)}';
     return _cache.containsKey(cacheKey);
   }
 }

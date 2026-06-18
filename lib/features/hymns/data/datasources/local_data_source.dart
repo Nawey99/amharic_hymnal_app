@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:amharic_hymnal_app/core/database/database_helper.dart';
 import 'package:amharic_hymnal_app/core/database/json_data_source.dart';
+import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 import 'package:amharic_hymnal_app/core/models/database_config.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_local_data_source.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
@@ -18,7 +20,9 @@ class LocalDataSource implements HymnLocalDataSource {
   @override
   Future<List<HymnModel>> getHymns(String languageCode, String version) async {
     // Verify database config exists
-    final dbConfig = DatabaseRegistry.getDatabase(languageCode, version);
+    final normalizedVersion = HymnalVersions.normalizeId(version);
+    final dbConfig =
+        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
     if (dbConfig == null) {
       throw DatabaseNotFoundException(
           'Database not found for language: $languageCode, version: $version');
@@ -26,7 +30,7 @@ class LocalDataSource implements HymnLocalDataSource {
 
     try {
       final remoteHymns =
-          await _remoteDataSource.getHymns(languageCode, version);
+          await _remoteDataSource.getHymns(languageCode, normalizedVersion);
       if (remoteHymns.isNotEmpty) {
         return remoteHymns;
       }
@@ -46,7 +50,7 @@ class LocalDataSource implements HymnLocalDataSource {
         final jsonResults =
             await _jsonDataSource.getHymns(languageCode, version);
         return jsonResults
-            .map((row) => _mapJsonToHymnModel(row, version))
+            .map((row) => _mapJsonToHymnModel(row, normalizedVersion))
             .toList();
       } catch (e) {
         if (kDebugMode) {
@@ -58,9 +62,11 @@ class LocalDataSource implements HymnLocalDataSource {
 
     // Normal path: Get hymns from SQLite database (when ready)
     try {
-      final results = await _dbHelper.getHymns(languageCode, version);
+      final results = await _dbHelper.getHymns(languageCode, normalizedVersion);
       if (results.isNotEmpty) {
-        return results.map((row) => _mapRowToHymnModel(row, version)).toList();
+        return results
+            .map((row) => _mapRowToHymnModel(row, normalizedVersion))
+            .toList();
       }
     } catch (e) {
       if (kDebugMode) {
@@ -72,9 +78,11 @@ class LocalDataSource implements HymnLocalDataSource {
     if (kDebugMode) {
       debugPrint('⚡ Falling back to JSON data source');
     }
-    final jsonResults = await _jsonDataSource.getHymns(languageCode, version);
-    final hymns =
-        jsonResults.map((row) => _mapJsonToHymnModel(row, version)).toList();
+    final jsonResults =
+        await _jsonDataSource.getHymns(languageCode, normalizedVersion);
+    final hymns = jsonResults
+        .map((row) => _mapJsonToHymnModel(row, normalizedVersion))
+        .toList();
 
     // Debug: Log title mapping for first few hymns from JSON
     if (kDebugMode && hymns.isNotEmpty) {
@@ -117,6 +125,10 @@ class LocalDataSource implements HymnLocalDataSource {
       }
     }
 
+    final newHymnalNumber = _readInt(jsonData['new_hymnal_number']);
+    final oldHymnalNumber = _readInt(jsonData['old_hymnal_number']);
+    final isOld = version == HymnalVersions.sdaOld;
+
     // Extract title fields
     final newHymnalTitle = jsonData['new_hymnal_title'] as String?;
     final oldHymnalTitle = jsonData['old_hymnal_title'] as String?;
@@ -127,9 +139,13 @@ class LocalDataSource implements HymnLocalDataSource {
     // This ensures title field always has a value for displayTitle getter
     final String? title = titleField?.isNotEmpty == true
         ? titleField
-        : (newHymnalTitle?.isNotEmpty == true
-            ? newHymnalTitle
-            : (oldHymnalTitle?.isNotEmpty == true ? oldHymnalTitle : null));
+        : (isOld
+            ? (oldHymnalTitle?.isNotEmpty == true
+                ? oldHymnalTitle
+                : newHymnalTitle)
+            : (newHymnalTitle?.isNotEmpty == true
+                ? newHymnalTitle
+                : oldHymnalTitle));
 
     // Extract lyrics with fallback
     final newHymnalLyrics = jsonData['new_hymnal_lyrics'] as String?;
@@ -138,13 +154,17 @@ class LocalDataSource implements HymnLocalDataSource {
 
     final String? lyrics = lyricsField?.isNotEmpty == true
         ? lyricsField
-        : (newHymnalLyrics?.isNotEmpty == true
-            ? newHymnalLyrics
-            : (oldHymnalLyrics?.isNotEmpty == true ? oldHymnalLyrics : null));
+        : (isOld
+            ? (oldHymnalLyrics?.isNotEmpty == true
+                ? oldHymnalLyrics
+                : newHymnalLyrics)
+            : (newHymnalLyrics?.isNotEmpty == true
+                ? newHymnalLyrics
+                : oldHymnalLyrics));
 
     // Sheet music is now loaded remotely on demand
     // No need to discover during mapping - will be fetched when needed
-    final hymnNumber = jsonData['number'] as int?;
+    final hymnNumber = _readInt(jsonData['number']);
     List<String>? finalSheetMusic = sheetMusic;
     // Keep existing sheetMusic from JSON if present (may contain URLs)
 
@@ -153,7 +173,8 @@ class LocalDataSource implements HymnLocalDataSource {
       number: hymnNumber,
       title: title,
       lyrics: lyrics,
-      category: jsonData['category'] as String?,
+      category: (jsonData['category'] as String?) ??
+          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
       audioUrl: jsonData['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields
@@ -165,6 +186,8 @@ class LocalDataSource implements HymnLocalDataSource {
       newHymnalLyrics: newHymnalLyrics,
       englishTitleOld: jsonData['english_title_old'] as String?,
       oldHymnalLyrics: oldHymnalLyrics,
+      newHymnalNumber: newHymnalNumber,
+      oldHymnalNumber: oldHymnalNumber,
       isFavorite: (jsonData['is_favorite'] as int?) == 1 ||
           (jsonData['is_favorite'] as bool?) == true,
     );
@@ -194,6 +217,10 @@ class LocalDataSource implements HymnLocalDataSource {
       }
     }
 
+    final newHymnalNumber = _readInt(row['new_hymnal_number']);
+    final oldHymnalNumber = _readInt(row['old_hymnal_number']);
+    final isOld = version == HymnalVersions.sdaOld;
+
     // Extract title fields
     final newHymnalTitle = row['new_hymnal_title'] as String?;
     final oldHymnalTitle = row['old_hymnal_title'] as String?;
@@ -203,9 +230,13 @@ class LocalDataSource implements HymnLocalDataSource {
     // Priority: title field > new_hymnal_title > old_hymnal_title
     final String? title = titleField?.isNotEmpty == true
         ? titleField
-        : (newHymnalTitle?.isNotEmpty == true
-            ? newHymnalTitle
-            : (oldHymnalTitle?.isNotEmpty == true ? oldHymnalTitle : null));
+        : (isOld
+            ? (oldHymnalTitle?.isNotEmpty == true
+                ? oldHymnalTitle
+                : newHymnalTitle)
+            : (newHymnalTitle?.isNotEmpty == true
+                ? newHymnalTitle
+                : oldHymnalTitle));
 
     // Extract lyrics with fallback
     final newHymnalLyrics = row['new_hymnal_lyrics'] as String?;
@@ -214,13 +245,17 @@ class LocalDataSource implements HymnLocalDataSource {
 
     final String? lyrics = lyricsField?.isNotEmpty == true
         ? lyricsField
-        : (newHymnalLyrics?.isNotEmpty == true
-            ? newHymnalLyrics
-            : (oldHymnalLyrics?.isNotEmpty == true ? oldHymnalLyrics : null));
+        : (isOld
+            ? (oldHymnalLyrics?.isNotEmpty == true
+                ? oldHymnalLyrics
+                : newHymnalLyrics)
+            : (newHymnalLyrics?.isNotEmpty == true
+                ? newHymnalLyrics
+                : oldHymnalLyrics));
 
     // Sheet music is now loaded remotely on demand
     // No need to discover during mapping - will be fetched when needed
-    final hymnNumber = row['number'] as int?;
+    final hymnNumber = _readInt(row['number']);
     List<String>? finalSheetMusic = sheetMusic;
     // Keep existing sheetMusic from database if present (may contain URLs)
 
@@ -229,7 +264,8 @@ class LocalDataSource implements HymnLocalDataSource {
       number: hymnNumber,
       title: title,
       lyrics: lyrics,
-      category: row['category'] as String?,
+      category: (row['category'] as String?) ??
+          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
       audioUrl: row['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields
@@ -241,7 +277,16 @@ class LocalDataSource implements HymnLocalDataSource {
       newHymnalLyrics: newHymnalLyrics,
       englishTitleOld: row['english_title_old'] as String?,
       oldHymnalLyrics: oldHymnalLyrics,
+      newHymnalNumber: newHymnalNumber,
+      oldHymnalNumber: oldHymnalNumber,
       isFavorite: (row['is_favorite'] as int?) == 1,
     );
+  }
+
+  int? _readInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
   }
 }

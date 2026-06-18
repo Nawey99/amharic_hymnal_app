@@ -184,7 +184,17 @@ class SearchEngine {
       );
     }
 
-    // Priority 3: Partial Amharic title match (starts with)
+    // Priority 3: Exact hymn number match
+    final numberMatch = _matchNumber(hymn: hymn, query: query);
+    if (numberMatch) {
+      return SearchResult(
+        hymn: hymn,
+        rank: 3,
+        matchType: MatchType.number,
+      );
+    }
+
+    // Priority 4: Partial Amharic title match (starts with)
     final partialAmharicStartsWith = _matchPartialAmharicTitle(
       hymn: hymn,
       query: query,
@@ -195,12 +205,12 @@ class SearchEngine {
     if (partialAmharicStartsWith) {
       return SearchResult(
         hymn: hymn,
-        rank: 3,
+        rank: 4,
         matchType: MatchType.partialTitle,
       );
     }
 
-    // Priority 4: Partial Amharic title match (contains)
+    // Priority 5: Partial Amharic title match (contains)
     final partialAmharicContains = _matchPartialAmharicTitle(
       hymn: hymn,
       query: query,
@@ -211,12 +221,12 @@ class SearchEngine {
     if (partialAmharicContains) {
       return SearchResult(
         hymn: hymn,
-        rank: 4,
+        rank: 5,
         matchType: MatchType.partialTitle,
       );
     }
 
-    // Priority 5: Partial English title match (starts with)
+    // Priority 6: Partial English title match (starts with)
     final partialEnglishStartsWith = _matchPartialEnglishTitle(
       hymn: hymn,
       query: query,
@@ -227,12 +237,12 @@ class SearchEngine {
     if (partialEnglishStartsWith) {
       return SearchResult(
         hymn: hymn,
-        rank: 5,
+        rank: 6,
         matchType: MatchType.partialTitle,
       );
     }
 
-    // Priority 6: Partial English title match (contains)
+    // Priority 7: Partial English title match (contains)
     final partialEnglishContains = _matchPartialEnglishTitle(
       hymn: hymn,
       query: query,
@@ -243,12 +253,12 @@ class SearchEngine {
     if (partialEnglishContains) {
       return SearchResult(
         hymn: hymn,
-        rank: 6,
+        rank: 7,
         matchType: MatchType.partialTitle,
       );
     }
 
-    // Priority 7: Lyrics match
+    // Priority 8: Lyrics match
     final lyricsMatch = _matchLyrics(
       hymn: hymn,
       query: query,
@@ -259,7 +269,7 @@ class SearchEngine {
     if (lyricsMatch) {
       return SearchResult(
         hymn: hymn,
-        rank: 7,
+        rank: 8,
         matchType: MatchType.lyrics,
       );
     }
@@ -270,6 +280,17 @@ class SearchEngine {
       rank: 999,
       matchType: MatchType.none,
     );
+  }
+
+  bool _matchNumber({
+    required Hymn hymn,
+    required String query,
+  }) {
+    final numberQuery = int.tryParse(query.trim());
+    if (numberQuery == null) return false;
+    return hymn.displayNumber == numberQuery ||
+        hymn.newHymnalNumber == numberQuery ||
+        hymn.oldHymnalNumber == numberQuery;
   }
 
   /// Check for exact Amharic title match

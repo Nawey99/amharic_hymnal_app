@@ -20,7 +20,7 @@ class HymnsLoaded extends HymnsState {
     List<Hymn> hymns,
     this.sortType, {
     this.languageCode = 'am',
-    this.version = 'hymnal',
+    this.version = 'sda_new',
   }) : hymns = _sortHymns(List.from(hymns), sortType);
 
   static List<Hymn> _sortHymns(List<Hymn> hymns, String sortType) {

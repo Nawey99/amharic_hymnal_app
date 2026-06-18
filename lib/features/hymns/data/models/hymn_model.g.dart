@@ -23,6 +23,8 @@ HymnModel _$HymnModelFromJson(Map<String, dynamic> json) => HymnModel(
       newHymnalLyrics: json['newHymnalLyrics'] as String?,
       englishTitleOld: json['englishTitleOld'] as String?,
       oldHymnalLyrics: json['oldHymnalLyrics'] as String?,
+      newHymnalNumber: (json['new_hymnal_number'] as num?)?.toInt(),
+      oldHymnalNumber: (json['old_hymnal_number'] as num?)?.toInt(),
       isFavorite: json['isFavorite'] as bool? ?? false,
     );
 
@@ -42,4 +44,8 @@ Map<String, dynamic> _$HymnModelToJson(HymnModel instance) => <String, dynamic>{
       'isFavorite': instance.isFavorite,
       if (instance.audioUrl case final value?) 'audio': value,
       if (instance.sheetMusic case final value?) 'sheet_music': value,
+      if (instance.newHymnalNumber case final value?)
+        'new_hymnal_number': value,
+      if (instance.oldHymnalNumber case final value?)
+        'old_hymnal_number': value,
     };

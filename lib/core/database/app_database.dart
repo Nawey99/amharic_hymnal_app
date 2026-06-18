@@ -35,6 +35,10 @@ class Hymns extends Table {
       text().nullable().named('english_title_old')();
   TextColumn get oldHymnalLyrics =>
       text().nullable().named('old_hymnal_lyrics')();
+  IntColumn get newHymnalNumber =>
+      integer().nullable().named('new_hymnal_number')();
+  IntColumn get oldHymnalNumber =>
+      integer().nullable().named('old_hymnal_number')();
   IntColumn get createdAt => integer().named('created_at')();
   IntColumn get updatedAt => integer().named('updated_at')();
   BoolColumn get isFavorite =>
@@ -49,7 +53,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -64,6 +68,9 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from <= 2) {
           await schemaHelper.upgradeFromV2();
+        }
+        if (from <= 3) {
+          await schemaHelper.upgradeFromV3();
         }
       },
     );
@@ -141,6 +148,8 @@ class AppDatabase extends _$AppDatabase {
         newHymnalLyrics: data['new_hymnal_lyrics'] as String?,
         englishTitleOld: data['english_title_old'] as String?,
         oldHymnalLyrics: data['old_hymnal_lyrics'] as String?,
+        newHymnalNumber: data['new_hymnal_number'] as int?,
+        oldHymnalNumber: data['old_hymnal_number'] as int?,
         createdAt: data['created_at'] as int,
         updatedAt: data['updated_at'] as int,
         isFavorite: (data['is_favorite'] as int?) == 1,

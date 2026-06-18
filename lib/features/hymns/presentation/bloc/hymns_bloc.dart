@@ -304,6 +304,8 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
               newHymnalLyrics: hymn.newHymnalLyrics,
               englishTitleOld: hymn.englishTitleOld,
               oldHymnalLyrics: hymn.oldHymnalLyrics,
+              newHymnalNumber: hymn.newHymnalNumber,
+              oldHymnalNumber: hymn.oldHymnalNumber,
               isFavorite: newFavoriteStatus,
             );
           }

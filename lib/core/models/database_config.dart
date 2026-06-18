@@ -1,4 +1,6 @@
 // lib/core/models/database_config.dart
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+
 class DatabaseConfig {
   final String languageCode; // e.g., 'am', 'en'
   final String version; // e.g., 'hymnal', 'hagerigna'
@@ -35,6 +37,18 @@ class DatabaseRegistry {
       filePath: 'assets/data/database/SDA_Hymnal.json',
       displayName: 'Hymnal',
     ),
+    'am_sda_new': const DatabaseConfig(
+      languageCode: 'am',
+      version: HymnalVersions.sdaNew,
+      filePath: 'assets/data/database/SDA_Hymnal.json',
+      displayName: 'New SDA Hymnal',
+    ),
+    'am_sda_old': const DatabaseConfig(
+      languageCode: 'am',
+      version: HymnalVersions.sdaOld,
+      filePath: 'assets/data/database/SDA_Hymnal.json',
+      displayName: 'Old SDA Hymnal',
+    ),
     'am_hagerigna': const DatabaseConfig(
       languageCode: 'am',
       version: 'hagerigna',
@@ -52,7 +66,8 @@ class DatabaseRegistry {
 
   /// Get database config for a language and version
   static DatabaseConfig? getDatabase(String languageCode, String version) {
-    final key = '${languageCode}_$version';
+    final normalizedVersion = HymnalVersions.normalizeId(version);
+    final key = '${languageCode}_$normalizedVersion';
     return _databases[key];
   }
 

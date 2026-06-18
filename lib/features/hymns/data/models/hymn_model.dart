@@ -21,6 +21,16 @@ class HymnModel extends Hymn {
   // ignore: overridden_fields
   final List<String>? sheetMusic;
 
+  @JsonKey(name: 'new_hymnal_number')
+  @override
+  // ignore: overridden_fields
+  final int? newHymnalNumber;
+
+  @JsonKey(name: 'old_hymnal_number')
+  @override
+  // ignore: overridden_fields
+  final int? oldHymnalNumber;
+
   const HymnModel({
     super.id,
     super.number,
@@ -38,10 +48,14 @@ class HymnModel extends Hymn {
     super.newHymnalLyrics,
     super.englishTitleOld,
     super.oldHymnalLyrics,
+    this.newHymnalNumber,
+    this.oldHymnalNumber,
     super.isFavorite,
   }) : super(
           audioUrl: audioUrl,
           sheetMusic: sheetMusic,
+          newHymnalNumber: newHymnalNumber,
+          oldHymnalNumber: oldHymnalNumber,
         );
 
   factory HymnModel.fromJson(Map<String, dynamic> json) =>

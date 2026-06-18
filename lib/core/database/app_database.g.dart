@@ -107,6 +107,18 @@ class $HymnsTable extends Hymns with TableInfo<$HymnsTable, Hymn> {
   late final GeneratedColumn<String> oldHymnalLyrics = GeneratedColumn<String>(
       'old_hymnal_lyrics', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _newHymnalNumberMeta =
+      const VerificationMeta('newHymnalNumber');
+  @override
+  late final GeneratedColumn<int> newHymnalNumber = GeneratedColumn<int>(
+      'new_hymnal_number', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _oldHymnalNumberMeta =
+      const VerificationMeta('oldHymnalNumber');
+  @override
+  late final GeneratedColumn<int> oldHymnalNumber = GeneratedColumn<int>(
+      'old_hymnal_number', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -147,6 +159,8 @@ class $HymnsTable extends Hymns with TableInfo<$HymnsTable, Hymn> {
         newHymnalLyrics,
         englishTitleOld,
         oldHymnalLyrics,
+        newHymnalNumber,
+        oldHymnalNumber,
         createdAt,
         updatedAt,
         isFavorite
@@ -245,6 +259,18 @@ class $HymnsTable extends Hymns with TableInfo<$HymnsTable, Hymn> {
           oldHymnalLyrics.isAcceptableOrUnknown(
               data['old_hymnal_lyrics']!, _oldHymnalLyricsMeta));
     }
+    if (data.containsKey('new_hymnal_number')) {
+      context.handle(
+          _newHymnalNumberMeta,
+          newHymnalNumber.isAcceptableOrUnknown(
+              data['new_hymnal_number']!, _newHymnalNumberMeta));
+    }
+    if (data.containsKey('old_hymnal_number')) {
+      context.handle(
+          _oldHymnalNumberMeta,
+          oldHymnalNumber.isAcceptableOrUnknown(
+              data['old_hymnal_number']!, _oldHymnalNumberMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -304,6 +330,10 @@ class $HymnsTable extends Hymns with TableInfo<$HymnsTable, Hymn> {
           DriftSqlType.string, data['${effectivePrefix}english_title_old']),
       oldHymnalLyrics: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}old_hymnal_lyrics']),
+      newHymnalNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}new_hymnal_number']),
+      oldHymnalNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}old_hymnal_number']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -336,6 +366,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
   final String? newHymnalLyrics;
   final String? englishTitleOld;
   final String? oldHymnalLyrics;
+  final int? newHymnalNumber;
+  final int? oldHymnalNumber;
   final int createdAt;
   final int updatedAt;
   final bool isFavorite;
@@ -356,6 +388,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
       this.newHymnalLyrics,
       this.englishTitleOld,
       this.oldHymnalLyrics,
+      this.newHymnalNumber,
+      this.oldHymnalNumber,
       required this.createdAt,
       required this.updatedAt,
       required this.isFavorite});
@@ -404,6 +438,12 @@ class Hymn extends DataClass implements Insertable<Hymn> {
     if (!nullToAbsent || oldHymnalLyrics != null) {
       map['old_hymnal_lyrics'] = Variable<String>(oldHymnalLyrics);
     }
+    if (!nullToAbsent || newHymnalNumber != null) {
+      map['new_hymnal_number'] = Variable<int>(newHymnalNumber);
+    }
+    if (!nullToAbsent || oldHymnalNumber != null) {
+      map['old_hymnal_number'] = Variable<int>(oldHymnalNumber);
+    }
     map['created_at'] = Variable<int>(createdAt);
     map['updated_at'] = Variable<int>(updatedAt);
     map['is_favorite'] = Variable<bool>(isFavorite);
@@ -448,6 +488,12 @@ class Hymn extends DataClass implements Insertable<Hymn> {
       oldHymnalLyrics: oldHymnalLyrics == null && nullToAbsent
           ? const Value.absent()
           : Value(oldHymnalLyrics),
+      newHymnalNumber: newHymnalNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(newHymnalNumber),
+      oldHymnalNumber: oldHymnalNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oldHymnalNumber),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       isFavorite: Value(isFavorite),
@@ -474,6 +520,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
       newHymnalLyrics: serializer.fromJson<String?>(json['newHymnalLyrics']),
       englishTitleOld: serializer.fromJson<String?>(json['englishTitleOld']),
       oldHymnalLyrics: serializer.fromJson<String?>(json['oldHymnalLyrics']),
+      newHymnalNumber: serializer.fromJson<int?>(json['newHymnalNumber']),
+      oldHymnalNumber: serializer.fromJson<int?>(json['oldHymnalNumber']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
@@ -499,6 +547,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
       'newHymnalLyrics': serializer.toJson<String?>(newHymnalLyrics),
       'englishTitleOld': serializer.toJson<String?>(englishTitleOld),
       'oldHymnalLyrics': serializer.toJson<String?>(oldHymnalLyrics),
+      'newHymnalNumber': serializer.toJson<int?>(newHymnalNumber),
+      'oldHymnalNumber': serializer.toJson<int?>(oldHymnalNumber),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
       'isFavorite': serializer.toJson<bool>(isFavorite),
@@ -522,6 +572,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
           Value<String?> newHymnalLyrics = const Value.absent(),
           Value<String?> englishTitleOld = const Value.absent(),
           Value<String?> oldHymnalLyrics = const Value.absent(),
+          Value<int?> newHymnalNumber = const Value.absent(),
+          Value<int?> oldHymnalNumber = const Value.absent(),
           int? createdAt,
           int? updatedAt,
           bool? isFavorite}) =>
@@ -550,6 +602,12 @@ class Hymn extends DataClass implements Insertable<Hymn> {
         oldHymnalLyrics: oldHymnalLyrics.present
             ? oldHymnalLyrics.value
             : this.oldHymnalLyrics,
+        newHymnalNumber: newHymnalNumber.present
+            ? newHymnalNumber.value
+            : this.newHymnalNumber,
+        oldHymnalNumber: oldHymnalNumber.present
+            ? oldHymnalNumber.value
+            : this.oldHymnalNumber,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         isFavorite: isFavorite ?? this.isFavorite,
@@ -585,6 +643,12 @@ class Hymn extends DataClass implements Insertable<Hymn> {
       oldHymnalLyrics: data.oldHymnalLyrics.present
           ? data.oldHymnalLyrics.value
           : this.oldHymnalLyrics,
+      newHymnalNumber: data.newHymnalNumber.present
+          ? data.newHymnalNumber.value
+          : this.newHymnalNumber,
+      oldHymnalNumber: data.oldHymnalNumber.present
+          ? data.oldHymnalNumber.value
+          : this.oldHymnalNumber,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isFavorite:
@@ -611,6 +675,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
           ..write('newHymnalLyrics: $newHymnalLyrics, ')
           ..write('englishTitleOld: $englishTitleOld, ')
           ..write('oldHymnalLyrics: $oldHymnalLyrics, ')
+          ..write('newHymnalNumber: $newHymnalNumber, ')
+          ..write('oldHymnalNumber: $oldHymnalNumber, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isFavorite: $isFavorite')
@@ -619,26 +685,29 @@ class Hymn extends DataClass implements Insertable<Hymn> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      hymnId,
-      languageCode,
-      version,
-      number,
-      title,
-      lyrics,
-      category,
-      audioUrl,
-      sheetMusic,
-      artist,
-      song,
-      newHymnalTitle,
-      oldHymnalTitle,
-      newHymnalLyrics,
-      englishTitleOld,
-      oldHymnalLyrics,
-      createdAt,
-      updatedAt,
-      isFavorite);
+  int get hashCode => Object.hashAll([
+        hymnId,
+        languageCode,
+        version,
+        number,
+        title,
+        lyrics,
+        category,
+        audioUrl,
+        sheetMusic,
+        artist,
+        song,
+        newHymnalTitle,
+        oldHymnalTitle,
+        newHymnalLyrics,
+        englishTitleOld,
+        oldHymnalLyrics,
+        newHymnalNumber,
+        oldHymnalNumber,
+        createdAt,
+        updatedAt,
+        isFavorite
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -659,6 +728,8 @@ class Hymn extends DataClass implements Insertable<Hymn> {
           other.newHymnalLyrics == this.newHymnalLyrics &&
           other.englishTitleOld == this.englishTitleOld &&
           other.oldHymnalLyrics == this.oldHymnalLyrics &&
+          other.newHymnalNumber == this.newHymnalNumber &&
+          other.oldHymnalNumber == this.oldHymnalNumber &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.isFavorite == this.isFavorite);
@@ -681,6 +752,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
   final Value<String?> newHymnalLyrics;
   final Value<String?> englishTitleOld;
   final Value<String?> oldHymnalLyrics;
+  final Value<int?> newHymnalNumber;
+  final Value<int?> oldHymnalNumber;
   final Value<int> createdAt;
   final Value<int> updatedAt;
   final Value<bool> isFavorite;
@@ -702,6 +775,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
     this.newHymnalLyrics = const Value.absent(),
     this.englishTitleOld = const Value.absent(),
     this.oldHymnalLyrics = const Value.absent(),
+    this.newHymnalNumber = const Value.absent(),
+    this.oldHymnalNumber = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
@@ -724,6 +799,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
     this.newHymnalLyrics = const Value.absent(),
     this.englishTitleOld = const Value.absent(),
     this.oldHymnalLyrics = const Value.absent(),
+    this.newHymnalNumber = const Value.absent(),
+    this.oldHymnalNumber = const Value.absent(),
     required int createdAt,
     required int updatedAt,
     this.isFavorite = const Value.absent(),
@@ -750,6 +827,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
     Expression<String>? newHymnalLyrics,
     Expression<String>? englishTitleOld,
     Expression<String>? oldHymnalLyrics,
+    Expression<int>? newHymnalNumber,
+    Expression<int>? oldHymnalNumber,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
     Expression<bool>? isFavorite,
@@ -772,6 +851,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
       if (newHymnalLyrics != null) 'new_hymnal_lyrics': newHymnalLyrics,
       if (englishTitleOld != null) 'english_title_old': englishTitleOld,
       if (oldHymnalLyrics != null) 'old_hymnal_lyrics': oldHymnalLyrics,
+      if (newHymnalNumber != null) 'new_hymnal_number': newHymnalNumber,
+      if (oldHymnalNumber != null) 'old_hymnal_number': oldHymnalNumber,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isFavorite != null) 'is_favorite': isFavorite,
@@ -796,6 +877,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
       Value<String?>? newHymnalLyrics,
       Value<String?>? englishTitleOld,
       Value<String?>? oldHymnalLyrics,
+      Value<int?>? newHymnalNumber,
+      Value<int?>? oldHymnalNumber,
       Value<int>? createdAt,
       Value<int>? updatedAt,
       Value<bool>? isFavorite,
@@ -817,6 +900,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
       newHymnalLyrics: newHymnalLyrics ?? this.newHymnalLyrics,
       englishTitleOld: englishTitleOld ?? this.englishTitleOld,
       oldHymnalLyrics: oldHymnalLyrics ?? this.oldHymnalLyrics,
+      newHymnalNumber: newHymnalNumber ?? this.newHymnalNumber,
+      oldHymnalNumber: oldHymnalNumber ?? this.oldHymnalNumber,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isFavorite: isFavorite ?? this.isFavorite,
@@ -875,6 +960,12 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
     if (oldHymnalLyrics.present) {
       map['old_hymnal_lyrics'] = Variable<String>(oldHymnalLyrics.value);
     }
+    if (newHymnalNumber.present) {
+      map['new_hymnal_number'] = Variable<int>(newHymnalNumber.value);
+    }
+    if (oldHymnalNumber.present) {
+      map['old_hymnal_number'] = Variable<int>(oldHymnalNumber.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -909,6 +1000,8 @@ class HymnsCompanion extends UpdateCompanion<Hymn> {
           ..write('newHymnalLyrics: $newHymnalLyrics, ')
           ..write('englishTitleOld: $englishTitleOld, ')
           ..write('oldHymnalLyrics: $oldHymnalLyrics, ')
+          ..write('newHymnalNumber: $newHymnalNumber, ')
+          ..write('oldHymnalNumber: $oldHymnalNumber, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isFavorite: $isFavorite, ')
@@ -946,6 +1039,8 @@ typedef $$HymnsTableCreateCompanionBuilder = HymnsCompanion Function({
   Value<String?> newHymnalLyrics,
   Value<String?> englishTitleOld,
   Value<String?> oldHymnalLyrics,
+  Value<int?> newHymnalNumber,
+  Value<int?> oldHymnalNumber,
   required int createdAt,
   required int updatedAt,
   Value<bool> isFavorite,
@@ -968,6 +1063,8 @@ typedef $$HymnsTableUpdateCompanionBuilder = HymnsCompanion Function({
   Value<String?> newHymnalLyrics,
   Value<String?> englishTitleOld,
   Value<String?> oldHymnalLyrics,
+  Value<int?> newHymnalNumber,
+  Value<int?> oldHymnalNumber,
   Value<int> createdAt,
   Value<int> updatedAt,
   Value<bool> isFavorite,
@@ -1033,6 +1130,14 @@ class $$HymnsTableFilterComposer extends Composer<_$AppDatabase, $HymnsTable> {
 
   ColumnFilters<String> get oldHymnalLyrics => $composableBuilder(
       column: $table.oldHymnalLyrics,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get newHymnalNumber => $composableBuilder(
+      column: $table.newHymnalNumber,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get oldHymnalNumber => $composableBuilder(
+      column: $table.oldHymnalNumber,
       builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get createdAt => $composableBuilder(
@@ -1108,6 +1213,14 @@ class $$HymnsTableOrderingComposer
       column: $table.oldHymnalLyrics,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get newHymnalNumber => $composableBuilder(
+      column: $table.newHymnalNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get oldHymnalNumber => $composableBuilder(
+      column: $table.oldHymnalNumber,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -1175,6 +1288,12 @@ class $$HymnsTableAnnotationComposer
   GeneratedColumn<String> get oldHymnalLyrics => $composableBuilder(
       column: $table.oldHymnalLyrics, builder: (column) => column);
 
+  GeneratedColumn<int> get newHymnalNumber => $composableBuilder(
+      column: $table.newHymnalNumber, builder: (column) => column);
+
+  GeneratedColumn<int> get oldHymnalNumber => $composableBuilder(
+      column: $table.oldHymnalNumber, builder: (column) => column);
+
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -1224,6 +1343,8 @@ class $$HymnsTableTableManager extends RootTableManager<
             Value<String?> newHymnalLyrics = const Value.absent(),
             Value<String?> englishTitleOld = const Value.absent(),
             Value<String?> oldHymnalLyrics = const Value.absent(),
+            Value<int?> newHymnalNumber = const Value.absent(),
+            Value<int?> oldHymnalNumber = const Value.absent(),
             Value<int> createdAt = const Value.absent(),
             Value<int> updatedAt = const Value.absent(),
             Value<bool> isFavorite = const Value.absent(),
@@ -1246,6 +1367,8 @@ class $$HymnsTableTableManager extends RootTableManager<
             newHymnalLyrics: newHymnalLyrics,
             englishTitleOld: englishTitleOld,
             oldHymnalLyrics: oldHymnalLyrics,
+            newHymnalNumber: newHymnalNumber,
+            oldHymnalNumber: oldHymnalNumber,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isFavorite: isFavorite,
@@ -1268,6 +1391,8 @@ class $$HymnsTableTableManager extends RootTableManager<
             Value<String?> newHymnalLyrics = const Value.absent(),
             Value<String?> englishTitleOld = const Value.absent(),
             Value<String?> oldHymnalLyrics = const Value.absent(),
+            Value<int?> newHymnalNumber = const Value.absent(),
+            Value<int?> oldHymnalNumber = const Value.absent(),
             required int createdAt,
             required int updatedAt,
             Value<bool> isFavorite = const Value.absent(),
@@ -1290,6 +1415,8 @@ class $$HymnsTableTableManager extends RootTableManager<
             newHymnalLyrics: newHymnalLyrics,
             englishTitleOld: englishTitleOld,
             oldHymnalLyrics: oldHymnalLyrics,
+            newHymnalNumber: newHymnalNumber,
+            oldHymnalNumber: oldHymnalNumber,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isFavorite: isFavorite,

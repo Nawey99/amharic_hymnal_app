@@ -1,8 +1,15 @@
 // lib/core/database/parsers/sda_parser.dart
+import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+
 /// Parser for SDA Hymnal JSON format
 class SdaParser {
   /// Parse SDA format: find arrays by _name and combine by index
-  static List<Map<String, dynamic>> parse(Map<String, dynamic> jsonData) {
+  static List<Map<String, dynamic>> parse(
+    Map<String, dynamic> jsonData, {
+    String version = HymnalVersions.sdaNew,
+  }) {
+    final normalizedVersion = HymnalVersions.normalizeId(version);
     final List<dynamic> arrays = jsonData['resources']?['array'] ?? [];
 
     // Find arrays by _name
@@ -45,11 +52,31 @@ class SdaParser {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     for (int i = 0; i < maxLength; i++) {
+      final newNumber = i + 1;
+      final oldNumber =
+          oldTitleArray.length > i || oldLyricsArray.length > i ? i + 1 : null;
+      final category =
+          HymnCategories.getCategoryByNumber(newNumber)?.nameAmharic;
+      final isOld = normalizedVersion == HymnalVersions.sdaOld;
+      final displayNumber = isOld ? oldNumber : newNumber;
+      if (displayNumber == null) {
+        continue;
+      }
+
       hymns.add({
-        'id': 'sda-$i',
+        'id': '$normalizedVersion-sda-$i',
         'language_code': 'am',
-        'version': 'hymnal',
-        'number': i + 1, // Start from 1
+        'version': normalizedVersion,
+        'number': displayNumber,
+        'new_hymnal_number': newNumber,
+        'old_hymnal_number': oldNumber,
+        'title': isOld
+            ? (oldTitleArray.length > i ? oldTitleArray[i] : '')
+            : (newTitleArray.length > i ? newTitleArray[i] : ''),
+        'lyrics': isOld
+            ? (oldLyricsArray.length > i ? oldLyricsArray[i] : '')
+            : (newLyricsArray.length > i ? newLyricsArray[i] : ''),
+        'category': category,
         'new_hymnal_title': newTitleArray.length > i
             ? (newTitleArray[i].isEmpty ? '' : newTitleArray[i])
             : '',

@@ -27,6 +27,70 @@ const hagerignaDb = new PrismaClient({
   datasources: { db: { url: hagerignaDatabaseUrl } },
 });
 
+const versions = {
+  sdaNew: 'sda_new',
+  sdaOld: 'sda_old',
+  hagerigna: 'hagerigna',
+  legacyHymnal: 'hymnal',
+};
+
+const normalizeVersion = (version) => {
+  if (version === versions.legacyHymnal || !version) return versions.sdaNew;
+  if ([versions.sdaNew, versions.sdaOld, versions.hagerigna].includes(version)) {
+    return version;
+  }
+  return versions.sdaNew;
+};
+
+const sdaCategories = [
+  ['praise', 'ምስጋና', 1, 24],
+  ['worship', 'ስግደት', 25, 42],
+  ['awakening', 'መነቃቃት', 43, 44],
+  ['repentance', 'ንሥሐ', 45, 58],
+  ['prayer', 'ጸሎት', 59, 84],
+  ['christian_life', 'የክርስቲያን ኑሮ', 85, 116],
+  ['self_sacrifice', 'ራስን ቀድሶ መስጠት', 117, 118],
+  ['work', 'ሥራ', 119, 121],
+  ['people', 'ሕዝብ', 122, 122],
+  ['faithfulness', 'ታማኝነት', 123, 128],
+  ['hope', 'ተስፋ', 129, 134],
+  ['joy', 'ደስታ', 135, 140],
+  ['peace', 'ሰላም', 141, 146],
+  ['love', 'ፍቅር', 147, 159],
+  ['salvation', 'መድህን', 160, 178],
+  ['cross', 'መስቀል', 179, 193],
+  ['sabbath', 'ሰንበት', 194, 197],
+  ['word_of_god', 'የእግዚአብሔር ቃል', 198, 203],
+  ['christian_struggle', 'የክርስቲያን ተጋድሎ', 204, 206],
+  ['judgment', 'ፍርድ', 207, 208],
+  ['second_coming', 'ዳግም ምፅአት', 209, 220],
+  ['heaven', 'የሰማይ ቤት', 221, 241],
+  ['youth', 'ወጣቶች', 242, 264],
+  ['nature', 'ተፈጥሮ', 265, 266],
+  ['children', 'የልጆች መዝሙር', 267, 275],
+  ['marriage', 'ጋብቻ', 276, 277],
+  ['birth', 'ልደት', 278, 292],
+  ['trust', 'መታመን', 293, 310],
+  ['offering', 'ቁርባን', 311, 314],
+  ['resurrection', 'ትንሣኤ', 315, 320],
+  ['funeral', 'መሰናበቻ', 321, 325],
+].map(([id, name, startNumber, endNumber], index) => ({
+  id,
+  name,
+  name_amharic: name,
+  start_number: startNumber,
+  end_number: endNumber,
+  sort_order: index + 1,
+}));
+
+const getCategoryForNumber = (number) =>
+  sdaCategories.find(
+    (category) =>
+      Number.isFinite(number) &&
+      number >= category.start_number &&
+      number <= category.end_number,
+  ) ?? null;
+
 const sendJson = (response, statusCode, body) => {
   response.writeHead(statusCode, {
     'content-type': 'application/json; charset=utf-8',
@@ -41,18 +105,17 @@ const sendJson = (response, statusCode, body) => {
 const toIntOrNull = (value) =>
   value === null || value === undefined ? null : Number(value);
 
-const getSdaHymns = async () => {
+const getSdaHymns = async (version) => {
+  const normalizedVersion = normalizeVersion(version);
+  const isOld = normalizedVersion === versions.sdaOld;
   const rows = await sdaDb.$queryRaw`
     select
       s.work_id::text as id,
-      coalesce(s.new_hymnal_number, s.old_hymnal_number) as number,
       s.new_hymnal_number,
       s.old_hymnal_number,
-      coalesce(new_e.title, old_e.title, s.title) as title,
       new_e.title as new_hymnal_title,
       old_e.title as old_hymnal_title,
       s.english_title,
-      coalesce(new_e.lyrics, old_e.lyrics, '') as lyrics,
       new_e.lyrics as new_hymnal_lyrics,
       old_e.lyrics as old_hymnal_lyrics,
       coalesce(
@@ -77,29 +140,51 @@ const getSdaHymns = async () => {
     order by coalesce(s.new_hymnal_number, s.old_hymnal_number);
   `;
 
-  return rows.map((row) => ({
-    id: row.id,
-    number: toIntOrNull(row.number),
-    title: row.title,
-    lyrics: row.lyrics ?? '',
-    category: null,
-    audio_url: null,
-    audio: null,
-    sheet_music: row.sheet_music ?? [],
-    new_hymnal_title: row.new_hymnal_title,
-    old_hymnal_title: row.old_hymnal_title,
-    new_hymnal_lyrics: row.new_hymnal_lyrics,
-    old_hymnal_lyrics: row.old_hymnal_lyrics,
-    english_title_old: row.english_title,
-    newHymnalTitle: row.new_hymnal_title,
-    oldHymnalTitle: row.old_hymnal_title,
-    newHymnalLyrics: row.new_hymnal_lyrics,
-    oldHymnalLyrics: row.old_hymnal_lyrics,
-    englishTitleOld: row.english_title,
-    new_hymnal_number: toIntOrNull(row.new_hymnal_number),
-    old_hymnal_number: toIntOrNull(row.old_hymnal_number),
-    isFavorite: false,
-  }));
+  return rows
+    .map((row) => {
+      const number = toIntOrNull(
+        isOld ? row.old_hymnal_number : row.new_hymnal_number,
+      );
+      const title = isOld
+        ? row.old_hymnal_title ?? row.new_hymnal_title ?? ''
+        : row.new_hymnal_title ?? row.old_hymnal_title ?? '';
+      const lyrics = isOld
+        ? row.old_hymnal_lyrics ?? row.new_hymnal_lyrics ?? ''
+        : row.new_hymnal_lyrics ?? row.old_hymnal_lyrics ?? '';
+      const category = getCategoryForNumber(number);
+
+      if (number === null) {
+        return null;
+      }
+
+      return {
+        id: row.id,
+        number,
+        version: normalizedVersion,
+        title,
+        lyrics,
+        category: category?.name ?? null,
+        category_id: category?.id ?? null,
+        audio_url: null,
+        audio: null,
+        sheet_music: row.sheet_music ?? [],
+        new_hymnal_title: row.new_hymnal_title,
+        old_hymnal_title: row.old_hymnal_title,
+        new_hymnal_lyrics: row.new_hymnal_lyrics,
+        old_hymnal_lyrics: row.old_hymnal_lyrics,
+        english_title_old: row.english_title,
+        newHymnalTitle: row.new_hymnal_title,
+        oldHymnalTitle: row.old_hymnal_title,
+        newHymnalLyrics: row.new_hymnal_lyrics,
+        oldHymnalLyrics: row.old_hymnal_lyrics,
+        englishTitleOld: row.english_title,
+        new_hymnal_number: toIntOrNull(row.new_hymnal_number),
+        old_hymnal_number: toIntOrNull(row.old_hymnal_number),
+        isFavorite: false,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.number - b.number);
 };
 
 const getHagerignaSongs = async () => {
@@ -173,9 +258,20 @@ const server = http.createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && url.pathname === '/api/hymns') {
-      const version = url.searchParams.get('version') ?? 'hymnal';
+      const version = normalizeVersion(url.searchParams.get('version'));
       const data =
-        version === 'hagerigna' ? await getHagerignaSongs() : await getSdaHymns();
+        version === versions.hagerigna
+          ? await getHagerignaSongs()
+          : await getSdaHymns(version);
+      sendJson(response, 200, { data });
+      return;
+    }
+
+    if (request.method === 'GET' && url.pathname === '/api/categories') {
+      const version = normalizeVersion(url.searchParams.get('version'));
+      const data = [versions.sdaNew, versions.sdaOld].includes(version)
+        ? sdaCategories
+        : [];
       sendJson(response, 200, { data });
       return;
     }

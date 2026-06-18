@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:amharic_hymnal_app/core/database/app_database.dart';
 import 'package:amharic_hymnal_app/core/database/database_migration.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 
 /// Singleton helper class for database operations
 ///
@@ -175,7 +176,8 @@ class DatabaseHelper {
     }
 
     // Check cache first
-    final cacheKey = '${languageCode}_$version';
+    final normalizedVersion = HymnalVersions.normalizeId(version);
+    final cacheKey = '${languageCode}_$normalizedVersion';
     if (_hymnsCache.containsKey(cacheKey)) {
       if (kDebugMode) {
         debugPrint(
@@ -185,7 +187,8 @@ class DatabaseHelper {
     }
 
     try {
-      final hymnData = await _database.getHymns(languageCode, version);
+      final hymnData =
+          await _database.getHymns(languageCode, normalizedVersion);
       if (kDebugMode) {
         debugPrint(
             '📖 Retrieved ${hymnData.length} hymns for $languageCode/$version');
@@ -240,7 +243,8 @@ class DatabaseHelper {
     }
 
     // Check cache first
-    final cacheKey = '${languageCode}_${version}_$number';
+    final normalizedVersion = HymnalVersions.normalizeId(version);
+    final cacheKey = '${languageCode}_${normalizedVersion}_$number';
     if (_hymnByNumberCache.containsKey(cacheKey)) {
       if (kDebugMode) {
         debugPrint(
@@ -250,8 +254,8 @@ class DatabaseHelper {
     }
 
     try {
-      final hymn =
-          await _database.getHymnByNumber(languageCode, version, number);
+      final hymn = await _database.getHymnByNumber(
+          languageCode, normalizedVersion, number);
       final mapped = hymn != null ? _mapToMap(hymn) : null;
       // Cache the result
       _hymnByNumberCache[cacheKey] = mapped;
@@ -282,8 +286,9 @@ class DatabaseHelper {
     }
 
     try {
+      final normalizedVersion = HymnalVersions.normalizeId(version);
       final hymnData =
-          await _database.searchHymns(languageCode, version, query);
+          await _database.searchHymns(languageCode, normalizedVersion, query);
       if (kDebugMode) {
         debugPrint(
             '🔍 Search "$query" returned ${hymnData.length} results for $languageCode/$version');
@@ -313,8 +318,9 @@ class DatabaseHelper {
       return [];
     }
     try {
-      final hymnData =
-          await _database.getHymnsByCategory(languageCode, version, category);
+      final normalizedVersion = HymnalVersions.normalizeId(version);
+      final hymnData = await _database.getHymnsByCategory(
+          languageCode, normalizedVersion, category);
       return hymnData.map((h) => _mapToMap(h)).toList();
     } catch (e) {
       if (kDebugMode) {
@@ -327,7 +333,8 @@ class DatabaseHelper {
 
   // Clear all hymns for a language/version
   Future<void> clearHymns(String languageCode, String version) async {
-    await _database.clearHymns(languageCode, version);
+    await _database.clearHymns(
+        languageCode, HymnalVersions.normalizeId(version));
   }
 
   // Check if database is empty
@@ -410,6 +417,8 @@ class DatabaseHelper {
       newHymnalLyrics: Value(hymn['new_hymnal_lyrics'] as String?),
       englishTitleOld: Value(hymn['english_title_old'] as String?),
       oldHymnalLyrics: Value(hymn['old_hymnal_lyrics'] as String?),
+      newHymnalNumber: Value(hymn['new_hymnal_number'] as int?),
+      oldHymnalNumber: Value(hymn['old_hymnal_number'] as int?),
       createdAt: hymn['created_at'] as int,
       updatedAt: hymn['updated_at'] as int,
       isFavorite: Value((hymn['is_favorite'] as int?) == 1),
@@ -436,6 +445,8 @@ class DatabaseHelper {
       'new_hymnal_lyrics': hymn.newHymnalLyrics,
       'english_title_old': hymn.englishTitleOld,
       'old_hymnal_lyrics': hymn.oldHymnalLyrics,
+      'new_hymnal_number': hymn.newHymnalNumber,
+      'old_hymnal_number': hymn.oldHymnalNumber,
       'created_at': hymn.createdAt,
       'updated_at': hymn.updatedAt,
       'is_favorite': hymn.isFavorite ? 1 : 0,
@@ -448,7 +459,9 @@ class DatabaseHelper {
     await _ensureReady();
     try {
       // Get current favorite status
-      final hymn = await getHymnByNumber(languageCode, version, hymnNumber);
+      final normalizedVersion = HymnalVersions.normalizeId(version);
+      final hymn =
+          await getHymnByNumber(languageCode, normalizedVersion, hymnNumber);
       if (hymn != null) {
         final currentStatus = (hymn['is_favorite'] as int?) == 1;
         final newStatus = !currentStatus;
@@ -460,14 +473,15 @@ class DatabaseHelper {
           [
             Variable.withInt(newStatus ? 1 : 0),
             Variable.withString(languageCode),
-            Variable.withString(version),
+            Variable.withString(normalizedVersion),
             Variable.withInt(hymnNumber),
           ],
         );
 
         // Invalidate cache for this hymn and the hymns list
-        _hymnByNumberCache.remove('${languageCode}_${version}_$hymnNumber');
-        _hymnsCache.remove('${languageCode}_$version');
+        _hymnByNumberCache
+            .remove('${languageCode}_${normalizedVersion}_$hymnNumber');
+        _hymnsCache.remove('${languageCode}_$normalizedVersion');
         if (kDebugMode) {
           debugPrint('✅ Toggled favorite for hymn #$hymnNumber to $newStatus');
         }
@@ -496,7 +510,7 @@ class DatabaseHelper {
         'SELECT * FROM hymns WHERE language_code = ? AND version = ? AND is_favorite = 1 ORDER BY number ASC',
         variables: [
           Variable.withString(languageCode),
-          Variable.withString(version),
+          Variable.withString(HymnalVersions.normalizeId(version)),
         ],
         readsFrom: {_database.hymns},
       ).get();
@@ -520,6 +534,8 @@ class DatabaseHelper {
           'new_hymnal_lyrics': data['new_hymnal_lyrics'] as String?,
           'english_title_old': data['english_title_old'] as String?,
           'old_hymnal_lyrics': data['old_hymnal_lyrics'] as String?,
+          'new_hymnal_number': data['new_hymnal_number'] as int?,
+          'old_hymnal_number': data['old_hymnal_number'] as int?,
           'created_at': data['created_at'] as int,
           'updated_at': data['updated_at'] as int,
           'is_favorite': 1,

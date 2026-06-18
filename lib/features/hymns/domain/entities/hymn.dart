@@ -25,6 +25,8 @@ class Hymn extends Equatable {
   final String? newHymnalLyrics;
   final String? englishTitleOld;
   final String? oldHymnalLyrics;
+  final int? newHymnalNumber;
+  final int? oldHymnalNumber;
   final bool isFavorite;
 
   const Hymn({
@@ -44,27 +46,27 @@ class Hymn extends Equatable {
     this.newHymnalLyrics,
     this.englishTitleOld,
     this.oldHymnalLyrics,
+    this.newHymnalNumber,
+    this.oldHymnalNumber,
     this.isFavorite = false,
   });
 
   /// Get display title with proper fallback logic
   ///
   /// Priority order:
-  /// 1. newHymnalTitle (SDA new hymnal)
-  /// 2. title (generic title field, may contain fallback from mapping)
-  /// 3. oldHymnalTitle (SDA old hymnal)
+  /// 1. title (version-specific display title from mapping/API)
+  /// 2. newHymnalTitle
+  /// 3. oldHymnalTitle
   /// 4. Empty string (UI will show fallback "መዝሙር {number}")
   ///
   /// This ensures titles are always available for sorting and display,
   /// especially important for SDA hymnal sort-by-name functionality.
   String get displayTitle {
-    // Priority: newHymnalTitle > title > oldHymnalTitle
-    // Note: title field may already contain a fallback value from data mapping
-    if (newHymnalTitle != null && newHymnalTitle!.isNotEmpty) {
-      return newHymnalTitle!;
-    }
     if (title != null && title!.isNotEmpty) {
       return title!;
+    }
+    if (newHymnalTitle != null && newHymnalTitle!.isNotEmpty) {
+      return newHymnalTitle!;
     }
     if (oldHymnalTitle != null && oldHymnalTitle!.isNotEmpty) {
       return oldHymnalTitle!;
@@ -75,12 +77,12 @@ class Hymn extends Equatable {
 
   String get displayLyrics {
     String? lyricsText;
-    if (newHymnalLyrics != null && newHymnalLyrics!.isNotEmpty) {
-      lyricsText = newHymnalLyrics!;
+    if (lyrics != null && lyrics!.isNotEmpty) {
+      lyricsText = lyrics!;
     } else if (song != null && song!.isNotEmpty) {
       lyricsText = song!;
-    } else if (lyrics != null && lyrics!.isNotEmpty) {
-      lyricsText = lyrics!;
+    } else if (newHymnalLyrics != null && newHymnalLyrics!.isNotEmpty) {
+      lyricsText = newHymnalLyrics!;
     } else if (oldHymnalLyrics != null && oldHymnalLyrics!.isNotEmpty) {
       lyricsText = oldHymnalLyrics!;
     }
@@ -105,6 +107,10 @@ class Hymn extends Equatable {
     return 0;
   }
 
+  int? get displayNewHymnalNumber => newHymnalNumber;
+
+  int? get displayOldHymnalNumber => oldHymnalNumber;
+
   /// Check if this hymn is from the hagerigna hymnal
   bool get isHagerigna {
     return id != null && id!.startsWith('hagerigna-');
@@ -126,6 +132,8 @@ class Hymn extends Equatable {
         newHymnalLyrics,
         englishTitleOld,
         oldHymnalLyrics,
+        newHymnalNumber,
+        oldHymnalNumber,
         isFavorite,
       ];
 }
