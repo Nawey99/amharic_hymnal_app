@@ -219,11 +219,11 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         final maxScroll = _scrollController.position.maxScrollExtent;
         final targetPosition = scrollPosition.clamp(0.0, maxScroll);
 
-      _scrollController.animateTo(
+        _scrollController.animateTo(
           targetPosition,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       }
     }
   }
@@ -233,10 +233,10 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     // Optimize: Only listen to background image changes when enabled
     final bgService = BackgroundImageService();
     if (bgService.isEnabled) {
-    return ListenableBuilder(
+      return ListenableBuilder(
         listenable: bgService,
-      builder: (context, _) => _buildPageContent(context),
-    );
+        builder: (context, _) => _buildPageContent(context),
+      );
     }
     // Skip ListenableBuilder when background is disabled for better performance
     return _buildPageContent(context);
@@ -336,8 +336,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     final state = context.read<HymnsBloc>().state;
     if (state is HymnsLoaded) {
       context.read<HymnsBloc>().add(
-        LoadHymns(state.languageCode, state.version, state.sortType),
-      );
+            LoadHymns(state.languageCode, state.version, state.sortType),
+          );
     }
   }
 
@@ -356,23 +356,23 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
-      child: GlassContainer(
+        child: GlassContainer(
           borderRadius: 20.0,
           blurSigma: 18.0,
           opacity: 0.25,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        child: TextField(
-          controller: _searchController,
-          focusNode: _searchFocusNode,
-          autofocus: true,
-          inputFormatters: [AmharicTransliterationFormatter()],
-          style: TextStyle(
-            color: AppColors.primaryText,
-            fontSize: settingsRepository.getFontSize(),
-            fontFamily: 'NotoSansEthiopic',
-          ),
-          decoration: InputDecoration(
-            hintText: 'Search hymns...',
+          child: TextField(
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+            autofocus: true,
+            inputFormatters: [AmharicTransliterationFormatter()],
+            style: TextStyle(
+              color: AppColors.primaryText,
+              fontSize: settingsRepository.getFontSize(),
+              fontFamily: 'NotoSansEthiopic',
+            ),
+            decoration: InputDecoration(
+              hintText: 'Search hymns...',
               hintStyle: const TextStyle(
                 color: AppColors.tertiaryText,
                 fontSize: 14,
@@ -380,15 +380,15 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
               ),
               prefixIcon:
                   const Icon(Icons.search, color: AppColors.primaryText),
-            suffixIcon: _buildClearButton(context),
-            border: InputBorder.none,
+              suffixIcon: _buildClearButton(context),
+              border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               focusedErrorBorder: InputBorder.none,
-          ),
-          onChanged: (value) => _handleSearchChange(context, value),
+            ),
+            onChanged: (value) => _handleSearchChange(context, value),
           ),
         ),
       ),
@@ -420,20 +420,20 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     setState(() {
       _localSearchQuery = value;
     });
-    
+
     // If empty, reload immediately
     if (value.isEmpty) {
       _reloadHymns(context);
       return;
     }
-    
+
     // Debounce search - wait 300ms before executing
     _searchDebounceTimer = Timer(const Duration(milliseconds: 300), () {
       final state = context.read<HymnsBloc>().state;
       if (state is HymnsLoaded && mounted) {
         context.read<HymnsBloc>().add(
-          SearchHymnsEvent(state.languageCode, state.version, value),
-        );
+              SearchHymnsEvent(state.languageCode, state.version, value),
+            );
       }
     });
   }
@@ -537,21 +537,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     final state = context.read<HymnsBloc>().state;
     final useItemExtent = state is HymnsLoaded && state.sortType == 'name';
 
-    // Step 1: Debug and Verify Data Flow
-    if (kDebugMode &&
-        state is HymnsLoaded &&
-        state.sortType == 'name' &&
-        state.version == 'hymnal') {
-      debugPrint('🔍 SDA Hymnal Sort-by-Name Debug - Data Flow:');
-      debugPrint('   Total hymns received: ${hymns.length}');
-      if (hymns.isNotEmpty) {
-        debugPrint(
-            '   First hymn sample: #${hymns.first.displayNumber}, displayTitle="${hymns.first.displayTitle}", title="${hymns.first.title}", newHymnalTitle="${hymns.first.newHymnalTitle}", oldHymnalTitle="${hymns.first.oldHymnalTitle}"');
-        debugPrint(
-            '   First hymn has number: ${hymns.first.displayNumber > 0}');
-      }
-    }
-
     // Step 2: Fix Filtering Logic - Ensure filtering doesn't exclude all hymns when sorted by name
     // When sorted by name, only filter out hymns with no number (titles might be empty but that's OK)
     // When sorted by number or category, use the standard filter
@@ -587,28 +572,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       return true;
     }).toList();
 
-    // Step 1 continued: Log filtering results
-    if (kDebugMode &&
-        state is HymnsLoaded &&
-        state.sortType == 'name' &&
-        state.version == 'hymnal') {
-      debugPrint('   After filtering - Valid hymns: ${validHymns.length}');
-      if (validHymns.isEmpty && hymns.isNotEmpty) {
-        debugPrint('❌ CRITICAL: All hymns filtered out! This is the problem.');
-        debugPrint('   Sample of filtered hymns:');
-        final sampleSize = hymns.length > 5 ? 5 : hymns.length;
-        for (int i = 0; i < sampleSize; i++) {
-          final h = hymns[i];
-          debugPrint(
-              '     Hymn #${h.displayNumber}: hasNumber=${h.displayNumber > 0}, displayTitle="${h.displayTitle}", title="${h.title}", newHymnalTitle="${h.newHymnalTitle}", oldHymnalTitle="${h.oldHymnalTitle}"');
-        }
-      }
-      if (validHymns.isNotEmpty) {
-        debugPrint(
-            '   First valid hymn: #${validHymns.first.displayNumber}, displayTitle="${validHymns.first.displayTitle}"');
-      }
-    }
-
     if (kDebugMode && validHymns.length != hymns.length) {
       debugPrint(
           '📊 Filtered ${hymns.length - validHymns.length} empty hymns from list');
@@ -618,17 +581,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     // If validHymns is empty but hymns is not, show all hymns as fallback
     final hymnsToDisplay =
         validHymns.isEmpty && hymns.isNotEmpty ? hymns : validHymns;
-
-    if (kDebugMode &&
-        state is HymnsLoaded &&
-        state.sortType == 'name' &&
-        state.version == 'hymnal') {
-      if (validHymns.isEmpty && hymns.isNotEmpty) {
-        debugPrint(
-            '⚠️ WARNING: Using fallback - showing all hymns despite filtering issues');
-        debugPrint('   Hymns to display: ${hymnsToDisplay.length}');
-      }
-    }
 
     // Step 5: Add empty state handling
     if (hymnsToDisplay.isEmpty) {
@@ -646,8 +598,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
     // Step 3: Fix ListView Rendering - Ensure proper constraints and visibility
     // Conditionally apply right padding only when sorted by name (for alphabet scrollbar)
-    final rightPadding = useItemExtent ? 48.0 : 16.0; // 48px only when sorted by name
-    
+    final rightPadding =
+        useItemExtent ? 48.0 : 16.0; // 48px only when sorted by name
+
     return ListView.builder(
       controller: _scrollController,
       shrinkWrap: false, // Explicitly set to false for proper rendering
@@ -657,8 +610,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       // Performance: Cache items for smoother scrolling
       cacheExtent: 250.0,
       // Use fixed item extent for accurate scrolling when sorted by name
-      // Increased height when sorted by name: 80 (minHeight) + 16 (top padding) + 16 (bottom padding) + 8 (margin) = 96
-      itemExtent: useItemExtent ? 96.0 : null,
+      // Fixed extent must include the two-line list item plus card margin.
+      itemExtent: useItemExtent ? 104.0 : null,
       itemBuilder: (context, index) {
         if (index >= hymnsToDisplay.length) {
           if (kDebugMode) {
@@ -669,21 +622,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         }
         final hymn = hymnsToDisplay[index];
 
-        if (kDebugMode &&
-            state is HymnsLoaded &&
-            state.sortType == 'name' &&
-            state.version == 'hymnal' &&
-            index < 3) {
-          debugPrint(
-              '   Building list item $index: #${hymn.displayNumber}, displayTitle="${hymn.displayTitle}"');
-        }
-
         // Wrap in RepaintBoundary for performance optimization
         return RepaintBoundary(
           child: HymnListItem(
             key: ValueKey('hymn_${hymn.id}_${hymn.displayNumber}'),
-          hymn: hymn,
-          onTap: () => _navigateToHymnDetail(context, hymn),
+            hymn: hymn,
+            onTap: () => _navigateToHymnDetail(context, hymn),
             sortType: state is HymnsLoaded
                 ? state.sortType
                 : null, // Pass sort type for height adjustment
@@ -839,8 +783,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
   void _applySort(HymnsLoaded state, String sortType) {
     context.read<HymnsBloc>().add(
-      ChangeSort(state.languageCode, state.version, sortType),
-    );
+          ChangeSort(state.languageCode, state.version, sortType),
+        );
     Navigator.pop(context);
   }
 

@@ -3,7 +3,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kDebugMode, debugPrint;
 import 'package:http/http.dart' as http;
 
 /// Global audio service - single source of truth for all audio playback
@@ -15,7 +16,7 @@ class GlobalAudioService {
   factory GlobalAudioService() => _instance;
   GlobalAudioService._internal();
 
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer? _player;
 
   String? _apiKey;
   String? _baseUrl;
@@ -38,6 +39,7 @@ class GlobalAudioService {
   PlayerState _playbackState = PlayerState.stopped;
 
   bool _isInitialized = false;
+  bool _audioBackendAvailable = true;
 
   /// Initialize the audio service with API configuration
   ///
@@ -54,6 +56,18 @@ class GlobalAudioService {
     _apiKey = apiKey;
     _baseUrl = baseUrl;
 
+    if (!_isNativeAudioBackendSupported) {
+      _audioBackendAvailable = false;
+      _isInitialized = true;
+      if (kDebugMode) {
+        debugPrint(
+          'ℹ️ Audio playback disabled on this platform until a supported backend is configured.',
+        );
+      }
+      return;
+    }
+
+    _player = AudioPlayer();
     _setupPlayerListeners();
     _isInitialized = true;
 
@@ -70,14 +84,19 @@ class GlobalAudioService {
 
   /// Set up player event listeners
   void _setupPlayerListeners() {
+    final player = _player;
+    if (player == null) {
+      return;
+    }
+
     // Listen to position changes
-    _player.onPositionChanged.listen((position) {
+    player.onPositionChanged.listen((position) {
       _currentPosition = position;
       _positionController.add(position);
     });
 
     // Listen to duration changes
-    _player.onDurationChanged.listen((duration) {
+    player.onDurationChanged.listen((duration) {
       _totalDuration = duration;
       _durationController.add(duration);
       if (kDebugMode) {
@@ -86,7 +105,7 @@ class GlobalAudioService {
     });
 
     // Listen to player state changes
-    _player.onPlayerStateChanged.listen((state) {
+    player.onPlayerStateChanged.listen((state) {
       _playbackState = state;
       _playbackStateController.add(state);
     });
@@ -184,6 +203,11 @@ class GlobalAudioService {
     String? artist,
   }) async {
     try {
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        throw Exception('Audio playback is not available on this platform');
+      }
+
       // Stop previous hymn if different
       if (_currentHymnNumber != null &&
           _currentHymnNumber != hymnNumber &&
@@ -200,8 +224,8 @@ class GlobalAudioService {
         throw Exception('Audio not available for hymn #$hymnNumber');
       }
 
-      await _player.stop();
-      await _player.play(UrlSource(audioUrl));
+      await player.stop();
+      await player.play(UrlSource(audioUrl));
 
       _currentHymnNumber = hymnNumber;
       _currentAudioUrl = audioUrl;
@@ -221,7 +245,11 @@ class GlobalAudioService {
   /// Pause playback
   Future<void> pause() async {
     try {
-      await _player.pause();
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        return;
+      }
+      await player.pause();
       if (kDebugMode) {
         debugPrint('⏸️ Audio paused');
       }
@@ -235,7 +263,11 @@ class GlobalAudioService {
   /// Resume playback
   Future<void> resume() async {
     try {
-      await _player.resume();
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        return;
+      }
+      await player.resume();
       if (kDebugMode) {
         debugPrint('▶️ Audio resumed');
       }
@@ -249,7 +281,11 @@ class GlobalAudioService {
   /// Stop playback and reset state
   Future<void> stop() async {
     try {
-      await _player.stop();
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        return;
+      }
+      await player.stop();
       _currentPosition = Duration.zero;
       _positionController.add(_currentPosition);
       _currentHymnNumber = null;
@@ -269,7 +305,11 @@ class GlobalAudioService {
   /// Seek to a specific position
   Future<void> seek(Duration position) async {
     try {
-      await _player.seek(position);
+      final player = _player;
+      if (!_audioBackendAvailable || player == null) {
+        return;
+      }
+      await player.seek(position);
       _currentPosition = position;
       _positionController.add(position);
 
@@ -309,13 +349,19 @@ class GlobalAudioService {
   bool get isStopped => _playbackState == PlayerState.stopped;
   String? get currentAudioUrl => _currentAudioUrl;
 
+  bool get _isNativeAudioBackendSupported {
+    return defaultTargetPlatform != TargetPlatform.windows;
+  }
+
   /// Dispose resources
   void dispose() {
     _positionController.close();
     _durationController.close();
     _playbackStateController.close();
     _currentHymnController.close();
-    _player.dispose();
+    _player?.dispose();
+    _player = null;
+    _audioBackendAvailable = true;
     _isInitialized = false;
   }
 }

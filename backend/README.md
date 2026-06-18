@@ -81,6 +81,12 @@ Flutter uses `http://localhost:8787` on desktop/web and `http://10.0.2.2:8787` o
 flutter run -d windows --dart-define=WUDASE_CONTENT_API_URL=http://localhost:8787
 ```
 
+The old local Drift content database migration is disabled by default because the content API is now the primary source. To test the local content database fallback explicitly, run Flutter with:
+
+```powershell
+flutter run -d windows --dart-define=WUDASE_ENABLE_LOCAL_CONTENT_DB=true
+```
+
 ## Current JSON Import
 
 The current Flutter JSON files are column-based resource arrays. The exporter reads those named arrays and converts them into normalized relational rows.

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint, kIsWeb;
 import 'package:get_it/get_it.dart';
 
+import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/database/database_helper.dart';
 import 'package:amharic_hymnal_app/core/database/database_migration.dart';
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
@@ -42,9 +43,17 @@ Future<void> initDependencies({bool startDatabase = true}) async {
 
     // Initialize database with Drift (works on all platforms including web)
     // Run migration in background to avoid blocking app startup
-    if (startDatabase && !_databaseInitializationStarted) {
+    if (startDatabase &&
+        ContentApiConfig.enableLocalContentDatabase &&
+        !_databaseInitializationStarted) {
       _databaseInitializationStarted = true;
       unawaited(_initializeDatabaseAsync());
+    } else if (kDebugMode &&
+        startDatabase &&
+        !ContentApiConfig.enableLocalContentDatabase) {
+      debugPrint(
+        'ℹ️ Local content database migration disabled; using content API/local JSON fallback.',
+      );
     }
   } catch (e) {
     // Only rethrow critical errors (like SettingsService failure)
