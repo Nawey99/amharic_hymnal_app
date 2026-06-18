@@ -24,37 +24,37 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingStep(
       title: 'Welcome to ውዳሴ',
       description:
-          'Browse and search through beautiful hymns in Amharic. This app works completely offline once data is loaded.',
+          'Browse Amharic SDA hymns and worship songs with a calm reading experience built for church, family worship, and devotion.',
       icon: Icons.library_music,
     ),
     OnboardingStep(
-      title: 'Search Hymns',
+      title: 'Choose Your Song Book',
       description:
-          'Search by name: Tap the search icon on Index or Number page. Type in Amharic using phonetic keyboard (e.g., type "selam" to get "ሰላም").\n\nSearch by number: Enter hymn number on the Number page and tap OPEN.',
+          'Use Settings to switch between New SDA Hymnal, Old SDA Hymnal, and Hagerigna. Old and New SDA reuse the same song work where they match.',
+      icon: Icons.menu_book,
+    ),
+    OnboardingStep(
+      title: 'Find Hymns Quickly',
+      description:
+          'Open by hymn number, browse the Index, or use Search. SDA categories are available from the Categories tab.',
       icon: Icons.search,
     ),
     OnboardingStep(
       title: 'Navigate Between Hymns',
       description:
-          'Swipe left to go to the next hymn (by number).\nSwipe right to go to the previous hymn (by number).\nNavigation always uses hymn numbers, not alphabetical order.',
+          'Swipe left or right in a hymn to move by hymn number. Favorites and automatic History help you return to songs later.',
       icon: Icons.swipe,
     ),
     OnboardingStep(
-      title: 'Zoom in Lyrics',
+      title: 'Lyrics and Media',
       description:
-          'Pinch with two fingers to zoom in or out on the lyrics page. The zoom level will be saved and applied to your font size setting.',
+          'Adjust lyric size from Settings. Sheet music is available for supported SDA hymns, with audio and download support prepared for future releases.',
       icon: Icons.zoom_in,
-    ),
-    OnboardingStep(
-      title: 'Favorites',
-      description:
-          'Tap the heart icon on any hymn to add it to favorites. Access all your favorites from the Favorites tab in the bottom navigation.',
-      icon: Icons.favorite,
     ),
     OnboardingStep(
       title: 'Customize Settings',
       description:
-          'Adjust font size using the slider in Settings.\nChange language and version.\nToggle "Keep screen on" to prevent screen from sleeping during reading.',
+          'Tune font size, background image, and Keep Screen On from Settings. More Ethiopian languages can be added in future releases.',
       icon: Icons.settings,
     ),
   ];
@@ -241,6 +241,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         fontFamily: 'NotoSansEthiopic',
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: compact ? 16 : 24),
                     Text(

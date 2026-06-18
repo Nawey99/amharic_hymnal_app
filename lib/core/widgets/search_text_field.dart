@@ -49,7 +49,8 @@ class _SearchTextFieldState extends State<SearchTextField> {
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
+    _textController =
+        TextEditingController(text: widget.controller.currentQuery);
     _focusNode = widget.focusNode ?? FocusNode();
     _isFocusNodeExternal = widget.focusNode != null;
 

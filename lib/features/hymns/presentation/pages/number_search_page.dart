@@ -264,21 +264,16 @@ class _NumberSearchPageState extends State<NumberSearchPage>
   }
 
   void _toggleSearch() {
+    final willShowSearch = !_isSearchVisible;
     setState(() {
-      _isSearchVisible = !_isSearchVisible;
+      _isSearchVisible = willShowSearch;
       if (!_isSearchVisible) {
-        _searchController.clear();
-        _localSearchQuery = '';
         _searchFocusNode.unfocus();
-        // Reload full list when search is closed
-        final state = context.read<HymnsBloc>().state;
-        if (state is HymnsLoaded) {
-          context.read<HymnsBloc>().add(
-                LoadHymns(state.languageCode, state.version, 'number'),
-              );
-        }
       }
     });
+    if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
+      _handleSearchQuery(_searchController.currentQuery);
+    }
   }
 
   Widget _buildSearchBar() {
@@ -452,14 +447,14 @@ class _NumberSearchPageState extends State<NumberSearchPage>
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: TextStyle(
           color: AppColors.primaryText,
-          fontSize: settingsRepository.getFontSize() * 1.5,
+          fontSize: settingsRepository.getFontSize() * 1.2,
           fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
           hintStyle: TextStyle(
             color: AppColors.tertiaryText,
-            fontSize: settingsRepository.getFontSize() * 1.5,
+            fontSize: settingsRepository.getFontSize() * 1.2,
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -467,14 +462,14 @@ class _NumberSearchPageState extends State<NumberSearchPage>
               '#',
               style: TextStyle(
                 color: AppColors.primaryText,
-                fontSize: settingsRepository.getFontSize() * 1.5,
+                fontSize: settingsRepository.getFontSize() * 1.2,
                 fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
           border: InputBorder.none,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         ),
         onSubmitted: (_) => _openHymn(),
       ),

@@ -6,19 +6,19 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
-import 'package:amharic_hymnal_app/core/services/amharic_transliteration_service.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
+import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/amharic_utils.dart';
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/alphabet_scroll_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class IndexPage extends StatefulWidget {
   const IndexPage({super.key});
@@ -31,11 +31,11 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   static const double _estimatedHymnItemExtent = 96.0;
   static const double _listVerticalPadding = 8.0;
 
-  final TextEditingController _searchController = TextEditingController();
+  final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchVisible = false;
-  Timer? _searchDebounceTimer;
+  StreamSubscription<String>? _searchSubscription;
   String _currentSectionLetter =
       ''; // Track current section letter for dynamic updates
   // Local search query tracking for page independence
@@ -48,12 +48,16 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // Add scroll listener to update section indicator dynamically
     _scrollController.addListener(_updateSectionIndicator);
+    _searchSubscription = _searchController.queryStream.listen((query) {
+      if (!mounted) return;
+      _handleSearchQuery(query);
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _searchDebounceTimer?.cancel();
+    _searchSubscription?.cancel();
     _scrollController.removeListener(_updateSectionIndicator);
     _searchController.dispose();
     _scrollController.dispose();
@@ -67,7 +71,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     // Close search if empty when app goes to background
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      if (_isSearchVisible && _searchController.text.isEmpty) {
+      if (_isSearchVisible && _searchController.currentQuery.isEmpty) {
         setState(() {
           _isSearchVisible = false;
           _searchFocusNode.unfocus();
@@ -289,13 +293,17 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           children: [
             const Expanded(
               child: Center(
-                child: Text(
-                  'Adventist Hymnal',
-                  style: TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'NotoSansEthiopic',
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Adventist Hymnal',
+                    style: TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'NotoSansEthiopic',
+                    ),
+                    maxLines: 1,
                   ),
                 ),
               ),
@@ -318,13 +326,11 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   void _toggleSearch(BuildContext context) {
+    final willShowSearch = !_isSearchVisible;
     setState(() {
-      _isSearchVisible = !_isSearchVisible;
-      if (!_isSearchVisible) {
-        _searchController.clear();
-        _localSearchQuery = '';
+      _isSearchVisible = willShowSearch;
+      if (!willShowSearch) {
         _searchFocusNode.unfocus();
-        _reloadHymns(context);
       } else {
         Future.delayed(
           const Duration(milliseconds: 100),
@@ -332,6 +338,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         );
       }
     });
+    if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
+      _handleSearchQuery(_searchController.currentQuery);
+    }
   }
 
   void _reloadHymns(BuildContext context) {
@@ -353,72 +362,16 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   Widget _buildSearchField(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20.0),
-        child: GlassContainer(
-          borderRadius: 20.0,
-          blurSigma: 18.0,
-          opacity: 0.25,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-          child: TextField(
-            controller: _searchController,
-            focusNode: _searchFocusNode,
-            autofocus: true,
-            inputFormatters: [AmharicTransliterationFormatter()],
-            style: TextStyle(
-              color: AppColors.primaryText,
-              fontSize: settingsRepository.getFontSize(),
-              fontFamily: 'NotoSansEthiopic',
-            ),
-            decoration: InputDecoration(
-              hintText: 'Search hymns...',
-              hintStyle: const TextStyle(
-                color: AppColors.tertiaryText,
-                fontSize: 14,
-                fontFamily: 'NotoSansEthiopic',
-              ),
-              prefixIcon:
-                  const Icon(Icons.search, color: AppColors.primaryText),
-              suffixIcon: _buildClearButton(context),
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-            ),
-            onChanged: (value) => _handleSearchChange(context, value),
-          ),
-        ),
-      ),
+    return SearchTextField(
+      controller: _searchController,
+      focusNode: _searchFocusNode,
+      hintText: 'Search hymns...',
+      autofocus: true,
+      onClear: () => _reloadHymns(context),
     );
   }
 
-  Widget? _buildClearButton(BuildContext context) {
-    return ValueListenableBuilder<TextEditingValue>(
-      valueListenable: _searchController,
-      builder: (_, value, __) {
-        return value.text.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear, color: AppColors.primaryText),
-                onPressed: () {
-                  _searchController.clear();
-                  _reloadHymns(context);
-                },
-              )
-            : const SizedBox.shrink();
-      },
-    );
-  }
-
-  void _handleSearchChange(BuildContext context, String value) {
-    // Cancel previous timer
-    _searchDebounceTimer?.cancel();
-
-    // Store local search query
+  void _handleSearchQuery(String value) {
     setState(() {
       _localSearchQuery = value;
     });
@@ -429,15 +382,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       return;
     }
 
-    // Debounce search - wait 300ms before executing
-    _searchDebounceTimer = Timer(const Duration(milliseconds: 300), () {
-      final state = context.read<HymnsBloc>().state;
-      if (state is HymnsLoaded && mounted) {
-        context.read<HymnsBloc>().add(
-              SearchHymnsEvent(state.languageCode, state.version, value),
-            );
-      }
-    });
+    final state = context.read<HymnsBloc>().state;
+    if (state is HymnsLoaded && mounted) {
+      context.read<HymnsBloc>().add(
+            SearchHymnsEvent(state.languageCode, state.version, value),
+          );
+    }
   }
 
   Widget _buildSectionIndicator() {
@@ -607,7 +557,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       controller: _scrollController,
       shrinkWrap: false, // Explicitly set to false for proper rendering
       // Add right padding only when sorted by name to prevent overlap with alphabet scrollbar
-      padding: EdgeInsets.fromLTRB(16, 8, rightPadding, 8),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        rightPadding,
+        NavBarConstants.getBottomPadding(context),
+      ),
       itemCount: hymnsToDisplay.length,
       // Performance: Cache items for smoother scrolling
       cacheExtent: 250.0,
@@ -677,30 +632,21 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   Widget _buildSortOptions(HymnsLoaded state) {
-    final isHagerigna = state.version == 'hagerigna';
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        _buildSortOption(
+          'Number',
+          'number',
+          state.sortType,
+          () => _applySort(state, 'number'),
+        ),
         _buildSortOption(
           'Name',
           'name',
           state.sortType,
           () => _applySort(state, 'name'),
         ),
-        if (!isHagerigna)
-          _buildSortOption(
-            'Number',
-            'number',
-            state.sortType,
-            () => _applySort(state, 'number'),
-          ),
-        if (state.version == 'hymnal')
-          _buildSortOption(
-            'Category',
-            'category',
-            state.sortType,
-            () => _applySort(state, 'category'),
-          ),
       ],
     );
   }

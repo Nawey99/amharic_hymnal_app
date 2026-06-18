@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
@@ -25,7 +26,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String _selectedLanguage = 'am';
-  String _selectedVersion = 'hymnal';
+  String _selectedVersion = HymnalVersions.sdaNew;
   double _fontSize = 20.0;
   bool _backgroundImageEnabled = true;
   bool _keepScreenOn = false;
@@ -177,13 +178,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     'Select hymnal version',
                 value: _selectedVersion,
                 items: [
-                  DropdownMenuItem(
-                    value: 'hymnal',
-                    child: Text(AppLocalizations.of(context)?.sdaHymnal ??
-                        'SDA Hymnal'),
+                  const DropdownMenuItem(
+                    value: HymnalVersions.sdaNew,
+                    child: Text('New SDA Hymnal'),
+                  ),
+                  const DropdownMenuItem(
+                    value: HymnalVersions.sdaOld,
+                    child: Text('Old SDA Hymnal'),
                   ),
                   DropdownMenuItem(
-                    value: 'hagerigna',
+                    value: HymnalVersions.hagerigna,
                     child: Text(
                         AppLocalizations.of(context)?.hagerigna ?? 'Hagerigna'),
                   ),
@@ -284,7 +288,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     'View source code and contribute',
                 onTap: () async {
                   final uri = Uri.parse(
-                      'https://github.com/example/amharic-hymnal-app');
+                      'https://github.com/Nawey99/amharic_hymnal_app');
 
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);

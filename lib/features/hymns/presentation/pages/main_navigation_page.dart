@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/pages/number_search_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/pages/index_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/favorites_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/index_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/number_search_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -39,9 +40,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
             );
       }
     } catch (e) {
-      if (mounted) {
-        debugPrint('Error loading initial data: $e');
-      }
+      debugPrint('Error loading initial data: $e');
     }
   }
 
@@ -59,6 +58,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         children: const [
           NumberSearchPage(),
           IndexPage(),
+          CategoriesPage(),
           FavoritesPage(),
           SettingsPage(),
         ],
@@ -68,107 +68,74 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.primaryBackground.withValues(alpha: 0.95),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.15),
-            width: 0.5,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
+        indicatorColor: AppColors.accentGreen.withValues(alpha: 0.18),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            color: selected ? AppColors.accentGreen : AppColors.secondaryText,
+            fontSize: 11,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            fontFamily: 'NotoSansEthiopic',
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: selected ? AppColors.accentGreen : AppColors.secondaryText,
+            size: 22,
+          );
+        }),
       ),
-      child: SafeArea(
-        top: false,
-        child: Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                icon: Icons.library_books_outlined,
-                label: 'Number',
-                index: 0,
-              ),
-              _buildNavItem(
-                icon: Icons.list,
-                label: 'Index',
-                index: 1,
-              ),
-              _buildNavItem(
-                icon: Icons.favorite_outline,
-                label: 'Favorites',
-                index: 2,
-              ),
-              _buildNavItem(
-                icon: Icons.settings_outlined,
-                label: 'Settings',
-                index: 3,
-              ),
-            ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withValues(alpha: 0.15),
+              width: 0.5,
+            ),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required int index,
-  }) {
-    final isSelected = _selectedIndex == index;
-
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _onItemTapped(index),
-          borderRadius: BorderRadius.circular(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.accentGreen.withValues(alpha: 0.2)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  color: isSelected
-                      ? AppColors.accentGreen
-                      : AppColors.secondaryText,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(height: 2),
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  color: isSelected
-                      ? AppColors.accentGreen
-                      : AppColors.secondaryText,
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  fontFamily: 'NotoSansEthiopic',
-                ),
-                child: Text(label),
-              ),
-            ],
-          ),
+        child: NavigationBar(
+          selectedIndex: _selectedIndex,
+          height: 72,
+          onDestinationSelected: _onItemTapped,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.library_books_outlined),
+              selectedIcon: Icon(Icons.library_books),
+              label: 'Number',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.list_alt_outlined),
+              selectedIcon: Icon(Icons.list_alt),
+              label: 'Index',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.category_outlined),
+              selectedIcon: Icon(Icons.category),
+              label: 'Categories',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.favorite_outline),
+              selectedIcon: Icon(Icons.favorite),
+              label: 'Favorites',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
+          ],
         ),
       ),
     );
