@@ -8,12 +8,10 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_local_data_source.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/mappers/hymn_mapper.dart';
 import 'package:amharic_hymnal_app/core/services/search_engine.dart';
-import 'package:amharic_hymnal_app/core/services/search_index_service.dart';
 
 class HymnRepositoryImpl implements HymnRepository {
   final HymnLocalDataSource localDataSource;
   final SearchEngine _searchEngine = SearchEngine();
-  final SearchIndexService _searchIndexService = SearchIndexService();
 
   HymnRepositoryImpl(this.localDataSource);
 
@@ -98,18 +96,10 @@ class HymnRepositoryImpl implements HymnRepository {
       }
       final hymns = HymnMapper.toDomainList(hymnModels);
 
-      // Get or build normalized search index (cached per language-version)
-      final normalizedIndex = await _searchIndexService.getIndex(
-        languageCode: languageCode,
-        version: version,
-        hymns: hymns,
-      );
-
       // Use SearchEngine for pure, testable search logic with ranking
       final searchResults = _searchEngine.search(
         hymns: hymns,
         query: query,
-        normalizedIndex: normalizedIndex,
       );
 
       // Extract hymns from search results (sorted by rank)

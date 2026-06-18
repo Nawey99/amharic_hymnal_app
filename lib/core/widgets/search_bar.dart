@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-import 'package:amharic_hymnal_app/core/services/amharic_transliteration_service.dart';
 
 /// Reusable search bar widget with consistent styling
 ///
@@ -57,8 +56,7 @@ class AppSearchBar extends StatelessWidget {
             keyboardType: keyboardType ?? TextInputType.text,
             textInputAction:
                 TextInputAction.done, // No search action - real-time search
-            inputFormatters:
-                inputFormatters ?? [AmharicTransliterationFormatter()],
+            inputFormatters: inputFormatters,
             style: const TextStyle(
               color: AppColors.primaryText,
               fontSize: 16,

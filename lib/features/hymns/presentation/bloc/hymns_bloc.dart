@@ -41,9 +41,6 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   // Using a single map to track all pending queries by type
   final Map<Type, HymnsEvent> _pendingQueries = {};
 
-  // Debounce timer for search events
-  Timer? _searchDebounceTimer;
-
   HymnsBloc({
     required this.getHymns,
     required this.searchHymns,
@@ -104,7 +101,6 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   @override
   Future<void> close() {
     _dbReadySubscription?.cancel();
-    _searchDebounceTimer?.cancel();
     _pendingQueries.clear();
     return super.close();
   }
@@ -147,47 +143,41 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       return;
     }
 
-    // Cancel previous debounce timer
-    _searchDebounceTimer?.cancel();
-
-    // Debounce search queries (300ms delay)
-    _searchDebounceTimer = Timer(const Duration(milliseconds: 300), () async {
-      emit(HymnsLoading());
-      final result = await searchHymns(
-        usecases.SearchHymnsParams(
+    emit(HymnsLoading());
+    final result = await searchHymns(
+      usecases.SearchHymnsParams(
+        languageCode: event.languageCode,
+        version: event.version,
+        query: event.query,
+      ),
+    );
+    result.fold(
+      (failure) {
+        // If database is not ready and we got CacheFailure, store as pending query
+        if (failure is CacheFailure && !_dbHelper.isReady) {
+          _storePendingQuery(event);
+          // Keep loading state instead of showing error
+          emit(HymnsLoading());
+        } else {
+          // Database is ready but query failed - show error
+          if (failure is CacheFailure) {
+            emit(HymnsError('No cached data available for search.'));
+          } else {
+            emit(HymnsError('Failed to search hymns.'));
+          }
+        }
+      },
+      (hymns) {
+        // Clear pending query on success
+        _clearPendingQuery(SearchHymnsEvent);
+        emit(HymnsLoaded(
+          hymns,
+          'name',
           languageCode: event.languageCode,
           version: event.version,
-          query: event.query,
-        ),
-      );
-      result.fold(
-        (failure) {
-          // If database is not ready and we got CacheFailure, store as pending query
-          if (failure is CacheFailure && !_dbHelper.isReady) {
-            _storePendingQuery(event);
-            // Keep loading state instead of showing error
-            emit(HymnsLoading());
-          } else {
-            // Database is ready but query failed - show error
-            if (failure is CacheFailure) {
-              emit(HymnsError('No cached data available for search.'));
-            } else {
-              emit(HymnsError('Failed to search hymns.'));
-            }
-          }
-        },
-        (hymns) {
-          // Clear pending query on success
-          _clearPendingQuery(SearchHymnsEvent);
-          emit(HymnsLoaded(
-            hymns,
-            'name',
-            languageCode: event.languageCode,
-            version: event.version,
-          ));
-        },
-      );
-    });
+        ));
+      },
+    );
   }
 
   Future<void> _onChangeLanguage(

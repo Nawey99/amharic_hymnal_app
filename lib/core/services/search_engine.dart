@@ -31,7 +31,7 @@ enum MatchType {
 /// Features:
 /// - Language-aware normalization (Amharic phonetic + English case-insensitive)
 /// - Ranking algorithm: exact title > number > partial title > lyrics
-/// - Uses prebuilt normalized index
+/// - Searches title and body fields separately so lyric hits do not outrank titles
 /// - Returns ranked results (no filtering in widgets)
 ///
 /// Architecture: This is the core search logic layer. It's pure and testable,
@@ -44,7 +44,7 @@ class SearchEngine {
   ///
   /// [hymns] - List of hymns to search (immutable)
   /// [query] - Search query (raw, will be normalized)
-  /// [normalizedIndex] - Prebuilt normalized search index (optional, for Amharic)
+  /// [normalizedIndex] - Legacy compatibility parameter; no longer required
   ///
   /// Returns: List of SearchResult sorted by rank (best matches first)
   List<SearchResult> search({
@@ -52,20 +52,21 @@ class SearchEngine {
     required String query,
     Map<String, String>? normalizedIndex,
   }) {
-    if (query.isEmpty) {
+    final rawQuery = query.trim();
+    if (rawQuery.isEmpty) {
       return [];
     }
 
     final startTime = DateTime.now();
 
     // Detect script type to determine search strategy
-    final scriptType = ScriptDetector.detect(query);
+    final scriptType = ScriptDetector.detect(rawQuery);
     final isAmharicQuery = scriptType == ScriptType.amharic;
 
     // Normalize query based on script type
     final normalizedQuery = isAmharicQuery
-        ? AmharicPhoneticService.normalizeAmharic(query)
-        : query.toLowerCase().trim();
+        ? _normalizeAmharic(rawQuery)
+        : _normalizeEnglish(rawQuery);
 
     if (_enableValidationLogs && kDebugMode) {
       debugPrint(
@@ -92,7 +93,6 @@ class SearchEngine {
         query: normalizedQuery,
         queryTokens: queryTokens,
         isAmharicQuery: isAmharicQuery,
-        normalizedIndex: normalizedIndex,
       );
 
       if (match.matchType != MatchType.none) {
@@ -152,14 +152,12 @@ class SearchEngine {
     required String query,
     required List<String> queryTokens,
     required bool isAmharicQuery,
-    Map<String, String>? normalizedIndex,
   }) {
     // Priority 1: Exact Amharic title match
     final exactAmharicMatch = _matchExactAmharicTitle(
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
-      normalizedIndex: normalizedIndex,
     );
     if (exactAmharicMatch) {
       return SearchResult(
@@ -199,7 +197,6 @@ class SearchEngine {
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
-      normalizedIndex: normalizedIndex,
       startsWith: true,
     );
     if (partialAmharicStartsWith) {
@@ -215,7 +212,6 @@ class SearchEngine {
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
-      normalizedIndex: normalizedIndex,
       startsWith: false,
     );
     if (partialAmharicContains) {
@@ -264,7 +260,6 @@ class SearchEngine {
       query: query,
       queryTokens: queryTokens,
       isAmharicQuery: isAmharicQuery,
-      normalizedIndex: normalizedIndex,
     );
     if (lyricsMatch) {
       return SearchResult(
@@ -298,20 +293,10 @@ class SearchEngine {
     required Hymn hymn,
     required String query,
     required bool isAmharicQuery,
-    Map<String, String>? normalizedIndex,
   }) {
     if (!isAmharicQuery) return false;
 
-    final amharicTitle = hymn.displayTitle;
-    if (amharicTitle.isEmpty) return false;
-
-    if (normalizedIndex != null) {
-      final hymnId = hymn.id ?? '${hymn.displayNumber}';
-      final normalizedTitle = normalizedIndex[hymnId]?.split(' ').first ?? '';
-      return normalizedTitle == query;
-    }
-
-    return false;
+    return _titleFields(hymn).any((title) => _normalizeAmharic(title) == query);
   }
 
   /// Check for exact English title match
@@ -323,22 +308,17 @@ class SearchEngine {
   }) {
     if (isAmharicQuery) return false;
 
-    final englishTitle = hymn.englishTitleOld ?? '';
-    if (englishTitle.isEmpty) return false;
+    return _titleFields(hymn).any((title) {
+      final titleLower = _normalizeEnglish(title);
+      if (titleLower == query) return true;
 
-    final titleLower = englishTitle.toLowerCase();
-    if (titleLower == query) {
-      return true;
-    }
-
-    // Also check token-based exact match
-    final titleTokens = titleLower.split(RegExp(r'\s+'));
-    if (titleTokens.length == queryTokens.length &&
-        titleTokens.join(' ') == queryTokens.join(' ')) {
-      return true;
-    }
-
-    return false;
+      final titleTokens = titleLower
+          .split(RegExp(r'\s+'))
+          .where((token) => token.isNotEmpty)
+          .toList();
+      return titleTokens.length == queryTokens.length &&
+          titleTokens.join(' ') == queryTokens.join(' ');
+    });
   }
 
   /// Check for partial Amharic title match
@@ -346,25 +326,17 @@ class SearchEngine {
     required Hymn hymn,
     required String query,
     required bool isAmharicQuery,
-    Map<String, String>? normalizedIndex,
     required bool startsWith,
   }) {
     if (!isAmharicQuery) return false;
 
-    final amharicTitle = hymn.displayTitle;
-    if (amharicTitle.isEmpty) return false;
-
-    if (normalizedIndex != null) {
-      final hymnId = hymn.id ?? '${hymn.displayNumber}';
-      final normalizedText = normalizedIndex[hymnId] ?? '';
+    return _titleFields(hymn).any((title) {
+      final normalizedText = _normalizeAmharic(title);
       if (startsWith) {
         return normalizedText.startsWith(query);
-      } else {
-        return normalizedText.contains(query);
       }
-    }
-
-    return false;
+      return normalizedText.contains(query);
+    });
   }
 
   /// Check for partial English title match
@@ -377,31 +349,25 @@ class SearchEngine {
   }) {
     if (isAmharicQuery) return false;
 
-    final englishTitle = hymn.englishTitleOld ?? '';
-    if (englishTitle.isEmpty) return false;
+    return _titleFields(hymn).any((title) {
+      final titleLower = _normalizeEnglish(title);
+      final significantTokens =
+          queryTokens.where((token) => token.length >= 3).toList();
+      if (startsWith) {
+        if (titleLower.startsWith(query)) return true;
+        return significantTokens.isNotEmpty &&
+            titleLower.startsWith(significantTokens.first);
+      }
 
-    final titleLower = englishTitle.toLowerCase();
-    if (startsWith) {
-      if (titleLower.startsWith(query)) {
-        return true;
+      if (titleLower.contains(query)) return true;
+      if (significantTokens.isEmpty) {
+        return false;
       }
-      // Token-based startsWith matching (first token)
-      if (queryTokens.isNotEmpty && titleLower.startsWith(queryTokens.first)) {
-        return true;
+      if (significantTokens.length == 1) {
+        return titleLower.contains(significantTokens.single);
       }
-    } else {
-      if (titleLower.contains(query)) {
-        return true;
-      }
-      // Token-based matching
-      for (final token in queryTokens) {
-        if (titleLower.contains(token)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+      return significantTokens.every(titleLower.contains);
+    });
   }
 
   /// Check for lyrics match
@@ -412,10 +378,9 @@ class SearchEngine {
     required String query,
     required List<String> queryTokens,
     required bool isAmharicQuery,
-    Map<String, String>? normalizedIndex,
   }) {
-    final lyrics = hymn.displayLyrics;
-    if (lyrics.isEmpty) {
+    final searchableFields = _bodyFields(hymn);
+    if (searchableFields.isEmpty) {
       return false;
     }
 
@@ -425,27 +390,54 @@ class SearchEngine {
       return false;
     }
 
-    if (isAmharicQuery && normalizedIndex != null) {
-      final hymnId = hymn.id ?? '${hymn.displayNumber}';
-      final normalizedText = normalizedIndex[hymnId] ?? '';
-      if (normalizedText.contains(query)) {
-        return true;
-      }
+    if (isAmharicQuery) {
+      return searchableFields.any(
+        (field) => _normalizeAmharic(field).contains(query),
+      );
     } else if (!isAmharicQuery) {
-      final lyricsLower = lyrics.toLowerCase();
-      // Require at least 4 characters for English lyrics matching
-      if (query.length >= 4 && lyricsLower.contains(query)) {
-        return true;
-      }
-      // Token-based matching - only for tokens of at least 4 characters
-      for (final token in queryTokens) {
-        if (token.length >= 4 && lyricsLower.contains(token)) {
+      for (final field in searchableFields) {
+        final fieldLower = _normalizeEnglish(field);
+        if (query.length >= 4 && fieldLower.contains(query)) {
           return true;
+        }
+        for (final token in queryTokens) {
+          if (token.length >= 4 && fieldLower.contains(token)) {
+            return true;
+          }
         }
       }
     }
 
     return false;
+  }
+
+  List<String> _titleFields(Hymn hymn) {
+    return [
+      hymn.displayTitle,
+      hymn.title ?? '',
+      hymn.newHymnalTitle ?? '',
+      hymn.oldHymnalTitle ?? '',
+      hymn.englishTitleOld ?? '',
+    ].map((value) => value.trim()).where((value) => value.isNotEmpty).toList();
+  }
+
+  List<String> _bodyFields(Hymn hymn) {
+    return [
+      hymn.displayLyrics,
+      hymn.lyrics ?? '',
+      hymn.song ?? '',
+      hymn.newHymnalLyrics ?? '',
+      hymn.oldHymnalLyrics ?? '',
+      hymn.artist ?? '',
+    ].map((value) => value.trim()).where((value) => value.isNotEmpty).toList();
+  }
+
+  String _normalizeAmharic(String value) {
+    return AmharicPhoneticService.normalizeAmharic(value.trim().toLowerCase());
+  }
+
+  String _normalizeEnglish(String value) {
+    return value.trim().toLowerCase();
   }
 
   /// Disable validation logs (call after testing)

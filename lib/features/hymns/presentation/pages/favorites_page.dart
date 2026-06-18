@@ -336,8 +336,17 @@ class _FavoritesPageState extends State<FavoritesPage>
       final query = _searchQuery.toLowerCase();
       favoriteHymns = favoriteHymns.where((hymn) {
         final title = hymn.displayTitle.toLowerCase();
+        final englishTitle = hymn.englishTitleOld?.toLowerCase() ?? '';
         final lyrics = hymn.displayLyrics.toLowerCase();
-        return title.contains(query) || lyrics.contains(query);
+        final number = hymn.displayNumber.toString();
+        final newNumber = hymn.newHymnalNumber?.toString() ?? '';
+        final oldNumber = hymn.oldHymnalNumber?.toString() ?? '';
+        return title.contains(query) ||
+            englishTitle.contains(query) ||
+            lyrics.contains(query) ||
+            number == query ||
+            newNumber == query ||
+            oldNumber == query;
       }).toList();
     }
 

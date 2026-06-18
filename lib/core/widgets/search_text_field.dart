@@ -2,9 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-import 'package:amharic_hymnal_app/core/services/amharic_transliteration_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
-import 'package:amharic_hymnal_app/core/utils/script_detector.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -79,21 +77,6 @@ class _SearchTextFieldState extends State<SearchTextField> {
     widget.onClear?.call();
   }
 
-  /// Determine if we should use transliteration formatter
-  /// Only use formatter if:
-  /// 1. Current text is empty or contains only Latin characters
-  /// 2. User is typing Latin (not Amharic)
-  bool _shouldUseFormatter() {
-    final text = _textController.text;
-    if (text.isEmpty) return true; // Allow formatter for new input
-
-    // Check if text contains Amharic characters
-    final scriptType = ScriptDetector.detect(text);
-    // Only use formatter if text is English (Latin script)
-    // If user types Amharic directly, don't interfere
-    return scriptType == ScriptType.english;
-  }
-
   @override
   Widget build(BuildContext context) {
     final settingsRepository = sl<SettingsRepository>();
@@ -111,10 +94,8 @@ class _SearchTextFieldState extends State<SearchTextField> {
             controller: _textController,
             focusNode: _focusNode,
             autofocus: widget.autofocus,
-            // Use formatter conditionally - only for transliteration, not direct Amharic
-            inputFormatters: _shouldUseFormatter()
-                ? [AmharicTransliterationFormatter()]
-                : null,
+            // Preserve user input exactly; matching and phonetic normalization
+            // belong in the search engine, not in the text field.
             // Unicode support for Amharic (Ge'ez script)
             keyboardType: TextInputType.text,
             textInputAction: TextInputAction.search,
