@@ -23,6 +23,7 @@ class HymnListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final settingsRepository = sl<SettingsRepository>();
     final fontSize = settingsRepository.getFontSize();
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
 
     // Step 1: Simplify and Rewrite the Widget Structure
     // Step 5: Fix GlassCard Interaction - Use Material for better rendering
@@ -35,45 +36,58 @@ class HymnListItem extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           borderRadius: 16.0,
           onTap: null, // Disable GlassCard onTap since Material handles it
-          child: Container(
-            constraints: const BoxConstraints(
-              // Allow enough room for Amharic title plus optional English title.
-              minHeight: 80,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 10,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                // Step 2: Fix Number Badge Visibility - Use explicit green with full opacity
-                _buildNumberBadge(context, hymn, fontSize),
-                const SizedBox(
-                    width:
-                        16), // Increased spacing to make number feel secondary
-                // Category image - inserted after number badge and before title
-                if (hymn.category != null && hymn.category!.isNotEmpty) ...[
-                  CategoryImageGenerator.buildCategoryImage(hymn.category!,
-                      size: 40),
-                  const SizedBox(width: 12), // Spacing after image
-                ],
-                // Step 3: Fix Title Text Visibility - Use explicit white color
-                // Shows both Amharic (primary) and English (secondary) titles
-                Expanded(
-                  child: _buildTitleSection(context, hymn, fontSize),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 360 || textScale > 1.2;
+              final showCategoryImage = !compact &&
+                  hymn.category != null &&
+                  hymn.category!.trim().isNotEmpty;
+
+              return Container(
+                constraints: const BoxConstraints(
+                  // Allow enough room for Amharic title plus optional English title.
+                  minHeight: 80,
                 ),
-                const SizedBox(width: 8),
-                // Chevron icon
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.white
-                      .withValues(alpha: 0.5), // Explicit white with opacity
-                  size: 20,
+                padding: EdgeInsets.symmetric(
+                  horizontal: compact ? 12 : 16,
+                  vertical: 10,
                 ),
-              ],
-            ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    // Step 2: Fix Number Badge Visibility - Use explicit green with full opacity
+                    _buildNumberBadge(context, hymn, fontSize),
+                    SizedBox(width: compact ? 10 : 16),
+                    // Category image - inserted after number badge and before title
+                    if (showCategoryImage) ...[
+                      CategoryImageGenerator.buildCategoryImage(
+                        hymn.category!,
+                        size: 40,
+                      ),
+                      const SizedBox(width: 12), // Spacing after image
+                    ],
+                    // Step 3: Fix Title Text Visibility - Use explicit white color
+                    // Shows both Amharic (primary) and English (secondary) titles
+                    Expanded(
+                      child: _buildTitleSection(
+                        context,
+                        hymn,
+                        fontSize,
+                        compact: compact,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Chevron icon
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.white.withValues(alpha: 0.5),
+                      size: compact ? 18 : 20,
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -133,7 +147,12 @@ class HymnListItem extends StatelessWidget {
   /// - Amharic title: bold (w700), larger font, better spacing
   /// - English title: regular (w400), smaller font, reduced opacity (70%)
   /// - Clear hierarchy with size difference and spacing
-  Widget _buildTitleSection(BuildContext context, Hymn hymn, double fontSize) {
+  Widget _buildTitleSection(
+    BuildContext context,
+    Hymn hymn,
+    double fontSize, {
+    required bool compact,
+  }) {
     // Get Amharic title
     String amharicTitle = hymn.displayTitle.trim();
     if (amharicTitle.isEmpty) {
@@ -148,7 +167,8 @@ class HymnListItem extends StatelessWidget {
     final textScaler = MediaQuery.of(context).textScaler;
     final textScaleFactor = textScaler.scale(1.0);
     final baseFontSize = (fontSize < 16) ? 16.0 : fontSize;
-    final scaledFontSize = baseFontSize * textScaleFactor.clamp(0.8, 1.5);
+    final scaledFontSize =
+        baseFontSize * textScaleFactor.clamp(0.8, compact ? 1.25 : 1.5);
 
     return Material(
       color: Colors.transparent,
@@ -184,7 +204,7 @@ class HymnListItem extends StatelessWidget {
             textAlign: TextAlign.start,
           ),
           // English title (secondary, smaller, reduced opacity) - improved spacing
-          if (englishTitle != null && englishTitle.isNotEmpty) ...[
+          if (!compact && englishTitle != null && englishTitle.isNotEmpty) ...[
             SizedBox(height: 2 * textScaleFactor.clamp(0.8, 1.5)),
             Text(
               englishTitle,

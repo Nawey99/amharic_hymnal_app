@@ -220,11 +220,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
     final settingsRepository = sl<SettingsRepository>();
-    // Check favorite status from both database and SharedPreferences
-    final isFavoriteFromPrefs =
-        settingsRepository.isFavorite(hymn.displayNumber);
-    final isFavoriteFromDb = hymn.isFavorite;
-    final isFavorite = isFavoriteFromPrefs || isFavoriteFromDb;
+    final isFavorite = settingsRepository.isFavorite(hymn.displayNumber);
     final languageCode = _getLanguageCode();
     final version = _getVersion();
 
@@ -324,21 +320,21 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           // Use RepaintBoundary to isolate background rendering and prevent flickering
           return RepaintBoundary(
             child: Container(
-            decoration: BoxDecoration(
-              image: bgService.isEnabled
-                  ? DecorationImage(
+              decoration: BoxDecoration(
+                image: bgService.isEnabled
+                    ? DecorationImage(
                         // Use AssetImage directly - Flutter caches assets automatically
-                      image: const AssetImage('assets/images/background.jpg'),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withValues(alpha: 0.8),
-                        BlendMode.darken,
-                      ),
+                        image: const AssetImage('assets/images/background.jpg'),
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(
+                          Colors.black.withValues(alpha: 0.8),
+                          BlendMode.darken,
+                        ),
                         // Prevent image from reloading on rebuild
                         repeat: ImageRepeat.noRepeat,
-                    )
-                  : null,
-              color: bgService.isEnabled ? null : AppColors.primaryBackground,
+                      )
+                    : null,
+                color: bgService.isEnabled ? null : AppColors.primaryBackground,
               ),
             ),
           );
@@ -348,6 +344,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   PreferredSizeWidget _buildAppBar(Hymn hymn, bool isFavorite) {
+    final compactActions = MediaQuery.sizeOf(context).width < 380;
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -359,11 +356,22 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           color: AppColors.primaryText,
         ),
       ),
-      actions: _buildAppBarActions(hymn, isFavorite),
+      actions: _buildAppBarActions(hymn, isFavorite, compactActions),
     );
   }
 
-  List<Widget> _buildAppBarActions(Hymn hymn, bool isFavorite) {
+  List<Widget> _buildAppBarActions(
+    Hymn hymn,
+    bool isFavorite,
+    bool compactActions,
+  ) {
+    if (compactActions) {
+      return [
+        _buildFavoriteButton(hymn, isFavorite),
+        _buildOverflowMenuButton(hymn),
+      ];
+    }
+
     return [
       if (!hymn.isHagerigna) _buildSheetMusicButton(),
       if (!hymn.isHagerigna) _buildAudioButton(),
@@ -372,16 +380,69 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     ];
   }
 
+  Widget _buildOverflowMenuButton(Hymn hymn) {
+    return PopupMenuButton<_HymnAction>(
+      icon: const Icon(Icons.more_vert, color: AppColors.primaryText),
+      tooltip: 'More',
+      color: AppColors.surface,
+      onSelected: (action) {
+        switch (action) {
+          case _HymnAction.sheetMusic:
+            _showComingSoonMessage('Sheet music feature coming soon');
+          case _HymnAction.audio:
+            _showComingSoonMessage('Audio player feature coming soon');
+          case _HymnAction.share:
+            _shareHymn(hymn);
+        }
+      },
+      itemBuilder: (context) => [
+        if (!hymn.isHagerigna)
+          const PopupMenuItem(
+            value: _HymnAction.sheetMusic,
+            child: ListTile(
+              leading: Icon(Icons.music_note, color: AppColors.primaryText),
+              title: Text(
+                'Sheet Music',
+                style: TextStyle(color: AppColors.primaryText),
+              ),
+            ),
+          ),
+        if (!hymn.isHagerigna)
+          const PopupMenuItem(
+            value: _HymnAction.audio,
+            child: ListTile(
+              leading:
+                  Icon(Icons.play_circle_outline, color: AppColors.primaryText),
+              title: Text(
+                'Audio Player',
+                style: TextStyle(color: AppColors.primaryText),
+              ),
+            ),
+          ),
+        const PopupMenuItem(
+          value: _HymnAction.share,
+          child: ListTile(
+            leading: Icon(Icons.share, color: AppColors.primaryText),
+            title: Text(
+              'Share',
+              style: TextStyle(color: AppColors.primaryText),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSheetMusicButton() {
     // Ensure minimum 48x48 tap target for accessibility
     return SizedBox(
       width: 48,
       height: 48,
       child: IconButton(
-      icon: const Icon(Icons.music_note, color: AppColors.primaryText),
-      tooltip: 'Sheet Music',
-      onPressed: () =>
-          _showComingSoonMessage('Sheet music feature coming soon'),
+        icon: const Icon(Icons.music_note, color: AppColors.primaryText),
+        tooltip: 'Sheet Music',
+        onPressed: () =>
+            _showComingSoonMessage('Sheet music feature coming soon'),
       ),
     );
   }
@@ -394,9 +455,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: IconButton(
         icon:
             const Icon(Icons.play_circle_outline, color: AppColors.primaryText),
-      tooltip: 'Audio Player',
-      onPressed: () =>
-          _showComingSoonMessage('Audio player feature coming soon'),
+        tooltip: 'Audio Player',
+        onPressed: () =>
+            _showComingSoonMessage('Audio player feature coming soon'),
       ),
     );
   }
@@ -422,9 +483,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       width: 48,
       height: 48,
       child: IconButton(
-      icon: const Icon(Icons.share, color: AppColors.primaryText),
-      tooltip: 'Share',
-      onPressed: () => _shareHymn(hymn),
+        icon: const Icon(Icons.share, color: AppColors.primaryText),
+        tooltip: 'Share',
+        onPressed: () => _shareHymn(hymn),
       ),
     );
   }
@@ -444,19 +505,19 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-          _buildTitleSection(hymn, fontSize),
+              _buildTitleSection(hymn, fontSize),
               const SizedBox(height: 8),
-          _buildLyricsSection(hymn, fontSize),
+              _buildLyricsSection(hymn, fontSize),
               const SizedBox(height: 12),
-          if (!hymn.isHagerigna) ...[
-            _buildSheetMusicSection(context, hymn),
-            const SizedBox(height: 16),
-            _buildAudioSection(context, hymn),
-          ],
+              if (!hymn.isHagerigna) ...[
+                _buildSheetMusicSection(context, hymn),
+                const SizedBox(height: 16),
+                _buildAudioSection(context, hymn),
+              ],
             ]),
           ),
         ),
-        ],
+      ],
     );
   }
 
@@ -578,10 +639,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               final maxScale = AppConstants.maxZoomScale;
 
               return InteractiveViewer(
-        transformationController: _transformationController,
+                transformationController: _transformationController,
                 minScale: minScale,
                 maxScale: maxScale,
-        onInteractionEnd: (_) => _handleZoomInteraction(),
+                onInteractionEnd: (_) => _handleZoomInteraction(),
                 // Only allow panning when zoomed in - this prevents horizontal swipes from being captured
                 // when not zoomed, allowing navigation swipes to work
                 panEnabled: isZoomed,
@@ -611,12 +672,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               hymn.displayLyrics.isNotEmpty
                   ? hymn.displayLyrics
                   : 'No lyrics available',
-          style: TextStyle(
-            color: AppColors.primaryText,
-            fontSize: fontSize,
+              style: TextStyle(
+                color: AppColors.primaryText,
+                fontSize: fontSize,
                 // Use theme scale system for responsive line height and letter spacing
                 height: AppTheme.getLineHeight(fontSize),
-            fontFamily: 'NotoSansEthiopic',
+                fontFamily: 'NotoSansEthiopic',
                 letterSpacing: AppTheme.getLetterSpacing(fontSize),
                 shadows: [
                   Shadow(
@@ -629,7 +690,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               textAlign: TextAlign.start,
               // Ensure text can expand fully
               textWidthBasis: TextWidthBasis.longestLine,
-          ),
+            ),
           );
         },
       ),
@@ -646,7 +707,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       final controllerRef = _transformationController;
       if (controllerRef == null) return;
 
-    // Update initial scale and font size when interaction ends
+      // Update initial scale and font size when interaction ends
       final currentScale = controllerRef.value.getMaxScaleOnAxis();
       final fontSizeService = FontSizeService();
 
@@ -825,13 +886,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       await Share.share(text);
     } catch (e) {
       if (mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text('Error sharing: $e'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+            duration: const Duration(seconds: 2),
+          ),
+        );
       }
     }
   }
 }
+
+enum _HymnAction { sheetMusic, audio, share }

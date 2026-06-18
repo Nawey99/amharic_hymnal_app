@@ -28,6 +28,9 @@ class IndexPage extends StatefulWidget {
 }
 
 class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
+  static const double _estimatedHymnItemExtent = 96.0;
+  static const double _listVerticalPadding = 8.0;
+
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -108,10 +111,10 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       return;
     }
 
-    // Get item height based on sort type (96px when sorted by name, variable otherwise)
-    final useItemExtent = state.sortType == 'name';
-    final itemHeight = useItemExtent ? 96.0 : 68.0;
-    final listPadding = 8.0;
+    // The actual list rows are allowed to grow with text scale and screen size.
+    // This estimate is only for the alphabet section indicator.
+    const itemHeight = _estimatedHymnItemExtent;
+    const listPadding = _listVerticalPadding;
     final scrollOffset = _scrollController.offset;
     final viewportHeight = _scrollController.position.viewportDimension;
 
@@ -207,11 +210,10 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     final index = _buildAlphabetIndex(state.hymns);
     final position = index[letter];
     if (position != null && _scrollController.hasClients) {
-      // Calculate approximate scroll position
-      // HymnListItem: 40px container + 20px padding (10px top + 10px bottom) + 8px margin = ~68px
-      // ListView padding: 8px vertical
-      const itemHeight = 68.0;
-      const listPadding = 8.0;
+      // Calculate an approximate scroll position. Rows have dynamic height to
+      // avoid overflow when text scale or window size changes.
+      const itemHeight = _estimatedHymnItemExtent;
+      const listPadding = _listVerticalPadding;
       final scrollPosition = (position * itemHeight) + listPadding;
 
       // Ensure we don't scroll beyond the list
@@ -533,9 +535,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   Widget _buildHymnListItems(List<Hymn> hymns) {
-    // Use itemExtent for more accurate scroll position calculation when sorted by name
     final state = context.read<HymnsBloc>().state;
-    final useItemExtent = state is HymnsLoaded && state.sortType == 'name';
+    final hasAlphabetScrollBar =
+        state is HymnsLoaded && state.sortType == 'name';
 
     // Step 2: Fix Filtering Logic - Ensure filtering doesn't exclude all hymns when sorted by name
     // When sorted by name, only filter out hymns with no number (titles might be empty but that's OK)
@@ -599,7 +601,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     // Step 3: Fix ListView Rendering - Ensure proper constraints and visibility
     // Conditionally apply right padding only when sorted by name (for alphabet scrollbar)
     final rightPadding =
-        useItemExtent ? 48.0 : 16.0; // 48px only when sorted by name
+        hasAlphabetScrollBar ? 48.0 : 16.0; // 48px only when sorted by name
 
     return ListView.builder(
       controller: _scrollController,
@@ -609,9 +611,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       itemCount: hymnsToDisplay.length,
       // Performance: Cache items for smoother scrolling
       cacheExtent: 250.0,
-      // Use fixed item extent for accurate scrolling when sorted by name
-      // Fixed extent must include the two-line list item plus card margin.
-      itemExtent: useItemExtent ? 104.0 : null,
       itemBuilder: (context, index) {
         if (index >= hymnsToDisplay.length) {
           if (kDebugMode) {
