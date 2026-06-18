@@ -188,11 +188,3 @@ class BugReportQueueService {
     return true;
   }
 }
-
-
-
-
-
-
-
-

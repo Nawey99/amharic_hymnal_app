@@ -36,4 +36,3 @@ abstract class SettingsRepository {
   bool isOnboardingCompleted();
   Future<bool> setOnboardingCompleted(bool value);
 }
-

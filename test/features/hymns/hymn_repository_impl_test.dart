@@ -27,10 +27,12 @@ void main() {
     result.fold((l) => expect(l, isA<Failure>()), (r) => expect(r.length, 1));
   });
 
-  test('HymnRepositoryImpl returns CacheFailure when datasource empty', () async {
+  test('HymnRepositoryImpl returns CacheFailure when datasource empty',
+      () async {
     final repo = HymnRepositoryImpl(FakeLocalDataSource([]));
     final result = await repo.getHymns('am', 'hymnal');
     expect(result.isLeft(), true);
-    result.fold((l) => expect(l, isA<CacheFailure>()), (r) => fail('Expected failure'));
+    result.fold(
+        (l) => expect(l, isA<CacheFailure>()), (r) => fail('Expected failure'));
   });
 }

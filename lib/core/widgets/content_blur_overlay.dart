@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// Subtle blur overlay for content that falls below the navigation bar
-/// 
+///
 /// Applies a very light blur to content that is positioned below the vertical
 /// midpoint of the navigation bar. This creates a subtle depth effect without
 /// being distracting.
-/// 
+///
 /// The blur is independent of the navigation bar's glass blur and remains
 /// stable during scrolling.
 class ContentBlurOverlay extends StatelessWidget {
@@ -30,7 +30,7 @@ class ContentBlurOverlay extends StatelessWidget {
       builder: (context, constraints) {
         final screenHeight = constraints.maxHeight;
         final navBarMidpoint = screenHeight - navBarBottom - (navBarHeight / 2);
-        
+
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -64,7 +64,7 @@ class ContentBlurOverlay extends StatelessWidget {
 }
 
 /// Scroll-aware blur overlay that applies blur based on scroll position
-/// 
+///
 /// Uses a ScrollController to detect when content scrolls below the nav bar
 /// and applies blur only to that content.
 class ScrollAwareBlurOverlay extends StatefulWidget {
@@ -118,12 +118,13 @@ class _ScrollAwareBlurOverlayState extends State<ScrollAwareBlurOverlay> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenHeight = constraints.maxHeight;
-        final navBarMidpoint = screenHeight - widget.navBarBottom - (widget.navBarHeight / 2);
-        
+        final navBarMidpoint =
+            screenHeight - widget.navBarBottom - (widget.navBarHeight / 2);
+
         // Calculate if content is below nav bar midpoint
         final contentBottom = _scrollOffset + screenHeight;
         final shouldBlur = contentBottom > navBarMidpoint;
-        
+
         if (!shouldBlur) {
           return widget.child;
         }
@@ -162,8 +163,3 @@ class _ScrollAwareBlurOverlayState extends State<ScrollAwareBlurOverlay> {
     );
   }
 }
-
-
-
-
-

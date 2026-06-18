@@ -12,18 +12,19 @@ import 'package:amharic_hymnal_app/core/utils/constants.dart';
 void main() {
   group('HymnDetailPage Widget Tests', () {
     late Hymn testHymn;
-    
+
     setUp(() {
       // Initialize FontSizeService for tests
       FontSizeService().initialize(AppConstants.defaultFontSize);
-      
+
       // Create a test hymn
       testHymn = const Hymn(
         id: 'sda-1',
         number: 1,
         title: 'Test Hymn Title',
         newHymnalTitle: 'Test Hymn Title',
-        newHymnalLyrics: 'Test lyrics line 1\nTest lyrics line 2\nTest lyrics line 3',
+        newHymnalLyrics:
+            'Test lyrics line 1\nTest lyrics line 2\nTest lyrics line 3',
         isFavorite: false,
       );
     });
@@ -32,14 +33,15 @@ void main() {
     // See test/widget_tests/favorite_toggle_test.dart for working example
     // To enable these tests, generate mocks with:
     // flutter pub run build_runner build
-    
+
     testWidgets('Hymn entity creation works', (WidgetTester tester) async {
       expect(testHymn.displayTitle, 'Test Hymn Title');
       expect(testHymn.displayNumber, 1);
       expect(testHymn.displayLyrics, contains('Test lyrics'));
     });
 
-    testWidgets('Font size service initialization works', (WidgetTester tester) async {
+    testWidgets('Font size service initialization works',
+        (WidgetTester tester) async {
       final fontSizeService = FontSizeService();
       fontSizeService.initialize(20.0);
       expect(fontSizeService.getFontSize(), 20.0);

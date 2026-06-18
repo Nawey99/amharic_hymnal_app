@@ -32,7 +32,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final bgService = BackgroundImageService();
-    
+
     return Container(
       decoration: BoxDecoration(
         image: bgService.isEnabled
@@ -52,9 +52,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
         appBar: AppBar(
           title: BlocBuilder<HymnsBloc, HymnsState>(
             builder: (context, state) {
-              final title = (state is HymnsLoaded && state.version == 'hagerigna') 
-                  ? 'Authors' 
-                  : 'Categories';
+              final title =
+                  (state is HymnsLoaded && state.version == 'hagerigna')
+                      ? 'Authors'
+                      : 'Categories';
               return Text(
                 title,
                 style: const TextStyle(
@@ -75,11 +76,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
               if (state is HymnsLoading) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
                   ),
                 );
               }
-              
+
               if (state is HymnsError) {
                 return Center(
                   child: Padding(
@@ -96,37 +98,41 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                 );
               }
-              
+
               if (state is HymnsLoaded) {
                 if (state.version == 'hymnal') {
                   // Use exact category ranges for hymnal
                   final categories = CategoryRanges.allCategories;
-                  
+
                   if (categories.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.category_outlined,
                       title: 'No categories found',
                     );
                   }
-                  
+
                   // Add bottom padding to prevent content from going under navigation bar
-                  final bottomPadding = NavBarConstants.getBottomPadding(context);
-                  
+                  final bottomPadding =
+                      NavBarConstants.getBottomPadding(context);
+
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       // Responsive grid: 1 column for small screens (< 400px), 2 columns for larger screens
                       // Prevents overflow on smallest mobile devices (320px minimum)
                       final screenWidth = MediaQuery.of(context).size.width;
                       final crossAxisCount = screenWidth < 400 ? 1 : 2;
-                      final cardWidth = crossAxisCount == 1 
-                          ? screenWidth - 32 // Full width minus padding for single column
-                          : (screenWidth - 32 - 12) / 2; // 50% width minus spacing for two columns
-                      
+                      final cardWidth = crossAxisCount == 1
+                          ? screenWidth -
+                              32 // Full width minus padding for single column
+                          : (screenWidth - 32 - 12) /
+                              2; // 50% width minus spacing for two columns
+
                       return Padding(
                         padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
                         child: GridView.builder(
                           controller: _scrollController,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: crossAxisCount,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
@@ -138,7 +144,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             final range = CategoryRanges.getRange(category);
                             return SizedBox(
                               width: cardWidth,
-                              child: _buildCategoryCard(context, category, range, state.languageCode, state.version),
+                              child: _buildCategoryCard(context, category,
+                                  range, state.languageCode, state.version),
                             );
                           },
                         ),
@@ -148,35 +155,39 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 } else if (state.version == 'hagerigna') {
                   // Show authors for Hagerigna mode
                   final authors = _extractAuthors(state.hymns);
-                  
+
                   if (authors.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.person_outline,
                       title: 'No authors found',
                     );
                   }
-                  
+
                   // Sort authors alphabetically
                   authors.sort();
-                  
+
                   // Add bottom padding to prevent content from going under navigation bar
-                  final bottomPadding = NavBarConstants.getBottomPadding(context);
-                  
+                  final bottomPadding =
+                      NavBarConstants.getBottomPadding(context);
+
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       // Responsive grid: 1 column for small screens (< 400px), 2 columns for larger screens
                       // Prevents overflow on smallest mobile devices (320px minimum)
                       final screenWidth = MediaQuery.of(context).size.width;
                       final crossAxisCount = screenWidth < 400 ? 1 : 2;
-                      final cardWidth = crossAxisCount == 1 
-                          ? screenWidth - 32 // Full width minus padding for single column
-                          : (screenWidth - 32 - 12) / 2; // 50% width minus spacing for two columns
-                      
+                      final cardWidth = crossAxisCount == 1
+                          ? screenWidth -
+                              32 // Full width minus padding for single column
+                          : (screenWidth - 32 - 12) /
+                              2; // 50% width minus spacing for two columns
+
                       return Padding(
                         padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
                         child: GridView.builder(
                           controller: _scrollController,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: crossAxisCount,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
@@ -187,7 +198,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             final author = authors[index];
                             return SizedBox(
                               width: cardWidth,
-                              child: _buildAuthorCard(context, author, state.languageCode, state.version),
+                              child: _buildAuthorCard(context, author,
+                                  state.languageCode, state.version),
                             );
                           },
                         ),
@@ -196,7 +208,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   );
                 }
               }
-              
+
               // For other versions, show empty state
               return const EmptyStateWidget(
                 icon: Icons.category_outlined,
@@ -220,9 +232,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
     return authors.toList();
   }
 
-  Widget _buildCategoryCard(BuildContext context, String category, List<int>? range, String languageCode, String version) {
+  Widget _buildCategoryCard(BuildContext context, String category,
+      List<int>? range, String languageCode, String version) {
     final imageProvider = CategoryImageLoader.getCategoryImage(category);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -323,7 +336,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Widget _buildAuthorCard(BuildContext context, String author, String languageCode, String version) {
+  Widget _buildAuthorCard(BuildContext context, String author,
+      String languageCode, String version) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -351,32 +365,32 @@ class _CategoriesPageState extends State<CategoriesPage> {
             opacity: 0.25,
             padding: const EdgeInsets.all(16),
             child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Author icon (no image needed for authors)
-              const Icon(
-                Icons.person,
-                size: 48,
-                color: AppColors.accentGreen,
-              ),
-              const SizedBox(height: 12),
-              // Author name
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  author,
-                  style: const TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'NotoSansEthiopic',
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Author icon (no image needed for authors)
+                const Icon(
+                  Icons.person,
+                  size: 48,
+                  color: AppColors.accentGreen,
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                // Author name
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    author,
+                    style: const TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'NotoSansEthiopic',
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -384,4 +398,3 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 }
-

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 /// Utility for generating dynamic category images based on category name
-/// 
+///
 /// Uses category name hash to determine consistent color/gradient for each category.
 /// Generates simple colored containers with icons or text as placeholders.
 class CategoryImageGenerator {
@@ -10,7 +10,7 @@ class CategoryImageGenerator {
   static final Map<String, Widget> _imageCache = {};
 
   /// Generate a category image widget based on category name
-  /// 
+  ///
   /// Uses hash of category name to generate consistent colors.
   /// Returns a colored container with an icon or category initial.
   static Widget buildCategoryImage(String category, {double size = 40}) {
@@ -22,7 +22,7 @@ class CategoryImageGenerator {
 
     // Generate color based on category name hash
     final color = _getCategoryColor(category);
-    
+
     // Get category icon or initial
     final icon = _getCategoryIcon(category);
     final initial = _getCategoryInitial(category);
@@ -77,7 +77,7 @@ class CategoryImageGenerator {
     // Generate consistent color from category name hash
     final hash = category.hashCode;
     final hue = (hash.abs() % 360).toDouble();
-    
+
     // Use HSL color space for vibrant colors
     return HSLColor.fromAHSL(1.0, hue, 0.7, 0.5).toColor();
   }
@@ -85,7 +85,7 @@ class CategoryImageGenerator {
   /// Get icon for category if available
   static IconData? _getCategoryIcon(String category) {
     final lowerCategory = category.toLowerCase();
-    
+
     // Map common category names to icons
     final iconMap = {
       'praise': Icons.music_note,
@@ -128,4 +128,3 @@ class CategoryImageGenerator {
     _imageCache.clear();
   }
 }
-

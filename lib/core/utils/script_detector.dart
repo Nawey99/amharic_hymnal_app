@@ -1,7 +1,7 @@
 // lib/core/utils/script_detector.dart
 
 /// Utility for detecting the script type of input text
-/// 
+///
 /// Determines whether text is written in Amharic (Ge'ez script) or English (Latin script).
 /// This is essential for applying the correct search algorithm:
 /// - Amharic: phonetic normalization matching
@@ -9,10 +9,10 @@
 enum ScriptType {
   /// Amharic text using Ge'ez script (Unicode range U+1200–U+137F)
   amharic,
-  
+
   /// English text using Latin script (ASCII/Unicode Latin ranges)
   english,
-  
+
   /// Mixed or unknown script
   mixed,
 }
@@ -23,11 +23,11 @@ class ScriptDetector {
   /// This covers the Amharic syllabary
   static const int _amharicStart = 0x1200;
   static const int _amharicEnd = 0x137F;
-  
+
   /// Extended Amharic range: U+1380 to U+139F (supplementary characters)
   static const int _amharicExtendedStart = 0x1380;
   static const int _amharicExtendedEnd = 0x139F;
-  
+
   /// Latin script ranges (basic and extended)
   /// Basic Latin: U+0020-U+007F (ASCII printable)
   /// Latin-1 Supplement: U+0080-U+00FF
@@ -37,39 +37,39 @@ class ScriptDetector {
   static const int _latinEnd = 0x024F;
 
   /// Detect the script type of the given text
-  /// 
+  ///
   /// Returns:
   /// - [ScriptType.amharic] if text contains primarily Amharic characters
   /// - [ScriptType.english] if text contains primarily Latin characters
   /// - [ScriptType.mixed] if text contains significant amounts of both
-  /// 
+  ///
   /// Detection is based on the first non-whitespace character found,
   /// or majority if multiple characters are present.
   static ScriptType detect(String text) {
     if (text.isEmpty) return ScriptType.english; // Default to English for empty
-    
+
     // Remove whitespace and punctuation for analysis
     final cleaned = text.replaceAll(RegExp(r'[\s\p{P}]', unicode: true), '');
     if (cleaned.isEmpty) return ScriptType.english;
-    
+
     int amharicCount = 0;
     int latinCount = 0;
-    
+
     for (int i = 0; i < cleaned.length; i++) {
       final codeUnit = cleaned.codeUnitAt(i);
-      
+
       if (_isAmharic(codeUnit)) {
         amharicCount++;
       } else if (_isLatin(codeUnit)) {
         latinCount++;
       }
     }
-    
+
     // If no script characters found, default to English
     if (amharicCount == 0 && latinCount == 0) {
       return ScriptType.english;
     }
-    
+
     // Determine based on majority
     if (amharicCount > latinCount) {
       return ScriptType.amharic;
@@ -89,7 +89,7 @@ class ScriptDetector {
   /// Check if a character code unit is in the Amharic range
   static bool _isAmharic(int codeUnit) {
     return (codeUnit >= _amharicStart && codeUnit <= _amharicEnd) ||
-           (codeUnit >= _amharicExtendedStart && codeUnit <= _amharicExtendedEnd);
+        (codeUnit >= _amharicExtendedStart && codeUnit <= _amharicExtendedEnd);
   }
 
   /// Check if a character code unit is in the Latin range
@@ -107,9 +107,3 @@ class ScriptDetector {
     return detect(text) == ScriptType.english;
   }
 }
-
-
-
-
-
-

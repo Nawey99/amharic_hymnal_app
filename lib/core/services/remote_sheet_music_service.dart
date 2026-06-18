@@ -5,11 +5,12 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'dart:convert';
 
 /// Remote sheet music service - fetches sheet music from CDN/server
-/// 
+///
 /// Similar architecture to GlobalAudioService
 /// Supports on-demand loading with URL resolution
 class RemoteSheetMusicService {
-  static final RemoteSheetMusicService _instance = RemoteSheetMusicService._internal();
+  static final RemoteSheetMusicService _instance =
+      RemoteSheetMusicService._internal();
   factory RemoteSheetMusicService() => _instance;
   RemoteSheetMusicService._internal();
 
@@ -18,7 +19,7 @@ class RemoteSheetMusicService {
   bool _isInitialized = false;
 
   /// Initialize the service with API configuration
-  /// 
+  ///
   /// [baseUrl] - Base URL for sheet music CDN/server
   /// [apiKey] - Optional API key for authentication
   Future<void> initialize({String? baseUrl, String? apiKey}) async {
@@ -49,12 +50,12 @@ class RemoteSheetMusicService {
   }
 
   /// Get sheet music URL for a specific hymn number
-  /// 
+  ///
   /// [hymnNumber] - The hymn number to get sheet music for
   /// [page] - Optional page indicator ('L', 'R', or null for single page)
-  /// 
+  ///
   /// Returns the sheet music URL if available, null otherwise
-  /// 
+  ///
   /// URL patterns:
   /// - Single page: {baseUrl}/sheet_music/{hymnNumber}.webp
   /// - Two pages: {baseUrl}/sheet_music/{hymnNumber}_L.webp or {hymnNumber}_R.webp
@@ -81,9 +82,9 @@ class RemoteSheetMusicService {
   }
 
   /// Get all sheet music URLs for a hymn (handles single page or L/R pages)
-  /// 
+  ///
   /// [hymnNumber] - The hymn number
-  /// 
+  ///
   /// Returns list of URLs. Empty list if not available.
   /// First checks for two-page format (L/R), then single page.
   Future<List<String>> getSheetMusicUrls(int hymnNumber) async {
@@ -124,9 +125,11 @@ class RemoteSheetMusicService {
   /// Check if a URL exists (HEAD request)
   Future<bool> _checkUrlExists(String url) async {
     try {
-      final response = await http.head(
+      final response = await http
+          .head(
         Uri.parse(url),
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 5),
         onTimeout: () {
           return http.Response('', 408); // Timeout
@@ -143,10 +146,10 @@ class RemoteSheetMusicService {
   }
 
   /// Resolve sheet music URLs from API (alternative approach)
-  /// 
+  ///
   /// [hymnNumber] - The hymn number to get sheet music for
   /// Returns list of sheet music URLs if found, empty list otherwise
-  /// 
+  ///
   /// API format: {baseUrl}/api/sheet_music/{hymnNumber}
   /// Response: { "urls": ["url1", "url2"] } or { "url": "url1" }
   Future<List<String>> resolveSheetMusicUrls(int hymnNumber) async {
@@ -168,13 +171,16 @@ class RemoteSheetMusicService {
       }
 
       // Make API request with timeout
-      final response = await http.get(
+      final response = await http
+          .get(
         Uri.parse(url),
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           if (kDebugMode) {
-            debugPrint('⏱️ Sheet music API request timeout for hymn #$hymnNumber');
+            debugPrint(
+                '⏱️ Sheet music API request timeout for hymn #$hymnNumber');
           }
           throw Exception('Sheet music API request timed out');
         },
@@ -183,7 +189,7 @@ class RemoteSheetMusicService {
       if (response.statusCode == 200) {
         try {
           final data = json.decode(response.body) as Map<String, dynamic>;
-          
+
           // Extract URLs from response
           // Supports multiple formats: { "urls": [...] } or { "url": "..." }
           if (data.containsKey('urls')) {
@@ -196,13 +202,15 @@ class RemoteSheetMusicService {
           } else if (data.containsKey('sheet_music_url')) {
             return [data['sheet_music_url'] as String];
           }
-          
+
           if (kDebugMode) {
-            debugPrint('⚠️ Sheet music URLs not found in API response for hymn #$hymnNumber');
+            debugPrint(
+                '⚠️ Sheet music URLs not found in API response for hymn #$hymnNumber');
           }
         } catch (e) {
           if (kDebugMode) {
-            debugPrint('❌ Failed to parse API response for hymn #$hymnNumber: $e');
+            debugPrint(
+                '❌ Failed to parse API response for hymn #$hymnNumber: $e');
           }
         }
       } else if (response.statusCode == 404) {
@@ -212,12 +220,14 @@ class RemoteSheetMusicService {
         // 404 is not an error - just means sheet music doesn't exist for this hymn
       } else {
         if (kDebugMode) {
-          debugPrint('⚠️ API returned status ${response.statusCode} for hymn #$hymnNumber');
+          debugPrint(
+              '⚠️ API returned status ${response.statusCode} for hymn #$hymnNumber');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('❌ Failed to resolve sheet music URLs for hymn #$hymnNumber: $e');
+        debugPrint(
+            '❌ Failed to resolve sheet music URLs for hymn #$hymnNumber: $e');
       }
     }
 
@@ -233,8 +243,3 @@ class RemoteSheetMusicService {
   String? get baseUrl => _baseUrl;
   bool get isInitialized => _isInitialized;
 }
-
-
-
-
-

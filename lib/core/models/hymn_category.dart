@@ -1,12 +1,12 @@
 // lib/core/models/hymn_category.dart
 
 /// Model representing a hymn category with its hymn number range
-/// 
+///
 /// Each category contains:
 /// - Unique identifier
 /// - Amharic name
 /// - Start and end hymn numbers (inclusive)
-/// 
+///
 /// Used for programmatic category assignment and validation
 class HymnCategory {
   final String id;
@@ -19,8 +19,8 @@ class HymnCategory {
     required this.nameAmharic,
     required this.startNumber,
     required this.endNumber,
-  }) : assert(startNumber > 0, 'Start number must be positive'),
-       assert(endNumber >= startNumber, 'End number must be >= start number');
+  })  : assert(startNumber > 0, 'Start number must be positive'),
+        assert(endNumber >= startNumber, 'End number must be >= start number');
 
   /// Get list of all hymn numbers in this category
   List<int> get hymnNumbers {
@@ -58,9 +58,3 @@ class HymnCategory {
       startNumber.hashCode ^
       endNumber.hashCode;
 }
-
-
-
-
-
-

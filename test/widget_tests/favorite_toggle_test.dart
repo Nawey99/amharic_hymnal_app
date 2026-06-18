@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -21,7 +22,8 @@ void main() {
       await di.initDependencies(startDatabase: false);
     });
 
-    setUp(() {
+    setUp(() async {
+      await di.sl<SettingsRepository>().setFavoriteHymns([]);
       hymnsBloc = di.sl<HymnsBloc>();
     });
 
@@ -68,6 +70,8 @@ void main() {
 
     testWidgets('Favorite button has proper accessibility',
         (WidgetTester tester) async {
+      await di.sl<SettingsRepository>().setFavoriteHymns([2]);
+
       final testHymn = const Hymn(
         id: 'test-2',
         number: 2,

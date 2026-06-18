@@ -4,15 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 /// Service for discovering and mapping sheet music files to hymn numbers
-/// 
+///
 /// Scans assets/sheet_music/ directory and maps files by naming convention:
 /// - Single page: number.webp (e.g., "5.webp", "10.webp")
 /// - Two pages: number_L.webp and number_R.webp (e.g., "8_L.webp", "8_R.webp")
-/// 
+///
 /// The service automatically detects whether a hymn has one or two pages based on
 /// the file naming pattern. No hardcoded assumptions are made.
 class SheetMusicDiscoveryService {
-  static final SheetMusicDiscoveryService _instance = SheetMusicDiscoveryService._internal();
+  static final SheetMusicDiscoveryService _instance =
+      SheetMusicDiscoveryService._internal();
   factory SheetMusicDiscoveryService() => _instance;
   SheetMusicDiscoveryService._internal();
 
@@ -29,21 +30,21 @@ class SheetMusicDiscoveryService {
     try {
       // Load asset manifest to discover sheet music files
       final manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifest = 
+      final Map<String, dynamic> manifest =
           jsonDecode(manifestContent) as Map<String, dynamic>;
 
       // Filter for sheet_music assets (primarily WebP format)
       final sheetMusicAssets = manifest.keys
           .where((key) => key.startsWith('assets/sheet_music/'))
           .where((key) {
-            final ext = key.split('.').last.toLowerCase();
-            // Support WebP (primary) and legacy formats for backward compatibility
-            return ext == 'webp' || ext == 'jpg' || ext == 'jpeg' || ext == 'png';
-          })
-          .toList();
+        final ext = key.split('.').last.toLowerCase();
+        // Support WebP (primary) and legacy formats for backward compatibility
+        return ext == 'webp' || ext == 'jpg' || ext == 'jpeg' || ext == 'png';
+      }).toList();
 
       if (kDebugMode) {
-        debugPrint('📚 Discovered ${sheetMusicAssets.length} sheet music files');
+        debugPrint(
+            '📚 Discovered ${sheetMusicAssets.length} sheet music files');
       }
 
       // Group files by hymn number
@@ -98,11 +99,11 @@ class SheetMusicDiscoveryService {
           // Single page files come first
           if (!aIsL && !aIsR && (bIsL || bIsR)) return -1;
           if ((aIsL || aIsR) && !bIsL && !bIsR) return 1;
-          
+
           // Among two-page files, _L comes before _R
           if (aIsL && bIsR) return -1;
           if (aIsR && bIsL) return 1;
-          
+
           // Same type, sort alphabetically
           return aFileName.compareTo(bFileName);
         });
@@ -113,7 +114,8 @@ class SheetMusicDiscoveryService {
       _isInitialized = true;
 
       if (kDebugMode) {
-        debugPrint('✅ Sheet music discovery complete: ${_sheetMusicCache.length} hymns with sheet music');
+        debugPrint(
+            '✅ Sheet music discovery complete: ${_sheetMusicCache.length} hymns with sheet music');
         if (_sheetMusicCache.isNotEmpty) {
           final sample = _sheetMusicCache.entries.take(5);
           for (final entry in sample) {
@@ -137,8 +139,8 @@ class SheetMusicDiscoveryService {
 
   /// Check if a hymn has sheet music
   bool hasSheetMusic(int hymnNumber) {
-    return _sheetMusicCache.containsKey(hymnNumber) && 
-           _sheetMusicCache[hymnNumber]!.isNotEmpty;
+    return _sheetMusicCache.containsKey(hymnNumber) &&
+        _sheetMusicCache[hymnNumber]!.isNotEmpty;
   }
 
   /// Get all hymn numbers that have sheet music

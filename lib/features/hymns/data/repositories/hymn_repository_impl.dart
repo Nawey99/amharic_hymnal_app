@@ -97,24 +97,24 @@ class HymnRepositoryImpl implements HymnRepository {
         return const Left(CacheFailure());
       }
       final hymns = HymnMapper.toDomainList(hymnModels);
-      
+
       // Get or build normalized search index (cached per language-version)
       final normalizedIndex = await _searchIndexService.getIndex(
         languageCode: languageCode,
         version: version,
         hymns: hymns,
       );
-      
+
       // Use SearchEngine for pure, testable search logic with ranking
       final searchResults = _searchEngine.search(
         hymns: hymns,
         query: query,
         normalizedIndex: normalizedIndex,
       );
-      
+
       // Extract hymns from search results (sorted by rank)
       final filtered = searchResults.map((result) => result.hymn).toList();
-      
+
       if (kDebugMode) {
         debugPrint('🔍 Search "$query" returned ${filtered.length} results');
       }

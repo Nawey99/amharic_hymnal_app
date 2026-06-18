@@ -4,7 +4,7 @@ import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 /// Service for managing hymn categories
-/// 
+///
 /// Provides programmatic access to the 31-category system.
 /// Validates category assignments and provides category queries.
 class CategoryService {
@@ -26,10 +26,11 @@ class CategoryService {
       }
       throw Exception('Category validation failed: ${errors.join(", ")}');
     }
-    
+
     if (kDebugMode) {
       debugPrint('✅ All 31 categories validated successfully');
-      debugPrint('   Total hymns covered: ${HymnCategories.getAllCoveredNumbers().length}');
+      debugPrint(
+          '   Total hymns covered: ${HymnCategories.getAllCoveredNumbers().length}');
     }
   }
 
@@ -76,9 +77,3 @@ class CategoryService {
     return HymnCategories.getAllCoveredNumbers();
   }
 }
-
-
-
-
-
-

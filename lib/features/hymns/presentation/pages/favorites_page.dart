@@ -79,15 +79,18 @@ class _FavoritesPageState extends State<FavoritesPage>
     super.didChangeDependencies();
     // Track page visibility for auto-close search functionality
     final isVisible = ModalRoute.of(context)?.isCurrent ?? false;
-    
+
     // Auto-close search when leaving page AND search is empty
-    if (_wasVisible && !isVisible && _isSearchVisible && _searchController.text.isEmpty) {
+    if (_wasVisible &&
+        !isVisible &&
+        _isSearchVisible &&
+        _searchController.text.isEmpty) {
       setState(() {
         _isSearchVisible = false;
         _searchFocusNode.unfocus();
       });
     }
-    
+
     // When page becomes visible, reload full list if no local search
     // This ensures search independence between pages
     if (isVisible && _searchQuery.isEmpty) {
@@ -104,7 +107,7 @@ class _FavoritesPageState extends State<FavoritesPage>
         });
       }
     }
-    
+
     _wasVisible = isVisible; // Update visibility state
   }
 
@@ -183,70 +186,70 @@ class _FavoritesPageState extends State<FavoritesPage>
                 _buildSearchBar(),
                 Expanded(
                   child: BlocBuilder<HymnsBloc, HymnsState>(
-                      buildWhen: (previous, current) {
-                        // Only rebuild when:
-                        // 1. State type changes (e.g., Loading -> Loaded)
-                        // 2. Hymns list changes (favorites added/removed)
-                        // 3. Error occurs
-                        if (previous.runtimeType != current.runtimeType) {
-                          return true;
-                        }
-                        if (previous is HymnsLoaded && current is HymnsLoaded) {
-                          // Rebuild if hymns list changed (favorite toggle)
-                          return previous.hymns.length != current.hymns.length ||
-                              previous.hymns.any((h) => 
-                                !current.hymns.any((ch) => 
-                                  ch.id == h.id && ch.isFavorite == h.isFavorite));
-                        }
+                    buildWhen: (previous, current) {
+                      // Only rebuild when:
+                      // 1. State type changes (e.g., Loading -> Loaded)
+                      // 2. Hymns list changes (favorites added/removed)
+                      // 3. Error occurs
+                      if (previous.runtimeType != current.runtimeType) {
                         return true;
-                      },
-                      builder: (context, state) {
-                        final settingsRepository = sl<SettingsRepository>();
-                        // Get fresh favorites list to ensure instant updates
-                        final favorites = settingsRepository.getFavoriteHymns();
+                      }
+                      if (previous is HymnsLoaded && current is HymnsLoaded) {
+                        // Rebuild if hymns list changed (favorite toggle)
+                        return previous.hymns.length != current.hymns.length ||
+                            previous.hymns.any((h) => !current.hymns.any((ch) =>
+                                ch.id == h.id &&
+                                ch.isFavorite == h.isFavorite));
+                      }
+                      return true;
+                    },
+                    builder: (context, state) {
+                      final settingsRepository = sl<SettingsRepository>();
+                      // Get fresh favorites list to ensure instant updates
+                      final favorites = settingsRepository.getFavoriteHymns();
 
-                        // Handle errors
-                        if (state is HymnsError) {
-                          return ErrorStateWidget(
-                            message: state.message,
-                          );
-                        }
+                      // Handle errors
+                      if (state is HymnsError) {
+                        return ErrorStateWidget(
+                          message: state.message,
+                        );
+                      }
 
-                        // Only show loading on initial load (HymnsInitial or HymnsLoading)
-                        // NOT when toggling favorites (which keeps HymnsLoaded state)
-                        if (state is HymnsInitial || 
-                            (state is HymnsLoading && favorites.isEmpty)) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.accentGreen),
-                            ),
-                          );
-                        }
+                      // Only show loading on initial load (HymnsInitial or HymnsLoading)
+                      // NOT when toggling favorites (which keeps HymnsLoaded state)
+                      if (state is HymnsInitial ||
+                          (state is HymnsLoading && favorites.isEmpty)) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.accentGreen),
+                          ),
+                        );
+                      }
 
-                        // If we have favorites but state isn't loaded yet, show them optimistically
-                        if (state is! HymnsLoaded && favorites.isNotEmpty) {
-                          // Show favorites from SharedPreferences even if state isn't loaded
-                          // This prevents flickering during favorite removal
-                          return _buildFavoritesList(context, favorites, []);
-                        }
+                      // If we have favorites but state isn't loaded yet, show them optimistically
+                      if (state is! HymnsLoaded && favorites.isNotEmpty) {
+                        // Show favorites from SharedPreferences even if state isn't loaded
+                        // This prevents flickering during favorite removal
+                        return _buildFavoritesList(context, favorites, []);
+                      }
 
-                        // State is loaded - show favorites
-                        if (state is! HymnsLoaded) {
-                          return EmptyStateWidget(
-                            icon: Icons.favorite_border,
-                            title:
-                                AppLocalizations.of(context)?.noFavoritesYet ??
-                                    'No favorites yet',
-                            message: AppLocalizations.of(context)
-                                    ?.addToFavoritesHint ??
-                                'Tap the heart icon on any hymn to add it to favorites',
-                          );
-                        }
+                      // State is loaded - show favorites
+                      if (state is! HymnsLoaded) {
+                        return EmptyStateWidget(
+                          icon: Icons.favorite_border,
+                          title: AppLocalizations.of(context)?.noFavoritesYet ??
+                              'No favorites yet',
+                          message: AppLocalizations.of(context)
+                                  ?.addToFavoritesHint ??
+                              'Tap the heart icon on any hymn to add it to favorites',
+                        );
+                      }
 
-                        return _buildFavoritesList(context, favorites, state.hymns);
-                      },
-                    ),
+                      return _buildFavoritesList(
+                          context, favorites, state.hymns);
+                    },
+                  ),
                 ),
               ],
             ),
@@ -341,7 +344,8 @@ class _FavoritesPageState extends State<FavoritesPage>
     if (favorites.isEmpty) {
       return EmptyStateWidget(
         icon: Icons.favorite_border,
-        title: AppLocalizations.of(context)?.noFavoritesYet ?? 'No favorites yet',
+        title:
+            AppLocalizations.of(context)?.noFavoritesYet ?? 'No favorites yet',
         message: AppLocalizations.of(context)?.addToFavoritesHint ??
             'Tap the heart icon on any hymn to add it to favorites',
       );
@@ -350,13 +354,14 @@ class _FavoritesPageState extends State<FavoritesPage>
     if (favoriteHymns.isEmpty) {
       return EmptyStateWidget(
         icon: Icons.favorite_border,
-        title: AppLocalizations.of(context)?.noFavoritesFound ?? 'No favorites found',
+        title: AppLocalizations.of(context)?.noFavoritesFound ??
+            'No favorites found',
       );
     }
 
     // Add bottom padding to prevent content from going under navigation bar
     final bottomPadding = NavBarConstants.getBottomPadding(context);
-    
+
     return ListView.builder(
       controller: _scrollController,
       padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPadding),

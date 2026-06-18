@@ -7,7 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 /// Service for downloading and caching sheet music locally
-/// 
+///
 /// Features:
 /// - Downloads sheet music on demand
 /// - Stores in app documents directory
@@ -15,16 +15,17 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 /// - Cache size tracking
 /// - Manual cache clearing
 class SheetMusicCacheService {
-  static final SheetMusicCacheService _instance = SheetMusicCacheService._internal();
+  static final SheetMusicCacheService _instance =
+      SheetMusicCacheService._internal();
   factory SheetMusicCacheService() => _instance;
   SheetMusicCacheService._internal();
 
   Directory? _cacheDir;
   bool _isInitialized = false;
-  
+
   // Track access times for LRU eviction
   final Map<String, DateTime> _accessTimes = {};
-  
+
   // Maximum cache size in bytes (default: 500 MB)
   int _maxCacheSize = 500 * 1024 * 1024;
 
@@ -35,7 +36,7 @@ class SheetMusicCacheService {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
       _cacheDir = Directory(path.join(appDocDir.path, 'sheet_music_cache'));
-      
+
       if (!await _cacheDir!.exists()) {
         await _cacheDir!.create(recursive: true);
       }
@@ -95,9 +96,11 @@ class SheetMusicCacheService {
       }
 
       // Download file
-      final response = await http.get(
+      final response = await http
+          .get(
         Uri.parse(url),
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           throw Exception('Download timeout');
@@ -123,7 +126,8 @@ class SheetMusicCacheService {
         return file.path;
       } else {
         if (kDebugMode) {
-          debugPrint('❌ Failed to download sheet music: HTTP ${response.statusCode}');
+          debugPrint(
+              '❌ Failed to download sheet music: HTTP ${response.statusCode}');
         }
         return null;
       }
@@ -252,7 +256,8 @@ class SheetMusicCacheService {
     }
 
     if (kDebugMode) {
-      debugPrint('✅ Freed ${(freedSpace / (1024 * 1024)).toStringAsFixed(2)} MB');
+      debugPrint(
+          '✅ Freed ${(freedSpace / (1024 * 1024)).toStringAsFixed(2)} MB');
     }
   }
 
@@ -261,7 +266,7 @@ class SheetMusicCacheService {
     // Extract filename from URL, sanitize for filesystem
     final uri = Uri.parse(url);
     var fileName = path.basename(uri.path);
-    
+
     // Remove query parameters from filename
     if (fileName.contains('?')) {
       fileName = fileName.split('?').first;
@@ -269,7 +274,7 @@ class SheetMusicCacheService {
 
     // Sanitize filename (replace invalid characters)
     fileName = fileName.replaceAll(RegExp(r'[<>:"|?*]'), '_');
-    
+
     // Use URL hash as fallback if no filename
     if (fileName.isEmpty || !fileName.contains('.')) {
       fileName = '${uri.hashCode}.webp';
@@ -280,11 +285,6 @@ class SheetMusicCacheService {
 
   /// Get cache directory path
   String? get cacheDirectory => _cacheDir?.path;
-  
+
   bool get isInitialized => _isInitialized;
 }
-
-
-
-
-

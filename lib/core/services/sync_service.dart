@@ -117,7 +117,8 @@ class SyncService {
           _retryCounts[task.id] = retryCount + 1;
           _pendingTasks.add(task);
           if (kDebugMode) {
-            debugPrint('⚠️ Sync task ${task.id} failed, will retry (attempt ${retryCount + 1}/3)');
+            debugPrint(
+                '⚠️ Sync task ${task.id} failed, will retry (attempt ${retryCount + 1}/3)');
           }
         } else {
           if (kDebugMode) {
@@ -194,4 +195,3 @@ class SyncTask {
         'createdAt': createdAt.toIso8601String(),
       };
 }
-

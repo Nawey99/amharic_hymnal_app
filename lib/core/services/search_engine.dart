@@ -19,21 +19,21 @@ class SearchResult {
 
 /// Type of match found
 enum MatchType {
-  exactTitle,      // Exact title match (Amharic or English)
-  number,          // Hymn number match
-  partialTitle,    // Partial title match
-  lyrics,          // Lyrics match
-  none,            // No match (shouldn't appear in results)
+  exactTitle, // Exact title match (Amharic or English)
+  number, // Hymn number match
+  partialTitle, // Partial title match
+  lyrics, // Lyrics match
+  none, // No match (shouldn't appear in results)
 }
 
 /// Pure, testable search logic
-/// 
+///
 /// Features:
 /// - Language-aware normalization (Amharic phonetic + English case-insensitive)
 /// - Ranking algorithm: exact title > number > partial title > lyrics
 /// - Uses prebuilt normalized index
 /// - Returns ranked results (no filtering in widgets)
-/// 
+///
 /// Architecture: This is the core search logic layer. It's pure and testable,
 /// with no UI dependencies or side effects.
 class SearchEngine {
@@ -41,11 +41,11 @@ class SearchEngine {
   bool _enableValidationLogs = false;
 
   /// Search hymns with ranking
-  /// 
+  ///
   /// [hymns] - List of hymns to search (immutable)
   /// [query] - Search query (raw, will be normalized)
   /// [normalizedIndex] - Prebuilt normalized search index (optional, for Amharic)
-  /// 
+  ///
   /// Returns: List of SearchResult sorted by rank (best matches first)
   List<SearchResult> search({
     required List<Hymn> hymns,
@@ -57,7 +57,7 @@ class SearchEngine {
     }
 
     final startTime = DateTime.now();
-    
+
     // Detect script type to determine search strategy
     final scriptType = ScriptDetector.detect(query);
     final isAmharicQuery = scriptType == ScriptType.amharic;
@@ -68,13 +68,17 @@ class SearchEngine {
         : query.toLowerCase().trim();
 
     if (_enableValidationLogs && kDebugMode) {
-      debugPrint('🔍 [SearchEngine] Query: "$query" -> Normalized: "$normalizedQuery" (${isAmharicQuery ? "Amharic" : "English"})');
+      debugPrint(
+          '🔍 [SearchEngine] Query: "$query" -> Normalized: "$normalizedQuery" (${isAmharicQuery ? "Amharic" : "English"})');
     }
 
     // Tokenize English queries for better matching
     final queryTokens = isAmharicQuery
         ? [normalizedQuery]
-        : normalizedQuery.split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
+        : normalizedQuery
+            .split(RegExp(r'\s+'))
+            .where((t) => t.isNotEmpty)
+            .toList();
 
     if (_enableValidationLogs && kDebugMode) {
       debugPrint('🔍 [SearchEngine] Query tokens: $queryTokens');
@@ -107,10 +111,12 @@ class SearchEngine {
     // Limit lyrics-only matches to avoid too many unrelated results
     // Keep all exact title, number, and partial title matches
     // But limit lyrics matches to top 20 if there are many results
-    final lyricsOnlyResults = results.where((r) => r.matchType == MatchType.lyrics).toList();
+    final lyricsOnlyResults =
+        results.where((r) => r.matchType == MatchType.lyrics).toList();
     if (lyricsOnlyResults.length > 20) {
       // Remove excess lyrics-only results, keeping only top 20
-      final otherResults = results.where((r) => r.matchType != MatchType.lyrics).toList();
+      final otherResults =
+          results.where((r) => r.matchType != MatchType.lyrics).toList();
       final topLyricsResults = lyricsOnlyResults.take(20).toList();
       results = [...otherResults, ...topLyricsResults];
       // Re-sort after limiting (with secondary sort by hymn number)
@@ -123,14 +129,15 @@ class SearchEngine {
 
     final duration = DateTime.now().difference(startTime);
     if (_enableValidationLogs && kDebugMode) {
-      debugPrint('🔍 [SearchEngine] Found ${results.length} results in ${duration.inMilliseconds}ms');
+      debugPrint(
+          '🔍 [SearchEngine] Found ${results.length} results in ${duration.inMilliseconds}ms');
     }
 
     return results;
   }
 
   /// Match a single hymn against the query
-  /// 
+  ///
   /// Returns SearchResult with match type and rank
   /// Ranking priority:
   /// 1. Exact Amharic title match
@@ -273,16 +280,16 @@ class SearchEngine {
     Map<String, String>? normalizedIndex,
   }) {
     if (!isAmharicQuery) return false;
-    
+
     final amharicTitle = hymn.displayTitle;
     if (amharicTitle.isEmpty) return false;
-    
+
     if (normalizedIndex != null) {
       final hymnId = hymn.id ?? '${hymn.displayNumber}';
       final normalizedTitle = normalizedIndex[hymnId]?.split(' ').first ?? '';
       return normalizedTitle == query;
     }
-    
+
     return false;
   }
 
@@ -294,22 +301,22 @@ class SearchEngine {
     required bool isAmharicQuery,
   }) {
     if (isAmharicQuery) return false;
-    
+
     final englishTitle = hymn.englishTitleOld ?? '';
     if (englishTitle.isEmpty) return false;
-    
+
     final titleLower = englishTitle.toLowerCase();
     if (titleLower == query) {
       return true;
     }
-    
+
     // Also check token-based exact match
     final titleTokens = titleLower.split(RegExp(r'\s+'));
     if (titleTokens.length == queryTokens.length &&
         titleTokens.join(' ') == queryTokens.join(' ')) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -322,10 +329,10 @@ class SearchEngine {
     required bool startsWith,
   }) {
     if (!isAmharicQuery) return false;
-    
+
     final amharicTitle = hymn.displayTitle;
     if (amharicTitle.isEmpty) return false;
-    
+
     if (normalizedIndex != null) {
       final hymnId = hymn.id ?? '${hymn.displayNumber}';
       final normalizedText = normalizedIndex[hymnId] ?? '';
@@ -335,7 +342,7 @@ class SearchEngine {
         return normalizedText.contains(query);
       }
     }
-    
+
     return false;
   }
 
@@ -348,10 +355,10 @@ class SearchEngine {
     required bool startsWith,
   }) {
     if (isAmharicQuery) return false;
-    
+
     final englishTitle = hymn.englishTitleOld ?? '';
     if (englishTitle.isEmpty) return false;
-    
+
     final titleLower = englishTitle.toLowerCase();
     if (startsWith) {
       if (titleLower.startsWith(query)) {
@@ -372,7 +379,7 @@ class SearchEngine {
         }
       }
     }
-    
+
     return false;
   }
 
@@ -425,4 +432,3 @@ class SearchEngine {
     _enableValidationLogs = false;
   }
 }
-

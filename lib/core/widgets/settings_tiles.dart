@@ -213,7 +213,8 @@ class SettingsDropdownTile extends StatelessWidget {
                 ),
                 elevation: WidgetStateProperty.all(8),
                 maximumSize: WidgetStateProperty.all(
-                  const Size(double.infinity, 300), // Prevent overflow on small screens
+                  const Size(double.infinity,
+                      300), // Prevent overflow on small screens
                 ),
               ),
               textStyle: const TextStyle(
@@ -230,18 +231,18 @@ class SettingsDropdownTile extends StatelessWidget {
                 } else {
                   itemText = item.value ?? '';
                 }
-                
+
                 return DropdownMenuEntry<String>(
                   value: item.value ?? '',
                   label: itemText,
                   style: MenuItemButton.styleFrom(
                     textStyle: TextStyle(
                       fontSize: 16,
-                      fontWeight: item.value == value 
-                          ? FontWeight.w600 
+                      fontWeight: item.value == value
+                          ? FontWeight.w600
                           : FontWeight.normal,
-                      color: item.value == value 
-                          ? AppColors.accentGreen 
+                      color: item.value == value
+                          ? AppColors.accentGreen
                           : AppColors.primaryText,
                       fontFamily: 'NotoSansEthiopic',
                     ),

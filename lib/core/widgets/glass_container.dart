@@ -25,7 +25,8 @@ class GlassContainer extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderRadius = 12.0,
-    this.blurSigma = 8.0, // Reduced default from 10.0 to 8.0 for better performance
+    this.blurSigma =
+        8.0, // Reduced default from 10.0 to 8.0 for better performance
     this.opacity = 0.1,
     this.color,
     this.border,
@@ -37,7 +38,7 @@ class GlassContainer extends StatelessWidget {
     // Optimize blur: use animated value with Tween for smooth transitions
     // Cap at 8 for GPU-accelerated performance on low-tier devices
     final optimizedBlurSigma = (blurSigma > 8 ? 8.0 : blurSigma).toDouble();
-    
+
     final container = RepaintBoundary(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -66,7 +67,8 @@ class GlassContainer extends StatelessWidget {
               ),
               // Content on top
               Container(
-                width: width ?? double.infinity, // Fill available width if not specified
+                width: width ??
+                    double.infinity, // Fill available width if not specified
                 height: height,
                 padding: padding,
                 margin: margin,

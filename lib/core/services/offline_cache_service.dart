@@ -37,7 +37,8 @@ class OfflineCacheService {
   /// [key] - Unique key for the cached data
   /// [data] - The data to cache (will be JSON encoded)
   /// [expiryDays] - Number of days before cache expires (default: 30)
-  Future<bool> cacheData(String key, Map<String, dynamic> data, {int expiryDays = 30}) async {
+  Future<bool> cacheData(String key, Map<String, dynamic> data,
+      {int expiryDays = 30}) async {
     await init();
     try {
       final cacheEntry = {
@@ -175,4 +176,3 @@ class OfflineCacheService {
     }
   }
 }
-

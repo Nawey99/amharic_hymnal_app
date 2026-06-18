@@ -9,7 +9,7 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 /// Pure UI-only search text field widget
-/// 
+///
 /// Features:
 /// - No debounce logic (handled by SearchStateController)
 /// - No submit actions
@@ -18,7 +18,7 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 /// - No re-encoding
 /// - No incorrect lowercasing of Amharic
 /// - Proper text direction handling
-/// 
+///
 /// Architecture: This widget is purely presentational. It emits text changes
 /// to SearchStateController, which handles debouncing and state management.
 class SearchTextField extends StatefulWidget {
@@ -52,7 +52,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
     _textController = TextEditingController();
     _focusNode = widget.focusNode ?? FocusNode();
     _isFocusNodeExternal = widget.focusNode != null;
-    
+
     // Listen to text changes and update SearchStateController
     _textController.addListener(_onTextChanged);
   }
@@ -85,7 +85,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
   bool _shouldUseFormatter() {
     final text = _textController.text;
     if (text.isEmpty) return true; // Allow formatter for new input
-    
+
     // Check if text contains Amharic characters
     final scriptType = ScriptDetector.detect(text);
     // Only use formatter if text is English (Latin script)
@@ -117,7 +117,8 @@ class _SearchTextFieldState extends State<SearchTextField> {
             // Unicode support for Amharic (Ge'ez script)
             keyboardType: TextInputType.text,
             textInputAction: TextInputAction.search,
-            enableSuggestions: false, // Prevent keyboard interference with Amharic
+            enableSuggestions:
+                false, // Prevent keyboard interference with Amharic
             autocorrect: false, // Prevent autocorrect interference
             style: TextStyle(
               color: AppColors.primaryText,
@@ -131,7 +132,8 @@ class _SearchTextFieldState extends State<SearchTextField> {
                 fontSize: settingsRepository.getFontSize() * 0.9,
                 fontFamily: 'NotoSansEthiopic',
               ),
-              prefixIcon: const Icon(Icons.search, color: AppColors.primaryText),
+              prefixIcon:
+                  const Icon(Icons.search, color: AppColors.primaryText),
               suffixIcon: _buildSuffixIcon(),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -156,7 +158,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
         if (value.text.isEmpty) {
           return const SizedBox.shrink();
         }
-        
+
         // Show clear button (wrapped in Tooltip to prevent ticker issues)
         return Tooltip(
           message: 'Clear search',
@@ -169,4 +171,3 @@ class _SearchTextFieldState extends State<SearchTextField> {
     );
   }
 }
-

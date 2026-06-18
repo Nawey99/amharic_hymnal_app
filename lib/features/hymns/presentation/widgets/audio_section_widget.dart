@@ -7,7 +7,7 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/music_player_widget.dart';
 
 /// Automatic audio section widget for hymn detail page
-/// 
+///
 /// Automatically detects if audio is available for the hymn
 /// Transitions from static section to full player when audio is available
 /// Shows "Audio unavailable" state when no audio is found
@@ -41,7 +41,8 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
 
   void _setupListener() {
     // Listen to current hymn changes to update UI when another hymn starts
-    _currentHymnSubscription = _audioService.currentHymnStream.listen((hymnNumber) {
+    _currentHymnSubscription =
+        _audioService.currentHymnStream.listen((hymnNumber) {
       if (mounted) {
         setState(() {
           // UI will update automatically via MusicPlayerWidget
@@ -58,7 +59,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
     try {
       // Try to resolve audio URL
       final audioUrl = await _audioService.resolveAudioUrl(widget.hymnNumber);
-      
+
       if (mounted) {
         setState(() {
           _isChecking = false;
@@ -167,4 +168,3 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
     );
   }
 }
-

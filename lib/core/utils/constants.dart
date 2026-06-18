@@ -26,10 +26,12 @@ class AppConstants {
 
   // Zoom scale constants (font scale multipliers)
   static const double minZoomScale = 0.8; // Minimum 0.8x font scale
-  static const double maxZoomScale = 2.0; // Maximum 2.0x font scale (per requirements)
+  static const double maxZoomScale =
+      2.0; // Maximum 2.0x font scale (per requirements)
   static const double defaultZoomScale = 1.0;
   static const double scaleSensitivity = 1.0; // Multiplier for responsiveness
-  static const Duration animationDurationOnRelease = Duration(milliseconds: 200);
+  static const Duration animationDurationOnRelease =
+      Duration(milliseconds: 200);
 
   // Font size limits for zoom calculations
   static const double minFontSize = 12.0;

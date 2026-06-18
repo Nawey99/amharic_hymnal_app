@@ -62,4 +62,3 @@ class HagerignaParser {
     return hymns;
   }
 }
-

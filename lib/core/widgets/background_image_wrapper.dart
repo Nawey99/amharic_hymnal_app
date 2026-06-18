@@ -39,4 +39,3 @@ class BackgroundImageWrapper extends StatelessWidget {
     );
   }
 }
-

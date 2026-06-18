@@ -34,24 +34,24 @@ class CategoryHymnsPage extends StatefulWidget {
 
 class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
   String _sortType = 'number'; // Default sort: by number (for Hagerigna mode)
-  
+
   @override
   void initState() {
     super.initState();
     // Load all hymns - we'll filter by number range or author
     context.read<HymnsBloc>().add(
-      LoadHymns(
-        widget.languageCode,
-        widget.version,
-        'number', // Sort by number for category pages
-      ),
-    );
+          LoadHymns(
+            widget.languageCode,
+            widget.version,
+            'number', // Sort by number for category pages
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final bgService = BackgroundImageService();
-    
+
     return Container(
       decoration: BoxDecoration(
         image: bgService.isEnabled
@@ -70,7 +70,9 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            widget.author != null ? 'Author: ${widget.author}' : widget.category,
+            widget.author != null
+                ? 'Author: ${widget.author}'
+                : widget.category,
             style: const TextStyle(
               color: AppColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
@@ -151,11 +153,12 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
               if (state is HymnsLoading) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
                   ),
                 );
               }
-              
+
               if (state is HymnsError) {
                 return Center(
                   child: Padding(
@@ -172,7 +175,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   ),
                 );
               }
-              
+
               if (state is HymnsLoaded) {
                 // Filter hymns by number range (hymnal) or author (hagerigna)
                 final categoryHymns = state.hymns.where((hymn) {
@@ -182,36 +185,40 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   } else {
                     // Hymnal mode: filter by number range
                     final hymnNumber = hymn.displayNumber;
-                    return hymnNumber >= widget.fromNumber && hymnNumber <= widget.toNumber;
+                    return hymnNumber >= widget.fromNumber &&
+                        hymnNumber <= widget.toNumber;
                   }
                 }).toList();
-                
+
                 // Sort: by number for hymnal, by selected sort type for hagerigna
                 if (widget.author != null) {
                   // Hagerigna mode: use selected sort type (default: number)
                   if (_sortType == 'name') {
-                    categoryHymns.sort((a, b) => a.displayTitle.compareTo(b.displayTitle));
+                    categoryHymns.sort(
+                        (a, b) => a.displayTitle.compareTo(b.displayTitle));
                   } else {
                     // Default: sort by number
-                    categoryHymns.sort((a, b) => a.displayNumber.compareTo(b.displayNumber));
+                    categoryHymns.sort(
+                        (a, b) => a.displayNumber.compareTo(b.displayNumber));
                   }
                 } else {
                   // Hymnal mode: always sort by number
-                  categoryHymns.sort((a, b) => a.displayNumber.compareTo(b.displayNumber));
+                  categoryHymns.sort(
+                      (a, b) => a.displayNumber.compareTo(b.displayNumber));
                 }
-                
+
                 if (categoryHymns.isEmpty) {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
-                    title: widget.author != null 
+                    title: widget.author != null
                         ? 'No hymns found for this author'
                         : 'No hymns found in this category',
                   );
                 }
-                
+
                 // Add bottom padding to prevent content from going under navigation bar
                 final bottomPadding = NavBarConstants.getBottomPadding(context);
-                
+
                 return ListView.builder(
                   padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
                   itemCount: categoryHymns.length,
@@ -219,7 +226,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                     final hymn = categoryHymns[index];
                     return RepaintBoundary(
                       child: HymnListItem(
-                        key: ValueKey('category_${hymn.id}_${hymn.displayNumber}'),
+                        key: ValueKey(
+                            'category_${hymn.id}_${hymn.displayNumber}'),
                         hymn: hymn,
                         onTap: () {
                           Navigator.push(
@@ -234,7 +242,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   },
                 );
               }
-              
+
               return const SizedBox.shrink();
             },
           ),
@@ -243,4 +251,3 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
     );
   }
 }
-

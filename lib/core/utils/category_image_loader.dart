@@ -33,7 +33,8 @@ class CategoryImageLoader {
     'ወጣቶች': 'young_people',
     'ተፈጥሮ': 'nature',
     'የልጆች መዝሙር': 'children',
-    'ጋብቻ': 'wedding', // Note: May need to map to existing image or use placeholder
+    'ጋብቻ':
+        'wedding', // Note: May need to map to existing image or use placeholder
     'ልደት': 'christmas',
     'መታመን': 'trust', // Reuse trust image
     'ቁርባን': 'consecration', // Reuse consecration image
@@ -55,7 +56,7 @@ class CategoryImageLoader {
   /// Returns Image widget if image exists, otherwise returns Icon placeholder
   static Widget buildCategoryImage(String categoryName, {double size = 48}) {
     final imageProvider = getCategoryImage(categoryName);
-    
+
     if (imageProvider != null) {
       return Image(
         image: imageProvider,
@@ -72,7 +73,7 @@ class CategoryImageLoader {
         },
       );
     }
-    
+
     // No image mapping found, use placeholder icon
     return Icon(
       Icons.category,
@@ -81,4 +82,3 @@ class CategoryImageLoader {
     );
   }
 }
-

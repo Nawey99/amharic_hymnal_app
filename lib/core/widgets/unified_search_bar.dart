@@ -17,7 +17,7 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 /// - Real-time search (no debounce - handled by SearchStateController)
 /// - Unicode-safe Amharic input handling
 /// - Smart formatter (only for transliteration, not direct Amharic)
-/// 
+///
 /// NOTE: This widget is deprecated. Use SearchTextField with SearchStateController instead.
 /// This widget is kept for backward compatibility but debounce logic has been removed.
 class UnifiedSearchBar extends StatefulWidget {
@@ -57,7 +57,7 @@ class _UnifiedSearchBarState extends State<UnifiedSearchBar> {
     _focusNode = widget.focusNode ?? FocusNode();
     _isControllerExternal = widget.controller != null;
     _isFocusNodeExternal = widget.focusNode != null;
-    
+
     // Listen to text changes (no debounce - handled by SearchStateController)
     _controller.addListener(_onTextChanged);
   }
@@ -92,10 +92,10 @@ class _UnifiedSearchBarState extends State<UnifiedSearchBar> {
   /// 3. User is typing Latin (not Amharic)
   bool _shouldUseFormatter() {
     if (!widget.enableTransliteration) return false;
-    
+
     final text = _controller.text;
     if (text.isEmpty) return true; // Allow formatter for new input
-    
+
     // Check if text contains Amharic characters
     final scriptType = ScriptDetector.detect(text);
     // Only use formatter if text is English (Latin script)
@@ -126,8 +126,10 @@ class _UnifiedSearchBarState extends State<UnifiedSearchBar> {
                 : null,
             // Unicode support for Amharic (Ge'ez script)
             keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done, // No search action - real-time search
-            enableSuggestions: false, // Prevent keyboard interference with Amharic
+            textInputAction:
+                TextInputAction.done, // No search action - real-time search
+            enableSuggestions:
+                false, // Prevent keyboard interference with Amharic
             autocorrect: false, // Prevent autocorrect interference
             // NO onSubmitted - real-time search only
             style: TextStyle(
@@ -142,7 +144,8 @@ class _UnifiedSearchBarState extends State<UnifiedSearchBar> {
                 fontSize: settingsRepository.getFontSize() * 0.9,
                 fontFamily: 'NotoSansEthiopic',
               ),
-              prefixIcon: const Icon(Icons.search, color: AppColors.primaryText),
+              prefixIcon:
+                  const Icon(Icons.search, color: AppColors.primaryText),
               suffixIcon: _buildSuffixIcon(),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -164,7 +167,7 @@ class _UnifiedSearchBarState extends State<UnifiedSearchBar> {
         if (value.text.isEmpty) {
           return const SizedBox.shrink();
         }
-        
+
         // Show clear button (no loading indicator - real-time search)
         return IconButton(
           icon: const Icon(Icons.clear, color: AppColors.primaryText),

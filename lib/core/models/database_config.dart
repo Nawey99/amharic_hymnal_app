@@ -88,4 +88,3 @@ class DatabaseRegistry {
     return _databases.containsKey(key);
   }
 }
-

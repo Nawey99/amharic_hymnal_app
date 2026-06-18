@@ -1,9 +1,9 @@
 // lib/core/utils/category_ranges.dart
 
 /// Exact category ranges for SDA Hymnal
-/// 
+///
 /// Format: "Category Name": fromNumber - toNumber (inclusive)
-/// 
+///
 /// Categories are static and defined by numeric ranges.
 /// Each hymn number belongs to exactly one category.
 class CategoryRanges {
@@ -85,7 +85,7 @@ class CategoryRanges {
     if (range == null) return [];
     final fromNumber = range[0];
     final toNumber = range[1];
-    return List.generate(toNumber - fromNumber + 1, (index) => fromNumber + index);
+    return List.generate(
+        toNumber - fromNumber + 1, (index) => fromNumber + index);
   }
 }
-

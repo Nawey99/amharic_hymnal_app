@@ -73,4 +73,3 @@ class SdaParser {
     return hymns;
   }
 }
-

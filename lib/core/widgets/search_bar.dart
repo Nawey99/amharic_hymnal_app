@@ -6,7 +6,7 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/services/amharic_transliteration_service.dart';
 
 /// Reusable search bar widget with consistent styling
-/// 
+///
 /// Features:
 /// - Single rounded container (no nested boxes)
 /// - Consistent padding and styling
@@ -55,8 +55,10 @@ class AppSearchBar extends StatelessWidget {
             focusNode: focusNode,
             autofocus: autofocus,
             keyboardType: keyboardType ?? TextInputType.text,
-            textInputAction: TextInputAction.done, // No search action - real-time search
-            inputFormatters: inputFormatters ?? [AmharicTransliterationFormatter()],
+            textInputAction:
+                TextInputAction.done, // No search action - real-time search
+            inputFormatters:
+                inputFormatters ?? [AmharicTransliterationFormatter()],
             style: const TextStyle(
               color: AppColors.primaryText,
               fontSize: 16,
@@ -82,7 +84,8 @@ class AppSearchBar extends StatelessWidget {
               disabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               focusedErrorBorder: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
               isDense: true, // Material 3 compact style
             ),
             onChanged: onChanged,
@@ -128,4 +131,3 @@ class AppSearchBar extends StatelessWidget {
     );
   }
 }
-

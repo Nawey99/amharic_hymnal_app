@@ -20,4 +20,3 @@ class AppColors {
   // Status bar colors
   static const Color statusBarBackground = Color(0xFF4CAF50);
 }
-

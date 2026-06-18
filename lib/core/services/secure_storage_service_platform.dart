@@ -25,7 +25,7 @@ class SecureStorageService {
   /// Initialize the appropriate storage backend
   Future<void> _initStorage() async {
     if (_initialized) return;
-    
+
     // Try FlutterSecureStorage first
     if (_useSecureStorage) {
       try {
@@ -42,7 +42,8 @@ class SecureStorageService {
         }
       } catch (e) {
         if (kDebugMode) {
-          debugPrint('⚠️ FlutterSecureStorage initialization failed, falling back to SharedPreferences: $e');
+          debugPrint(
+              '⚠️ FlutterSecureStorage initialization failed, falling back to SharedPreferences: $e');
         }
         _useSecureStorage = false;
         _secureStorage = null;
@@ -62,7 +63,7 @@ class SecureStorageService {
         }
       }
     }
-    
+
     _initialized = true;
   }
 
@@ -76,7 +77,7 @@ class SecureStorageService {
   /// Store a value securely
   Future<void> write(String key, String value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useSecureStorage && _secureStorage != null) {
         await _secureStorage!.write(key: key, value: value);
@@ -85,9 +86,10 @@ class SecureStorageService {
       } else {
         throw Exception('Storage not initialized');
       }
-      
+
       if (kDebugMode) {
-        debugPrint('✅ Stored value for key: $key (using ${_useSecureStorage ? "secure storage" : "SharedPreferences"})');
+        debugPrint(
+            '✅ Stored value for key: $key (using ${_useSecureStorage ? "secure storage" : "SharedPreferences"})');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -100,7 +102,7 @@ class SecureStorageService {
   /// Read a value securely
   Future<String?> read(String key) async {
     await _ensureInitialized();
-    
+
     try {
       String? value;
       if (_useSecureStorage && _secureStorage != null) {
@@ -108,7 +110,7 @@ class SecureStorageService {
       } else if (_prefs != null) {
         value = _prefs!.getString('secure_$key');
       }
-      
+
       if (kDebugMode && value != null) {
         debugPrint('✅ Retrieved value for key: $key');
       }
@@ -124,14 +126,14 @@ class SecureStorageService {
   /// Delete a value
   Future<void> delete(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useSecureStorage && _secureStorage != null) {
         await _secureStorage!.delete(key: key);
       } else if (_prefs != null) {
         await _prefs!.remove('secure_$key');
       }
-      
+
       if (kDebugMode) {
         debugPrint('✅ Deleted value for key: $key');
       }
@@ -145,17 +147,18 @@ class SecureStorageService {
   /// Delete all stored values
   Future<void> deleteAll() async {
     await _ensureInitialized();
-    
+
     try {
       if (_useSecureStorage && _secureStorage != null) {
         await _secureStorage!.deleteAll();
       } else if (_prefs != null) {
-        final keys = _prefs!.getKeys().where((key) => key.startsWith('secure_'));
+        final keys =
+            _prefs!.getKeys().where((key) => key.startsWith('secure_'));
         for (final key in keys) {
           await _prefs!.remove(key);
         }
       }
-      
+
       if (kDebugMode) {
         debugPrint('✅ Deleted all stored values');
       }
@@ -169,7 +172,7 @@ class SecureStorageService {
   /// Check if a key exists
   Future<bool> containsKey(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_useSecureStorage && _secureStorage != null) {
         final value = await _secureStorage!.read(key: key);
@@ -186,11 +189,3 @@ class SecureStorageService {
     }
   }
 }
-
-
-
-
-
-
-
-

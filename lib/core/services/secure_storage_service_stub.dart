@@ -22,7 +22,7 @@ class SecureStorageService {
   /// Initialize SharedPreferences
   Future<void> _initStorage() async {
     if (_initialized) return;
-    
+
     try {
       _prefs ??= await SharedPreferences.getInstance();
       if (kDebugMode) {
@@ -33,7 +33,7 @@ class SecureStorageService {
         debugPrint('❌ Failed to initialize SharedPreferences: $e');
       }
     }
-    
+
     _initialized = true;
   }
 
@@ -47,14 +47,14 @@ class SecureStorageService {
   /// Store a value
   Future<void> write(String key, String value) async {
     await _ensureInitialized();
-    
+
     try {
       if (_prefs != null) {
         await _prefs!.setString('secure_$key', value);
       } else {
         throw Exception('Storage not initialized');
       }
-      
+
       if (kDebugMode) {
         debugPrint('✅ Stored value for key: $key (using SharedPreferences)');
       }
@@ -69,7 +69,7 @@ class SecureStorageService {
   /// Read a value
   Future<String?> read(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_prefs != null) {
         final value = _prefs!.getString('secure_$key');
@@ -90,12 +90,12 @@ class SecureStorageService {
   /// Delete a value
   Future<void> delete(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_prefs != null) {
         await _prefs!.remove('secure_$key');
       }
-      
+
       if (kDebugMode) {
         debugPrint('✅ Deleted value for key: $key');
       }
@@ -109,15 +109,16 @@ class SecureStorageService {
   /// Delete all stored values
   Future<void> deleteAll() async {
     await _ensureInitialized();
-    
+
     try {
       if (_prefs != null) {
-        final keys = _prefs!.getKeys().where((key) => key.startsWith('secure_'));
+        final keys =
+            _prefs!.getKeys().where((key) => key.startsWith('secure_'));
         for (final key in keys) {
           await _prefs!.remove(key);
         }
       }
-      
+
       if (kDebugMode) {
         debugPrint('✅ Deleted all stored values');
       }
@@ -131,7 +132,7 @@ class SecureStorageService {
   /// Check if a key exists
   Future<bool> containsKey(String key) async {
     await _ensureInitialized();
-    
+
     try {
       if (_prefs != null) {
         return _prefs!.containsKey('secure_$key');
@@ -145,11 +146,3 @@ class SecureStorageService {
     }
   }
 }
-
-
-
-
-
-
-
-

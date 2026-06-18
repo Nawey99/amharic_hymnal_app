@@ -38,6 +38,7 @@ node_modules/
 backend/*/node_modules/
 .tmp_*/
 .tmp_*.log
+.tmp_*.txt
 
 # Symbolication related
 app.*.symbols

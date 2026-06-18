@@ -8,7 +8,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Integration Tests', () {
-    testWidgets('Complete user flow: open lyrics, zoom, pan, navigate, unfavorite', (WidgetTester tester) async {
+    testWidgets(
+        'Complete user flow: open lyrics, zoom, pan, navigate, unfavorite',
+        (WidgetTester tester) async {
       // Start the app
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -76,7 +78,8 @@ void main() {
       }
     });
 
-    testWidgets('Sheet music viewer loads correctly', (WidgetTester tester) async {
+    testWidgets('Sheet music viewer loads correctly',
+        (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
@@ -85,8 +88,8 @@ void main() {
       // For now, just verify the viewer widget exists when sheet music is present
       // Sheet music viewer uses PageView internally
       // This is a basic smoke test - full test would require specific hymn data
-      expect(find.byType(PageView), findsNothing); // No sheet music on initial load
+      expect(find.byType(PageView),
+          findsNothing); // No sheet music on initial load
     });
   });
 }
-
