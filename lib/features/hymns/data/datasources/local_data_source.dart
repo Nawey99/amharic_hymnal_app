@@ -6,12 +6,14 @@ import 'package:amharic_hymnal_app/core/database/json_data_source.dart';
 import 'package:amharic_hymnal_app/core/models/database_config.dart';
 import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_local_data_source.dart';
+import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 class LocalDataSource implements HymnLocalDataSource {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final JsonDataSource _jsonDataSource = JsonDataSource.instance;
+  final HymnRemoteDataSource _remoteDataSource = HymnRemoteDataSource();
 
   @override
   Future<List<HymnModel>> getHymns(String languageCode, String version) async {
@@ -20,6 +22,18 @@ class LocalDataSource implements HymnLocalDataSource {
     if (dbConfig == null) {
       throw DatabaseNotFoundException(
           'Database not found for language: $languageCode, version: $version');
+    }
+
+    try {
+      final remoteHymns =
+          await _remoteDataSource.getHymns(languageCode, version);
+      if (remoteHymns.isNotEmpty) {
+        return remoteHymns;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️ Content API unavailable, using local data: $e');
+      }
     }
 
     // Fast path: If database is not ready, load from JSON assets (very fast, no migration needed)
@@ -31,7 +45,9 @@ class LocalDataSource implements HymnLocalDataSource {
       try {
         final jsonResults =
             await _jsonDataSource.getHymns(languageCode, version);
-        return jsonResults.map((row) => _mapJsonToHymnModel(row, version)).toList();
+        return jsonResults
+            .map((row) => _mapJsonToHymnModel(row, version))
+            .toList();
       } catch (e) {
         if (kDebugMode) {
           debugPrint('⚠️ Failed to load from JSON, will try database: $e');
@@ -57,7 +73,8 @@ class LocalDataSource implements HymnLocalDataSource {
       debugPrint('⚡ Falling back to JSON data source');
     }
     final jsonResults = await _jsonDataSource.getHymns(languageCode, version);
-    final hymns = jsonResults.map((row) => _mapJsonToHymnModel(row, version)).toList();
+    final hymns =
+        jsonResults.map((row) => _mapJsonToHymnModel(row, version)).toList();
 
     // Debug: Log title mapping for first few hymns from JSON
     if (kDebugMode && hymns.isNotEmpty) {

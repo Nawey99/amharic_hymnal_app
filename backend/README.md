@@ -52,6 +52,35 @@ psql $env:USER_APP_DATABASE_URL -f backend/user_app/schema.sql
 
 The raw SQL files remain useful for PostgreSQL-specific constraints, extensions, views, and first database bootstrap. Prisma is the application access layer.
 
+## Content API
+
+The Flutter app connects to PostgreSQL through the content API, not directly to the database.
+
+For local development, start PostgreSQL and load the content seeds, then run:
+
+```powershell
+$env:SDA_HYMNAL_DATABASE_URL='postgresql://postgres@localhost:55432/wudase_sda_dev'
+$env:HAGERIGNA_DATABASE_URL='postgresql://postgres@localhost:55432/wudase_hagerigna_dev'
+cd backend/content
+npm run dev
+```
+
+The API listens on `http://127.0.0.1:8787` by default.
+
+Useful checks:
+
+```powershell
+Invoke-RestMethod http://localhost:8787/health
+Invoke-RestMethod 'http://localhost:8787/api/hymns?language=am&version=hymnal'
+Invoke-RestMethod 'http://localhost:8787/api/hymns?language=am&version=hagerigna'
+```
+
+Flutter uses `http://localhost:8787` on desktop/web and `http://10.0.2.2:8787` on Android emulator. Override it with:
+
+```powershell
+flutter run -d windows --dart-define=WUDASE_CONTENT_API_URL=http://localhost:8787
+```
+
 ## Current JSON Import
 
 The current Flutter JSON files are column-based resource arrays. The exporter reads those named arrays and converts them into normalized relational rows.
