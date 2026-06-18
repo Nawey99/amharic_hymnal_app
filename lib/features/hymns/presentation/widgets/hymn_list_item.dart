@@ -59,7 +59,7 @@ class HymnListItem extends StatelessWidget {
                   const Icon(
                     Icons.chevron_right,
                     color: AppColors.secondaryText,
-                    size: 22,
+                    size: 20,
                   ),
                 ],
               );
@@ -79,25 +79,16 @@ class HymnListItem extends StatelessWidget {
     final textScaleFactor = textScaler.scale(1.0);
     return Material(
       color: Colors.transparent,
-      child: Container(
-        width: 58,
-        height: 58,
-        decoration: BoxDecoration(
-          color: AppColors.accentGreen.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppColors.accentGreen.withValues(alpha: 0.35),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            hymn.displayNumber > 0 ? '${hymn.displayNumber}' : '-',
-            style: TextStyle(
-              color: AppColors.accentGreen,
-              fontSize: (fontSize * 0.72 * textScaleFactor.clamp(0.8, 1.35)),
-              fontWeight: FontWeight.bold,
-              fontFamily: 'NotoSansEthiopic',
-            ),
+      child: SizedBox(
+        width: 38,
+        child: Text(
+          hymn.displayNumber > 0 ? '${hymn.displayNumber}' : '-',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.accentGreen,
+            fontSize: (fontSize * 0.72 * textScaleFactor.clamp(0.8, 1.25)),
+            fontWeight: FontWeight.w800,
+            fontFamily: 'NotoSansEthiopic',
           ),
         ),
       ),
@@ -117,31 +108,55 @@ class HymnListItem extends StatelessWidget {
 
     final textScaler = MediaQuery.of(context).textScaler;
     final textScaleFactor = textScaler.scale(1.0);
+    final englishTitle = hymn.englishTitleOld?.trim();
+    final hasEnglishTitle = englishTitle != null && englishTitle.isNotEmpty;
     final scaledFontSize =
         (fontSize * 0.85).clamp(16.0, 18.0) * textScaleFactor.clamp(0.8, 1.25);
 
     return Material(
       color: Colors.transparent,
-      child: Text(
-        amharicTitle,
-        style: TextStyle(
-          color: AppColors.primaryText,
-          fontSize: scaledFontSize,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'NotoSansEthiopic',
-          height: 1.25,
-          letterSpacing: 0,
-          shadows: [
-            Shadow(
-              color: Colors.black.withValues(alpha: 0.55),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            amharicTitle,
+            style: TextStyle(
+              color: AppColors.primaryText,
+              fontSize: scaledFontSize,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'NotoSansEthiopic',
+              height: 1.2,
+              letterSpacing: 0,
+              shadows: [
+                Shadow(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            maxLines: hasEnglishTitle ? 1 : 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.start,
+          ),
+          if (hasEnglishTitle) ...[
+            const SizedBox(height: 3),
+            Text(
+              englishTitle,
+              style: TextStyle(
+                color: AppColors.secondaryText,
+                fontSize: 12.0 * textScaleFactor.clamp(0.8, 1.2),
+                fontWeight: FontWeight.w400,
+                height: 1.1,
+                letterSpacing: 0,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
             ),
           ],
-        ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.start,
+        ],
       ),
     );
   }
