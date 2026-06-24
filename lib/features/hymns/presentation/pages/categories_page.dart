@@ -274,11 +274,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 image: imageProvider,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Container(color: AppColors.surface);
+                  return CategoryImageLoader.buildCategoryImage(
+                    category,
+                    size: 58,
+                  );
                 },
               )
             else
-              Container(color: AppColors.surface),
+              CategoryImageLoader.buildCategoryImage(category, size: 58),
             Container(
               color: Colors.black.withValues(alpha: 0.22),
             ),
