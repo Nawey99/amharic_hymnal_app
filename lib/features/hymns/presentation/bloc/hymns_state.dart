@@ -29,7 +29,9 @@ class HymnsLoaded extends HymnsState {
       return hymns;
     }
 
-    if (sortType == 'number') {
+    if (sortType == 'search') {
+      return hymns;
+    } else if (sortType == 'number') {
       hymns.sort((a, b) => a.displayNumber.compareTo(b.displayNumber));
     } else if (sortType == 'name') {
       // Use locale-aware comparison for Amharic text

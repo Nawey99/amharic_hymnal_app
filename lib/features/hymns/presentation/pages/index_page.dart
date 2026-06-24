@@ -40,6 +40,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   StreamSubscription<String>? _searchSubscription;
   String _currentSectionLetter =
       ''; // Track current section letter for dynamic updates
+  String _sortTypeBeforeSearch = 'number';
   // Local search query tracking for page independence
   // Used to determine if page should reload full list when becoming visible
   String _localSearchQuery = '';
@@ -92,13 +93,18 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       // Clear any search state from other pages by reloading full list
       final currentState = context.read<HymnsBloc>().state;
       if (currentState is HymnsLoaded) {
-        // Only reload if current state is from a search (indicated by sortType 'name' without local query)
+        // Only reload if current state is from a search without a local query.
         // This prevents unnecessary reloads
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _localSearchQuery.isEmpty) {
             context.read<HymnsBloc>().add(
-                  LoadHymns(currentState.languageCode, currentState.version,
-                      currentState.sortType),
+                  LoadHymns(
+                    currentState.languageCode,
+                    currentState.version,
+                    currentState.sortType == 'search'
+                        ? _sortTypeBeforeSearch
+                        : currentState.sortType,
+                  ),
                 );
           }
         });
@@ -383,8 +389,10 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   void _reloadHymns(BuildContext context) {
     final state = context.read<HymnsBloc>().state;
     if (state is HymnsLoaded) {
+      final sortType =
+          state.sortType == 'search' ? _sortTypeBeforeSearch : state.sortType;
       context.read<HymnsBloc>().add(
-            LoadHymns(state.languageCode, state.version, state.sortType),
+            LoadHymns(state.languageCode, state.version, sortType),
           );
     }
   }
@@ -421,6 +429,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
     final state = context.read<HymnsBloc>().state;
     if (state is HymnsLoaded && mounted) {
+      if (state.sortType != 'search') {
+        _sortTypeBeforeSearch = state.sortType;
+      }
       context.read<HymnsBloc>().add(
             SearchHymnsEvent(state.languageCode, state.version, value),
           );
@@ -728,6 +739,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   void _applySort(HymnsLoaded state, String sortType) {
     setState(() {
       _currentSectionLetter = '';
+      _sortTypeBeforeSearch = sortType;
     });
     context.read<HymnsBloc>().add(
           ChangeSort(state.languageCode, state.version, sortType),

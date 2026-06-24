@@ -202,4 +202,37 @@ void main() {
     expect(results[1].hymn.displayNumber, 1);
     expect(results[1].matchType, MatchType.lyrics);
   });
+
+  test('exact Amharic title query ranks the exact title first', () {
+    final results = SearchEngine().search(
+      hymns: const [
+        Hymn(
+          id: 'lyrics-match',
+          number: 93,
+          title: 'ሰቅዬት ሳለሁ በፈተና ጊዜ',
+          lyrics: 'አምላካችን በጭንቅ ጊዜ ይረዳናል',
+        ),
+        Hymn(
+          id: 'exact-title',
+          number: 1,
+          title: 'አምላካችን',
+          lyrics: 'ምስጋና ለእግዚአብሔር',
+        ),
+        Hymn(
+          id: 'partial-title',
+          number: 11,
+          title: 'አምላካችን ኃይላችን ነው',
+          lyrics: 'ሌላ ግጥም',
+        ),
+      ],
+      query: 'አምላካችን',
+    );
+
+    expect(results.first.hymn.displayNumber, 1);
+    expect(results.first.matchType, MatchType.exactTitle);
+    expect(results[1].hymn.displayNumber, 11);
+    expect(results[1].matchType, MatchType.partialTitle);
+    expect(results[2].hymn.displayNumber, 93);
+    expect(results[2].matchType, MatchType.lyrics);
+  });
 }

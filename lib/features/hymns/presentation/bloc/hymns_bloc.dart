@@ -139,7 +139,11 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   Future<void> _onSearchHymns(
       SearchHymnsEvent event, Emitter<HymnsState> emit) async {
     if (event.query.isEmpty) {
-      add(LoadHymns(event.languageCode, event.version, 'name'));
+      add(LoadHymns(
+        event.languageCode,
+        event.version,
+        settingsRepository.getSortType(),
+      ));
       return;
     }
 
@@ -172,7 +176,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
         _clearPendingQuery(SearchHymnsEvent);
         emit(HymnsLoaded(
           hymns,
-          'name',
+          'search',
           languageCode: event.languageCode,
           version: event.version,
         ));
