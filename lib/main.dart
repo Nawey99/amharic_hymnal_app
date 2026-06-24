@@ -11,8 +11,8 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_splash_screen.dart';
 import 'package:amharic_hymnal_app/core/widgets/error_widget.dart';
-import 'package:amharic_hymnal_app/core/widgets/loading_widget.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
@@ -124,18 +124,27 @@ class _AppInitializerState extends State<AppInitializer> {
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 260),
+      child: _buildInitializerChild(),
+    );
+  }
+
+  Widget _buildInitializerChild() {
     if (_isInitializing) {
       return MaterialApp(
+        key: const ValueKey('splash'),
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
-        home: const AppLoadingWidget(
-          message: 'Initializing app...',
+        home: const AppSplashScreen(
+          message: 'Preparing your hymnal...',
         ),
       );
     }
 
     if (_hasError) {
       return MaterialApp(
+        key: const ValueKey('error'),
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
         home: AppErrorWidget(
@@ -152,7 +161,7 @@ class _AppInitializerState extends State<AppInitializer> {
       );
     }
 
-    return const MyApp();
+    return const MyApp(key: ValueKey('app'));
   }
 }
 

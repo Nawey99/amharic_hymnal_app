@@ -123,8 +123,8 @@ class SettingsSwitchTile extends StatelessWidget {
   }
 }
 
-/// Reusable settings dropdown tile widget with Material 3 MenuAnchor
-/// Provides modern, consistent dropdown UI with smooth animations
+/// Reusable settings dropdown tile widget.
+/// Uses a true dropdown selector so the value is not editable text.
 class SettingsDropdownTile extends StatelessWidget {
   final String title;
   final String description;
@@ -146,7 +146,15 @@ class SettingsDropdownTile extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 390;
-        final menuWidth = compact ? constraints.maxWidth - 32 : 190.0;
+        final menuWidth = compact ? constraints.maxWidth : 220.0;
+        final dropdownWidth = compact
+            ? constraints.maxWidth
+            : menuWidth.clamp(160.0, constraints.maxWidth);
+        final values =
+            items.map((item) => item.value).whereType<String>().toSet();
+        final selectedValue = values.contains(value)
+            ? value
+            : (values.isEmpty ? null : values.first);
 
         final label = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,86 +178,84 @@ class SettingsDropdownTile extends StatelessWidget {
           ],
         );
 
-        final dropdown = Theme(
-          data: Theme.of(context).copyWith(
-            dropdownMenuTheme: DropdownMenuThemeData(
-              menuStyle: MenuStyle(
-                backgroundColor: WidgetStateProperty.all(AppColors.surface),
-                shape: WidgetStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                elevation: WidgetStateProperty.all(8),
-                padding: WidgetStateProperty.all(
-                  const EdgeInsets.symmetric(vertical: 8),
-                ),
-              ),
-              inputDecorationTheme: const InputDecorationTheme(
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-              ),
+        final dropdown = SizedBox(
+          width: dropdownWidth,
+          child: DropdownButtonFormField<String>(
+            value: selectedValue,
+            isExpanded: true,
+            dropdownColor: AppColors.surface,
+            borderRadius: BorderRadius.circular(14),
+            menuMaxHeight: 320,
+            icon: const Icon(
+              Icons.expand_more,
+              color: AppColors.accentGreen,
             ),
-          ),
-          child: DropdownMenu<String>(
-            initialSelection: value,
-            menuStyle: MenuStyle(
-              backgroundColor: WidgetStateProperty.all(AppColors.surface),
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              elevation: WidgetStateProperty.all(8),
-              maximumSize: WidgetStateProperty.all(
-                const Size(
-                    double.infinity, 300), // Prevent overflow on small screens
-              ),
-            ),
-            textStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
               color: AppColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
             ),
-            dropdownMenuEntries: items.map((item) {
-              // Extract text from child widget if it exists
-              String itemText;
-              if (item.child is Text) {
-                itemText = (item.child as Text).data ?? item.value ?? '';
-              } else {
-                itemText = item.value ?? '';
-              }
-
-              return DropdownMenuEntry<String>(
-                value: item.value ?? '',
-                label: itemText,
-                style: MenuItemButton.styleFrom(
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: item.value == value
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                    color: item.value == value
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: AppColors.surface.withValues(alpha: 0.72),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: AppColors.divider.withValues(alpha: 0.5),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: AppColors.accentGreen,
+                  width: 1.4,
+                ),
+              ),
+            ),
+            selectedItemBuilder: (context) {
+              return items.map((item) {
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _labelForItem(item),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'NotoSansEthiopic',
+                    ),
+                  ),
+                );
+              }).toList();
+            },
+            items: items.map((item) {
+              final isSelected = item.value == selectedValue;
+              return DropdownMenuItem<String>(
+                value: item.value,
+                child: Text(
+                  _labelForItem(item),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: isSelected
                         ? AppColors.accentGreen
                         : AppColors.primaryText,
+                    fontSize: 15,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     fontFamily: 'NotoSansEthiopic',
                   ),
                 ),
               );
             }).toList(),
-            onSelected: onChanged,
-            width: menuWidth.clamp(150.0, 220.0),
-            leadingIcon: const Icon(
-              Icons.arrow_drop_down,
-              color: AppColors.accentGreen,
-              size: 24,
-            ),
+            onChanged: onChanged,
           ),
         );
 
@@ -278,6 +284,14 @@ class SettingsDropdownTile extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _labelForItem(DropdownMenuItem<String> item) {
+    final child = item.child;
+    if (child is Text) {
+      return child.data ?? item.value ?? '';
+    }
+    return item.value ?? '';
   }
 }
 
