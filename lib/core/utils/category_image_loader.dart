@@ -34,6 +34,7 @@ class CategoryImageLoader {
     'ተፈጥሮ': 'nature',
     'የልጆች መዝሙር': 'children',
     'ልደት': 'christmas',
+    'ጋብቻ': 'marriage',
     'መታመን': 'trust', // Reuse trust image
     'ቁርባን': 'consecration', // Reuse consecration image
     'ትንሣኤ': 'resurrection',
@@ -53,10 +54,6 @@ class CategoryImageLoader {
   /// Build category image widget with fallback
   /// Returns Image widget if image exists, otherwise returns Icon placeholder
   static Widget buildCategoryImage(String categoryName, {double size = 48}) {
-    if (categoryName == 'ጋብቻ') {
-      return _buildMarriagePlaceholder(size);
-    }
-
     final imageProvider = getCategoryImage(categoryName);
 
     if (imageProvider != null) {
@@ -81,48 +78,6 @@ class CategoryImageLoader {
       Icons.category,
       size: size,
       color: AppColors.accentGreen,
-    );
-  }
-
-  static Widget _buildMarriagePlaceholder(double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.accentGreen.withValues(alpha: 0.95),
-            AppColors.surface,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(size * 0.16),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Icon(
-            Icons.church_rounded,
-            color: Colors.white.withValues(alpha: 0.28),
-            size: size * 0.72,
-          ),
-          Icon(
-            Icons.favorite_rounded,
-            color: Colors.white,
-            size: size * 0.38,
-          ),
-          Positioned(
-            right: size * 0.18,
-            bottom: size * 0.16,
-            child: Icon(
-              Icons.diversity_1_rounded,
-              color: Colors.white.withValues(alpha: 0.9),
-              size: size * 0.24,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
