@@ -34,6 +34,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
+  final GlobalKey _listViewportKey = GlobalKey();
+  final Map<String, GlobalKey> _hymnItemKeys = {};
   bool _isSearchVisible = false;
   StreamSubscription<String>? _searchSubscription;
   String _currentSectionLetter =
@@ -115,68 +117,16 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       return;
     }
 
-    // The actual list rows are allowed to grow with text scale and screen size.
-    // This estimate is only for the alphabet section indicator.
-    const itemHeight = _estimatedHymnItemExtent;
-    const listPadding = _listVerticalPadding;
-    final scrollOffset = _scrollController.offset;
-    final viewportHeight = _scrollController.position.viewportDimension;
+    final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
+    if (hymnsToDisplay.isEmpty) return;
 
-    // Calculate visible range: from top of viewport to bottom
-    final topVisiblePosition = scrollOffset;
-    final bottomVisiblePosition = scrollOffset + viewportHeight;
+    final topmostIndex = _topVisibleHymnIndex(hymnsToDisplay);
+    if (topmostIndex == null) return;
 
-    // Find all visible hymn indices
-    final visibleIndices = <int>[];
-    for (int i = 0; i < state.hymns.length; i++) {
-      final itemTop = listPadding + (i * itemHeight);
-      final itemBottom = itemTop + itemHeight;
-
-      // Item is visible if any part of it is within the viewport
-      if (itemBottom >= topVisiblePosition &&
-          itemTop <= bottomVisiblePosition) {
-        visibleIndices.add(i);
-      }
-    }
-
-    if (visibleIndices.isEmpty) return;
-
-    // Group visible hymns by their primary letter family
-    final visibleHymnsByLetter = <String, List<int>>{};
-    for (final index in visibleIndices) {
-      if (index >= 0 && index < state.hymns.length) {
-        final hymn = state.hymns[index];
-        final title = hymn.displayTitle.isNotEmpty
-            ? hymn.displayTitle
-            : 'መዝሙር ${hymn.displayNumber}';
-        final letter = _getFirstLetter(title);
-        visibleHymnsByLetter.putIfAbsent(letter, () => []).add(index);
-      }
-    }
-
-    if (visibleHymnsByLetter.isEmpty) return;
-
-    // CORRECT BEHAVIOR: Update header only when ALL items of current family scroll out of view
-    // NOT when the next family enters the screen
-
-    // Check if current section letter family still has any visible items
-    final currentFamilyStillVisible = _currentSectionLetter.isNotEmpty &&
-        visibleHymnsByLetter.containsKey(_currentSectionLetter);
-
-    // If current family still has visible items, keep the current letter
-    if (currentFamilyStillVisible) {
-      return; // Don't update - current family is still visible
-    }
-
-    // Current family has completely scrolled out - update to the letter of the topmost visible item
-    final topmostIndex = visibleIndices.first;
-    final topmostHymn = state.hymns[topmostIndex];
-    final topmostTitle = topmostHymn.displayTitle.isNotEmpty
-        ? topmostHymn.displayTitle
-        : 'መዝሙር ${topmostHymn.displayNumber}';
+    final topmostHymn = hymnsToDisplay[topmostIndex];
+    final topmostTitle = _titleForIndexing(topmostHymn);
     final topmostLetter = _getFirstLetter(topmostTitle);
 
-    // Update to the new letter family only if it's different
     if (topmostLetter != _currentSectionLetter) {
       setState(() {
         _currentSectionLetter = topmostLetter;
@@ -192,10 +142,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   Map<String, int> _buildAlphabetIndex(List<Hymn> hymns) {
     final Map<String, int> index = {};
     for (int i = 0; i < hymns.length; i++) {
-      // Get title for indexing - use displayTitle or fallback to number
-      final title = hymns[i].displayTitle.isNotEmpty
-          ? hymns[i].displayTitle
-          : 'መዝሙር ${hymns[i].displayNumber}';
+      final title = _titleForIndexing(hymns[i]);
       final firstLetter = _getFirstLetter(title);
       if (!index.containsKey(firstLetter)) {
         index[firstLetter] = i;
@@ -211,9 +158,14 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     // Only scroll when sorted by name
     if (state.sortType != 'name') return;
 
-    final index = _buildAlphabetIndex(state.hymns);
+    final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
+    final index = _buildAlphabetIndex(hymnsToDisplay);
     final position = index[letter];
     if (position != null && _scrollController.hasClients) {
+      setState(() {
+        _currentSectionLetter = letter;
+      });
+
       // Calculate an approximate scroll position. Rows have dynamic height to
       // avoid overflow when text scale or window size changes.
       const itemHeight = _estimatedHymnItemExtent;
@@ -230,8 +182,93 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+        Future.delayed(const Duration(milliseconds: 340), () {
+          if (!mounted || position >= hymnsToDisplay.length) return;
+          _alignHymnWithViewportTop(hymnsToDisplay[position]);
+        });
       }
     }
+  }
+
+  int? _topVisibleHymnIndex(List<Hymn> hymns) {
+    final viewportContext = _listViewportKey.currentContext;
+    final viewportBox = viewportContext?.findRenderObject() as RenderBox?;
+    if (viewportBox == null || !viewportBox.hasSize) {
+      return _estimatedTopVisibleIndex(hymns.length);
+    }
+
+    final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
+    final viewportBottom = viewportTop + viewportBox.size.height;
+    int? bestIndex;
+    double? bestTop;
+
+    for (var index = 0; index < hymns.length; index++) {
+      final itemContext = _keyForHymn(hymns[index]).currentContext;
+      final itemBox = itemContext?.findRenderObject() as RenderBox?;
+      if (itemBox == null || !itemBox.hasSize) continue;
+
+      final itemTop = itemBox.localToGlobal(Offset.zero).dy;
+      final itemBottom = itemTop + itemBox.size.height;
+      if (itemBottom <= viewportTop || itemTop >= viewportBottom) continue;
+
+      if (bestTop == null || itemTop < bestTop) {
+        bestTop = itemTop;
+        bestIndex = index;
+      }
+    }
+
+    return bestIndex ?? _estimatedTopVisibleIndex(hymns.length);
+  }
+
+  int? _estimatedTopVisibleIndex(int hymnCount) {
+    if (hymnCount == 0 || !_scrollController.hasClients) return null;
+    final estimated = ((_scrollController.offset - _listVerticalPadding) /
+            _estimatedHymnItemExtent)
+        .floor();
+    return estimated.clamp(0, hymnCount - 1).toInt();
+  }
+
+  void _alignHymnWithViewportTop(Hymn hymn) {
+    if (!_scrollController.hasClients) return;
+
+    final viewportContext = _listViewportKey.currentContext;
+    final viewportBox = viewportContext?.findRenderObject() as RenderBox?;
+    final itemContext = _keyForHymn(hymn).currentContext;
+    final itemBox = itemContext?.findRenderObject() as RenderBox?;
+    if (viewportBox == null ||
+        itemBox == null ||
+        !viewportBox.hasSize ||
+        !itemBox.hasSize) {
+      return;
+    }
+
+    final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
+    final itemTop = itemBox.localToGlobal(Offset.zero).dy;
+    final target = (_scrollController.offset + itemTop - viewportTop)
+        .clamp(
+          0.0,
+          _scrollController.position.maxScrollExtent,
+        )
+        .toDouble();
+    _scrollController.animateTo(
+      target,
+      duration: const Duration(milliseconds: 140),
+      curve: Curves.easeOut,
+    );
+  }
+
+  GlobalKey _keyForHymn(Hymn hymn) {
+    return _hymnItemKeys.putIfAbsent(_hymnKey(hymn), GlobalKey.new);
+  }
+
+  String _hymnKey(Hymn hymn) {
+    return hymn.id ?? '${hymn.displayNumber}_${hymn.displayTitle}';
+  }
+
+  String _titleForIndexing(Hymn hymn) {
+    return hymn.displayTitle.isNotEmpty
+        ? hymn.displayTitle
+        : 'መዝሙር ${hymn.displayNumber}';
   }
 
   @override
@@ -436,6 +473,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   Widget _buildHymnList() {
     return Expanded(
       child: Stack(
+        key: _listViewportKey,
         children: [
           _buildHymnListView(),
           _buildAlphabetScrollBar(),
@@ -488,51 +526,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     final state = context.read<HymnsBloc>().state;
     final hasAlphabetScrollBar =
         state is HymnsLoaded && state.sortType == 'name';
-
-    // Step 2: Fix Filtering Logic - Ensure filtering doesn't exclude all hymns when sorted by name
-    // When sorted by name, only filter out hymns with no number (titles might be empty but that's OK)
-    // When sorted by number or category, use the standard filter
-    final validHymns = hymns.where((hymn) {
-      final hasNumber = hymn.displayNumber > 0;
-
-      // If sorted by name, only require a number (titles will be shown even if empty, with fallback)
-      if (state is HymnsLoaded && state.sortType == 'name') {
-        // Keep hymns that have a valid number OR a valid title
-        // This filters out "ghost" hymns that have neither
-        final hasValidTitle = hymn.displayTitle.trim().isNotEmpty;
-        if (!hasNumber && !hasValidTitle) {
-          if (kDebugMode) {
-            debugPrint(
-                '⚠️ Filtering out empty hymn when sorted by name: id=${hymn.id}');
-          }
-          return false;
-        }
-        return true;
-      }
-
-      // For other sort types, use the standard filter
-      final hasTitle = hymn.displayTitle.isNotEmpty;
-      final hasLyrics = hymn.displayLyrics.isNotEmpty;
-
-      // Keep hymn if it has at least a number or some content
-      if (!hasNumber && !hasTitle && !hasLyrics) {
-        if (kDebugMode) {
-          debugPrint('⚠️ Filtering out empty hymn: id=${hymn.id}');
-        }
-        return false;
-      }
-      return true;
-    }).toList();
-
-    if (kDebugMode && validHymns.length != hymns.length) {
-      debugPrint(
-          '📊 Filtered ${hymns.length - validHymns.length} empty hymns from list');
-    }
-
-    // Step 5: Add Safety Checks and Fallbacks
-    // If validHymns is empty but hymns is not, show all hymns as fallback
-    final hymnsToDisplay =
-        validHymns.isEmpty && hymns.isNotEmpty ? hymns : validHymns;
+    final sortType = state is HymnsLoaded ? state.sortType : null;
+    final hymnsToDisplay = _hymnsForDisplay(hymns, sortType);
 
     // Step 5: Add empty state handling
     if (hymnsToDisplay.isEmpty) {
@@ -578,8 +573,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
         // Wrap in RepaintBoundary for performance optimization
         return RepaintBoundary(
+          key: _keyForHymn(hymn),
           child: HymnListItem(
-            key: ValueKey('hymn_${hymn.id}_${hymn.displayNumber}'),
             hymn: hymn,
             onTap: () => _navigateToHymnDetail(context, hymn),
             sortType: state is HymnsLoaded
@@ -602,8 +597,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     return BlocBuilder<HymnsBloc, HymnsState>(
       builder: (context, state) {
         if (state is HymnsLoaded && state.sortType == 'name') {
-          final letters = _buildAlphabetIndex(state.hymns).keys.toList()
-            ..sort();
+          final hymnsToDisplay = _hymnsForDisplay(
+            state.hymns,
+            state.sortType,
+          );
+          final letters = _buildAlphabetIndex(hymnsToDisplay).keys.toList();
+          if (letters.isEmpty) return const SizedBox();
           return AlphabetScrollBar(
             letters: letters,
             onLetterSelected: _scrollToLetter,
@@ -727,6 +726,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   void _applySort(HymnsLoaded state, String sortType) {
+    setState(() {
+      _currentSectionLetter = '';
+    });
     context.read<HymnsBloc>().add(
           ChangeSort(state.languageCode, state.version, sortType),
         );
@@ -735,5 +737,27 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
   ImageProvider _getBackgroundImage() {
     return const AssetImage('assets/images/background.jpg');
+  }
+
+  List<Hymn> _hymnsForDisplay(List<Hymn> hymns, String? sortType) {
+    final validHymns = hymns.where((hymn) {
+      final hasNumber = hymn.displayNumber > 0;
+      if (sortType == 'name') {
+        final hasValidTitle = hymn.displayTitle.trim().isNotEmpty;
+        return hasNumber || hasValidTitle;
+      }
+
+      final hasTitle = hymn.displayTitle.isNotEmpty;
+      final hasLyrics = hymn.displayLyrics.isNotEmpty;
+      return hasNumber || hasTitle || hasLyrics;
+    }).toList();
+
+    if (kDebugMode && validHymns.length != hymns.length) {
+      debugPrint(
+        '📊 Filtered ${hymns.length - validHymns.length} empty hymns from list',
+      );
+    }
+
+    return validHymns.isEmpty && hymns.isNotEmpty ? hymns : validHymns;
   }
 }
