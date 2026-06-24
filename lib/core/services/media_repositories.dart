@@ -18,7 +18,28 @@ class AudioTrack {
   });
 }
 
+class LocalDummyAudioRepository {
+  static const int dummyHymnNumber = 1;
+
+  Future<AudioTrack?> getTrackForNumber(
+    int hymnNumber, {
+    String? title,
+  }) async {
+    if (hymnNumber != dummyHymnNumber) return null;
+    return AudioTrack(
+      hymnNumber: hymnNumber,
+      title: title ?? 'Hymn #$hymnNumber',
+      url: '${GlobalAudioService.dummyAudioScheme}hymn-$hymnNumber',
+      duration: GlobalAudioService.dummyDuration,
+      isDummy: true,
+    );
+  }
+}
+
 class AudioRepository {
+  final LocalDummyAudioRepository _localDummyAudioRepository =
+      LocalDummyAudioRepository();
+
   Future<AudioTrack?> getTrackForHymn(Hymn hymn) async {
     return getTrackForNumber(
       hymn.displayNumber,
@@ -30,6 +51,12 @@ class AudioRepository {
     int hymnNumber, {
     String? title,
   }) async {
+    final dummyTrack = await _localDummyAudioRepository.getTrackForNumber(
+      hymnNumber,
+      title: title,
+    );
+    if (dummyTrack != null) return dummyTrack;
+
     final url = await GlobalAudioService().resolveAudioUrl(hymnNumber);
     if (url == null || url.isEmpty) return null;
     return AudioTrack(

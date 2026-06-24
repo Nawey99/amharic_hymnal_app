@@ -1,5 +1,4 @@
 // lib/features/hymns/presentation/pages/hymn_detail_page.dart
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,10 +13,9 @@ import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_viewer.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HymnDetailPage extends StatefulWidget {
@@ -35,25 +33,20 @@ class HymnDetailPage extends StatefulWidget {
 }
 
 class _HymnDetailPageState extends State<HymnDetailPage> {
-  TransformationController? _transformationController;
-  double _initialFontSize = 18.0;
-  double _initialScale = 1.0;
   double _horizontalDragStart = 0.0;
   bool _isHorizontalDrag = false;
   bool _isExpectingNewHymn =
       false; // Track if we're expecting a new hymn from swipe
+  bool _showAudioSection = false;
+  int? _displayedHymnNumber;
+  double _lyricsZoomScale = AppConstants.defaultZoomScale;
+  double _scaleStartZoom = AppConstants.defaultZoomScale;
   final Map<int, bool> _favoriteOverrides = {};
   final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
 
   @override
   void initState() {
     super.initState();
-    // Initialize font size from service
-    final fontSizeService = FontSizeService();
-    _initialFontSize = fontSizeService.getFontSize();
-    _transformationController = TransformationController();
-    _transformationController?.addListener(_onTransformationChanged);
-
     // Track hymn view in history
     _trackHymnView();
   }
@@ -68,22 +61,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     } else if (widget.hymnNumber != null) {
       await HistoryService.addToHistory(widget.hymnNumber!);
     }
-  }
-
-  void _onTransformationChanged() {
-    if (_transformationController == null || !mounted) return;
-    // Debounce font size updates to improve smoothness during zoom
-    // Only update font size on interaction end, not during continuous zoom
-    // This improves smoothness by avoiding constant state updates during pinch gestures
-    // The font size will be updated in _handleZoomInteraction() when the interaction ends
-    // DO NOT call setState here to prevent MouseTracker assertion errors
-  }
-
-  @override
-  void dispose() {
-    _transformationController?.removeListener(_onTransformationChanged);
-    _transformationController?.dispose();
-    super.dispose();
   }
 
   @override
@@ -223,6 +200,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
+    _syncDisplayedHymn(hymn);
     final settingsRepository = sl<SettingsRepository>();
     final isFavorite = _favoriteOverrides[hymn.displayNumber] ??
         settingsRepository.isFavorite(hymn.displayNumber);
@@ -277,6 +255,14 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         ],
       ),
     );
+  }
+
+  void _syncDisplayedHymn(Hymn hymn) {
+    if (_displayedHymnNumber == hymn.displayNumber) return;
+    _displayedHymnNumber = hymn.displayNumber;
+    _lyricsZoomScale = AppConstants.defaultZoomScale;
+    _scaleStartZoom = AppConstants.defaultZoomScale;
+    _showAudioSection = hymn.displayNumber == 1 && !hymn.isHagerigna;
   }
 
   String _getLanguageCode() {
@@ -378,8 +364,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     }
 
     return [
-      if (!hymn.isHagerigna) _buildSheetMusicButton(),
-      if (!hymn.isHagerigna) _buildAudioButton(),
+      if (!hymn.isHagerigna) _buildSheetMusicButton(hymn),
+      if (!hymn.isHagerigna) _buildAudioButton(hymn),
       _buildFavoriteButton(hymn, isFavorite),
       _buildShareButton(hymn),
     ];
@@ -393,9 +379,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       onSelected: (action) {
         switch (action) {
           case _HymnAction.sheetMusic:
-            _showComingSoonMessage('Sheet music feature coming soon');
+            _openSheetMusic(hymn);
           case _HymnAction.audio:
-            _showComingSoonMessage('Audio player feature coming soon');
+            _showAudioForHymn(hymn);
           case _HymnAction.share:
             _shareHymn(hymn);
         }
@@ -438,7 +424,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Widget _buildSheetMusicButton() {
+  Widget _buildSheetMusicButton(Hymn hymn) {
     // Ensure minimum 48x48 tap target for accessibility
     return SizedBox(
       width: 48,
@@ -446,13 +432,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: IconButton(
         icon: const Icon(Icons.music_note, color: AppColors.primaryText),
         tooltip: 'Sheet Music',
-        onPressed: () =>
-            _showComingSoonMessage('Sheet music feature coming soon'),
+        onPressed: () => _openSheetMusic(hymn),
       ),
     );
   }
 
-  Widget _buildAudioButton() {
+  Widget _buildAudioButton(Hymn hymn) {
     // Ensure minimum 48x48 tap target for accessibility
     return SizedBox(
       width: 48,
@@ -461,10 +446,36 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         icon:
             const Icon(Icons.play_circle_outline, color: AppColors.primaryText),
         tooltip: 'Audio Player',
-        onPressed: () =>
-            _showComingSoonMessage('Audio player feature coming soon'),
+        onPressed: () => _showAudioForHymn(hymn),
       ),
     );
+  }
+
+  Future<void> _openSheetMusic(Hymn hymn) async {
+    final files = await _sheetMusicRepository.getFilesForHymn(hymn);
+    if (!mounted) return;
+
+    if (files.isEmpty) {
+      _showComingSoonMessage('No sheet music available');
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SheetMusicViewerPage(
+          hymn: hymn,
+          sheetMusicFiles: files,
+        ),
+      ),
+    );
+  }
+
+  void _showAudioForHymn(Hymn hymn) {
+    if (hymn.isHagerigna) return;
+    setState(() {
+      _showAudioSection = true;
+    });
   }
 
   Widget _buildFavoriteButton(Hymn hymn, bool isFavorite) {
@@ -505,31 +516,23 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildBody(Hymn hymn, double fontSize) {
+    final shouldShowAudio = !hymn.isHagerigna && _showAudioSection;
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: _buildTitleSection(hymn, fontSize),
         ),
+        if (shouldShowAudio)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: _buildAudioSection(hymn),
+          ),
         Expanded(
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    _buildLyricsSection(hymn, fontSize),
-                    const SizedBox(height: 12),
-                    if (!hymn.isHagerigna) ...[
-                      _buildSheetMusicSection(context, hymn),
-                      const SizedBox(height: 16),
-                      _buildAudioSection(context, hymn),
-                    ],
-                  ]),
-                ),
-              ),
-            ],
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            child: _buildLyricsSection(hymn, fontSize),
           ),
         ),
       ],
@@ -609,15 +612,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildLyricsSection(Hymn hymn, double fontSize) {
-    // Ensure transformation controller is initialized
-    if (_transformationController == null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-        ),
-      );
-    }
-
     // Reduced padding for more compact lyrics card
     // Keep horizontal padding consistent, reduce vertical padding
     final padding = fontSize > 24
@@ -625,249 +619,65 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         : (fontSize < 16
             ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
             : const EdgeInsets.symmetric(horizontal: 16, vertical: 10));
+    final effectiveFontSize = (fontSize * _lyricsZoomScale).clamp(
+      AppConstants.minFontSize * AppConstants.minZoomScale,
+      AppConstants.maxFontSize * AppConstants.maxZoomScale,
+    );
 
-    return GlassContainer(
-      borderRadius: 12.0,
-      blurSigma: 12.0,
-      opacity: 0.25,
-      padding: padding,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Use proper constraints from parent
-          final maxWidth = constraints.maxWidth > 0
-              ? constraints.maxWidth
-              : MediaQuery.of(context).size.width -
-                  32; // Fallback to screen width minus padding
-
-          return ValueListenableBuilder<Matrix4>(
-            valueListenable: _transformationController!,
-            builder: (context, value, child) {
-              // Check if currently zoomed in
-              final currentScale = value.getMaxScaleOnAxis();
-              final isZoomed = currentScale >
-                  1.01; // Small threshold to account for floating point
-
-              // Removed RepaintBoundary from InteractiveViewer to prevent layout exceptions
-              // Keep InteractiveViewer properly constrained
-              return InteractiveViewer(
-                transformationController: _transformationController,
-                minScale: AppConstants.minZoomScale,
-                maxScale: AppConstants.maxZoomScale,
-                onInteractionEnd: (_) => _handleZoomInteraction(),
-                // Only allow panning when zoomed in - this prevents horizontal swipes from being captured
-                // when not zoomed, allowing navigation swipes to work
-                panEnabled: isZoomed,
-                // Reduced boundary margin to reasonable value to prevent layout issues
-                boundaryMargin: const EdgeInsets.all(100),
-                // Use proper constraints instead of false
-                constrained: true,
-                // Use Clip.none to prevent text from being clipped at edges
-                clipBehavior: Clip.none,
-                // Enable smooth scaling
-                scaleEnabled: true,
-                // Enable panning when zoomed
-                panAxis: PanAxis.free,
-                alignment: Alignment.center,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: maxWidth,
-                    maxWidth: maxWidth,
-                    // Allow vertical expansion for text
-                    minHeight: 0,
-                  ),
-                  child: child!,
-                ),
-              );
-            },
-            child: SelectableText(
-              hymn.displayLyrics.isNotEmpty
-                  ? hymn.displayLyrics
-                  : 'No lyrics available',
-              style: TextStyle(
-                color: AppColors.primaryText,
-                fontSize: fontSize,
-                // Use theme scale system for responsive line height and letter spacing
-                height: AppTheme.getLineHeight(fontSize),
-                fontFamily: 'NotoSansEthiopic',
-                letterSpacing: AppTheme.getLetterSpacing(fontSize),
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 2,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+    return GestureDetector(
+      behavior: HitTestBehavior.deferToChild,
+      onScaleStart: (details) {
+        if (details.pointerCount >= 2) {
+          _scaleStartZoom = _lyricsZoomScale;
+        }
+      },
+      onScaleUpdate: (details) {
+        if (details.pointerCount < 2) return;
+        final nextScale = (_scaleStartZoom * details.scale).clamp(
+          AppConstants.minZoomScale,
+          AppConstants.maxZoomScale,
+        );
+        if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
+        setState(() {
+          _lyricsZoomScale = nextScale;
+        });
+      },
+      child: GlassContainer(
+        borderRadius: 12.0,
+        blurSigma: 12.0,
+        opacity: 0.25,
+        padding: padding,
+        child: SelectableText(
+          hymn.displayLyrics.isNotEmpty
+              ? hymn.displayLyrics
+              : 'No lyrics available',
+          style: TextStyle(
+            color: AppColors.primaryText,
+            fontSize: effectiveFontSize,
+            height: AppTheme.getLineHeight(effectiveFontSize),
+            fontFamily: 'NotoSansEthiopic',
+            letterSpacing: AppTheme.getLetterSpacing(effectiveFontSize),
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 2,
+                offset: const Offset(0, 1),
               ),
-              textAlign: TextAlign.start,
-              // Ensure text can expand fully
-              textWidthBasis: TextWidthBasis.longestLine,
-            ),
-          );
-        },
+            ],
+          ),
+          textAlign: TextAlign.start,
+          textWidthBasis: TextWidthBasis.parent,
+        ),
       ),
     );
   }
 
-  void _handleZoomInteraction() {
-    final controller = _transformationController;
-    if (controller == null || !mounted) return;
-
-    // Use post-frame callback to defer state updates and prevent MouseTracker assertion
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final controllerRef = _transformationController;
-      if (controllerRef == null) return;
-
-      // Update initial scale and font size when interaction ends
-      final currentScale = controllerRef.value.getMaxScaleOnAxis();
-      final fontSizeService = FontSizeService();
-
-      // Update font size based on zoom level (only when zoom ends for smoothness)
-      // Map InteractiveViewer scale to the clamped lyrics zoom multiplier.
-      // FontSizeService.setFontSize() will clamp to 12-30 range automatically
-      if ((currentScale - _initialScale).abs() > 0.01 &&
-          _initialScale > 0 &&
-          _initialScale >= AppConstants.minZoomScale) {
-        // Scale ratio represents the change in zoom (e.g., 1.0 -> 1.5 means 1.5x zoom)
-        final scaleRatio = currentScale / _initialScale;
-        // Calculate new font size based on scale ratio
-        final newFontSize = _initialFontSize * scaleRatio;
-
-        // Clamp to valid font size range before setting
-        final clampedFontSize = newFontSize.clamp(
-            AppConstants.minFontSize, AppConstants.maxFontSize);
-
-        // Defer font size update to next microtask to prevent synchronous layout during pointer events
-        Future.microtask(() async {
-          if (!mounted) return;
-          // Update font size service which will clamp and notify listeners
-          await fontSizeService.setFontSize(clampedFontSize);
-          // Update local state to the clamped value that will be set
-          if (mounted) {
-            setState(() {
-              _initialFontSize = clampedFontSize;
-            });
-          }
-        });
-      }
-
-      // Update scale reference for next interaction
-      // Ensure scale is within valid bounds
-      _initialScale = currentScale.clamp(
-        AppConstants.minZoomScale,
-        AppConstants.maxZoomScale,
-      );
-      // Sync local state with service (getFontSize() already clamps)
-      if (mounted) {
-        setState(() {
-          _initialFontSize = fontSizeService
-              .getFontSize()
-              .clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
-        });
-      }
-    });
-  }
-
-  Widget _buildSheetMusicSection(BuildContext context, Hymn hymn) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // Prevent overflow
-      children: [
-        const Divider(color: AppColors.divider),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            const Icon(
-              Icons.music_note,
-              color: AppColors.accentGreen,
-              size: 24,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              AppLocalizations.of(context)?.sheetMusic ?? 'Sheet Music',
-              style: const TextStyle(
-                color: AppColors.primaryText,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'NotoSansEthiopic',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Text(
-          hymn.displayTitle.isNotEmpty
-              ? hymn.displayTitle
-              : 'መዝሙር ${hymn.displayNumber}',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: AppColors.secondaryText,
-            fontSize: 14,
-            fontFamily: 'NotoSansEthiopic',
-            height: 1.3,
-          ),
-        ),
-        const SizedBox(height: 12),
-        FutureBuilder<List<String>>(
-          future: _sheetMusicRepository.getFilesForHymn(hymn),
-          builder: (context, snapshot) {
-            final files = snapshot.data ?? const <String>[];
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox(
-                height: 120,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-                  ),
-                ),
-              );
-            }
-            return SheetMusicViewer(
-              sheetMusicFiles: files,
-              hymnNumber: hymn.displayNumber,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAudioSection(BuildContext context, Hymn hymn) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // Prevent overflow
-      children: [
-        const Divider(color: AppColors.divider),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            const Icon(
-              Icons.play_circle_outline,
-              color: AppColors.accentGreen,
-              size: 24,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              AppLocalizations.of(context)?.audioPlayer ?? 'Audio Player',
-              style: const TextStyle(
-                color: AppColors.primaryText,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'NotoSansEthiopic',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        AudioSectionWidget(
-          hymnNumber: hymn.displayNumber,
-          hymnTitle: hymn.displayTitle.isNotEmpty
-              ? hymn.displayTitle
-              : 'መዝሙር ${hymn.displayNumber}',
-        ),
-      ],
+  Widget _buildAudioSection(Hymn hymn) {
+    return AudioSectionWidget(
+      hymnNumber: hymn.displayNumber,
+      hymnTitle: hymn.displayTitle.isNotEmpty
+          ? hymn.displayTitle
+          : 'መዝሙር ${hymn.displayNumber}',
     );
   }
 
