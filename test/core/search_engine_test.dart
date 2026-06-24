@@ -74,6 +74,55 @@ void main() {
     expect(results.first.matchType, MatchType.partialTitle);
   });
 
+  test('same-level title matches sort by hymn number', () {
+    final results = SearchEngine().search(
+      hymns: const [
+        Hymn(
+          id: 'later',
+          number: 40,
+          title: 'Holy Promise',
+          lyrics: '',
+        ),
+        Hymn(
+          id: 'earlier',
+          number: 12,
+          title: 'Holy Mountain',
+          lyrics: '',
+        ),
+      ],
+      query: 'holy',
+    );
+
+    expect(results.map((result) => result.hymn.displayNumber), [12, 40]);
+    expect(
+        results.every((result) => result.matchType == MatchType.partialTitle),
+        isTrue);
+  });
+
+  test('lyric matches sort by occurrence count before hymn number', () {
+    final results = SearchEngine().search(
+      hymns: const [
+        Hymn(
+          id: 'low-number',
+          number: 1,
+          title: 'Other',
+          lyrics: 'grace appears once',
+        ),
+        Hymn(
+          id: 'high-occurrence',
+          number: 9,
+          title: 'Different',
+          lyrics: 'grace and grace and grace',
+        ),
+      ],
+      query: 'grace',
+    );
+
+    expect(results.map((result) => result.hymn.displayNumber), [9, 1]);
+    expect(
+        results.first.occurrenceCount, greaterThan(results[1].occurrenceCount));
+  });
+
   test('visible English title is searchable without englishTitleOld', () {
     final results = SearchEngine().search(
       hymns: const [

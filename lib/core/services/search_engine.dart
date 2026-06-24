@@ -9,11 +9,15 @@ class SearchResult {
   final Hymn hymn;
   final int rank; // Lower is better (1 = highest priority)
   final MatchType matchType;
+  final int score;
+  final int occurrenceCount;
 
   const SearchResult({
     required this.hymn,
     required this.rank,
     required this.matchType,
+    this.score = 0,
+    this.occurrenceCount = 0,
   });
 }
 
@@ -100,12 +104,19 @@ class SearchEngine {
       }
     }
 
-    // Sort by rank (lower is better), then by hymn number for stable ordering
+    // Sort by rank, lyric occurrences, hymn number, then title for stability.
     results.sort((a, b) {
       final rankComparison = a.rank.compareTo(b.rank);
       if (rankComparison != 0) return rankComparison;
-      // Secondary sort: hymn number for deterministic ordering
-      return a.hymn.displayNumber.compareTo(b.hymn.displayNumber);
+      if (a.matchType == MatchType.lyrics && b.matchType == MatchType.lyrics) {
+        final occurrenceComparison =
+            b.occurrenceCount.compareTo(a.occurrenceCount);
+        if (occurrenceComparison != 0) return occurrenceComparison;
+      }
+      final numberComparison =
+          a.hymn.displayNumber.compareTo(b.hymn.displayNumber);
+      if (numberComparison != 0) return numberComparison;
+      return a.hymn.displayTitle.compareTo(b.hymn.displayTitle);
     });
 
     // Limit lyrics-only matches to avoid too many unrelated results
@@ -123,7 +134,16 @@ class SearchEngine {
       results.sort((a, b) {
         final rankComparison = a.rank.compareTo(b.rank);
         if (rankComparison != 0) return rankComparison;
-        return a.hymn.displayNumber.compareTo(b.hymn.displayNumber);
+        if (a.matchType == MatchType.lyrics &&
+            b.matchType == MatchType.lyrics) {
+          final occurrenceComparison =
+              b.occurrenceCount.compareTo(a.occurrenceCount);
+          if (occurrenceComparison != 0) return occurrenceComparison;
+        }
+        final numberComparison =
+            a.hymn.displayNumber.compareTo(b.hymn.displayNumber);
+        if (numberComparison != 0) return numberComparison;
+        return a.hymn.displayTitle.compareTo(b.hymn.displayTitle);
       });
     }
 
@@ -163,6 +183,7 @@ class SearchEngine {
       return SearchResult(
         hymn: hymn,
         rank: 1,
+        score: 1000,
         matchType: MatchType.exactTitle,
       );
     }
@@ -178,6 +199,7 @@ class SearchEngine {
       return SearchResult(
         hymn: hymn,
         rank: 2,
+        score: 1000,
         matchType: MatchType.exactTitle,
       );
     }
@@ -187,7 +209,8 @@ class SearchEngine {
     if (numberMatch) {
       return SearchResult(
         hymn: hymn,
-        rank: 3,
+        rank: 0,
+        score: 1100,
         matchType: MatchType.number,
       );
     }
@@ -202,7 +225,8 @@ class SearchEngine {
     if (partialAmharicStartsWith) {
       return SearchResult(
         hymn: hymn,
-        rank: 4,
+        rank: 3,
+        score: 900,
         matchType: MatchType.partialTitle,
       );
     }
@@ -217,7 +241,8 @@ class SearchEngine {
     if (partialAmharicContains) {
       return SearchResult(
         hymn: hymn,
-        rank: 5,
+        rank: 4,
+        score: 800,
         matchType: MatchType.partialTitle,
       );
     }
@@ -233,7 +258,8 @@ class SearchEngine {
     if (partialEnglishStartsWith) {
       return SearchResult(
         hymn: hymn,
-        rank: 6,
+        rank: 3,
+        score: 900,
         matchType: MatchType.partialTitle,
       );
     }
@@ -249,22 +275,25 @@ class SearchEngine {
     if (partialEnglishContains) {
       return SearchResult(
         hymn: hymn,
-        rank: 7,
+        rank: 4,
+        score: 800,
         matchType: MatchType.partialTitle,
       );
     }
 
     // Priority 8: Lyrics match
-    final lyricsMatch = _matchLyrics(
+    final lyricsOccurrenceCount = _lyricsOccurrenceCount(
       hymn: hymn,
       query: query,
       queryTokens: queryTokens,
       isAmharicQuery: isAmharicQuery,
     );
-    if (lyricsMatch) {
+    if (lyricsOccurrenceCount > 0) {
       return SearchResult(
         hymn: hymn,
         rank: 8,
+        score: 500,
+        occurrenceCount: lyricsOccurrenceCount,
         matchType: MatchType.lyrics,
       );
     }
@@ -273,6 +302,7 @@ class SearchEngine {
     return SearchResult(
       hymn: hymn,
       rank: 999,
+      score: 0,
       matchType: MatchType.none,
     );
   }
@@ -370,10 +400,10 @@ class SearchEngine {
     });
   }
 
-  /// Check for lyrics match
-  /// Only matches if query is long enough (at least 3 characters for Amharic, 4 for English)
-  /// to avoid too many unrelated results
-  bool _matchLyrics({
+  /// Count lyric/content occurrences.
+  /// Only matches if query is long enough (at least 3 characters for Amharic,
+  /// 4 for English) to avoid too many unrelated results.
+  int _lyricsOccurrenceCount({
     required Hymn hymn,
     required String query,
     required List<String> queryTokens,
@@ -381,34 +411,33 @@ class SearchEngine {
   }) {
     final searchableFields = _bodyFields(hymn);
     if (searchableFields.isEmpty) {
-      return false;
+      return 0;
     }
 
     // Minimum query length for lyrics matching to avoid too many unrelated results
     final minQueryLength = isAmharicQuery ? 3 : 4;
     if (query.trim().length < minQueryLength) {
-      return false;
+      return 0;
     }
 
     if (isAmharicQuery) {
-      return searchableFields.any(
-        (field) => _normalizeAmharic(field).contains(query),
-      );
-    } else if (!isAmharicQuery) {
-      for (final field in searchableFields) {
-        final fieldLower = _normalizeEnglish(field);
-        if (query.length >= 4 && fieldLower.contains(query)) {
-          return true;
-        }
-        for (final token in queryTokens) {
-          if (token.length >= 4 && fieldLower.contains(token)) {
-            return true;
-          }
-        }
+      return searchableFields.fold<int>(0, (count, field) {
+        return count + _countOccurrences(_normalizeAmharic(field), query);
+      });
+    }
+
+    var count = 0;
+    final significantTokens =
+        queryTokens.where((token) => token.length >= 4).toSet();
+    for (final field in searchableFields) {
+      final fieldLower = _normalizeEnglish(field);
+      count += _countOccurrences(fieldLower, query) * 2;
+      for (final token in significantTokens) {
+        count += _countOccurrences(fieldLower, token);
       }
     }
 
-    return false;
+    return count;
   }
 
   List<String> _titleFields(Hymn hymn) {
@@ -438,6 +467,20 @@ class SearchEngine {
 
   String _normalizeEnglish(String value) {
     return value.trim().toLowerCase();
+  }
+
+  int _countOccurrences(String text, String query) {
+    if (text.isEmpty || query.isEmpty) return 0;
+
+    var count = 0;
+    var start = 0;
+    while (start < text.length) {
+      final index = text.indexOf(query, start);
+      if (index == -1) break;
+      count++;
+      start = index + query.length;
+    }
+    return count;
   }
 
   /// Disable validation logs (call after testing)
