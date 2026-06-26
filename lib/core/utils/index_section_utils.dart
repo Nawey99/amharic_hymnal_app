@@ -37,18 +37,7 @@ const List<String> amharicFidelIndexOrder = [
   'ፐ',
 ];
 
-const List<String> numericIndexOrder = [
-  '0',
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-];
+const int numericRangeStep = 50;
 
 final Map<String, String> _fidelToBase = {
   for (final entry in const {
@@ -107,6 +96,23 @@ String numericSectionForText(String text) {
   return '#';
 }
 
+List<String> numericRangeOrderForMax(int maxNumber) {
+  if (maxNumber <= 0) return const [];
+  final labels = <String>[];
+  for (var start = 1; start <= maxNumber; start += numericRangeStep) {
+    final end = (start + numericRangeStep - 1).clamp(start, maxNumber);
+    labels.add(start == end ? '$start' : '$start-$end');
+  }
+  return labels;
+}
+
+String numericRangeLabelForNumber(int number, int maxNumber) {
+  if (number <= 0 || maxNumber <= 0) return '#';
+  final start = (((number - 1) ~/ numericRangeStep) * numericRangeStep) + 1;
+  final end = (start + numericRangeStep - 1).clamp(start, maxNumber);
+  return start == end ? '$start' : '$start-$end';
+}
+
 int? nearestSectionIndex(
   String label,
   List<String> order,
@@ -140,6 +146,23 @@ Map<String, int> buildSectionIndex<T>(
     final section = sectionForText(textForItem(items[i]));
     if (section == '#') continue;
     index.putIfAbsent(section, () => i);
+  }
+  return index;
+}
+
+Map<String, int> buildNumericRangeIndex<T>(
+  List<T> items,
+  int Function(T item) numberForItem,
+) {
+  final numbers = items.map(numberForItem).where((number) => number > 0);
+  if (numbers.isEmpty) return const {};
+  final maxNumber = numbers.reduce((a, b) => a > b ? a : b);
+  final index = <String, int>{};
+  for (var i = 0; i < items.length; i++) {
+    final number = numberForItem(items[i]);
+    final label = numericRangeLabelForNumber(number, maxNumber);
+    if (label == '#') continue;
+    index.putIfAbsent(label, () => i);
   }
   return index;
 }

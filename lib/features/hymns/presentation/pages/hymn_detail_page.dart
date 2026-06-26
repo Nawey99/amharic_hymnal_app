@@ -9,11 +9,13 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
@@ -241,6 +243,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           Scaffold(
             backgroundColor: Colors.transparent,
             appBar: _buildAppBar(hymn, isFavorite),
+            resizeToAvoidBottomInset: false,
+            bottomNavigationBar: _buildLyricsBottomNavigation(version),
             body: BlocListener<HymnsBloc, HymnsState>(
               listener: (context, state) {
                 // Update UI when favorite status changes
@@ -259,6 +263,114 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLyricsBottomNavigation(String version) {
+    final showCategory = HymnalVersions.hasCategories(version);
+    final items = <_LyricsNavItem>[
+      if (showCategory)
+        const _LyricsNavItem(
+          id: 'category',
+          icon: Icons.category_outlined,
+          selectedIcon: Icons.category_rounded,
+          label: 'ምድብ',
+        ),
+      const _LyricsNavItem(
+        id: 'index',
+        icon: Icons.list_alt_outlined,
+        selectedIcon: Icons.list_alt_rounded,
+        label: 'ማውጫ',
+      ),
+      const _LyricsNavItem(
+        id: 'number',
+        icon: Icons.numbers_rounded,
+        selectedIcon: Icons.numbers_rounded,
+        label: 'ቁጥር',
+      ),
+      const _LyricsNavItem(
+        id: 'favorites',
+        icon: Icons.favorite_outline_rounded,
+        selectedIcon: Icons.favorite_rounded,
+        label: 'ተወዳጅ',
+      ),
+      const _LyricsNavItem(
+        id: 'settings',
+        icon: Icons.settings_outlined,
+        selectedIcon: Icons.settings_rounded,
+        label: 'ቅንብር',
+      ),
+    ];
+    final selectedIndex = items.indexWhere((item) => item.id == 'number');
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final compactLabels =
+        textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
+
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
+        indicatorColor: Colors.transparent,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            color: selected ? AppColors.accentGreen : AppColors.primaryText,
+            fontSize: selected
+                ? (compactLabels ? 11 : 12)
+                : (compactLabels ? 10 : 11),
+            fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
+            fontFamily: 'NotoSansEthiopic',
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: selected ? AppColors.accentGreen : AppColors.primaryText,
+            size: selected ? 28 : 24,
+          );
+        }),
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withValues(alpha: 0.15),
+              width: 0.5,
+            ),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+          height: compactLabels ? 66 : 70,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          onDestinationSelected: (index) {
+            final item = items[index];
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => MainNavigationPage(
+                  initialDestination: item.id,
+                ),
+              ),
+              (route) => false,
+            );
+          },
+          destinations: items
+              .map(
+                (item) => NavigationDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(item.selectedIcon),
+                  label: item.label,
+                ),
+              )
+              .toList(growable: false),
+        ),
       ),
     );
   }
@@ -746,6 +858,20 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 }
 
 enum _HymnAction { share }
+
+class _LyricsNavItem {
+  final String id;
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+
+  const _LyricsNavItem({
+    required this.id,
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+  });
+}
 
 class _SheetMusicPreviewBox extends StatelessWidget {
   final bool enabled;

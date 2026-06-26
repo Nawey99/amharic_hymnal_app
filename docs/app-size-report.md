@@ -80,3 +80,23 @@ Packaged Flutter asset counts in the fresh release APK:
 | `build/` | 1767.80 MB |
 | `android/app/build/` | 616.21 MB |
 | `.dart_tool/` | 95.03 MB |
+# Final QA Update
+
+Current source measurement on Windows:
+
+- Repository working folder: 1790.72 MB before deleting generated build output
+- `assets`: 61.22 MB
+- `assets/audio`: 0.71 MB
+- `assets/category`: 0.84 MB
+- `assets/images`: 0.18 MB
+- `assets/onboarding`: 0.02 MB
+- `assets/sheet_music`: 58.44 MB
+- `build`: 178.97 MB
+
+The large repository size is generated build/cache output, not bundled Flutter media. The base app does not register `assets/sheet_music` or `assets/category` in `pubspec.yaml`; those folders are retained for backend/CDN/local development. The dummy hymn audio was replaced with `assets/audio/dummy_hymn_1.mp3` from the supplied audible MP3.
+
+Final release size checks:
+
+- Multi-ABI release APK: 28.7 MB
+- `android-arm64` release APK with `--analyze-size`: 14.1 MB
+- `android-arm64` release AAB with `--analyze-size`: 15.8 MB

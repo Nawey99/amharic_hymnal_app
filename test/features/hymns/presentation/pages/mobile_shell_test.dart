@@ -66,6 +66,29 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('active bottom nav item has no selected pill container',
+      (tester) async {
+    final bloc = await _pumpShell(tester);
+    addTearDown(bloc.close);
+
+    final selectedDestination = tester.widget<NavigationDestination>(
+      find
+          .ancestor(
+            of: find.text('ቁጥር'),
+            matching: find.byType(NavigationDestination),
+          )
+          .first,
+    );
+
+    expect(selectedDestination.selectedIcon, isA<Icon>());
+    expect((selectedDestination.icon as Icon).icon, Icons.numbers_rounded);
+    expect(
+      (selectedDestination.selectedIcon as Icon).icon,
+      Icons.numbers_rounded,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('category tab is hidden for Hagerigna', (tester) async {
     final bloc = await _pumpShell(tester, version: 'hagerigna');
     addTearDown(bloc.close);

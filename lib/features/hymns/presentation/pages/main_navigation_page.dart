@@ -15,11 +15,13 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 class MainNavigationPage extends StatefulWidget {
   final bool loadInitialData;
   final bool usePlaceholderPagesForTesting;
+  final String initialDestination;
 
   const MainNavigationPage({
     super.key,
     this.loadInitialData = true,
     @visibleForTesting this.usePlaceholderPagesForTesting = false,
+    this.initialDestination = 'number',
   });
 
   @override
@@ -32,6 +34,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   @override
   void initState() {
     super.initState();
+    _selectedDestination = _NavDestination.fromId(widget.initialDestination);
     if (widget.loadInitialData) {
       _loadInitialData();
     }
@@ -135,7 +138,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         destination: _NavDestination.number,
         page: _pageFor(const NumberSearchPage()),
         icon: Icons.numbers_rounded,
-        selectedIcon: Icons.pin_rounded,
+        selectedIcon: Icons.numbers_rounded,
         label: 'ቁጥር',
       ),
       _NavItem(
@@ -170,12 +173,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
         backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
-        indicatorColor: AppColors.accentGreen.withValues(alpha: 0.24),
+        indicatorColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
-            color: selected ? AppColors.primaryText : AppColors.secondaryText,
-            fontSize: compactLabels ? 10 : 11,
+            color: selected ? AppColors.accentGreen : AppColors.primaryText,
+            fontSize: selected
+                ? (compactLabels ? 11 : 12)
+                : (compactLabels ? 10 : 11),
             fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
             fontFamily: 'NotoSansEthiopic',
           );
@@ -213,20 +218,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
               .map(
                 (item) => NavigationDestination(
                   icon: Icon(item.icon),
-                  selectedIcon: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentGreen.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: AppColors.accentGreen.withValues(alpha: 0.35),
-                      ),
-                    ),
-                    child: Icon(item.selectedIcon),
-                  ),
+                  selectedIcon: Icon(item.selectedIcon),
                   label: item.label,
                 ),
               )
@@ -237,7 +229,23 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 }
 
-enum _NavDestination { category, hymnIndex, number, favorites, settings }
+enum _NavDestination {
+  category,
+  hymnIndex,
+  number,
+  favorites,
+  settings;
+
+  static _NavDestination fromId(String id) {
+    return switch (id) {
+      'category' => _NavDestination.category,
+      'index' => _NavDestination.hymnIndex,
+      'favorites' => _NavDestination.favorites,
+      'settings' => _NavDestination.settings,
+      _ => _NavDestination.number,
+    };
+  }
+}
 
 class _NavItem {
   final _NavDestination destination;

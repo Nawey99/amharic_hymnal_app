@@ -25,3 +25,10 @@ The rail maps by first meaningful digit and jumps to the nearest available secti
 ## Interaction
 
 The shared `IndexedFastScroller` supports tap, vertical drag, haptic selection feedback, and a large floating bubble while dragging.
+# Final QA Update
+
+The numeric fast scroller now uses hymn ranges generated from the active maximum hymn number instead of digit buckets. For a 325-song hymnal, the rail labels are:
+
+`1-50`, `51-100`, `101-150`, `151-200`, `201-250`, `251-300`, `301-325`
+
+The Amharic Fidel rail remains fixed and uses the existing Fidel normalization table. The selection bubble now follows the user's tap/drag position.

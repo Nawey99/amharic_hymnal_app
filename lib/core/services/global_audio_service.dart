@@ -17,7 +17,7 @@ class GlobalAudioService {
   GlobalAudioService._internal();
 
   static const String dummyAudioScheme = 'dummy://';
-  static const String dummyAudioAsset = 'audio/dummy_hymn_1.wav';
+  static const String dummyAudioAsset = 'audio/dummy_hymn_1.mp3';
   static const Duration dummyDuration = Duration(seconds: 30);
 
   AudioPlayer? _player;

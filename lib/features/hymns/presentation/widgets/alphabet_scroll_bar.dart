@@ -27,26 +27,36 @@ class IndexedFastScroller extends StatefulWidget {
 
 class _IndexedFastScrollerState extends State<IndexedFastScroller> {
   String? _bubbleLabel;
+  double? _bubbleTop;
 
   void _selectFromGlobalPosition(Offset globalPosition) {
     final box = context.findRenderObject() as RenderBox?;
     if (box == null || widget.labels.isEmpty) return;
 
     final local = box.globalToLocal(globalPosition);
-    final index = (local.dy / box.size.height * widget.labels.length)
+    final railHeight = box.size.height;
+    final clampedDy = local.dy.clamp(0.0, railHeight).toDouble();
+    final index = (clampedDy / railHeight * widget.labels.length)
         .floor()
         .clamp(0, widget.labels.length - 1);
     final label = widget.labels[index];
-    if (_bubbleLabel != label) {
+    final bubbleTop = (clampedDy - 28).clamp(0.0, railHeight - 56).toDouble();
+    if (_bubbleLabel != label || _bubbleTop != bubbleTop) {
       HapticFeedback.selectionClick();
-      setState(() => _bubbleLabel = label);
+      setState(() {
+        _bubbleLabel = label;
+        _bubbleTop = bubbleTop;
+      });
     }
     widget.onLabelSelected(label);
   }
 
   void _hideBubble() {
     if (_bubbleLabel != null) {
-      setState(() => _bubbleLabel = null);
+      setState(() {
+        _bubbleLabel = null;
+        _bubbleTop = null;
+      });
     }
   }
 
@@ -133,6 +143,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
           if (_bubbleLabel != null)
             Positioned(
               right: 58,
+              top: _bubbleTop,
               child: IgnorePointer(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -210,9 +221,7 @@ class NumericFastScroller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final available = availableLabels.toSet();
-    final labels =
-        numericIndexOrder.where((label) => available.contains(label)).toList();
+    final labels = availableLabels;
     return IndexedFastScroller(
       labels: labels,
       bottomPadding: bottomPadding,

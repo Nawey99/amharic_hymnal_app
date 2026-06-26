@@ -139,10 +139,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   Map<String, int> _buildNumericIndex(List<Hymn> hymns) {
-    return buildSectionIndex<Hymn>(
+    return buildNumericRangeIndex<Hymn>(
       hymns,
-      (hymn) => hymn.displayNumber.toString(),
-      numericSectionForText,
+      (hymn) => hymn.displayNumber,
     );
   }
 
@@ -367,11 +366,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       _isSearchVisible = willShowSearch;
       if (!willShowSearch) {
         _searchFocusNode.unfocus();
-      } else {
-        Future.delayed(
-          const Duration(milliseconds: 100),
-          () => _searchFocusNode.requestFocus(),
-        );
       }
     });
     if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
@@ -404,7 +398,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       controller: _searchController,
       focusNode: _searchFocusNode,
       hintText: 'መዝሙር ይፈልጉ...',
-      autofocus: true,
+      autofocus: false,
       onClear: () => _reloadHymns(context),
     );
   }
@@ -644,7 +638,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   void _scrollToNumberSection(String label, List<Hymn> hymns) {
     if (!_scrollController.hasClients || hymns.isEmpty) return;
     final index = _buildNumericIndex(hymns);
-    final targetIndex = nearestSectionIndex(label, numericIndexOrder, index);
+    final order = numericRangeOrderForMax(
+      hymns
+          .map((hymn) => hymn.displayNumber)
+          .fold<int>(0, (max, number) => number > max ? number : max),
+    );
+    final targetIndex = nearestSectionIndex(label, order, index);
     if (targetIndex == null) return;
     final scrollPosition =
         (targetIndex * _estimatedHymnItemExtent) + _listVerticalPadding;

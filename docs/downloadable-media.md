@@ -26,3 +26,15 @@ When remote sheet music is not cached, the lyrics page asks before downloading. 
 ## Maintainer Action
 
 The content backend should expose sheet music/audio files at stable URLs or return exact media URLs in the hymn API. The Flutter app is ready to consume those URLs through the repository layer.
+# Final QA Update
+
+Media repository abstractions remain in place:
+
+- `SheetMusicRepository`
+- `AudioRepository`
+- `DownloadRepository`
+- `LocalMediaCacheService`
+- `RemoteSheetMusicDataSource`
+- `RemoteAudioDataSource`
+
+Sheet music and category source images are not bundled in the base app asset list. Future production media should be served from backend/CDN URLs with file-size metadata so the app can show Amharic download prompts before caching media offline.

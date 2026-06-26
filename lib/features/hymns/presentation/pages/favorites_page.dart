@@ -137,15 +137,6 @@ class _FavoritesPageState extends State<FavoritesPage>
         _searchController.clear();
         _searchFocusNode.unfocus();
         _reloadHymns();
-      } else {
-        Future.delayed(
-          const Duration(milliseconds: 100),
-          () {
-            if (mounted) {
-              _searchFocusNode.requestFocus();
-            }
-          },
-        );
       }
     });
   }
@@ -307,7 +298,7 @@ class _FavoritesPageState extends State<FavoritesPage>
       controller: _searchController,
       focusNode: _searchFocusNode,
       hintText: 'ተወዳጆችን ይፈልጉ...',
-      autofocus: true,
+      autofocus: false,
       onChanged: (value) {
         _handleSearchChange();
       },

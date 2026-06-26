@@ -132,18 +132,36 @@ class _NumberSearchPageState extends State<NumberSearchPage>
 
   void _openHymn() {
     final numberText = _numberController.text.trim();
-    if (numberText.isEmpty) return;
+    if (numberText.isEmpty) {
+      _showInvalidNumberMessage('እባክዎ የመዝሙር ቁጥር ያስገቡ።');
+      return;
+    }
 
     final number = int.tryParse(numberText);
     if (number == null || number <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)?.pleaseEnterValidNumber ??
-              'Please enter a valid hymn number'),
-          backgroundColor: Colors.red,
-        ),
+      _showInvalidNumberMessage(
+        AppLocalizations.of(context)?.pleaseEnterValidNumber ??
+            'እባክዎ ትክክለኛ ቁጥር ያስገቡ።',
       );
       return;
+    }
+
+    final state = context.read<HymnsBloc>().state;
+    if (state is HymnsLoaded && state.hymns.isNotEmpty) {
+      final numbers = state.hymns
+          .map((hymn) => hymn.displayNumber)
+          .where((value) => value > 0)
+          .toList()
+        ..sort();
+      final min = numbers.first;
+      final max = numbers.last;
+      final exists = numbers.contains(number);
+      if (number < min || number > max || !exists) {
+        _showInvalidNumberMessage(
+          'ይህ ቁጥር በአሁኑ መዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
+        );
+        return;
+      }
     }
 
     // Navigate to hymn detail page with number
@@ -151,6 +169,15 @@ class _NumberSearchPageState extends State<NumberSearchPage>
       context,
       MaterialPageRoute(
         builder: (_) => HymnDetailPage(hymnNumber: number),
+      ),
+    );
+  }
+
+  void _showInvalidNumberMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
       ),
     );
   }
@@ -238,7 +265,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  'መዝሙር',
+                  'ውዳሴ',
                   style: TextStyle(
                     color: AppColors.primaryText,
                     fontSize: 28,
@@ -281,9 +308,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
       }
     });
     if (willShowSearch) {
-      Future.delayed(const Duration(milliseconds: 80), () {
-        if (mounted) _searchFocusNode.requestFocus();
-      });
+      _numberFocusNode.unfocus();
     }
     if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
       _handleSearchQuery(_searchController.currentQuery);
@@ -303,7 +328,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
       controller: _searchController,
       focusNode: _searchFocusNode,
       hintText: 'በርዕስ መዝሙር ይፈልጉ...',
-      autofocus: true,
+      autofocus: false,
       onClear: () {
         final state = context.read<HymnsBloc>().state;
         if (state is HymnsLoaded) {

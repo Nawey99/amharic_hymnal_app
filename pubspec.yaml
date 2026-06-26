@@ -86,7 +86,7 @@ flutter:
     - assets/fonts/NotoSansEthiopic-Regular.ttf
     - assets/images/background.jpg
     - assets/images/favicon.png
-    - assets/audio/dummy_hymn_1.wav
+    - assets/audio/dummy_hymn_1.mp3
     - assets/onboarding/index.webp
     - assets/onboarding/library.webp
     - assets/onboarding/number.webp
