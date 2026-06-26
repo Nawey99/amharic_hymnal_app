@@ -8,7 +8,7 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
-import 'package:amharic_hymnal_app/core/utils/category_image_loader.dart';
+import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
 
@@ -259,34 +259,20 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   Widget _buildCategoryThumbnail(String category) {
-    final imageProvider = CategoryImageLoader.getCategoryImage(category);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        width: 58,
-        height: 58,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (imageProvider != null)
-              Image(
-                image: imageProvider,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return CategoryImageLoader.buildCategoryImage(
-                    category,
-                    size: 58,
-                  );
-                },
-              )
-            else
-              CategoryImageLoader.buildCategoryImage(category, size: 58),
-            Container(
-              color: Colors.black.withValues(alpha: 0.22),
-            ),
-          ],
+    return Container(
+      width: 58,
+      height: 58,
+      decoration: BoxDecoration(
+        color: AppColors.accentGreen.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.accentGreen.withValues(alpha: 0.34),
         ),
+      ),
+      child: Icon(
+        CategoryIconMapper.iconFor(category),
+        color: AppColors.accentGreen,
+        size: 28,
       ),
     );
   }

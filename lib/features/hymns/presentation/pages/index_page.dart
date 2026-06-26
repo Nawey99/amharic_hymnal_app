@@ -9,7 +9,7 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.d
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
-import 'package:amharic_hymnal_app/core/utils/amharic_utils.dart';
+import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
@@ -127,19 +127,23 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
   // Get primary Amharic letter (first character of the family)
   String _getFirstLetter(String text) {
-    return AmharicUtils.getPrimaryLetter(text);
+    return amharicSectionForText(text);
   }
 
   Map<String, int> _buildAlphabetIndex(List<Hymn> hymns) {
-    final Map<String, int> index = {};
-    for (int i = 0; i < hymns.length; i++) {
-      final title = _titleForIndexing(hymns[i]);
-      final firstLetter = _getFirstLetter(title);
-      if (!index.containsKey(firstLetter)) {
-        index[firstLetter] = i;
-      }
-    }
-    return index;
+    return buildSectionIndex<Hymn>(
+      hymns,
+      _titleForIndexing,
+      amharicSectionForText,
+    );
+  }
+
+  Map<String, int> _buildNumericIndex(List<Hymn> hymns) {
+    return buildSectionIndex<Hymn>(
+      hymns,
+      (hymn) => hymn.displayNumber.toString(),
+      numericSectionForText,
+    );
   }
 
   void _scrollToLetter(String letter) {
@@ -151,7 +155,11 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
     final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
     final index = _buildAlphabetIndex(hymnsToDisplay);
-    final position = index[letter];
+    final position = nearestSectionIndex(
+      letter,
+      amharicFidelIndexOrder,
+      index,
+    );
     if (position != null && _scrollController.hasClients) {
       setState(() {
         _currentSectionLetter = letter;
@@ -601,7 +609,8 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           final letters = _buildAlphabetIndex(hymnsToDisplay).keys.toList();
           if (letters.isEmpty) return const SizedBox();
           return AlphabetScrollBar(
-            letters: letters,
+            availableLabels: letters,
+            activeLabel: _currentSectionLetter,
             onLetterSelected: _scrollToLetter,
             bottomPadding: NavBarConstants.getBottomPadding(context),
           );
@@ -618,78 +627,25 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           return const SizedBox.shrink();
         }
         final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
-        if (hymnsToDisplay.length < 80) return const SizedBox.shrink();
-
-        const jumpPoints = [
-          (1, '1'),
-          (50, '50'),
-          (100, '100'),
-          (150, '150'),
-          (200, '200'),
-          (250, '250'),
-          (300, '300'),
-        ];
-        final bottomPadding = NavBarConstants.getBottomPadding(context);
-        return Positioned(
-          right: 14,
-          top: 8,
-          bottom: bottomPadding,
-          child: SafeArea(
-            left: false,
-            child: Center(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.24),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: jumpPoints
-                        .map(
-                          (point) => InkWell(
-                            borderRadius: BorderRadius.circular(999),
-                            onTap: () => _scrollToNearestNumber(
-                              point.$1,
-                              hymnsToDisplay,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 5,
-                              ),
-                              child: Text(
-                                point.$2,
-                                style: const TextStyle(
-                                  color: AppColors.primaryText,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  fontFamily: 'NotoSansEthiopic',
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ),
+        final index = _buildNumericIndex(hymnsToDisplay);
+        if (index.isEmpty) return const SizedBox.shrink();
+        return NumericFastScroller(
+          availableLabels: index.keys.toList(),
+          bottomPadding: NavBarConstants.getBottomPadding(context),
+          onNumberSelected: (label) => _scrollToNumberSection(
+            label,
+            hymnsToDisplay,
           ),
         );
       },
     );
   }
 
-  void _scrollToNearestNumber(int number, List<Hymn> hymns) {
+  void _scrollToNumberSection(String label, List<Hymn> hymns) {
     if (!_scrollController.hasClients || hymns.isEmpty) return;
-    var targetIndex = hymns.indexWhere((hymn) => hymn.displayNumber >= number);
-    if (targetIndex < 0) targetIndex = hymns.length - 1;
+    final index = _buildNumericIndex(hymns);
+    final targetIndex = nearestSectionIndex(label, numericIndexOrder, index);
+    if (targetIndex == null) return;
     final scrollPosition =
         (targetIndex * _estimatedHymnItemExtent) + _listVerticalPadding;
     final target = scrollPosition

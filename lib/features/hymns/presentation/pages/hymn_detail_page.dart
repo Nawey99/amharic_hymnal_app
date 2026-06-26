@@ -37,12 +37,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   bool _isHorizontalDrag = false;
   bool _isExpectingNewHymn =
       false; // Track if we're expecting a new hymn from swipe
-  bool _showAudioSection = false;
   int? _displayedHymnNumber;
   double _lyricsZoomScale = AppConstants.defaultZoomScale;
   double _scaleStartZoom = AppConstants.defaultZoomScale;
   final Map<int, bool> _favoriteOverrides = {};
   final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
+  final DownloadRepository _downloadRepository = DownloadRepository();
 
   @override
   void initState() {
@@ -268,7 +268,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     _displayedHymnNumber = hymn.displayNumber;
     _lyricsZoomScale = AppConstants.defaultZoomScale;
     _scaleStartZoom = AppConstants.defaultZoomScale;
-    _showAudioSection = hymn.displayNumber == 1 && !hymn.isHagerigna;
   }
 
   String _getLanguageCode() {
@@ -346,7 +345,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       title: Text(
-        'መዝሙር ${hymn.displayNumber}',
+        '- ${hymn.displayNumber} -',
         style: const TextStyle(
           fontFamily: 'NotoSansEthiopic',
           fontWeight: FontWeight.bold,
@@ -364,15 +363,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   ) {
     if (compactActions) {
       return [
-        if (!hymn.isHagerigna) _buildSheetMusicButton(hymn),
         _buildFavoriteButton(hymn, isFavorite),
         _buildOverflowMenuButton(hymn),
       ];
     }
 
     return [
-      if (!hymn.isHagerigna) _buildSheetMusicButton(hymn),
-      if (!hymn.isHagerigna) _buildAudioButton(hymn),
       _buildFavoriteButton(hymn, isFavorite),
       _buildShareButton(hymn),
     ];
@@ -385,27 +381,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       color: AppColors.surface,
       onSelected: (action) {
         switch (action) {
-          case _HymnAction.sheetMusic:
-            _openSheetMusic(hymn);
-          case _HymnAction.audio:
-            _showAudioForHymn(hymn);
           case _HymnAction.share:
             _shareHymn(hymn);
         }
       },
       itemBuilder: (context) => [
-        if (!hymn.isHagerigna)
-          const PopupMenuItem(
-            value: _HymnAction.audio,
-            child: ListTile(
-              leading:
-                  Icon(Icons.play_circle_outline, color: AppColors.primaryText),
-              title: Text(
-                'ድምፅ',
-                style: TextStyle(color: AppColors.primaryText),
-              ),
-            ),
-          ),
         const PopupMenuItem(
           value: _HymnAction.share,
           child: ListTile(
@@ -420,36 +400,32 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Widget _buildSheetMusicButton(Hymn hymn) {
-    // Ensure minimum 48x48 tap target for accessibility
-    return SizedBox(
-      width: 48,
-      height: 48,
-      child: IconButton(
-        icon: const Icon(Icons.music_note, color: AppColors.primaryText),
-        tooltip: 'ኖታ',
-        onPressed: () => _openSheetMusic(hymn),
-      ),
-    );
-  }
-
-  Widget _buildAudioButton(Hymn hymn) {
-    // Ensure minimum 48x48 tap target for accessibility
-    return SizedBox(
-      width: 48,
-      height: 48,
-      child: IconButton(
-        icon:
-            const Icon(Icons.play_circle_outline, color: AppColors.primaryText),
-        tooltip: 'ድምፅ',
-        onPressed: () => _showAudioForHymn(hymn),
-      ),
-    );
-  }
-
   Future<void> _openSheetMusic(Hymn hymn) async {
-    final files = await _sheetMusicRepository.getFilesForHymn(hymn);
+    var files = await _sheetMusicRepository.getFilesForHymn(hymn);
     if (!mounted) return;
+
+    final remoteSources = files
+        .where(
+            (file) => file.startsWith('http://') || file.startsWith('https://'))
+        .map(Uri.parse)
+        .toList();
+    if (remoteSources.isNotEmpty) {
+      final cached = await _sheetMusicRepository.cachedFilesForSources(
+        remoteSources,
+      );
+      if (!mounted) return;
+      if (cached.isNotEmpty) {
+        files = cached;
+      } else {
+        final downloaded = await _confirmAndDownloadSheetMusic(
+          hymn,
+          remoteSources,
+        );
+        if (!mounted) return;
+        if (downloaded.isEmpty) return;
+        files = downloaded;
+      }
+    }
 
     if (files.isEmpty) {
       _showComingSoonMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
@@ -467,11 +443,90 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  void _showAudioForHymn(Hymn hymn) {
-    if (hymn.isHagerigna) return;
-    setState(() {
-      _showAudioSection = true;
-    });
+  Future<List<String>> _confirmAndDownloadSheetMusic(
+    Hymn hymn,
+    List<Uri> sources,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text(
+          'ኖታ ይውረድ?',
+          style: TextStyle(color: AppColors.primaryText),
+        ),
+        content: const Text(
+          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።',
+          style: TextStyle(color: AppColors.secondaryText),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('ይቅር'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('አውርድ'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return const [];
+    if (!mounted) return const [];
+
+    var progress = 0.0;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            backgroundColor: AppColors.surface,
+            title: const Text(
+              'ኖታ በማውረድ ላይ',
+              style: TextStyle(color: AppColors.primaryText),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LinearProgressIndicator(
+                  value: progress == 0 ? null : progress,
+                  color: AppColors.accentGreen,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'እባክዎ ይጠብቁ...',
+                  style: TextStyle(color: AppColors.secondaryText),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
+    final downloaded = <String>[];
+    try {
+      for (final source in sources) {
+        final file = await _downloadRepository.requestDownload(
+          mediaType: 'sheet_music',
+          hymnNumber: hymn.displayNumber,
+          source: source,
+          onProgress: (received, total) {
+            if (total == null || total <= 0) return;
+            progress = (received / total).clamp(0.0, 1.0);
+          },
+        );
+        downloaded.add(file.path);
+      }
+    } catch (_) {
+      if (mounted) {
+        _showComingSoonMessage('ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
+      }
+    } finally {
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
+    }
+    return downloaded;
   }
 
   Widget _buildFavoriteButton(Hymn hymn, bool isFavorite) {
@@ -512,18 +567,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildBody(Hymn hymn, double fontSize) {
-    final shouldShowAudio = !hymn.isHagerigna && _showAudioSection;
-
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: _buildTitleSection(hymn, fontSize),
         ),
-        if (shouldShowAudio)
+        if (!hymn.isHagerigna)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: _buildAudioSection(hymn),
+            child: _buildMediaControls(hymn),
           ),
         Expanded(
           child: _buildLyricsViewport(hymn, fontSize),
@@ -565,47 +618,21 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       opacity: 0.25,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildNumberBadge(hymn.displayNumber, fontSize),
-          const SizedBox(width: 12),
-          Expanded(child: _buildTitleText(hymn.displayTitle, fontSize)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNumberBadge(int number, double fontSize) {
-    // Responsive badge size based on font size
-    final badgeSize = fontSize * 2.5 < 48 ? 48.0 : fontSize * 2.5;
-    return Container(
-      width: badgeSize,
-      height: badgeSize,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.accentGreen.withValues(alpha: 0.4),
-            AppColors.accentGreen.withValues(alpha: 0.2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.accentGreen.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          '$number',
-          style: TextStyle(
-            color: AppColors.accentGreen,
-            fontSize: fontSize * 0.9,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'NotoSansEthiopic',
+          Text(
+            '- ${hymn.displayNumber} -',
+            style: TextStyle(
+              color: AppColors.accentGreen,
+              fontSize: (fontSize * 0.95).clamp(16.0, 24.0),
+              fontWeight: FontWeight.w800,
+              fontFamily: 'NotoSansEthiopic',
+            ),
           ),
-        ),
+          const SizedBox(height: 6),
+          _buildTitleText(hymn.displayTitle, fontSize),
+        ],
       ),
     );
   }
@@ -681,6 +708,26 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
+  Widget _buildMediaControls(Hymn hymn) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _buildAudioSection(hymn)),
+        const SizedBox(width: 10),
+        FutureBuilder<List<String>>(
+          future: _sheetMusicRepository.getFilesForHymn(hymn),
+          builder: (context, snapshot) {
+            final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
+            return _SheetMusicPreviewBox(
+              enabled: hasSheetMusic,
+              onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   void _shareHymn(Hymn hymn) async {
     final text = '${hymn.displayTitle}\n\n${hymn.displayLyrics}';
     try {
@@ -698,4 +745,58 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 }
 
-enum _HymnAction { sheetMusic, audio, share }
+enum _HymnAction { share }
+
+class _SheetMusicPreviewBox extends StatelessWidget {
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  const _SheetMusicPreviewBox({
+    required this.enabled,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'ኖታ ክፈት',
+      button: enabled,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: GlassContainer(
+          width: 72,
+          borderRadius: 12,
+          blurSigma: 12,
+          opacity: enabled ? 0.25 : 0.12,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.library_music_outlined,
+                color:
+                    enabled ? AppColors.accentGreen : AppColors.secondaryText,
+                size: 24,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                enabled ? 'ኖታ' : 'የለም',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color:
+                      enabled ? AppColors.primaryText : AppColors.secondaryText,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'NotoSansEthiopic',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

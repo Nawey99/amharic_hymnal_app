@@ -30,20 +30,20 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: DonatePage()));
 
-    await tester.tap(find.text('ብሔራዊ ባንክ'));
+    await tester.tap(find.text('በባንክ ለማስተላለፍ'));
     await tester.pumpAndSettle();
 
-    expect(find.text('ብሔራዊ ባንክ'), findsWidgets);
+    expect(find.text('በባንክ ለማስተላለፍ'), findsWidgets);
     expect(
       find.textContaining('የባንክ ድጋፍ መረጃ'),
       findsOneWidget,
     );
-    expect(find.byTooltip('ቅዳ'), findsWidgets);
+    expect(find.byTooltip('ቅዳ'), findsOneWidget);
 
     await tester.tap(find.byTooltip('ቅዳ').first);
     await tester.pumpAndSettle();
 
-    expect(copiedText, 'National Bank of Ethiopia');
-    expect(find.text('ባንክ ተቀድቷል'), findsOneWidget);
+    expect(copiedText, 'በኋላ ይጨመራል');
+    expect(find.text('የመለያ ቁጥር ተቀድቷል'), findsOneWidget);
   });
 }

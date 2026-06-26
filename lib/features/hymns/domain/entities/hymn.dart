@@ -1,6 +1,7 @@
 // lib/features/hymns/domain/entities/hymn.dart
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/utils/title_cleaner.dart';
 
 /// Domain entity representing a Hymn
 /// This is the core business entity used throughout the domain layer
@@ -110,6 +111,8 @@ class Hymn extends Equatable {
   int? get displayNewHymnalNumber => newHymnalNumber;
 
   int? get displayOldHymnalNumber => oldHymnalNumber;
+
+  String get displayEnglishTitle => cleanEnglishTitle(englishTitleOld);
 
   /// Check if this hymn is from the hagerigna hymnal
   bool get isHagerigna {

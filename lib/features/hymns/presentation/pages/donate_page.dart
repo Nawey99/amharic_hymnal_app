@@ -78,7 +78,7 @@ class DonatePage extends StatelessWidget {
               const SizedBox(height: 12),
               _buildDonateOption(
                 context,
-                'ብሔራዊ ባንክ',
+                'በባንክ ለማስተላለፍ',
                 'የባንክ ማስተላለፊያ መረጃ',
                 Icons.account_balance,
                 _DonationAction.bank,
@@ -198,7 +198,6 @@ class NationalBankDonationPage extends StatelessWidget {
     ('ባንክ', 'National Bank of Ethiopia'),
     ('የመለያ ስም', 'Wudase App Support'),
     ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
-    ('ቅርንጫፍ', 'በኋላ ይጨመራል'),
   ];
 
   @override
@@ -224,7 +223,7 @@ class NationalBankDonationPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              title: const Text('ብሔራዊ ባንክ'),
+              title: const Text('በባንክ ለማስተላለፍ'),
               centerTitle: true,
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -272,6 +271,7 @@ class _BankField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canCopy = label == 'የመለያ ቁጥር';
     return GlassContainer(
       borderRadius: 14,
       blurSigma: 12,
@@ -302,18 +302,19 @@ class _BankField extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            tooltip: 'ቅዳ',
-            icon: const Icon(Icons.copy, color: AppColors.accentGreen),
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: value));
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('$label ተቀድቷል')),
-                );
-              }
-            },
-          ),
+          if (canCopy)
+            IconButton(
+              tooltip: 'ቅዳ',
+              icon: const Icon(Icons.copy, color: AppColors.accentGreen),
+              onPressed: () async {
+                await Clipboard.setData(ClipboardData(text: value));
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('የመለያ ቁጥር ተቀድቷል')),
+                  );
+                }
+              },
+            ),
         ],
       ),
     );

@@ -1,58 +1,82 @@
 # App Size Report
 
-Date: 2026-06-26
+Measured on Windows from `D:\Church\App\amharic_hymnal_app`.
 
-## Findings
+## Local Workspace Size
 
-PowerShell folder measurements from the project root:
-
-| Path | Size |
+| Area | Size |
 | --- | ---: |
-| `.` | 21274.94 MB |
-| `android/app/build` | 18492.13 MB |
-| `build` | 1834.42 MB |
-| `.dart_tool` | 124.07 MB |
-| `assets` | 146.72 MB |
-| `assets/sheet_music` | 140.81 MB |
-| `assets/category` | 4.40 MB |
-| `assets/onboarding` | 0.02 MB |
-| `backend` | 349.33 MB |
+| Project folder | 23534.11 MB |
+| `assets/` | 146.72 MB |
+| `assets/sheet_music/` | 140.81 MB |
+| `assets/category/` | 4.40 MB |
+| `assets/images/` | 0.45 MB |
+| `assets/onboarding/` | 0.02 MB |
+| `build/` | 1948.60 MB |
+| `.dart_tool/` | 248.13 MB |
 
-The reported 1.81 GB mobile concern is local build output, not source code alone. The largest generated folder is `android/app/build`, and it is ignored by Git. The largest source asset area is bundled sheet music.
+## What Made The App Large
 
-## Build Output Notes
+The base APK was dominated by bundled sheet music. The sheet music folder alone is about 140.81 MB and category photos add another 4.40 MB. Generated folders such as `build/` and `.dart_tool/` are local-only and already ignored by Git.
 
-The Android Gradle config now generates a universal debug APK and syncs Flutter's top-level APK output after Gradle finishes. This prevents stale Android installs from using an old `build/app/outputs/flutter-apk/app-debug.apk`.
+## Packaging Change
 
-Verified build outputs:
+`pubspec.yaml` no longer bundles:
 
-| Artifact | Size | Notes |
-| --- | ---: | --- |
-| Debug APK | 1642.00 MB | Debug/universal build; not representative for store release. |
-| Release APK, `android-arm64` | 159.1 MB | `flutter build apk --release --target-platform android-arm64 --analyze-size` |
-| Release AAB, `android-arm64` | 147.6 MB | `flutter build appbundle --release --target-platform android-arm64 --analyze-size` |
+- `assets/sheet_music/`
+- `assets/category/*.webp`
 
-Release size analysis shows Flutter assets are the dominant cost:
+Category UI now uses themed Material icons. Sheet music is resolved through repository/cache/download architecture and can be served by the content backend.
 
-- APK: `assets/flutter_assets` is about 146 MB.
-- AAB: `base/assets` is about 133 MB.
+The base app still bundles small required assets:
 
-Release builds required adding the Play Core dependency because R8 otherwise reported missing Flutter deferred-component split-install classes.
+- database JSON fallback
+- Ethiopic font
+- app background/favicon
+- onboarding images
+- audible dummy audio test tone
 
-## Recommendations
+## Build Verification
 
-- Keep `build/`, `.dart_tool/`, `android/app/build/`, backend `node_modules/`, and temporary logs untracked.
-- Keep current bundled sheet music until the remote download/cache path is fully deployed.
-- For production, move sheet music and future audio to a CDN or backend media endpoint and cache on device through `SheetMusicRepository` and `DownloadRepository`.
-- Run release size checks before store submission:
+Run:
 
 ```powershell
 flutter clean
 flutter pub get
-flutter build apk --release --target-platform android-arm64 --analyze-size
-flutter build appbundle --release --target-platform android-arm64 --analyze-size
+flutter build apk --release --analyze-size
+flutter build appbundle --release --analyze-size
 ```
 
-## Current Reason For Large Local Folder
+The expected release package should be much smaller than the previous sheet-music bundled build. The exact APK/AAB output must be re-measured after each asset manifest change.
 
-The local folder is large because debug/release intermediates were generated locally. These are rebuildable and should not be committed.
+## Verified Release Output
+
+After removing stale `android/app/build` output and rebuilding:
+
+| Artifact | Size |
+| --- | ---: |
+| Release APK | 28.39 MB |
+| Release AAB | 30.03 MB |
+
+Packaged Flutter asset counts in the fresh release APK:
+
+| Asset group | Count |
+| --- | ---: |
+| Sheet music | 0 |
+| Category photos | 0 |
+| Audio | 1 |
+| Onboarding | 4 |
+| Total app asset files | 10 |
+
+## Current Post-Rebuild Workspace Snapshot
+
+| Area | Size |
+| --- | ---: |
+| Project folder | 3305.58 MB |
+| `assets/` | 146.82 MB |
+| `assets/sheet_music/` | 140.81 MB |
+| `assets/category/` | 4.40 MB |
+| `assets/audio/` | 0.10 MB |
+| `build/` | 1767.80 MB |
+| `android/app/build/` | 616.21 MB |
+| `.dart_tool/` | 95.03 MB |

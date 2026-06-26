@@ -17,6 +17,7 @@ class GlobalAudioService {
   GlobalAudioService._internal();
 
   static const String dummyAudioScheme = 'dummy://';
+  static const String dummyAudioAsset = 'audio/dummy_hymn_1.wav';
   static const Duration dummyDuration = Duration(seconds: 30);
 
   AudioPlayer? _player;
@@ -229,7 +230,7 @@ class GlobalAudioService {
       }
 
       if (audioUrl.startsWith(dummyAudioScheme)) {
-        _playDummyTrack(hymnNumber, audioUrl);
+        await _playDummyTrack(hymnNumber, audioUrl);
         return;
       }
 
@@ -256,8 +257,41 @@ class GlobalAudioService {
     }
   }
 
-  void _playDummyTrack(int hymnNumber, String audioUrl) {
+  Future<void> playLocalFile(
+    int hymnNumber,
+    String filePath, {
+    String? hymnTitle,
+  }) async {
+    final player = _player;
+    if (!_audioBackendAvailable || player == null) {
+      throw Exception('Audio playback is not available on this platform');
+    }
+    await player.stop();
+    await player.play(DeviceFileSource(filePath));
+    _isDummyPlayback = false;
+    _currentHymnNumber = hymnNumber;
+    _currentAudioUrl = filePath;
+    _currentHymnController.add(hymnNumber);
+  }
+
+  Future<void> _playDummyTrack(int hymnNumber, String audioUrl) async {
     _dummyPlaybackTimer?.cancel();
+    final player = _player;
+    if (_audioBackendAvailable && player != null) {
+      await player.stop();
+      await player.play(AssetSource(dummyAudioAsset));
+      _isDummyPlayback = false;
+      _currentHymnNumber = hymnNumber;
+      _currentAudioUrl = audioUrl;
+      _totalDuration = dummyDuration;
+      _currentHymnController.add(hymnNumber);
+      _durationController.add(_totalDuration);
+      if (kDebugMode) {
+        debugPrint('🎵 Playing audible dummy hymn audio asset');
+      }
+      return;
+    }
+
     _isDummyPlayback = true;
     _currentHymnNumber = hymnNumber;
     _currentAudioUrl = audioUrl;

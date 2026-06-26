@@ -20,7 +20,7 @@ void main() {
         home: Stack(
           children: [
             AlphabetScrollBar(
-              letters: const ['አ', 'ለ', 'መ', 'ሰ'],
+              availableLabels: const ['አ', 'ለ', 'መ', 'ሰ'],
               onLetterSelected: (_) {},
             ),
           ],

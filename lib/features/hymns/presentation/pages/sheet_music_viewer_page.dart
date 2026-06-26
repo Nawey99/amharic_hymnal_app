@@ -68,42 +68,64 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              title: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontFamily: 'NotoSansEthiopic'),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
             body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
-                        fontFamily: 'NotoSansEthiopic',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          tooltip: 'ዝጋ',
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.primaryText,
+                            size: 28,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: AppColors.primaryText,
+                                  fontFamily: 'NotoSansEthiopic',
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                subtitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: AppColors.secondaryText,
+                                  fontFamily: 'NotoSansEthiopic',
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Expanded(
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                       child: SheetMusicViewer(
                         sheetMusicFiles: widget.sheetMusicFiles,
                         hymnNumber: widget.hymn.displayNumber,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

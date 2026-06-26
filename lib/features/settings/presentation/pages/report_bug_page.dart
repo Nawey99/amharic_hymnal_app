@@ -1,13 +1,13 @@
 // lib/features/settings/presentation/pages/report_bug_page.dart
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
-import 'package:amharic_hymnal_app/features/settings/data/repositories/bug_report_repository_impl.dart';
-import 'package:amharic_hymnal_app/features/settings/domain/repositories/bug_report_repository.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class ReportBugPage extends StatefulWidget {
@@ -22,7 +22,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final BugReportRepository _bugReportRepository = BugReportRepositoryImpl();
   bool _isSubmitting = false;
 
   @override
@@ -46,36 +45,45 @@ class _ReportBugPageState extends State<ReportBugPage> {
     final description = _descriptionController.text.trim();
     final contactEmail = _contactController.text.trim();
     final settingsRepository = sl<SettingsRepository>();
-    final diagnostics = {
-      'selected_language': settingsRepository.getSelectedLanguage(),
-      'selected_version': settingsRepository.getSelectedVersion(),
-      'font_size': settingsRepository.getFontSize(),
-      'background_image_enabled':
-          settingsRepository.getBackgroundImageEnabled(),
-      'keep_screen_on': settingsRepository.getKeepScreenOn(),
-    };
 
     try {
-      final result = await _bugReportRepository.submit(
-        BugReportPayload(
-          title: title,
-          description: description,
-          contactEmail: contactEmail.isEmpty ? null : contactEmail,
-          diagnostics: diagnostics,
-        ),
+      final packageInfo = await PackageInfo.fromPlatform();
+      final body = [
+        'ርዕስ: $title',
+        '',
+        'መግለጫ:',
+        description,
+        '',
+        if (contactEmail.isNotEmpty) 'የተጠቃሚ ኢሜይል: $contactEmail',
+        'የመተግበሪያ ስሪት: ${packageInfo.version}+${packageInfo.buildNumber}',
+        'የመዝሙር ስብስብ: ${settingsRepository.getSelectedVersion()}',
+        'ቋንቋ: ${settingsRepository.getSelectedLanguage()}',
+        'የፊደል መጠን: ${settingsRepository.getFontSize()}',
+        'የተላከበት ጊዜ: ${DateTime.now().toIso8601String()}',
+      ].join('\n');
+
+      final uri = Uri(
+        scheme: 'mailto',
+        path: 'nawey99@gmail.com',
+        queryParameters: {
+          'subject': 'የውዳሴ መተግበሪያ ስህተት ሪፖርት: $title',
+          'body': body,
+        },
       );
 
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result.message),
-            backgroundColor:
-                result.isSuccess ? AppColors.accentGreen : Colors.red,
-            duration: Duration(seconds: result.submitted ? 2 : 3),
+            content: Text(
+              opened ? 'የኢሜይል መተግበሪያዎ ተከፍቷል።' : 'የኢሜይል መተግበሪያ ማግኘት አልተቻለም።',
+            ),
+            backgroundColor: opened ? AppColors.accentGreen : Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
-      if (result.isSuccess) {
+      if (opened) {
         _titleController.clear();
         _descriptionController.clear();
         _contactController.clear();

@@ -1,5 +1,6 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
@@ -66,6 +67,10 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
 
   /// Get asset path for sheet music image
   String _getAssetPath(String fileName) {
+    if (fileName.startsWith('/') ||
+        RegExp(r'^[A-Za-z]:\\').hasMatch(fileName)) {
+      return fileName;
+    }
     // Remove any path separators and clean the filename
     final cleanFileName = fileName.replaceAll('\\', '/').split('/').last;
     // Construct asset path: files are directly in assets/sheet_music/
@@ -276,33 +281,48 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             color: Colors.white, // Keep white for sheet music contrast
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Image.asset(
-            assetPath,
-            fit: BoxFit.contain,
-            // Optimize memory usage for low-tier devices
-            cacheWidth: cacheWidth,
-            cacheHeight: cacheHeight,
-            errorBuilder: (context, error, stackTrace) {
-              // Debug: Log error details
-              if (kDebugMode) {
-                debugPrint('❌ Failed to load sheet music: $assetPath');
-                debugPrint('   Error: $error');
-              }
-              // Fallback if image not found - try alternative extensions
-              return _buildErrorWithRetry(context, assetPath);
-            },
-            // Image.asset doesn't support loadingBuilder, use frameBuilder instead
-            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-              if (wasSynchronouslyLoaded || frame != null) {
-                return child;
-              }
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-                ),
-              );
-            },
+          child: _buildImage(assetPath, cacheWidth, cacheHeight),
+        );
+      },
+    );
+  }
+
+  Widget _buildImage(String assetPath, int cacheWidth, int cacheHeight) {
+    final isLocalFile = assetPath.startsWith('/') ||
+        RegExp(r'^[A-Za-z]:\\').hasMatch(assetPath);
+    if (isLocalFile) {
+      return Image.file(
+        File(assetPath),
+        fit: BoxFit.contain,
+        cacheWidth: cacheWidth,
+        cacheHeight: cacheHeight,
+        errorBuilder: (context, error, stackTrace) {
+          if (kDebugMode) {
+            debugPrint('❌ Failed to load cached sheet music: $assetPath');
+            debugPrint('   Error: $error');
+          }
+          return _buildErrorWithRetry(context, assetPath);
+        },
+      );
+    }
+
+    return Image.asset(
+      assetPath,
+      fit: BoxFit.contain,
+      cacheWidth: cacheWidth,
+      cacheHeight: cacheHeight,
+      errorBuilder: (context, error, stackTrace) {
+        if (kDebugMode) {
+          debugPrint('❌ Failed to load sheet music: $assetPath');
+          debugPrint('   Error: $error');
+        }
+        return _buildErrorWithRetry(context, assetPath);
+      },
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) return child;
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
           ),
         );
       },

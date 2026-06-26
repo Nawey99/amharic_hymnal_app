@@ -118,8 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title:
-              Text(AppLocalizations.of(context)?.settingsTitle ?? 'Settings'),
+          title: Text(AppLocalizations.of(context)?.settingsTitle ?? 'ቅንብር'),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,

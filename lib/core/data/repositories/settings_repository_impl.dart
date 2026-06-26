@@ -82,18 +82,23 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
+  List<String> getFavoriteHymnKeys() {
+    return SettingsService.getFavoriteHymnKeys();
+  }
+
+  @override
   Future<bool> setFavoriteHymns(List<int> hymnNumbers) async {
     return await SettingsService.setFavoriteHymns(hymnNumbers);
   }
 
   @override
-  Future<bool> toggleFavorite(int hymnNumber) async {
-    return await SettingsService.toggleFavorite(hymnNumber);
+  Future<bool> toggleFavorite(int hymnNumber, {String? version}) async {
+    return await SettingsService.toggleFavorite(hymnNumber, version: version);
   }
 
   @override
-  bool isFavorite(int hymnNumber) {
-    return SettingsService.isFavorite(hymnNumber);
+  bool isFavorite(int hymnNumber, {String? version}) {
+    return SettingsService.isFavorite(hymnNumber, version: version);
   }
 
   @override

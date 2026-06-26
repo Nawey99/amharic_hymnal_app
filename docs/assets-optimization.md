@@ -1,30 +1,20 @@
 # Assets Optimization
 
-## Current Asset Shape
+## Completed
 
-- Sheet music is already stored as WebP and is the main bundled asset cost.
-- Category and onboarding images are small enough for current use.
-- Onboarding images under `assets/onboarding/` are screenshot-style guide placeholders. Replace them with final production screenshots before release if product screenshots are available.
+- Removed category images from the Flutter asset manifest.
+- Replaced category thumbnails with icon mapping in the app UI.
+- Removed full sheet music bundling from the Flutter asset manifest.
+- Added one small audible WAV asset for hymn 1 dummy audio.
+- Kept onboarding images because they are tiny and user-facing.
 
-## Rules
+## Still In Repo
 
-- Do not delete sheet music just to reduce APK size; it is part of current offline functionality.
-- Prefer WebP for photos and scanned sheets.
-- Keep UI guide images small, cropped, and readable at phone sizes.
-- Use explicit asset declarations for small UI image groups so Android and Windows builds package the same assets.
+`assets/sheet_music/` and `assets/category/` still exist in the repository because they are useful source files for backend/CDN upload and data verification. They should not be bundled into the mobile base app unless a release intentionally opts into offline media.
 
-## Future Remote Media Path
+## Rules Going Forward
 
-The code already has repository boundaries:
-
-- `AudioRepository`
-- `SheetMusicRepository`
-- `DownloadRepository`
-
-Use these to move large media out of the APK later:
-
-1. Store sheet music/audio in backend or CDN.
-2. Return media metadata from content API.
-3. Download on demand.
-4. Cache locally with eviction.
-5. Keep bundled placeholders only for offline-critical or demo media.
+- Store large sheet music/audio in backend object storage or CDN.
+- Keep the base app focused on code, JSON fallback, font, tiny onboarding assets, and one audio test fixture.
+- Prefer WebP/AVIF for images that must ship in-app.
+- Keep generated folders out of commits: `build/`, `.dart_tool/`, `android/app/build/`, backend `node_modules/`.

@@ -200,21 +200,45 @@ class _NumberSearchPageState extends State<NumberSearchPage>
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          // History icon button at top left
-          IconButton(
-            icon: const Icon(
-              Icons.history,
-              color: AppColors.primaryText,
+          InkWell(
+            onTap: () => _openHistory(context),
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.accentGreen.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: AppColors.accentGreen.withValues(alpha: 0.3),
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.history,
+                    color: AppColors.accentGreen,
+                    size: 20,
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    'ታሪክ',
+                    style: TextStyle(
+                      color: AppColors.primaryText,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'NotoSansEthiopic',
+                    ),
+                  ),
+                ],
+              ),
             ),
-            onPressed: () => _openHistory(context),
-            tooltip: 'History',
           ),
           const Expanded(
             child: Center(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  'Adventist Hymnal',
+                  'መዝሙር',
                   style: TextStyle(
                     color: AppColors.primaryText,
                     fontSize: 28,

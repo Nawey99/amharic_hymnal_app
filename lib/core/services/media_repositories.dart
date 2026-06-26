@@ -1,4 +1,5 @@
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
+import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/sheet_music_discovery_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 
@@ -39,6 +40,9 @@ class LocalDummyAudioRepository {
 class AudioRepository {
   final LocalDummyAudioRepository _localDummyAudioRepository =
       LocalDummyAudioRepository();
+  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
+  final RemoteAudioDataSource _remoteAudioDataSource =
+      const RemoteAudioDataSource();
 
   Future<AudioTrack?> getTrackForHymn(Hymn hymn) async {
     return getTrackForNumber(
@@ -69,9 +73,21 @@ class AudioRepository {
       isDummy: url.startsWith(GlobalAudioService.dummyAudioScheme),
     );
   }
+
+  Future<Uri?> remoteSourceForNumber(int hymnNumber) {
+    return _remoteAudioDataSource.resolve(hymnNumber);
+  }
+
+  Future<String?> cachedPathFor(Uri source) {
+    return _cache.cachedPath(source, 'audio');
+  }
 }
 
 class SheetMusicRepository {
+  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
+  final RemoteSheetMusicDataSource _remoteSheetMusicDataSource =
+      const RemoteSheetMusicDataSource();
+
   Future<List<String>> getFilesForHymn(Hymn hymn) async {
     final provided = hymn.sheetMusic
             ?.where((item) => item.trim().isNotEmpty)
@@ -80,22 +96,44 @@ class SheetMusicRepository {
     if (provided.isNotEmpty) return provided;
 
     final discoveryService = SheetMusicDiscoveryService();
-    return discoveryService.getSheetMusicFiles(hymn.displayNumber);
+    final discovered = discoveryService.getSheetMusicFiles(hymn.displayNumber);
+    if (discovered.isNotEmpty) return discovered;
+
+    final remote = await remoteSourcesForHymn(hymn);
+    return remote.map((source) => source.toString()).toList();
+  }
+
+  Future<List<Uri>> remoteSourcesForHymn(Hymn hymn) {
+    return _remoteSheetMusicDataSource.resolve(hymn.displayNumber);
+  }
+
+  Future<List<String>> cachedFilesForSources(List<Uri> sources) async {
+    final paths = <String>[];
+    for (final source in sources) {
+      final cached = await _cache.cachedPath(source, 'sheet_music');
+      if (cached != null) paths.add(cached);
+    }
+    return paths;
   }
 }
 
 class DownloadRepository {
-  Future<bool> isDownloadAvailable(String mediaType) async {
-    return mediaType == 'audio';
+  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
+
+  Future<bool> isDownloadAvailable(String mediaType, Uri? source) async {
+    return source != null && source.scheme.startsWith('http');
   }
 
-  Future<void> requestDownload({
+  Future<CachedMediaFile> requestDownload({
     required String mediaType,
     required int hymnNumber,
     required Uri source,
+    void Function(int received, int? total)? onProgress,
   }) async {
-    throw UnsupportedError(
-      'Download storage is not configured for $mediaType yet.',
+    return _cache.download(
+      source,
+      mediaType,
+      onProgress: onProgress,
     );
   }
 }

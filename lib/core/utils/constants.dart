@@ -9,6 +9,7 @@ class AppConstants {
   static const String keyKeepScreenOn = 'keep_screen_on';
   static const String keyBackgroundImageEnabled = 'background_image_enabled';
   static const String keyFavoriteHymns = 'favorite_hymns';
+  static const String keyFavoriteHymnsVersioned = 'favorite_hymns_by_version';
   static const String keyHistory = 'hymn_history';
   static const String keyOnboardingCompleted = 'onboarding_completed';
   static const String keyDataCollectionEnabled = 'data_collection_enabled';

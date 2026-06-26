@@ -212,9 +212,9 @@ class SettingsDropdownTile extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: AppColors.accentGreen,
-                  width: 1.4,
+                borderSide: BorderSide(
+                  color: AppColors.divider.withValues(alpha: 0.55),
+                  width: 1,
                 ),
               ),
             ),

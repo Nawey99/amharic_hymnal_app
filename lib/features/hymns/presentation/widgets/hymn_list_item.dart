@@ -108,8 +108,8 @@ class HymnListItem extends StatelessWidget {
 
     final textScaler = MediaQuery.of(context).textScaler;
     final textScaleFactor = textScaler.scale(1.0);
-    final englishTitle = hymn.englishTitleOld?.trim();
-    final hasEnglishTitle = englishTitle != null && englishTitle.isNotEmpty;
+    final englishTitle = hymn.displayEnglishTitle;
+    final hasEnglishTitle = englishTitle.isNotEmpty;
     final scaledFontSize =
         (fontSize * 0.85).clamp(16.0, 18.0) * textScaleFactor.clamp(0.8, 1.25);
 

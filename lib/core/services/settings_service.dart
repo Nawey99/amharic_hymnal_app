@@ -97,9 +97,43 @@ class SettingsService {
   }
 
   // Favorites
+  static String _favoriteKey(String version, int hymnNumber) {
+    return '${HymnalVersions.normalizeId(version)}:$hymnNumber';
+  }
+
+  static List<String> getFavoriteHymnKeys() {
+    final stored =
+        _prefs?.getStringList(AppConstants.keyFavoriteHymnsVersioned) ??
+            const <String>[];
+    return stored
+        .where((item) => RegExp(r'^[a-z0-9_]+:\d+$').hasMatch(item))
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
   static List<int> getFavoriteHymns() {
-    final List<String>? favorites =
-        _prefs?.getStringList(AppConstants.keyFavoriteHymns);
+    final version = getSelectedVersion();
+    final versioned = getFavoriteHymnKeys()
+        .where((key) => key.startsWith('$version:'))
+        .map((key) => int.tryParse(key.split(':').last) ?? 0)
+        .where((e) => e > 0)
+        .toList();
+    if (versioned.isNotEmpty) return versioned;
+
+    final legacy = _legacyFavoriteHymns();
+    if (legacy.isNotEmpty) {
+      final migrated = legacy.map((number) => _favoriteKey(version, number));
+      _prefs?.setStringList(
+        AppConstants.keyFavoriteHymnsVersioned,
+        migrated.toSet().toList()..sort(),
+      );
+    }
+    return legacy;
+  }
+
+  static List<int> _legacyFavoriteHymns() {
+    final favorites = _prefs?.getStringList(AppConstants.keyFavoriteHymns);
     if (favorites == null) return [];
     return favorites
         .map((e) => int.tryParse(e) ?? 0)
@@ -108,25 +142,60 @@ class SettingsService {
   }
 
   static Future<bool> setFavoriteHymns(List<int> hymnNumbers) async {
-    final List<String> favorites =
-        hymnNumbers.map((e) => e.toString()).toList();
+    final version = getSelectedVersion();
+    final otherVersionFavorites = getFavoriteHymnKeys()
+        .where((key) => !key.startsWith('$version:'))
+        .toList();
+    final currentVersionFavorites = hymnNumbers
+        .where((number) => number > 0)
+        .map((number) => _favoriteKey(version, number));
+    final merged = {
+      ...otherVersionFavorites,
+      ...currentVersionFavorites,
+    }.toList()
+      ..sort();
+
+    await _prefs?.setStringList(
+      AppConstants.keyFavoriteHymns,
+      hymnNumbers.map((e) => e.toString()).toList(),
+    );
     return await _prefs?.setStringList(
-            AppConstants.keyFavoriteHymns, favorites) ??
+            AppConstants.keyFavoriteHymnsVersioned, merged) ??
         false;
   }
 
-  static Future<bool> toggleFavorite(int hymnNumber) async {
-    final List<int> favorites = getFavoriteHymns();
-    if (favorites.contains(hymnNumber)) {
-      favorites.remove(hymnNumber);
+  static Future<bool> toggleFavorite(int hymnNumber, {String? version}) async {
+    final selectedVersion = HymnalVersions.normalizeId(
+      version ?? getSelectedVersion(),
+    );
+    final key = _favoriteKey(selectedVersion, hymnNumber);
+    final favorites = getFavoriteHymnKeys().toSet();
+    if (favorites.contains(key)) {
+      favorites.remove(key);
     } else {
-      favorites.add(hymnNumber);
+      favorites.add(key);
     }
-    return await setFavoriteHymns(favorites);
+    final sorted = favorites.toList()..sort();
+    await _prefs?.setStringList(
+      AppConstants.keyFavoriteHymns,
+      sorted
+          .where((item) => item.startsWith('${getSelectedVersion()}:'))
+          .map((item) => item.split(':').last)
+          .toList(),
+    );
+    return await _prefs?.setStringList(
+            AppConstants.keyFavoriteHymnsVersioned, sorted) ??
+        false;
   }
 
-  static bool isFavorite(int hymnNumber) {
-    return getFavoriteHymns().contains(hymnNumber);
+  static bool isFavorite(int hymnNumber, {String? version}) {
+    final selectedVersion = HymnalVersions.normalizeId(
+      version ?? getSelectedVersion(),
+    );
+    return getFavoriteHymnKeys().contains(_favoriteKey(
+      selectedVersion,
+      hymnNumber,
+    ));
   }
 
   // Onboarding

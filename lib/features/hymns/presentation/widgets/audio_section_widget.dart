@@ -121,7 +121,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
           SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Checking audio availability...',
+              'ድምፅ በመፈተሽ ላይ...',
               style: TextStyle(
                 color: AppColors.secondaryText,
                 fontSize: 14,
@@ -159,7 +159,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
           SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Audio unavailable',
+              'ድምፅ አልተገኘም',
               style: TextStyle(
                 color: AppColors.secondaryText,
                 fontSize: 14,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
+import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
@@ -27,6 +28,8 @@ class MusicPlayerWidget extends StatefulWidget {
 
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   final GlobalAudioService _audioService = GlobalAudioService();
+  final AudioRepository _audioRepository = AudioRepository();
+  final DownloadRepository _downloadRepository = DownloadRepository();
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration?>? _durationSubscription;
   StreamSubscription<PlayerState>? _playbackStateSubscription;
@@ -115,6 +118,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     });
 
     try {
+      if (widget.hymnNumber != LocalDummyAudioRepository.dummyHymnNumber) {
+        final playedCached = await _playCachedOrDownloadRemoteAudio();
+        if (playedCached) return;
+      }
       await _audioService.play(
         widget.hymnNumber,
         hymnTitle: widget.hymnTitle,
@@ -129,13 +136,72 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to load audio: ${e.toString()}'),
+              content: Text('ድምፅ መክፈት አልተቻለም: ${e.toString()}'),
               backgroundColor: Colors.red,
             ),
           );
         }
       }
     }
+  }
+
+  Future<bool> _playCachedOrDownloadRemoteAudio() async {
+    final source = await _audioRepository.remoteSourceForNumber(
+      widget.hymnNumber,
+    );
+    if (source == null) return false;
+
+    final cachedPath = await _audioRepository.cachedPathFor(source);
+    if (cachedPath != null) {
+      await _audioService.playLocalFile(
+        widget.hymnNumber,
+        cachedPath,
+        hymnTitle: widget.hymnTitle,
+      );
+      return true;
+    }
+
+    if (!mounted) return true;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text(
+          'ድምፅ ይውረድ?',
+          style: TextStyle(color: AppColors.primaryText),
+        ),
+        content: const Text(
+          'ይህ ድምፅ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም ማጫወት ይችላሉ።',
+          style: TextStyle(color: AppColors.secondaryText),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('ይቅር'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('አውርድ'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      setState(() => _isLoading = false);
+      return true;
+    }
+
+    final cached = await _downloadRepository.requestDownload(
+      mediaType: 'audio',
+      hymnNumber: widget.hymnNumber,
+      source: source,
+    );
+    await _audioService.playLocalFile(
+      widget.hymnNumber,
+      cached.path,
+      hymnTitle: widget.hymnTitle,
+    );
+    return true;
   }
 
   @override
@@ -199,7 +265,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                     ),
                     if (isThisHymnActive)
                       Text(
-                        'Hymn #${widget.hymnNumber}',
+                        'መዝሙር ${widget.hymnNumber}',
                         style: const TextStyle(
                           color: AppColors.secondaryText,
                           fontSize: 12,
@@ -226,7 +292,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _errorMessage ?? 'Audio unavailable',
+                      _errorMessage ?? 'ድምፅ አልተገኘም',
                       style: const TextStyle(
                         color: Colors.red,
                         fontSize: 12,

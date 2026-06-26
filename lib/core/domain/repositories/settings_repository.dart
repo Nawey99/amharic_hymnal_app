@@ -28,9 +28,10 @@ abstract class SettingsRepository {
 
   // Favorites
   List<int> getFavoriteHymns();
+  List<String> getFavoriteHymnKeys();
   Future<bool> setFavoriteHymns(List<int> hymnNumbers);
-  Future<bool> toggleFavorite(int hymnNumber);
-  bool isFavorite(int hymnNumber);
+  Future<bool> toggleFavorite(int hymnNumber, {String? version});
+  bool isFavorite(int hymnNumber, {String? version});
 
   // Onboarding
   bool isOnboardingCompleted();
