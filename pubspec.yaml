@@ -84,6 +84,8 @@ flutter:
     - assets/data/database/SDA_Hymnal.json
     - assets/fonts/NotoSansEthiopic-Regular.ttf
     - assets/images/background.jpg
+    - assets/images/favicon.png
+    - assets/onboarding/
     - assets/category/
     - assets/sheet_music/
 

@@ -7,7 +7,7 @@ class AppSplashScreen extends StatelessWidget {
 
   const AppSplashScreen({
     super.key,
-    this.message = 'Preparing your hymnal...',
+    this.message = 'መዝሙሮችን በማዘጋጀት ላይ...',
   });
 
   @override
@@ -42,33 +42,40 @@ class AppSplashScreen extends StatelessWidget {
                         color: AppColors.accentGreen.withValues(alpha: 0.38),
                       ),
                     ),
-                    child: const Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(
-                          Icons.menu_book_rounded,
-                          color: AppColors.accentGreen,
-                          size: 48,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(22),
+                      child: Image.asset(
+                        'assets/images/favicon.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.menu_book_rounded,
+                              color: AppColors.accentGreen,
+                              size: 48,
+                            ),
+                            Positioned(
+                              right: 19,
+                              bottom: 19,
+                              child: Icon(
+                                Icons.music_note_rounded,
+                                color: AppColors.primaryText,
+                                size: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          right: 19,
-                          bottom: 19,
-                          child: Icon(
-                            Icons.music_note_rounded,
-                            color: AppColors.primaryText,
-                            size: 18,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
                   const Text(
-                    'Amharic Adventist Hymnal',
+                    'ውዳሴ',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.primaryText,
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',
                       height: 1.2,
@@ -76,7 +83,7 @@ class AppSplashScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'ውዳሴ',
+                    'የአማርኛ አድቬንቲስት መዝሙር',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.accentGreen,

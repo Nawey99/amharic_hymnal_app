@@ -7,33 +7,25 @@ import 'package:amharic_hymnal_app/core/utils/amharic_utils.dart';
 class AlphabetScrollBar extends StatelessWidget {
   final List<String> letters;
   final Function(String) onLetterSelected;
+  final double bottomPadding;
 
   const AlphabetScrollBar({
     super.key,
     required this.letters,
     required this.onLetterSelected,
+    this.bottomPadding = 0,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    // Group letters by primary letter
+  static List<String> visibleLetters(List<String> letters) {
     final groupedLetters = AmharicUtils.groupLettersByPrimary(letters);
-
-    // Build list of letters to show in scrollbar
-    // Only show letters that actually have hymns (not dimmed, just don't show inactive ones)
-    final List<String> lettersToShow = [];
+    final lettersToShow = <String>[];
     final primaryLettersList = AmharicUtils.primaryLetters;
 
     for (final primaryLetter in primaryLettersList) {
-      // Only show primary letter if it has hymns
       if (groupedLetters.containsKey(primaryLetter)) {
         lettersToShow.add(primaryLetter);
-
-        // Show all children letters that appear in hymns
         final groupChildren = groupedLetters[primaryLetter]!;
         final allGroupLetters = AmharicUtils.getGroupLetters(primaryLetter);
-
-        // Add children letters that appear in hymns (excluding the primary which we already added)
         for (final childLetter in allGroupLetters) {
           if (childLetter != primaryLetter &&
               groupChildren.contains(childLetter)) {
@@ -42,11 +34,18 @@ class AlphabetScrollBar extends StatelessWidget {
         }
       }
     }
+    return lettersToShow;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lettersToShow = visibleLetters(letters);
+    final primaryLettersList = AmharicUtils.primaryLetters;
 
     return Positioned(
       right: 0,
       top: 0,
-      bottom: 0,
+      bottom: bottomPadding,
       child: GestureDetector(
         onVerticalDragUpdate: (details) {
           final RenderBox? box = context.findRenderObject() as RenderBox?;

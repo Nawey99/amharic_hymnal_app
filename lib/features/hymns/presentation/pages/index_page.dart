@@ -69,21 +69,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    // Close search if empty when app goes to background
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
-      if (_isSearchVisible && _searchController.currentQuery.isEmpty) {
-        setState(() {
-          _isSearchVisible = false;
-          _searchFocusNode.unfocus();
-        });
-      }
-    }
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // When page becomes visible, reload full list if no local search
@@ -488,6 +473,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         children: [
           _buildHymnListView(),
           _buildAlphabetScrollBar(),
+          _buildNumberJumpRail(),
         ],
       ),
     );
@@ -537,6 +523,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     final state = context.read<HymnsBloc>().state;
     final hasAlphabetScrollBar =
         state is HymnsLoaded && state.sortType == 'name';
+    final hasNumberRail = state is HymnsLoaded && state.sortType == 'number';
     final sortType = state is HymnsLoaded ? state.sortType : null;
     final hymnsToDisplay = _hymnsForDisplay(hymns, sortType);
 
@@ -556,8 +543,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
     // Step 3: Fix ListView Rendering - Ensure proper constraints and visibility
     // Conditionally apply right padding only when sorted by name (for alphabet scrollbar)
-    final rightPadding =
-        hasAlphabetScrollBar ? 48.0 : 16.0; // 48px only when sorted by name
+    final rightPadding = (hasAlphabetScrollBar || hasNumberRail) ? 54.0 : 16.0;
 
     return ListView.builder(
       controller: _scrollController,
@@ -617,10 +603,92 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           return AlphabetScrollBar(
             letters: letters,
             onLetterSelected: _scrollToLetter,
+            bottomPadding: NavBarConstants.getBottomPadding(context),
           );
         }
         return const SizedBox();
       },
+    );
+  }
+
+  Widget _buildNumberJumpRail() {
+    return BlocBuilder<HymnsBloc, HymnsState>(
+      builder: (context, state) {
+        if (state is! HymnsLoaded || state.sortType != 'number') {
+          return const SizedBox.shrink();
+        }
+        final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
+        if (hymnsToDisplay.length < 80) return const SizedBox.shrink();
+
+        const jumpPoints = [1, 50, 100, 150, 200, 250, 300];
+        final bottomPadding = NavBarConstants.getBottomPadding(context);
+        return Positioned(
+          right: 14,
+          top: 8,
+          bottom: bottomPadding,
+          child: SafeArea(
+            left: false,
+            child: Center(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.24),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.12),
+                  ),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: jumpPoints
+                        .map(
+                          (point) => InkWell(
+                            borderRadius: BorderRadius.circular(999),
+                            onTap: () =>
+                                _scrollToNearestNumber(point, hymnsToDisplay),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 3,
+                                vertical: 5,
+                              ),
+                              child: Text(
+                                '$point',
+                                style: const TextStyle(
+                                  color: AppColors.primaryText,
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  fontFamily: 'NotoSansEthiopic',
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _scrollToNearestNumber(int number, List<Hymn> hymns) {
+    if (!_scrollController.hasClients || hymns.isEmpty) return;
+    var targetIndex = hymns.indexWhere((hymn) => hymn.displayNumber >= number);
+    if (targetIndex < 0) targetIndex = hymns.length - 1;
+    final scrollPosition =
+        (targetIndex * _estimatedHymnItemExtent) + _listVerticalPadding;
+    final target = scrollPosition
+        .clamp(0.0, _scrollController.position.maxScrollExtent)
+        .toDouble();
+    _scrollController.animateTo(
+      target,
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
     );
   }
 

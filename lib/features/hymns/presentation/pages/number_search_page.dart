@@ -92,21 +92,6 @@ class _NumberSearchPageState extends State<NumberSearchPage>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    // Close search if empty when app goes to background
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
-      if (_isSearchVisible && _searchController.currentQuery.isEmpty) {
-        setState(() {
-          _isSearchVisible = false;
-          _searchFocusNode.unfocus();
-        });
-      }
-    }
-  }
-
-  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _searchSubscription?.cancel();
@@ -271,6 +256,11 @@ class _NumberSearchPageState extends State<NumberSearchPage>
         _searchFocusNode.unfocus();
       }
     });
+    if (willShowSearch) {
+      Future.delayed(const Duration(milliseconds: 80), () {
+        if (mounted) _searchFocusNode.requestFocus();
+      });
+    }
     if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
       _handleSearchQuery(_searchController.currentQuery);
     }
@@ -421,12 +411,12 @@ class _NumberSearchPageState extends State<NumberSearchPage>
   Widget _buildNumberInput(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildNumberInputField(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             _buildOpenButton(),
           ],
         ),
@@ -447,29 +437,29 @@ class _NumberSearchPageState extends State<NumberSearchPage>
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: TextStyle(
           color: AppColors.primaryText,
-          fontSize: settingsRepository.getFontSize() * 1.2,
+          fontSize: settingsRepository.getFontSize() * 1.08,
           fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
           hintStyle: TextStyle(
             color: AppColors.tertiaryText,
-            fontSize: settingsRepository.getFontSize() * 1.2,
+            fontSize: settingsRepository.getFontSize() * 1.08,
           ),
           prefixIcon: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(14.0),
             child: Text(
               '#',
               style: TextStyle(
                 color: AppColors.primaryText,
-                fontSize: settingsRepository.getFontSize() * 1.2,
+                fontSize: settingsRepository.getFontSize() * 1.08,
                 fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
           border: InputBorder.none,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         ),
         onSubmitted: (_) => _openHymn(),
       ),
@@ -481,7 +471,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
       width: double.infinity,
       child: GlassButton(
         onPressed: _openHymn,
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         borderRadius: 16.0,
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
