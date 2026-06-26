@@ -49,7 +49,7 @@ android {
             enable true
             reset()
             include 'armeabi-v7a', 'arm64-v8a', 'x86_64'
-            universalApk false
+            universalApk true
         }
     }
 }
@@ -58,22 +58,22 @@ flutter {
     source = "../.."
 }
 
-// Task to copy APK to Flutter's expected location
-tasks.whenTaskAdded { task ->
-    if (task.name == "assembleDebug" || task.name == "assembleRelease") {
-        task.doLast {
-            def buildType = task.name.replace("assemble", "").toLowerCase()
-            def gradleApkPath = file("build/outputs/flutter-apk/app-${buildType}.apk")
-            def flutterApkPath = file("../../build/app/outputs/flutter-apk/app-${buildType}.apk")
-            
-            if (gradleApkPath.exists()) {
-                flutterApkPath.parentFile.mkdirs()
-                copy {
-                    from gradleApkPath
-                    into flutterApkPath.parentFile
-                }
-                println "Copied APK to Flutter expected location: ${flutterApkPath.absolutePath}"
+// Keep Flutter's top-level APK path in sync after Gradle finishes writing APKs.
+gradle.buildFinished {
+    ["debug", "release"].each { buildType ->
+        def gradleApkPath = file("build/outputs/flutter-apk/app-${buildType}.apk")
+        def flutterApkPath = file("../../build/app/outputs/flutter-apk/app-${buildType}.apk")
+
+        if (gradleApkPath.exists()) {
+            flutterApkPath.parentFile.mkdirs()
+            if (flutterApkPath.exists()) {
+                flutterApkPath.delete()
             }
+            copy {
+                from gradleApkPath
+                into flutterApkPath.parentFile
+            }
+            println "Copied APK to Flutter expected location: ${flutterApkPath.absolutePath} from ${gradleApkPath.absolutePath}"
         }
     }
 }
