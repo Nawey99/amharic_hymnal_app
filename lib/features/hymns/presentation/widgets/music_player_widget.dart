@@ -264,7 +264,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                         ),
                         onPressed:
                             isThisHymnActive ? _togglePlayPause : _loadAudio,
-                        tooltip: _isPlaying ? 'Pause' : 'Play',
+                        tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
                       ),
                 const SizedBox(width: 8),
                 // Progress slider
@@ -331,7 +331,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Playback error: ${e.toString()}'),
+            content: Text('የድምፅ ስህተት: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

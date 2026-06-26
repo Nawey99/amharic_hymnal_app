@@ -70,9 +70,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            widget.author != null
-                ? 'Author: ${widget.author}'
-                : widget.category,
+            widget.author != null ? 'ደራሲ፦ ${widget.author}' : widget.category,
             style: const TextStyle(
               color: AppColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
@@ -111,7 +109,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                             ),
                             const SizedBox(width: 8),
                             const Text(
-                              'Sort by Number',
+                              'በቁጥር',
                               style: TextStyle(
                                 fontFamily: 'NotoSansEthiopic',
                               ),
@@ -134,7 +132,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                             ),
                             const SizedBox(width: 8),
                             const Text(
-                              'Sort by Name',
+                              'በስም',
                               style: TextStyle(
                                 fontFamily: 'NotoSansEthiopic',
                               ),
@@ -211,8 +209,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
                     title: widget.author != null
-                        ? 'No hymns found for this author'
-                        : 'No hymns found in this category',
+                        ? 'ለዚህ ደራሲ መዝሙር አልተገኘም'
+                        : 'በዚህ ምድብ መዝሙር አልተገኘም',
                   );
                 }
 

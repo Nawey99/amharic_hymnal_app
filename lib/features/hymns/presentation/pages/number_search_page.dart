@@ -278,7 +278,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
     return SearchTextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'Search hymns by name...',
+      hintText: 'በርዕስ መዝሙር ይፈልጉ...',
       autofocus: true,
       onClear: () {
         final state = context.read<HymnsBloc>().state;
@@ -480,7 +480,7 @@ class _NumberSearchPageState extends State<NumberSearchPage>
                 size: 24, color: AppColors.primaryText),
             SizedBox(width: 12),
             Text(
-              'OPEN',
+              'ክፈት',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

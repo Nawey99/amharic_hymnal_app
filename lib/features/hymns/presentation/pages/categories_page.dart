@@ -53,8 +53,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
             builder: (context, state) {
               final title = (state is HymnsLoaded &&
                       state.version == HymnalVersions.hagerigna)
-                  ? 'Authors'
-                  : 'Categories';
+                  ? 'ደራሲዎች'
+                  : 'ምድቦች';
               return Text(
                 title,
                 style: const TextStyle(
@@ -106,7 +106,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   if (categories.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.category_outlined,
-                      title: 'No categories found',
+                      title: 'ምድቦች አልተገኙም',
                     );
                   }
 
@@ -138,7 +138,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   if (authors.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.person_outline,
-                      title: 'No authors found',
+                      title: 'ደራሲዎች አልተገኙም',
                     );
                   }
 
@@ -170,7 +170,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               // For other versions, show empty state
               return const EmptyStateWidget(
                 icon: Icons.category_outlined,
-                title: 'Categories only available for SDA Hymnal',
+                title: 'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
               );
             },
           ),

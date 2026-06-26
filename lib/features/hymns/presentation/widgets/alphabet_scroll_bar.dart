@@ -60,47 +60,65 @@ class AlphabetScrollBar extends StatelessWidget {
             }
           }
         },
-        child: Container(
-          width: 32,
-          // Add clear spacing between scrollbar and song list to prevent overlap
-          margin: const EdgeInsets.only(right: 16),
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: lettersToShow.map((letter) {
-                final isPrimary = primaryLettersList.contains(letter);
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableHeight = constraints.maxHeight;
+            final itemHeight = lettersToShow.isEmpty
+                ? 18.0
+                : (availableHeight / lettersToShow.length)
+                    .clamp(12.0, 22.0)
+                    .toDouble();
 
-                return GestureDetector(
-                  onTap: () {
-                    onLetterSelected(letter);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: isPrimary ? 2 : 1,
-                    ),
-                    child: Text(
-                      letter,
-                      style: TextStyle(
-                        color: AppColors.primaryText,
-                        fontSize: isPrimary ? 12 : 10,
-                        fontWeight:
-                            isPrimary ? FontWeight.bold : FontWeight.w500,
-                        fontFamily: 'NotoSansEthiopic',
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.8),
-                            blurRadius: 2,
-                            offset: const Offset(0, 1),
+            return Container(
+              width: 32,
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.08),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: lettersToShow.map((letter) {
+                  final isPrimary = primaryLettersList.contains(letter);
+
+                  return GestureDetector(
+                    onTap: () {
+                      onLetterSelected(letter);
+                    },
+                    child: SizedBox(
+                      height: itemHeight,
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            letter,
+                            style: TextStyle(
+                              color: AppColors.primaryText,
+                              fontSize: isPrimary ? 12 : 10,
+                              fontWeight:
+                                  isPrimary ? FontWeight.bold : FontWeight.w500,
+                              fontFamily: 'NotoSansEthiopic',
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.8),
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+                  );
+                }).toList(),
+              ),
+            );
+          },
         ),
       ),
     );

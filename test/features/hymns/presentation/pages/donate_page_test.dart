@@ -11,7 +11,7 @@ void main() {
     await tester.tap(find.text('PayPal'));
     await tester.pumpAndSettle();
 
-    expect(find.text('PayPal donations are coming soon.'), findsOneWidget);
+    expect(find.text('የPayPal ድጋፍ በቅርቡ ይዘጋጃል።'), findsOneWidget);
   });
 
   testWidgets('National Bank page exposes copyable fields', (tester) async {
@@ -30,20 +30,20 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: DonatePage()));
 
-    await tester.tap(find.text('National Bank'));
+    await tester.tap(find.text('ብሔራዊ ባንክ'));
     await tester.pumpAndSettle();
 
-    expect(find.text('National Bank'), findsWidgets);
+    expect(find.text('ብሔራዊ ባንክ'), findsWidgets);
     expect(
-      find.textContaining('Bank transfer details are prepared'),
+      find.textContaining('የባንክ ድጋፍ መረጃ'),
       findsOneWidget,
     );
-    expect(find.byTooltip('Copy'), findsWidgets);
+    expect(find.byTooltip('ቅዳ'), findsWidgets);
 
-    await tester.tap(find.byTooltip('Copy').first);
+    await tester.tap(find.byTooltip('ቅዳ').first);
     await tester.pumpAndSettle();
 
     expect(copiedText, 'National Bank of Ethiopia');
-    expect(find.text('Bank copied'), findsOneWidget);
+    expect(find.text('ባንክ ተቀድቷል'), findsOneWidget);
   });
 }

@@ -22,7 +22,7 @@ class BugReportRepositoryImpl implements BugReportRepository {
         return const BugReportSubmissionResult(
           submitted: true,
           queued: false,
-          message: 'Bug report submitted successfully!',
+          message: 'የስህተት ሪፖርት ተልኳል!',
         );
       }
 
@@ -31,8 +31,8 @@ class BugReportRepositoryImpl implements BugReportRepository {
         submitted: false,
         queued: queued,
         message: queued
-            ? 'Bug report queued. Will submit when online.'
-            : 'Failed to submit bug report. Please try again.',
+            ? 'ሪፖርቱ ተቀምጧል። ኢንተርኔት ሲኖር ይላካል።'
+            : 'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
       );
     } catch (_) {
       final queued = await _queuer(payload);
@@ -40,8 +40,8 @@ class BugReportRepositoryImpl implements BugReportRepository {
         submitted: false,
         queued: queued,
         message: queued
-            ? 'Bug report queued. Will submit when online.'
-            : 'Failed to submit bug report. Please try again.',
+            ? 'ሪፖርቱ ተቀምጧል። ኢንተርኔት ሲኖር ይላካል።'
+            : 'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
       );
     }
   }

@@ -7,6 +7,7 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -67,14 +68,14 @@ class _HistoryPageState extends State<HistoryPage> {
                   icon: const Icon(Icons.delete_outline),
                   color: AppColors.primaryText,
                   onPressed: () => _showClearHistoryDialog(context),
-                  tooltip: 'Clear history',
+                  tooltip: 'ታሪክን አጽዳ',
                 ),
               ],
             ),
             body: SafeArea(
               child: BlocBuilder<HymnsBloc, HymnsState>(
                 builder: (context, state) {
-                  final history = HistoryService.getHistory();
+                  final history = HistoryService.getHistoryEntries();
 
                   if (state is HymnsLoading) {
                     return const Center(
@@ -103,19 +104,20 @@ class _HistoryPageState extends State<HistoryPage> {
                   if (history.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'No history yet',
-                      message: 'View hymns to see them in your history',
+                      title: 'እስካሁን ታሪክ የለም',
+                      message: 'መዝሙር ሲከፍቱ እዚህ ይታያል',
                     );
                   }
 
                   // Get hymns from history (in order of most recent first)
-                  final historyHymns = <Hymn>[];
-                  for (final hymnNumber in history) {
+                  final historyHymns = <(Hymn, HistoryEntry)>[];
+                  for (final entry in history) {
+                    if (entry.version != state.version) continue;
                     try {
                       final hymn = state.hymns.firstWhere(
-                        (h) => h.displayNumber == hymnNumber,
+                        (h) => h.displayNumber == entry.hymnNumber,
                       );
-                      historyHymns.add(hymn);
+                      historyHymns.add((hymn, entry));
                     } catch (e) {
                       // Hymn not found in current list, skip it
                       continue;
@@ -125,27 +127,57 @@ class _HistoryPageState extends State<HistoryPage> {
                   if (historyHymns.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'No history found',
+                      title: 'በዚህ መዝሙር ስብስብ ታሪክ የለም',
+                      message: 'መዝሙር ከከፈቱ በኋላ እዚህ ይታያል',
                     );
                   }
 
                   return ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      16,
+                      16,
+                      NavBarConstants.getBottomPadding(context),
+                    ),
                     itemCount: historyHymns.length,
                     itemBuilder: (context, index) {
-                      final hymn = historyHymns[index];
-                      return HymnListItem(
+                      final (hymn, entry) = historyHymns[index];
+                      return Dismissible(
                         key: ValueKey(
-                            'history_${hymn.id}_${hymn.displayNumber}'),
-                        hymn: hymn,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => HymnDetailPage(hymn: hymn),
-                            ),
+                          'history_${entry.version}_${hymn.id}_${hymn.displayNumber}',
+                        ),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.22),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        onDismissed: (_) async {
+                          await HistoryService.removeFromHistory(
+                            entry.hymnNumber,
+                            version: entry.version,
                           );
+                          if (mounted) setState(() {});
                         },
+                        child: HymnListItem(
+                          hymn: hymn,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => HymnDetailPage(hymn: hymn),
+                              ),
+                            );
+                          },
+                        ),
                       );
                     },
                   );
@@ -164,18 +196,18 @@ class _HistoryPageState extends State<HistoryPage> {
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surface,
         title: const Text(
-          'Clear History',
+          'ታሪክን አጽዳ',
           style: TextStyle(color: AppColors.primaryText),
         ),
         content: const Text(
-          'Are you sure you want to clear all history?',
+          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጠፋ?',
           style: TextStyle(color: AppColors.primaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text(
-              'Cancel',
+              'ይቅር',
               style: TextStyle(color: AppColors.primaryText),
             ),
           ),
@@ -188,7 +220,7 @@ class _HistoryPageState extends State<HistoryPage> {
               }
             },
             child: const Text(
-              'Clear',
+              'አጽዳ',
               style: TextStyle(color: AppColors.accentGreen),
             ),
           ),

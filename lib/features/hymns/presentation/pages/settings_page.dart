@@ -180,11 +180,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 items: [
                   const DropdownMenuItem(
                     value: HymnalVersions.sdaNew,
-                    child: Text('New SDA Hymnal'),
+                    child: Text('አዲስ የአድቬንቲስት መዝሙር'),
                   ),
                   const DropdownMenuItem(
                     value: HymnalVersions.sdaOld,
-                    child: Text('Old SDA Hymnal'),
+                    child: Text('ቀድሞ የአድቬንቲስት መዝሙር'),
                   ),
                   DropdownMenuItem(
                     value: HymnalVersions.hagerigna,
@@ -277,30 +277,36 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle('About'),
+              _buildSectionTitle('ስለ መተግበሪያው'),
               SettingsTile(
                 icon: Icons.code,
                 title: AppLocalizations.of(context)
                         ?.developmentContributionLabel ??
-                    'Development & Contribution',
+                    'ልማት እና አስተዋፅዖ',
                 description: AppLocalizations.of(context)
                         ?.developmentContributionDescription ??
-                    'View source code and contribute',
+                    'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
                 onTap: () async {
                   final uri = Uri.parse(
                       'https://github.com/Nawey99/amharic_hymnal_app');
 
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
+                      ),
+                    );
                   }
                 },
               ),
               const SizedBox(height: 12),
               SettingsTile(
                 icon: Icons.favorite,
-                title: AppLocalizations.of(context)?.donateLabel ?? 'Donate',
+                title: AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
                 description: AppLocalizations.of(context)?.donateDescription ??
-                    'Support the development of this app',
+                    'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
                 onTap: () {
                   Navigator.push(
                     context,
@@ -311,8 +317,8 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 12),
               SettingsTile(
                 icon: Icons.bug_report,
-                title: 'Report Bug',
-                description: 'Report issues or suggest improvements',
+                title: AppLocalizations.of(context)?.reportBug ?? 'ስህተት ላክ',
+                description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
                 onTap: () {
                   Navigator.push(
                     context,

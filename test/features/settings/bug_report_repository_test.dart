@@ -45,7 +45,7 @@ void main() {
 
     expect(result.submitted, isFalse);
     expect(result.queued, isTrue);
-    expect(result.message, contains('queued'));
+    expect(result.message, contains('ተቀምጧል'));
     expect(calls, ['submit', 'queue']);
   });
 

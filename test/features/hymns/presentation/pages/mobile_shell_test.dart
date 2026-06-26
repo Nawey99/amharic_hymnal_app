@@ -50,16 +50,16 @@ Future<HymnsBloc> _pumpShell(
 }
 
 void main() {
-  testWidgets('bottom nav order is Index, Favourite, Number, Category, Setting',
+  testWidgets('bottom nav order is Category, Index, Number, Fav, Setting',
       (tester) async {
     final bloc = await _pumpShell(tester);
     addTearDown(bloc.close);
 
-    expect(find.text('Index'), findsOneWidget);
-    expect(find.text('Favourite'), findsOneWidget);
-    expect(find.text('Number'), findsOneWidget);
-    expect(find.text('Category'), findsOneWidget);
-    expect(find.text('Setting'), findsOneWidget);
+    expect(find.text('ምድብ'), findsOneWidget);
+    expect(find.text('ማውጫ'), findsOneWidget);
+    expect(find.text('ቁጥር'), findsOneWidget);
+    expect(find.text('ተወዳጅ'), findsOneWidget);
+    expect(find.text('ቅንብር'), findsOneWidget);
 
     final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
     expect(navBar.selectedIndex, 2);
@@ -70,9 +70,9 @@ void main() {
     final bloc = await _pumpShell(tester, version: 'hagerigna');
     addTearDown(bloc.close);
 
-    expect(find.text('Category'), findsNothing);
+    expect(find.text('ምድብ'), findsNothing);
     final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
-    expect(navBar.selectedIndex, 2);
+    expect(navBar.selectedIndex, 1);
     expect(tester.takeException(), isNull);
   });
 

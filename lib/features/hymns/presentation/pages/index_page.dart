@@ -324,7 +324,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    'Adventist Hymnal',
+                    'መዝሙር ማውጫ',
                     style: TextStyle(
                       color: AppColors.primaryText,
                       fontSize: 23,
@@ -395,7 +395,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     return SearchTextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'Search hymns...',
+      hintText: 'መዝሙር ይፈልጉ...',
       autofocus: true,
       onClear: () => _reloadHymns(context),
     );
@@ -536,7 +536,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         icon: Icons.music_note,
         title: AppLocalizations.of(context)?.noHymnsFound ?? 'No hymns found',
         message: state is HymnsLoaded && state.sortType == 'name'
-            ? 'No hymns available for sorting by name'
+            ? 'በስም ለማደራጀት መዝሙር አልተገኘም'
             : null,
       );
     }
@@ -620,7 +620,15 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
         final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
         if (hymnsToDisplay.length < 80) return const SizedBox.shrink();
 
-        const jumpPoints = [1, 50, 100, 150, 200, 250, 300];
+        const jumpPoints = [
+          (1, '1'),
+          (50, '50'),
+          (100, '100'),
+          (150, '150'),
+          (200, '200'),
+          (250, '250'),
+          (300, '300'),
+        ];
         final bottomPadding = NavBarConstants.getBottomPadding(context);
         return Positioned(
           right: 14,
@@ -646,18 +654,20 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
                         .map(
                           (point) => InkWell(
                             borderRadius: BorderRadius.circular(999),
-                            onTap: () =>
-                                _scrollToNearestNumber(point, hymnsToDisplay),
+                            onTap: () => _scrollToNearestNumber(
+                              point.$1,
+                              hymnsToDisplay,
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 3,
+                                horizontal: 5,
                                 vertical: 5,
                               ),
                               child: Text(
-                                '$point',
+                                point.$2,
                                 style: const TextStyle(
                                   color: AppColors.primaryText,
-                                  fontSize: 9.5,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w800,
                                   fontFamily: 'NotoSansEthiopic',
                                 ),
@@ -701,7 +711,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surface,
         title: const Text(
-          'Sort By',
+          'አደራደር',
           style: TextStyle(color: AppColors.primaryText),
         ),
         content: _buildSortOptions(currentState),
@@ -714,13 +724,13 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildSortOption(
-          'Number',
+          'በቁጥር',
           'number',
           state.sortType,
           () => _applySort(state, 'number'),
         ),
         _buildSortOption(
-          'Name',
+          'በስም',
           'name',
           state.sortType,
           () => _applySort(state, 'name'),

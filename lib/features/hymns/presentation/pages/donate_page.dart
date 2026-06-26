@@ -25,7 +25,7 @@ class DonatePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)?.donateTitle ?? 'Donate'),
+          title: Text(AppLocalizations.of(context)?.donateTitle ?? 'ይለግሱ'),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -48,7 +48,7 @@ class DonatePage extends StatelessWidget {
                     ),
                     SizedBox(height: 16),
                     Text(
-                      'Support This App',
+                      'መተግበሪያውን ይደግፉ',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class DonatePage extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      'Your support helps us continue developing and improving this app. Thank you for your generosity!',
+                      'ድጋፍዎ ይህን መተግበሪያ ለማሻሻል እና ለማስቀጠል ይረዳናል። ለቸርነትዎ እናመሰግናለን።',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -71,15 +71,15 @@ class DonatePage extends StatelessWidget {
               _buildDonateOption(
                 context,
                 'PayPal',
-                'Coming soon',
+                'በቅርቡ ይዘጋጃል',
                 Icons.payment,
                 _DonationAction.paypal,
               ),
               const SizedBox(height: 12),
               _buildDonateOption(
                 context,
-                'National Bank',
-                'Bank transfer details',
+                'ብሔራዊ ባንክ',
+                'የባንክ ማስተላለፊያ መረጃ',
                 Icons.account_balance,
                 _DonationAction.bank,
               ),
@@ -129,11 +129,11 @@ class DonatePage extends StatelessWidget {
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('PayPal'),
-                content: const Text('PayPal donations are coming soon.'),
+                content: const Text('የPayPal ድጋፍ በቅርቡ ይዘጋጃል።'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
+                    child: const Text('እሺ'),
                   ),
                 ],
               ),
@@ -195,10 +195,10 @@ class NationalBankDonationPage extends StatelessWidget {
   const NationalBankDonationPage({super.key});
 
   static const _fields = [
-    ('Bank', 'National Bank of Ethiopia'),
-    ('Account Name', 'Wudase App Support'),
-    ('Account Number', 'To be provided'),
-    ('Branch', 'To be provided'),
+    ('ባንክ', 'National Bank of Ethiopia'),
+    ('የመለያ ስም', 'Wudase App Support'),
+    ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
+    ('ቅርንጫፍ', 'በኋላ ይጨመራል'),
   ];
 
   @override
@@ -224,7 +224,7 @@ class NationalBankDonationPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              title: const Text('National Bank'),
+              title: const Text('ብሔራዊ ባንክ'),
               centerTitle: true,
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -239,7 +239,7 @@ class NationalBankDonationPage extends StatelessWidget {
                     opacity: 0.12,
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      'Bank transfer details are prepared here so they can be enabled when the official account is ready.',
+                      'ይህ ገጽ የባንክ ድጋፍ መረጃ ለማሳየት ተዘጋጅቷል። ኦፊሴላዊ መለያው ሲዘጋጅ መረጃው ይሞላል።',
                       style: TextStyle(
                         color: AppColors.secondaryText,
                         fontSize: 15,
@@ -303,13 +303,13 @@ class _BankField extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Copy',
+            tooltip: 'ቅዳ',
             icon: const Icon(Icons.copy, color: AppColors.accentGreen),
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: value));
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('$label copied')),
+                  SnackBar(content: Text('$label ተቀድቷል')),
                 );
               }
             },

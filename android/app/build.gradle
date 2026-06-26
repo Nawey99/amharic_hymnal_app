@@ -58,11 +58,17 @@ flutter {
     source = "../.."
 }
 
+dependencies {
+    implementation "com.google.android.play:core:1.10.3"
+}
+
 // Keep Flutter's top-level APK path in sync after Gradle finishes writing APKs.
 gradle.buildFinished {
     ["debug", "release"].each { buildType ->
         def gradleApkPath = file("build/outputs/flutter-apk/app-${buildType}.apk")
         def flutterApkPath = file("../../build/app/outputs/flutter-apk/app-${buildType}.apk")
+        def gradleBundlePath = file("build/outputs/bundle/${buildType}/app-${buildType}.aab")
+        def flutterBundlePath = file("../../build/app/outputs/bundle/${buildType}/app-${buildType}.aab")
 
         if (gradleApkPath.exists()) {
             flutterApkPath.parentFile.mkdirs()
@@ -74,6 +80,18 @@ gradle.buildFinished {
                 into flutterApkPath.parentFile
             }
             println "Copied APK to Flutter expected location: ${flutterApkPath.absolutePath} from ${gradleApkPath.absolutePath}"
+        }
+
+        if (gradleBundlePath.exists()) {
+            flutterBundlePath.parentFile.mkdirs()
+            if (flutterBundlePath.exists()) {
+                flutterBundlePath.delete()
+            }
+            copy {
+                from gradleBundlePath
+                into flutterBundlePath.parentFile
+            }
+            println "Copied App Bundle to Flutter expected location: ${flutterBundlePath.absolutePath} from ${gradleBundlePath.absolutePath}"
         }
     }
 }

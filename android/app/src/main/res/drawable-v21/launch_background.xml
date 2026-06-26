@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Splash screen with placeholder logo (API 21+) -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Background color (adapts to system theme) -->
-    <item android:drawable="?android:colorBackground" />
+    <!-- Match the in-app splash background so startup reads as one flow. -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#141218" />
+        </shape>
+    </item>
 
     <!-- Splash logo centered -->
     <item>

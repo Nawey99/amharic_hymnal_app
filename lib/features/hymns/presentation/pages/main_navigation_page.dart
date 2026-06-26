@@ -27,7 +27,7 @@ class MainNavigationPage extends StatefulWidget {
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
-  int _selectedIndex = 2;
+  _NavDestination _selectedDestination = _NavDestination.number;
 
   @override
   void initState() {
@@ -55,8 +55,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   void _onItemTapped(int index) {
+    final state = context.read<HymnsBloc>().state;
+    final items = _navItemsForState(state);
+    if (index < 0 || index >= items.length) return;
     setState(() {
-      _selectedIndex = index;
+      _selectedDestination = items[index].destination;
     });
   }
 
@@ -71,20 +74,36 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       },
       builder: (context, state) {
         final items = _navItemsForState(state);
-        final selectedIndex = _selectedIndex.clamp(0, items.length - 1);
-        if (selectedIndex != _selectedIndex) {
+        final selectedIndex = items.indexWhere(
+          (item) => item.destination == _selectedDestination,
+        );
+        final effectiveSelectedIndex = selectedIndex < 0
+            ? items.indexWhere(
+                (item) => item.destination == _NavDestination.number,
+              )
+            : selectedIndex;
+        if (selectedIndex < 0 && items.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) setState(() => _selectedIndex = selectedIndex);
+            if (mounted) {
+              setState(() {
+                _selectedDestination = items[
+                        effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex]
+                    .destination;
+              });
+            }
           });
         }
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: IndexedStack(
-            index: selectedIndex,
+            index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
             children: items.map((item) => item.page).toList(growable: false),
           ),
-          bottomNavigationBar: _buildBottomNavigationBar(items, selectedIndex),
+          bottomNavigationBar: _buildBottomNavigationBar(
+            items,
+            effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
+          ),
         );
       },
     );
@@ -97,36 +116,41 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final showCategory = HymnalVersions.hasCategories(version);
 
     return [
-      _NavItem(
-        page: _pageFor(const IndexPage()),
-        icon: Icons.list_alt_outlined,
-        selectedIcon: Icons.list_alt_rounded,
-        label: 'Index',
-      ),
-      _NavItem(
-        page: _pageFor(const FavoritesPage()),
-        icon: Icons.favorite_outline_rounded,
-        selectedIcon: Icons.favorite_rounded,
-        label: 'Favourite',
-      ),
-      _NavItem(
-        page: _pageFor(const NumberSearchPage()),
-        icon: Icons.numbers_rounded,
-        selectedIcon: Icons.pin_rounded,
-        label: 'Number',
-      ),
       if (showCategory)
         _NavItem(
+          destination: _NavDestination.category,
           page: _pageFor(const CategoriesPage()),
           icon: Icons.category_outlined,
           selectedIcon: Icons.category_rounded,
-          label: 'Category',
+          label: 'ምድብ',
         ),
       _NavItem(
+        destination: _NavDestination.hymnIndex,
+        page: _pageFor(const IndexPage()),
+        icon: Icons.list_alt_outlined,
+        selectedIcon: Icons.list_alt_rounded,
+        label: 'ማውጫ',
+      ),
+      _NavItem(
+        destination: _NavDestination.number,
+        page: _pageFor(const NumberSearchPage()),
+        icon: Icons.numbers_rounded,
+        selectedIcon: Icons.pin_rounded,
+        label: 'ቁጥር',
+      ),
+      _NavItem(
+        destination: _NavDestination.favorites,
+        page: _pageFor(const FavoritesPage()),
+        icon: Icons.favorite_outline_rounded,
+        selectedIcon: Icons.favorite_rounded,
+        label: 'ተወዳጅ',
+      ),
+      _NavItem(
+        destination: _NavDestination.settings,
         page: _pageFor(const SettingsPage()),
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'Setting',
+        label: 'ቅንብር',
       ),
     ];
   }
@@ -160,7 +184,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
             color: selected ? AppColors.accentGreen : AppColors.secondaryText,
-            size: selected ? 24 : 21,
+            size: selected ? 28 : 24,
           );
         }),
       ),
@@ -183,15 +207,26 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         child: NavigationBar(
           selectedIndex: selectedIndex,
           height: compactLabels ? 66 : 70,
-          labelBehavior: compactLabels
-              ? NavigationDestinationLabelBehavior.onlyShowSelected
-              : NavigationDestinationLabelBehavior.alwaysShow,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           onDestinationSelected: _onItemTapped,
           destinations: items
               .map(
                 (item) => NavigationDestination(
                   icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
+                  selectedIcon: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentGreen.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: AppColors.accentGreen.withValues(alpha: 0.35),
+                      ),
+                    ),
+                    child: Icon(item.selectedIcon),
+                  ),
                   label: item.label,
                 ),
               )
@@ -202,13 +237,17 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 }
 
+enum _NavDestination { category, hymnIndex, number, favorites, settings }
+
 class _NavItem {
+  final _NavDestination destination;
   final Widget page;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
 
   const _NavItem({
+    required this.destination,
     required this.page,
     required this.icon,
     required this.selectedIcon,

@@ -84,7 +84,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Failed to submit bug report. Please try again.'),
+            content: Text('የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
           ),
@@ -117,7 +117,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)?.reportBug ?? 'Report Bug',
+            AppLocalizations.of(context)?.reportBug ?? 'ስህተት ሪፖርት',
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -138,7 +138,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Title',
+                        'ርዕስ',
                         style: TextStyle(
                           fontSize: settingsRepository.getFontSize() * 0.9,
                           fontWeight: FontWeight.bold,
@@ -147,9 +147,9 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       ),
                       const SizedBox(height: 8),
                       Semantics(
-                        label: 'Bug report title',
+                        label: 'የስህተት ሪፖርት ርዕስ',
                         textField: true,
-                        hint: 'Enter bug title',
+                        hint: 'ርዕስ ያስገቡ',
                         child: TextFormField(
                           controller: _titleController,
                           style: TextStyle(
@@ -158,7 +158,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Enter bug title...',
+                            hintText: 'የችግሩን ርዕስ ያስገቡ...',
                             hintStyle: TextStyle(
                               color: AppColors.tertiaryText,
                               fontSize: settingsRepository.getFontSize() * 0.9,
@@ -189,10 +189,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Please enter a title';
+                              return 'እባክዎ ርዕስ ያስገቡ';
                             }
                             if (value.trim().length < 3) {
-                              return 'Title must be at least 3 characters';
+                              return 'ርዕሱ ቢያንስ 3 ፊደላት መሆን አለበት';
                             }
                             return null;
                           },
@@ -211,7 +211,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Contact Email (Optional)',
+                        'የኢሜይል አድራሻ (አማራጭ)',
                         style: TextStyle(
                           fontSize: settingsRepository.getFontSize() * 0.9,
                           fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           if (email.isEmpty) return null;
                           final isValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
                               .hasMatch(email);
-                          return isValid ? null : 'Enter a valid email';
+                          return isValid ? null : 'ትክክለኛ ኢሜይል ያስገቡ';
                         },
                       ),
                     ],
@@ -278,7 +278,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Description',
+                        'መግለጫ',
                         style: TextStyle(
                           fontSize: settingsRepository.getFontSize() * 0.9,
                           fontWeight: FontWeight.bold,
@@ -287,9 +287,9 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       ),
                       const SizedBox(height: 8),
                       Semantics(
-                        label: 'Bug report description',
+                        label: 'የስህተት ሪፖርት መግለጫ',
                         textField: true,
-                        hint: 'Describe the bug in detail',
+                        hint: 'ችግሩን በዝርዝር ይግለጹ',
                         child: TextFormField(
                           controller: _descriptionController,
                           maxLines: 8,
@@ -299,7 +299,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Describe the bug in detail...',
+                            hintText: 'ችግሩን በዝርዝር ይግለጹ...',
                             hintStyle: TextStyle(
                               color: AppColors.tertiaryText,
                               fontSize: settingsRepository.getFontSize() * 0.9,
@@ -330,10 +330,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Please enter a description';
+                              return 'እባክዎ መግለጫ ያስገቡ';
                             }
                             if (value.trim().length < 10) {
-                              return 'Description must be at least 10 characters';
+                              return 'መግለጫው ቢያንስ 10 ፊደላት መሆን አለበት';
                             }
                             return null;
                           },
@@ -344,7 +344,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 ),
                 const SizedBox(height: 24),
                 Semantics(
-                  label: 'Submit bug report',
+                  label: 'የስህተት ሪፖርት ላክ',
                   button: true,
                   child: SizedBox(
                     width: double.infinity,
@@ -371,7 +371,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                               ),
                             )
                           : Text(
-                              'Submit Bug Report',
+                              'ሪፖርት ላክ',
                               style: TextStyle(
                                 fontSize: settingsRepository.getFontSize(),
                                 fontWeight: FontWeight.bold,

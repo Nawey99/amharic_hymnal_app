@@ -121,7 +121,7 @@ class _AppInitializerState extends State<AppInitializer> {
           setState(() {
             _isInitializing = false;
             _hasError = true;
-            _errorMessage = 'Failed to initialize app: ${e2.toString()}';
+            _errorMessage = 'መተግበሪያውን ማስጀመር አልተቻለም: ${e2.toString()}';
           });
         }
         return;
@@ -155,7 +155,7 @@ class _AppInitializerState extends State<AppInitializer> {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
         home: AppErrorWidget(
-          message: _errorMessage ?? 'Failed to initialize app',
+          message: _errorMessage ?? 'መተግበሪያውን ማስጀመር አልተቻለም',
           onRetry: () {
             setState(() {
               _isInitializing = true;

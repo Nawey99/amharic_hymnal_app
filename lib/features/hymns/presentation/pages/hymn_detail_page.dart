@@ -57,9 +57,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
     // Track the hymn if we have a hymn or hymn number
     if (widget.hymn != null) {
-      await HistoryService.addToHistory(widget.hymn!.displayNumber);
+      await HistoryService.addToHistory(
+        widget.hymn!.displayNumber,
+        version: _getVersion(),
+      );
     } else if (widget.hymnNumber != null) {
-      await HistoryService.addToHistory(widget.hymnNumber!);
+      await HistoryService.addToHistory(
+        widget.hymnNumber!,
+        version: _getVersion(),
+      );
     }
   }
 
@@ -358,6 +364,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   ) {
     if (compactActions) {
       return [
+        if (!hymn.isHagerigna) _buildSheetMusicButton(hymn),
         _buildFavoriteButton(hymn, isFavorite),
         _buildOverflowMenuButton(hymn),
       ];
@@ -374,7 +381,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildOverflowMenuButton(Hymn hymn) {
     return PopupMenuButton<_HymnAction>(
       icon: const Icon(Icons.more_vert, color: AppColors.primaryText),
-      tooltip: 'More',
+      tooltip: 'ተጨማሪ',
       color: AppColors.surface,
       onSelected: (action) {
         switch (action) {
@@ -389,23 +396,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       itemBuilder: (context) => [
         if (!hymn.isHagerigna)
           const PopupMenuItem(
-            value: _HymnAction.sheetMusic,
-            child: ListTile(
-              leading: Icon(Icons.music_note, color: AppColors.primaryText),
-              title: Text(
-                'Sheet Music',
-                style: TextStyle(color: AppColors.primaryText),
-              ),
-            ),
-          ),
-        if (!hymn.isHagerigna)
-          const PopupMenuItem(
             value: _HymnAction.audio,
             child: ListTile(
               leading:
                   Icon(Icons.play_circle_outline, color: AppColors.primaryText),
               title: Text(
-                'Audio Player',
+                'ድምፅ',
                 style: TextStyle(color: AppColors.primaryText),
               ),
             ),
@@ -415,7 +411,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           child: ListTile(
             leading: Icon(Icons.share, color: AppColors.primaryText),
             title: Text(
-              'Share',
+              'አጋራ',
               style: TextStyle(color: AppColors.primaryText),
             ),
           ),
@@ -431,7 +427,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: const Icon(Icons.music_note, color: AppColors.primaryText),
-        tooltip: 'Sheet Music',
+        tooltip: 'ኖታ',
         onPressed: () => _openSheetMusic(hymn),
       ),
     );
@@ -445,7 +441,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: IconButton(
         icon:
             const Icon(Icons.play_circle_outline, color: AppColors.primaryText),
-        tooltip: 'Audio Player',
+        tooltip: 'ድምፅ',
         onPressed: () => _showAudioForHymn(hymn),
       ),
     );
@@ -456,7 +452,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     if (!mounted) return;
 
     if (files.isEmpty) {
-      _showComingSoonMessage('No sheet music available');
+      _showComingSoonMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
       return;
     }
 
@@ -485,7 +481,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         isFavorite ? Icons.favorite : Icons.favorite_border,
         color: isFavorite ? AppColors.accentGreen : AppColors.primaryText,
       ),
-      tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
+      tooltip: isFavorite ? 'ከተወዳጅ አስወግድ' : 'ወደ ተወዳጅ ጨምር',
       onPressed: () {
         setState(() {
           _favoriteOverrides[hymn.displayNumber] = !isFavorite;
@@ -503,7 +499,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: const Icon(Icons.share, color: AppColors.primaryText),
-        tooltip: 'Share',
+        tooltip: 'አጋራ',
         onPressed: () => _shareHymn(hymn),
       ),
     );
@@ -530,12 +526,35 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             child: _buildAudioSection(hymn),
           ),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            child: _buildLyricsSection(hymn, fontSize),
-          ),
+          child: _buildLyricsViewport(hymn, fontSize),
         ),
       ],
+    );
+  }
+
+  Widget _buildLyricsViewport(Hymn hymn, double fontSize) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onScaleStart: (details) {
+        if (details.pointerCount >= 2) {
+          _scaleStartZoom = _lyricsZoomScale;
+        }
+      },
+      onScaleUpdate: (details) {
+        if (details.pointerCount < 2) return;
+        final nextScale = (_scaleStartZoom * details.scale).clamp(
+          AppConstants.minZoomScale,
+          AppConstants.maxZoomScale,
+        );
+        if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
+        setState(() {
+          _lyricsZoomScale = nextScale;
+        });
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: _buildLyricsSection(hymn, fontSize),
+      ),
     );
   }
 
@@ -593,7 +612,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   Widget _buildTitleText(String title, double fontSize) {
     return Text(
-      title.isNotEmpty ? title : 'No title',
+      title.isNotEmpty ? title : 'ርዕስ የለም',
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: AppColors.primaryText,
         fontSize: fontSize * 1.3,
@@ -624,50 +645,29 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       AppConstants.maxFontSize * AppConstants.maxZoomScale,
     );
 
-    return GestureDetector(
-      behavior: HitTestBehavior.deferToChild,
-      onScaleStart: (details) {
-        if (details.pointerCount >= 2) {
-          _scaleStartZoom = _lyricsZoomScale;
-        }
-      },
-      onScaleUpdate: (details) {
-        if (details.pointerCount < 2) return;
-        final nextScale = (_scaleStartZoom * details.scale).clamp(
-          AppConstants.minZoomScale,
-          AppConstants.maxZoomScale,
-        );
-        if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
-        setState(() {
-          _lyricsZoomScale = nextScale;
-        });
-      },
-      child: GlassContainer(
-        borderRadius: 12.0,
-        blurSigma: 12.0,
-        opacity: 0.25,
-        padding: padding,
-        child: SelectableText(
-          hymn.displayLyrics.isNotEmpty
-              ? hymn.displayLyrics
-              : 'No lyrics available',
-          style: TextStyle(
-            color: AppColors.primaryText,
-            fontSize: effectiveFontSize,
-            height: AppTheme.getLineHeight(effectiveFontSize),
-            fontFamily: 'NotoSansEthiopic',
-            letterSpacing: AppTheme.getLetterSpacing(effectiveFontSize),
-            shadows: [
-              Shadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                blurRadius: 2,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          textAlign: TextAlign.start,
-          textWidthBasis: TextWidthBasis.parent,
+    return GlassContainer(
+      borderRadius: 12.0,
+      blurSigma: 12.0,
+      opacity: 0.25,
+      padding: padding,
+      child: SelectableText(
+        hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
+        style: TextStyle(
+          color: AppColors.primaryText,
+          fontSize: effectiveFontSize,
+          height: AppTheme.getLineHeight(effectiveFontSize),
+          fontFamily: 'NotoSansEthiopic',
+          letterSpacing: AppTheme.getLetterSpacing(effectiveFontSize),
+          shadows: [
+            Shadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
+        textAlign: TextAlign.start,
+        textWidthBasis: TextWidthBasis.parent,
       ),
     );
   }
@@ -689,7 +689,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error sharing: $e'),
+            content: Text('በማጋራት ላይ ስህተት ተፈጥሯል: $e'),
             duration: const Duration(seconds: 2),
           ),
         );

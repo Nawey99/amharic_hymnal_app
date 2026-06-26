@@ -96,7 +96,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         // Page indicator
         if (widget.sheetMusicFiles.length > 1) ...[
@@ -123,7 +123,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             ),
             SizedBox(height: 12),
             Text(
-              'No sheet music available',
+              'ኖታ አልተገኘም',
               style: TextStyle(
                 color: AppColors.secondaryText,
                 fontSize: 14,
@@ -166,8 +166,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Widget _buildSheetMusicViewer() {
-    return SizedBox(
-      height: 400,
+    return Expanded(
       child: PageView.builder(
         controller: _pageController,
         onPageChanged: (index) {
@@ -178,7 +177,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         itemCount: widget.sheetMusicFiles.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
             child: _buildSheetMusicPage(index),
           );
         },
@@ -203,7 +202,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             child: Row(
               children: [
                 Text(
-                  'Page $label',
+                  'ገጽ $label',
                   style: const TextStyle(
                     color: AppColors.primaryText,
                     fontSize: 14,
@@ -221,17 +220,17 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
               onDoubleTap: () => _togglePageZoom(controller),
               child: InteractiveViewer(
                 transformationController: controller,
-                minScale: 0.8, // Minimum zoom for sheet music
-                maxScale: 2.0, // Maximum zoom for sheet music
+                minScale: 1.0,
+                maxScale: 4.0,
                 panEnabled: true,
                 boundaryMargin: const EdgeInsets.all(100),
                 constrained: true,
                 onInteractionEnd: (_) {
                   final currentScale = controller.value.getMaxScaleOnAxis();
-                  if (currentScale < 0.8) {
-                    controller.value = Matrix4.identity()..scale(0.8);
-                  } else if (currentScale > 2.0) {
-                    controller.value = Matrix4.identity()..scale(2.0);
+                  if (currentScale < 1.0) {
+                    controller.value = Matrix4.identity();
+                  } else if (currentScale > 4.0) {
+                    controller.value = Matrix4.identity()..scale(4.0);
                   }
                 },
                 child: RepaintBoundary(
@@ -249,7 +248,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     final currentScale = controller.value.getMaxScaleOnAxis();
     controller.value = currentScale > 1.01
         ? Matrix4.identity()
-        : (Matrix4.identity()..scale(1.6));
+        : (Matrix4.identity()..scale(2.0));
   }
 
   Widget _buildSheetMusicImage(String assetPath) {
@@ -327,7 +326,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Image not found\n$assetPath',
+            'የኖታ ምስል አልተገኘም\n$assetPath',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.secondaryText,

@@ -268,7 +268,7 @@ class _FavoritesPageState extends State<FavoritesPage>
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'Favorites',
+                'ተወዳጆች',
                 style: TextStyle(
                   color: AppColors.primaryText,
                   fontSize: 24,
@@ -306,7 +306,7 @@ class _FavoritesPageState extends State<FavoritesPage>
     return AppSearchBar(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'Search favorites...',
+      hintText: 'ተወዳጆችን ይፈልጉ...',
       autofocus: true,
       onChanged: (value) {
         _handleSearchChange();
