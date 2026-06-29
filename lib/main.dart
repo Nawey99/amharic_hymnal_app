@@ -8,10 +8,10 @@ import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/services/sheet_music_discovery_service.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:amharic_hymnal_app/core/widgets/app_splash_screen.dart';
 import 'package:amharic_hymnal_app/core/widgets/error_widget.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
@@ -58,7 +58,6 @@ class _AppInitializerState extends State<AppInitializer> {
   }
 
   Future<void> _initializeApp() async {
-    final startedAt = DateTime.now();
     try {
       // Initialize dependencies (includes Drift database initialization)
       // Drift works on all platforms including web (uses IndexedDB on web)
@@ -86,12 +85,6 @@ class _AppInitializerState extends State<AppInitializer> {
           debugPrint('Warning: Sheet music discovery failed: $e');
         }
       });
-
-      final elapsed = DateTime.now().difference(startedAt);
-      const minimumSplashDuration = Duration(milliseconds: 1400);
-      if (elapsed < minimumSplashDuration) {
-        await Future.delayed(minimumSplashDuration - elapsed);
-      }
 
       if (mounted) {
         setState(() {
@@ -143,8 +136,8 @@ class _AppInitializerState extends State<AppInitializer> {
         key: const ValueKey('splash'),
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
-        home: const AppSplashScreen(
-          message: 'መዝሙሮችን በማዘጋጀት ላይ...',
+        home: const Scaffold(
+          backgroundColor: AppColors.primaryBackground,
         ),
       );
     }
