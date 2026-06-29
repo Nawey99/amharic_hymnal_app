@@ -130,7 +130,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('በውዳሴ እንኳን ደህና መጡ'), findsOneWidget);
+      expect(find.text('ውዳሴ ምን ያደርጋል?'), findsOneWidget);
+      expect(find.textContaining('ከታች'), findsWidgets);
       expect(find.text('Skip'), findsNothing);
       expect(find.text('Next'), findsNothing);
       expect(tester.takeException(), isNull);
