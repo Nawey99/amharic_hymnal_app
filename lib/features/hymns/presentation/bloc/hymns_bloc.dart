@@ -36,6 +36,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   StreamSubscription<bool>? _dbReadySubscription;
+  String? _activeLoadKey;
 
   // Track pending queries that failed due to database not being ready
   // Using a single map to track all pending queries by type
@@ -102,10 +103,12 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   Future<void> close() {
     _dbReadySubscription?.cancel();
     _pendingQueries.clear();
+    _activeLoadKey = null;
     return super.close();
   }
 
   Future<void> _onLoadHymns(LoadHymns event, Emitter<HymnsState> emit) async {
+    final loadKey = '${event.languageCode}|${event.version}|${event.sortType}';
     final currentState = state;
     if (currentState is HymnsLoaded &&
         currentState.languageCode == event.languageCode &&
@@ -113,7 +116,11 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
         currentState.sortType == event.sortType) {
       return;
     }
+    if (_activeLoadKey == loadKey) {
+      return;
+    }
 
+    _activeLoadKey = loadKey;
     emit(HymnsLoading());
     final result = await getHymns(GetHymnsParams(
       languageCode: event.languageCode,
@@ -142,6 +149,9 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
         ));
       },
     );
+    if (_activeLoadKey == loadKey) {
+      _activeLoadKey = null;
+    }
   }
 
   Future<void> _onSearchHymns(

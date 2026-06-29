@@ -36,13 +36,6 @@ class _FavoritesPageState extends State<FavoritesPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Load hymns when page is opened
-    final settingsRepository = sl<SettingsRepository>();
-    final languageCode = settingsRepository.getSelectedLanguage();
-    final version = settingsRepository.getSelectedVersion();
-    final sortType = settingsRepository.getSortType();
-    context.read<HymnsBloc>().add(LoadHymns(languageCode, version, sortType));
-
     _searchController.addListener(_handleSearchChange);
   }
 
