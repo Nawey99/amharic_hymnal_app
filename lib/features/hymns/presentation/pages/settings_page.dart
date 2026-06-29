@@ -150,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   // ),
                 ],
                 onChanged: (value) async {
-                  if (value != null) {
+                  if (value != null && value != _selectedLanguage) {
                     final repo = sl<SettingsRepository>();
                     final bloc = context.read<HymnsBloc>();
                     await repo.setSelectedLanguage(value);
@@ -192,7 +192,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ],
                 onChanged: (value) async {
-                  if (value != null) {
+                  if (value != null && value != _selectedVersion) {
                     final repo = sl<SettingsRepository>();
                     final bloc = context.read<HymnsBloc>();
                     await repo.setSelectedVersion(value);

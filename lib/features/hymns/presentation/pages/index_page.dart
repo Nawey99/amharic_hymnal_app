@@ -657,11 +657,14 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     );
   }
 
-  void _showSortDialog(BuildContext context) {
+  Future<void> _showSortDialog(BuildContext context) async {
     final currentState = context.read<HymnsBloc>().state;
     if (currentState is! HymnsLoaded) return;
 
-    showDialog(
+    final effectiveSortType = currentState.sortType == 'search'
+        ? _sortTypeBeforeSearch
+        : currentState.sortType;
+    final selectedSortType = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surface,
@@ -669,26 +672,35 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
           'አደራደር',
           style: TextStyle(color: AppColors.primaryText),
         ),
-        content: _buildSortOptions(currentState),
+        content: _buildSortOptions(effectiveSortType),
       ),
     );
+
+    if (!mounted ||
+        !context.mounted ||
+        selectedSortType == null ||
+        selectedSortType == effectiveSortType) {
+      return;
+    }
+
+    final latestState = context.read<HymnsBloc>().state;
+    if (latestState is! HymnsLoaded) return;
+    _applySort(latestState, selectedSortType);
   }
 
-  Widget _buildSortOptions(HymnsLoaded state) {
+  Widget _buildSortOptions(String currentSortType) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildSortOption(
           'በቁጥር',
           'number',
-          state.sortType,
-          () => _applySort(state, 'number'),
+          currentSortType,
         ),
         _buildSortOption(
           'በስም',
           'name',
-          state.sortType,
-          () => _applySort(state, 'name'),
+          currentSortType,
         ),
       ],
     );
@@ -698,7 +710,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     String title,
     String value,
     String currentValue,
-    VoidCallback onSelected,
   ) {
     final isSelected = currentValue == value;
     IconData icon;
@@ -719,7 +730,7 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     }
 
     return InkWell(
-      onTap: onSelected,
+      onTap: () => Navigator.of(context).pop(value),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -777,7 +788,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
     context.read<HymnsBloc>().add(
           ChangeSort(state.languageCode, state.version, sortType),
         );
-    Navigator.pop(context);
   }
 
   ImageProvider _getBackgroundImage() {

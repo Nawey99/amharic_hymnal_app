@@ -89,6 +89,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                       color: AppColors.primaryText,
                     ),
                     onSelected: (value) {
+                      if (value == _sortType) return;
                       setState(() {
                         _sortType = value;
                       });
