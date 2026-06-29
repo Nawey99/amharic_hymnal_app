@@ -27,7 +27,7 @@ class IndexPage extends StatefulWidget {
   State<IndexPage> createState() => _IndexPageState();
 }
 
-class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
+class _IndexPageState extends State<IndexPage> {
   static const double _estimatedHymnItemExtent = 96.0;
   static const double _listVerticalPadding = 8.0;
 
@@ -41,14 +41,9 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   String _currentSectionLetter =
       ''; // Track current section letter for dynamic updates
   String _sortTypeBeforeSearch = 'number';
-  // Local search query tracking for page independence
-  // Used to determine if page should reload full list when becoming visible
-  String _localSearchQuery = '';
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     // Add scroll listener to update section indicator dynamically
     _scrollController.addListener(_updateSectionIndicator);
     _searchSubscription = _searchController.queryStream.listen((query) {
@@ -59,42 +54,12 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _searchSubscription?.cancel();
     _scrollController.removeListener(_updateSectionIndicator);
     _searchController.dispose();
     _scrollController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // When page becomes visible, reload full list if no local search
-    // This ensures search independence between pages
-    final isVisible = ModalRoute.of(context)?.isCurrent ?? false;
-    if (isVisible && _localSearchQuery.isEmpty) {
-      // Clear any search state from other pages by reloading full list
-      final currentState = context.read<HymnsBloc>().state;
-      if (currentState is HymnsLoaded) {
-        // Only reload if current state is from a search without a local query.
-        // This prevents unnecessary reloads
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _localSearchQuery.isEmpty) {
-            context.read<HymnsBloc>().add(
-                  LoadHymns(
-                    currentState.languageCode,
-                    currentState.version,
-                    currentState.sortType == 'search'
-                        ? _sortTypeBeforeSearch
-                        : currentState.sortType,
-                  ),
-                );
-          }
-        });
-      }
-    }
   }
 
   /// Update section indicator based on current scroll position
@@ -404,10 +369,6 @@ class _IndexPageState extends State<IndexPage> with WidgetsBindingObserver {
   }
 
   void _handleSearchQuery(String value) {
-    setState(() {
-      _localSearchQuery = value;
-    });
-
     // If empty, reload immediately
     if (value.isEmpty) {
       _reloadHymns(context);

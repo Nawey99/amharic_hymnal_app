@@ -72,45 +72,6 @@ class _FavoritesPageState extends State<FavoritesPage>
     }
   }
 
-  bool _wasVisible = false; // Track previous visibility state
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Track page visibility for auto-close search functionality
-    final isVisible = ModalRoute.of(context)?.isCurrent ?? false;
-
-    // Auto-close search when leaving page AND search is empty
-    if (_wasVisible &&
-        !isVisible &&
-        _isSearchVisible &&
-        _searchController.text.isEmpty) {
-      setState(() {
-        _isSearchVisible = false;
-        _searchFocusNode.unfocus();
-      });
-    }
-
-    // When page becomes visible, reload full list if no local search
-    // This ensures search independence between pages
-    if (isVisible && _searchQuery.isEmpty) {
-      // Clear any search state from other pages by reloading full list
-      final currentState = context.read<HymnsBloc>().state;
-      if (currentState is HymnsLoaded) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _searchQuery.isEmpty) {
-            context.read<HymnsBloc>().add(
-                  LoadHymns(currentState.languageCode, currentState.version,
-                      currentState.sortType),
-                );
-          }
-        });
-      }
-    }
-
-    _wasVisible = isVisible; // Update visibility state
-  }
-
   void _handleSearchChange() {
     _searchDebounceTimer?.cancel();
 

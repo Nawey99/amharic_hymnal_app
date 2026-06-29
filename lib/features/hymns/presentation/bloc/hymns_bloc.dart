@@ -106,6 +106,14 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   }
 
   Future<void> _onLoadHymns(LoadHymns event, Emitter<HymnsState> emit) async {
+    final currentState = state;
+    if (currentState is HymnsLoaded &&
+        currentState.languageCode == event.languageCode &&
+        currentState.version == event.version &&
+        currentState.sortType == event.sortType) {
+      return;
+    }
+
     emit(HymnsLoading());
     final result = await getHymns(GetHymnsParams(
       languageCode: event.languageCode,
@@ -254,6 +262,10 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   Future<void> _onChangeSort(ChangeSort event, Emitter<HymnsState> emit) async {
     if (state is HymnsLoaded) {
       final currentState = state as HymnsLoaded;
+      if (currentState.sortType == event.sortType) {
+        return;
+      }
+
       await settingsRepository.setSortType(event.sortType);
       emit(HymnsLoaded(
         currentState.hymns,

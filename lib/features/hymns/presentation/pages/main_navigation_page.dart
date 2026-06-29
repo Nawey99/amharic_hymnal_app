@@ -61,9 +61,36 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final state = context.read<HymnsBloc>().state;
     final items = _navItemsForState(state);
     if (index < 0 || index >= items.length) return;
+    final destination = items[index].destination;
+    if (destination == _selectedDestination) return;
+
     setState(() {
-      _selectedDestination = items[index].destination;
+      _selectedDestination = destination;
     });
+    _loadDataForDestination(destination);
+  }
+
+  void _loadDataForDestination(_NavDestination destination) {
+    if (destination == _NavDestination.category ||
+        destination == _NavDestination.settings) {
+      return;
+    }
+
+    final settingsRepository = sl<SettingsRepository>();
+    final state = context.read<HymnsBloc>().state;
+    final languageCode = state is HymnsLoaded
+        ? state.languageCode
+        : settingsRepository.getSelectedLanguage();
+    final version = state is HymnsLoaded
+        ? state.version
+        : settingsRepository.getSelectedVersion();
+    final sortType = destination == _NavDestination.number
+        ? 'number'
+        : settingsRepository.getSortType();
+
+    context.read<HymnsBloc>().add(
+          LoadHymns(languageCode, version, sortType),
+        );
   }
 
   @override

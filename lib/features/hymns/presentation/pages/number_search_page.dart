@@ -25,8 +25,7 @@ class NumberSearchPage extends StatefulWidget {
   State<NumberSearchPage> createState() => _NumberSearchPageState();
 }
 
-class _NumberSearchPageState extends State<NumberSearchPage>
-    with WidgetsBindingObserver {
+class _NumberSearchPageState extends State<NumberSearchPage> {
   final TextEditingController _numberController = TextEditingController();
   final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
@@ -34,14 +33,9 @@ class _NumberSearchPageState extends State<NumberSearchPage>
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchVisible = false;
   StreamSubscription<String>? _searchSubscription;
-  // Local search query tracking for page independence
-  // Used to determine if page should reload full list when becoming visible
-  String _localSearchQuery = '';
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     // Listen to SearchStateController stream and dispatch to BLoC
     _searchSubscription = _searchController.queryStream.listen((query) {
       if (!mounted) return;
@@ -49,51 +43,8 @@ class _NumberSearchPageState extends State<NumberSearchPage>
     });
   }
 
-  bool _wasVisible = false; // Track previous visibility state
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Track page visibility for auto-close search functionality
-    final isVisible = ModalRoute.of(context)?.isCurrent ?? false;
-
-    // Auto-close search when leaving page AND search is empty
-    if (_wasVisible &&
-        !isVisible &&
-        _isSearchVisible &&
-        _searchController.currentQuery.isEmpty) {
-      setState(() {
-        _isSearchVisible = false;
-        _searchFocusNode.unfocus();
-      });
-    }
-
-    // When page becomes visible, reload full list if no local search
-    // This ensures search independence between pages
-    // Number page always uses 'number' sortType to maintain its own context
-    if (isVisible && _localSearchQuery.isEmpty) {
-      // Clear any search state from other pages by reloading full list with Number page's sortType
-      final currentState = context.read<HymnsBloc>().state;
-      if (currentState is HymnsLoaded) {
-        // Always reload with 'number' sortType for Number page (its default)
-        // This ensures Index page searches don't affect Number page
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _localSearchQuery.isEmpty) {
-            context.read<HymnsBloc>().add(
-                  LoadHymns(currentState.languageCode, currentState.version,
-                      'number'), // Number page always uses 'number' sortType
-                );
-          }
-        });
-      }
-    }
-
-    _wasVisible = isVisible; // Update visibility state
-  }
-
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _searchSubscription?.cancel();
     _numberController.dispose();
     _searchController.dispose();
@@ -104,11 +55,6 @@ class _NumberSearchPageState extends State<NumberSearchPage>
   }
 
   void _handleSearchQuery(String query) {
-    // Store local search query
-    setState(() {
-      _localSearchQuery = query;
-    });
-
     // If empty, reload immediately with Number page's sortType
     if (query.isEmpty) {
       final state = context.read<HymnsBloc>().state;
