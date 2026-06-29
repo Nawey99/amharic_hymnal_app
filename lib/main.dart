@@ -175,6 +175,11 @@ class MyApp extends StatelessWidget {
 
   // Determine which page to show on startup
   Widget _getInitialPage(SettingsRepository settingsRepository) {
+    const forceOnboarding = bool.fromEnvironment('WUDASE_FORCE_ONBOARDING');
+    if (forceOnboarding) {
+      return const OnboardingPage();
+    }
+
     // Check if onboarding has been completed
     final isCompleted = settingsRepository.isOnboardingCompleted();
     if (isCompleted) {
