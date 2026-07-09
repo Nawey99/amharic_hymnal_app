@@ -329,7 +329,7 @@ class _FavoritesPageState extends State<FavoritesPage>
     final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     final isKeyboardVisible = keyboardHeight > 0;
     final lift =
-        isKeyboardVisible ? (keyboardHeight * 0.35).clamp(90.0, 150.0) : 0.0;
+        isKeyboardVisible ? (keyboardHeight * 0.2).clamp(48.0, 84.0) : 0.0;
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 180),
@@ -342,7 +342,8 @@ class _FavoritesPageState extends State<FavoritesPage>
         );
       },
       child: Align(
-        alignment: Alignment.center,
+        alignment:
+            isKeyboardVisible ? const Alignment(0, 0.18) : Alignment.center,
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.sizeOf(context).height * 0.52,
