@@ -33,6 +33,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   final FocusNode _numberFocusNode = FocusNode();
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchVisible = false;
+  String? _numberErrorMessage;
   StreamSubscription<String>? _searchSubscription;
   @override
   void initState() {
@@ -121,21 +122,12 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   void _showInvalidNumberMessage(String message) {
-    final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
-    final bottomMargin = keyboardHeight > 0
-        ? keyboardHeight + 16
-        : NavBarConstants.getBottomPadding(context);
+    setState(() => _numberErrorMessage = message);
+  }
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.fromLTRB(16, 0, 16, bottomMargin),
-        duration: const Duration(seconds: 3),
-      ),
-    );
+  void _clearNumberError() {
+    if (_numberErrorMessage == null) return;
+    setState(() => _numberErrorMessage = null);
   }
 
   @override
@@ -410,7 +402,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildNumberInputField(),
-            const SizedBox(height: 20),
+            _buildNumberErrorMessage(),
+            const SizedBox(height: 16),
             _buildOpenButton(),
           ],
         ),
@@ -424,11 +417,18 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       borderRadius: 16.0,
       blurSigma: 12.0,
       opacity: 0.15,
+      border: Border.all(
+        color: _numberErrorMessage == null
+            ? Colors.white.withValues(alpha: 0.3)
+            : Colors.red,
+        width: _numberErrorMessage == null ? 1.5 : 1.8,
+      ),
       child: TextField(
         controller: _numberController,
         focusNode: _numberFocusNode,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: (_) => _clearNumberError(),
         style: TextStyle(
           color: AppColors.primaryText,
           fontSize: settingsRepository.getFontSize() * 1.08,
@@ -457,6 +457,28 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         ),
         onSubmitted: (_) => _openHymn(),
       ),
+    );
+  }
+
+  Widget _buildNumberErrorMessage() {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      child: _numberErrorMessage == null
+          ? const SizedBox(height: 16)
+          : Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                _numberErrorMessage!,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'NotoSansEthiopic',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
     );
   }
 
