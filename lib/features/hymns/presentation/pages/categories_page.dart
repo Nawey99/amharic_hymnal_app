@@ -57,21 +57,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: BlocBuilder<HymnsBloc, HymnsState>(
-            builder: (context, state) {
-              final title = (state is HymnsLoaded &&
-                      state.version == HymnalVersions.hagerigna)
-                  ? 'ደራሲዎች'
-                  : 'ምድቦች';
-              return Text(
-                title,
-                style: const TextStyle(
-                  color: AppColors.primaryText,
-                  fontFamily: 'NotoSansEthiopic',
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            },
+          title: const Text(
+            'ውዳሴ',
+            style: TextStyle(
+              color: AppColors.primaryText,
+              fontFamily: 'NotoSansEthiopic',
+              fontWeight: FontWeight.bold,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,

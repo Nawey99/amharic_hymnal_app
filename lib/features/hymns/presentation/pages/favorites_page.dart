@@ -213,7 +213,7 @@ class _FavoritesPageState extends State<FavoritesPage>
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'ተወዳጆች',
+                'ውዳሴ',
                 style: TextStyle(
                   color: AppColors.primaryText,
                   fontSize: 24,
