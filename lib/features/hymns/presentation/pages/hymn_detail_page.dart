@@ -15,6 +15,7 @@ import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
@@ -37,8 +38,8 @@ class HymnDetailPage extends StatefulWidget {
 class _HymnDetailPageState extends State<HymnDetailPage> {
   double _horizontalDragStart = 0.0;
   bool _isHorizontalDrag = false;
-  bool _isExpectingNewHymn =
-      false; // Track if we're expecting a new hymn from swipe
+  Future<Hymn?>? _numberLookupFuture;
+  bool _isLoadingAdjacentHymn = false;
   int? _displayedHymnNumber;
   double _lyricsZoomScale = AppConstants.defaultZoomScale;
   double _scaleStartZoom = AppConstants.defaultZoomScale;
@@ -49,6 +50,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.hymnNumber != null && widget.hymn == null) {
+      _numberLookupFuture = _loadHymnByNumber(widget.hymnNumber!);
+    }
     // Track hymn view in history
     _trackHymnView();
   }
@@ -73,57 +77,14 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // If only hymnNumber is provided, load it
     if (widget.hymnNumber != null && widget.hymn == null) {
-      final settingsRepository = sl<SettingsRepository>();
-      final languageCode = settingsRepository.getSelectedLanguage();
-      final version = settingsRepository.getSelectedVersion();
-      _isExpectingNewHymn = true; // Set flag when loading hymn by number
-      context
-          .read<HymnsBloc>()
-          .add(GetHymnByNumberEvent(languageCode, version, widget.hymnNumber!));
+      return _buildNumberLookupView(widget.hymnNumber!);
     }
 
     if (widget.hymn != null) {
-      // Debug: Check if hymn has data
-      if (widget.hymn!.displayTitle.isEmpty &&
-          widget.hymn!.displayLyrics.isEmpty) {
-        // Hymn data might be incomplete, try to reload
-        final settingsRepository = sl<SettingsRepository>();
-        final languageCode = settingsRepository.getSelectedLanguage();
-        final version = settingsRepository.getSelectedVersion();
-        _isExpectingNewHymn = true; // Set flag when reloading hymn data
-        context.read<HymnsBloc>().add(
-              GetHymnByNumberEvent(
-                  languageCode, version, widget.hymn!.displayNumber),
-            );
-      }
-
       return BlocListener<HymnsBloc, HymnsState>(
         listener: (context, state) {
-          // Handle navigation when hymn is loaded after swipe
-          // Only navigate if we're expecting a new hymn (from swipe gesture)
-          // and the hymn number is actually different
-          if (state is HymnsLoaded &&
-              state.hymns.isNotEmpty &&
-              widget.hymn != null &&
-              _isExpectingNewHymn) {
-            final newHymn = state.hymns.first;
-            // Only navigate if it's a different hymn
-            if (newHymn.displayNumber != widget.hymn!.displayNumber) {
-              _isExpectingNewHymn = false; // Reset flag
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => HymnDetailPage(hymn: newHymn),
-                ),
-              );
-            } else {
-              _isExpectingNewHymn = false; // Reset flag if same hymn
-            }
-          } else if (state is HymnsLoaded && !_isExpectingNewHymn) {
-            // State changed but we're not expecting a new hymn (e.g., favorite toggle)
-            // Just update the UI, don't navigate
+          if (state is HymnsLoaded) {
             if (mounted) {
               setState(() {});
             }
@@ -144,10 +105,21 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       );
     }
 
-    // If only hymnNumber is provided, fetch from BLoC state
-    return BlocBuilder<HymnsBloc, HymnsState>(
-      builder: (context, state) {
-        if (state is HymnsLoading) {
+    return const Scaffold(
+      backgroundColor: AppColors.primaryBackground,
+      body: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNumberLookupView(int hymnNumber) {
+    return FutureBuilder<Hymn?>(
+      future: _numberLookupFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
             backgroundColor: AppColors.primaryBackground,
             body: Center(
@@ -159,7 +131,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           );
         }
 
-        if (state is HymnsError) {
+        final hymn = snapshot.data;
+        if (hymn == null) {
           return Scaffold(
             backgroundColor: AppColors.primaryBackground,
             body: Center(
@@ -175,7 +148,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      state.message,
+                      'Hymn #$hymnNumber not found.',
                       style: const TextStyle(
                         color: AppColors.primaryText,
                         fontSize: 16,
@@ -190,21 +163,23 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           );
         }
 
-        if (state is HymnsLoaded && state.hymns.isNotEmpty) {
-          final hymn = state.hymns.first;
-          return _buildDetailView(context, hymn);
-        }
-
-        return const Scaffold(
-          backgroundColor: AppColors.primaryBackground,
-          body: Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-            ),
-          ),
-        );
+        return _buildDetailView(context, hymn);
       },
     );
+  }
+
+  Future<Hymn?> _loadHymnByNumber(int number) async {
+    final settingsRepository = sl<SettingsRepository>();
+    final languageCode = settingsRepository.getSelectedLanguage();
+    final version = settingsRepository.getSelectedVersion();
+    final result = await sl<GetHymnByNumber>()(
+      GetHymnByNumberParams(
+        languageCode: languageCode,
+        version: version,
+        number: number,
+      ),
+    );
+    return result.fold((_) => null, (hymn) => hymn);
   }
 
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
@@ -212,7 +187,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     final settingsRepository = sl<SettingsRepository>();
     final isFavorite = _favoriteOverrides[hymn.displayNumber] ??
         settingsRepository.isFavorite(hymn.displayNumber);
-    final languageCode = _getLanguageCode();
     final version = _getVersion();
 
     return GestureDetector(
@@ -232,7 +206,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       },
       onHorizontalDragEnd: (details) {
         if (_isHorizontalDrag && details.primaryVelocity != null) {
-          _handleSwipe(details, hymn.displayNumber, languageCode, version);
+          _handleSwipe(details, hymn.displayNumber);
         }
         _isHorizontalDrag = false;
       },
@@ -382,13 +356,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     _scaleStartZoom = AppConstants.defaultZoomScale;
   }
 
-  String _getLanguageCode() {
-    final state = context.read<HymnsBloc>().state;
-    if (state is HymnsLoaded) return state.languageCode;
-    final settingsRepository = sl<SettingsRepository>();
-    return settingsRepository.getSelectedLanguage();
-  }
-
   String _getVersion() {
     final state = context.read<HymnsBloc>().state;
     if (state is HymnsLoaded) return state.version;
@@ -396,26 +363,34 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return settingsRepository.getSelectedVersion();
   }
 
-  void _handleSwipe(DragEndDetails details, int currentNumber,
-      String languageCode, String version) {
-    if (details.primaryVelocity == null || !mounted) return;
-
-    // Set flag to indicate we're expecting a new hymn from swipe
-    _isExpectingNewHymn = true;
-
-    if (!mounted) return; // Double-check after setting flag
-
-    if (details.primaryVelocity! < 0) {
-      // Swipe left - next hymn
-      context
-          .read<HymnsBloc>()
-          .add(GetHymnByNumberEvent(languageCode, version, currentNumber + 1));
-    } else if (details.primaryVelocity! > 0 && currentNumber > 1) {
-      // Swipe right - previous hymn
-      context
-          .read<HymnsBloc>()
-          .add(GetHymnByNumberEvent(languageCode, version, currentNumber - 1));
+  Future<void> _handleSwipe(DragEndDetails details, int currentNumber) {
+    if (details.primaryVelocity == null || !mounted || _isLoadingAdjacentHymn) {
+      return Future.value();
     }
+
+    final nextNumber = switch (details.primaryVelocity!) {
+      < 0 => currentNumber + 1,
+      > 0 when currentNumber > 1 => currentNumber - 1,
+      _ => null,
+    };
+    if (nextNumber == null) return Future.value();
+
+    _isLoadingAdjacentHymn = true;
+    return _loadHymnByNumber(nextNumber).then((hymn) {
+      if (!mounted) return;
+      if (hymn == null) {
+        _showComingSoonMessage('መዝሙር #$nextNumber አልተገኘም');
+        return;
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HymnDetailPage(hymn: hymn),
+        ),
+      );
+    }).whenComplete(() {
+      _isLoadingAdjacentHymn = false;
+    });
   }
 
   Widget _buildBackground() {
