@@ -25,6 +25,7 @@ class MainPageTitleBar extends StatelessWidget {
         borderRadius: 16.0,
         blurSigma: 12.0,
         opacity: 0.15,
+        border: Border.all(color: Colors.transparent, width: 0),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: leading == null
             ? Row(
