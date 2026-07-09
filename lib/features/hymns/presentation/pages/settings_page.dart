@@ -26,6 +26,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  static final Uri _contributionUri =
+      Uri.parse('https://github.com/Nawey99/amharic_hymnal_app');
+
   String _selectedLanguage = 'am';
   String _selectedVersion = HymnalVersions.sdaNew;
   double _fontSize = 20.0;
@@ -296,21 +299,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       description: AppLocalizations.of(context)
                               ?.developmentContributionDescription ??
                           'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
-                      onTap: () async {
-                        final uri = Uri.parse(
-                            'https://github.com/Nawey99/amharic_hymnal_app');
-
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(uri,
-                              mode: LaunchMode.externalApplication);
-                        } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
-                            ),
-                          );
-                        }
-                      },
+                      onTap: _openContributionLink,
                     ),
                     const SizedBox(height: 12),
                     SettingsTile(
@@ -365,6 +354,21 @@ class _SettingsPageState extends State<SettingsPage> {
           : null,
       color: bgService.isEnabled ? null : AppColors.primaryBackground,
     );
+  }
+
+  Future<void> _openContributionLink() async {
+    final opened = await launchUrl(
+      _contributionUri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
+        ),
+      );
+    }
   }
 
   Widget _buildSectionTitle(String title) {
