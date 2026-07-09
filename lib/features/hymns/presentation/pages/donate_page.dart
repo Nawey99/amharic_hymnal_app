@@ -195,9 +195,10 @@ class NationalBankDonationPage extends StatelessWidget {
   const NationalBankDonationPage({super.key});
 
   static const _fields = [
-    ('ባንክ', 'National Bank of Ethiopia'),
+    ('ባንክ', 'የኢትዮጵያ ንግድ ባንክ'),
     ('የመለያ ስም', 'Wudase App Support'),
     ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
+    ('ምክንያት', 'የውዳሴ መተግበሪያ ለመደገፍ'),
   ];
 
   @override
