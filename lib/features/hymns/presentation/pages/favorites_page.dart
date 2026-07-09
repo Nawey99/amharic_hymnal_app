@@ -276,20 +276,24 @@ class _FavoritesPageState extends State<FavoritesPage>
     }
 
     if (favorites.isEmpty) {
-      return EmptyStateWidget(
-        icon: Icons.favorite_border,
-        title:
-            AppLocalizations.of(context)?.noFavoritesYet ?? 'No favorites yet',
-        message: AppLocalizations.of(context)?.addToFavoritesHint ??
-            'Tap the heart icon on any hymn to add it to favorites',
+      return _buildKeyboardAwareEmptyState(
+        child: EmptyStateWidget(
+          icon: Icons.favorite_border,
+          title: AppLocalizations.of(context)?.noFavoritesYet ??
+              'No favorites yet',
+          message: AppLocalizations.of(context)?.addToFavoritesHint ??
+              'Tap the heart icon on any hymn to add it to favorites',
+        ),
       );
     }
 
     if (favoriteHymns.isEmpty) {
-      return EmptyStateWidget(
-        icon: Icons.favorite_border,
-        title: AppLocalizations.of(context)?.noFavoritesFound ??
-            'No favorites found',
+      return _buildKeyboardAwareEmptyState(
+        child: EmptyStateWidget(
+          icon: Icons.favorite_border,
+          title: AppLocalizations.of(context)?.noFavoritesFound ??
+              'No favorites found',
+        ),
       );
     }
 
@@ -318,6 +322,29 @@ class _FavoritesPageState extends State<FavoritesPage>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildKeyboardAwareEmptyState({required Widget child}) {
+    final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
+    final isKeyboardVisible = keyboardHeight > 0;
+
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(
+        bottom: isKeyboardVisible ? keyboardHeight : 0,
+      ),
+      child: Align(
+        alignment:
+            isKeyboardVisible ? const Alignment(0, -0.65) : Alignment.center,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: NavBarConstants.getBottomPadding(context),
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 }
