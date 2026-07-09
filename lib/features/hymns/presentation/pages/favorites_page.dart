@@ -328,21 +328,31 @@ class _FavoritesPageState extends State<FavoritesPage>
   Widget _buildKeyboardAwareEmptyState({required Widget child}) {
     final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     final isKeyboardVisible = keyboardHeight > 0;
+    final lift =
+        isKeyboardVisible ? (keyboardHeight * 0.35).clamp(90.0, 150.0) : 0.0;
 
-    return AnimatedPadding(
+    return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(
-        bottom: isKeyboardVisible ? keyboardHeight : 0,
-      ),
-      child: Align(
-        alignment:
-            isKeyboardVisible ? const Alignment(0, -0.65) : Alignment.center,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            bottom: NavBarConstants.getBottomPadding(context),
-          ),
+      curve: Curves.easeOutCubic,
+      tween: Tween<double>(end: lift),
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, -value),
           child: child,
+        );
+      },
+      child: Align(
+        alignment: Alignment.center,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.52,
+          ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: NavBarConstants.getBottomPadding(context),
+            ),
+            child: child,
+          ),
         ),
       ),
     );
