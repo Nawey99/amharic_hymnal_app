@@ -64,6 +64,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final destination = items[index].destination;
     if (destination == _selectedDestination) return;
 
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _selectedDestination = destination;
     });
@@ -128,7 +129,16 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           resizeToAvoidBottomInset: false,
           body: IndexedStack(
             index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
-            children: items.map((item) => item.page).toList(growable: false),
+            children: items.map((item) {
+              final isActive = item.destination == _selectedDestination;
+              return TickerMode(
+                enabled: isActive,
+                child: FocusScope(
+                  canRequestFocus: isActive,
+                  child: item.page,
+                ),
+              );
+            }).toList(growable: false),
           ),
           bottomNavigationBar: _buildBottomNavigationBar(
             items,

@@ -113,6 +113,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     }
 
     // Navigate to hymn detail page with number
+    _dismissInputFocus();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -128,6 +129,13 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   void _clearNumberError() {
     if (_numberErrorMessage == null) return;
     setState(() => _numberErrorMessage = null);
+  }
+
+  void _dismissInputFocus() {
+    _numberFocusNode.unfocus();
+    _searchFocusNode.unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
   }
 
   @override
@@ -228,6 +236,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   void _openHistory(BuildContext context) {
+    _dismissInputFocus();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -245,7 +254,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       }
     });
     if (willShowSearch) {
-      _numberFocusNode.unfocus();
+      _dismissInputFocus();
     }
     if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
       _handleSearchQuery(_searchController.currentQuery);
@@ -388,6 +397,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   void _navigateToHymnDetail(BuildContext context, dynamic hymn) {
+    _dismissInputFocus();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => HymnDetailPage(hymn: hymn)),
@@ -431,6 +441,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (_) => _clearNumberError(),
+        onTapOutside: (_) => _dismissInputFocus(),
         style: TextStyle(
           color: AppColors.primaryText,
           fontSize: settingsRepository.getFontSize() * 1.08,
