@@ -13,6 +13,7 @@ import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
@@ -94,8 +95,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       return;
     }
 
+    Hymn? loadedHymn;
     final state = context.read<HymnsBloc>().state;
     if (state is HymnsLoaded && state.hymns.isNotEmpty) {
+      loadedHymn = _findLoadedHymnByNumber(state.hymns, number);
       final numbers = state.hymns
           .map((hymn) => hymn.displayNumber)
           .where((value) => value > 0)
@@ -117,9 +120,18 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => HymnDetailPage(hymnNumber: number),
+        builder: (_) => loadedHymn != null
+            ? HymnDetailPage(hymn: loadedHymn)
+            : HymnDetailPage(hymnNumber: number),
       ),
     );
+  }
+
+  Hymn? _findLoadedHymnByNumber(List<Hymn> hymns, int number) {
+    for (final hymn in hymns) {
+      if (hymn.displayNumber == number) return hymn;
+    }
+    return null;
   }
 
   void _showInvalidNumberMessage(String message) {
