@@ -92,6 +92,12 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
                     (constraints.maxHeight - (verticalPadding * 2))
                         .clamp(0.0, constraints.maxHeight)
                         .toDouble();
+                const minReadableItemHeight = 10.0;
+                final needsMenu =
+                    usableHeight < widget.labels.length * minReadableItemHeight;
+                if (needsMenu) {
+                  return _buildOverflowMenu();
+                }
                 final itemHeight = (usableHeight / widget.labels.length)
                     .clamp(8.0, 18.0)
                     .toDouble();
@@ -176,6 +182,59 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOverflowMenu() {
+    return Container(
+      width: 42,
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+        ),
+      ),
+      child: PopupMenuButton<String>(
+        tooltip: 'ፊደል ይምረጡ',
+        icon: const Icon(
+          Icons.more_vert,
+          color: AppColors.primaryText,
+          size: 22,
+        ),
+        color: AppColors.surface,
+        constraints: const BoxConstraints(
+          minWidth: 72,
+          maxHeight: 360,
+        ),
+        onSelected: (label) {
+          HapticFeedback.selectionClick();
+          setState(() {
+            _bubbleLabel = null;
+            _bubbleTop = null;
+          });
+          widget.onLabelSelected(label);
+        },
+        itemBuilder: (context) {
+          return widget.labels.map((label) {
+            final isActive = widget.activeLabel == label;
+            return PopupMenuItem<String>(
+              value: label,
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color:
+                      isActive ? AppColors.accentGreen : AppColors.primaryText,
+                  fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                  fontFamily: 'NotoSansEthiopic',
+                ),
+              ),
+            );
+          }).toList(growable: false);
+        },
       ),
     );
   }

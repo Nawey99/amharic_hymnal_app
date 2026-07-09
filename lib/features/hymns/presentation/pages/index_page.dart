@@ -103,13 +103,6 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 
-  Map<String, int> _buildNumericIndex(List<Hymn> hymns) {
-    return buildNumericRangeIndex<Hymn>(
-      hymns,
-      (hymn) => hymn.displayNumber,
-    );
-  }
-
   void _scrollToLetter(String letter) {
     final state = context.read<HymnsBloc>().state;
     if (state is! HymnsLoaded) return;
@@ -405,7 +398,6 @@ class _IndexPageState extends State<IndexPage> {
         children: [
           _buildHymnListView(),
           _buildAlphabetScrollBar(),
-          _buildNumberJumpRail(),
         ],
       ),
     );
@@ -455,7 +447,8 @@ class _IndexPageState extends State<IndexPage> {
     final state = context.read<HymnsBloc>().state;
     final hasAlphabetScrollBar =
         state is HymnsLoaded && state.sortType == 'name';
-    final hasNumberRail = state is HymnsLoaded && state.sortType == 'number';
+    final hasNumberScrollbar =
+        state is HymnsLoaded && state.sortType == 'number';
     final sortType = state is HymnsLoaded ? state.sortType : null;
     final hymnsToDisplay = _hymnsForDisplay(hymns, sortType);
 
@@ -475,9 +468,9 @@ class _IndexPageState extends State<IndexPage> {
 
     // Step 3: Fix ListView Rendering - Ensure proper constraints and visibility
     // Conditionally apply right padding only when sorted by name (for alphabet scrollbar)
-    final rightPadding = (hasAlphabetScrollBar || hasNumberRail) ? 54.0 : 16.0;
+    final rightPadding = hasAlphabetScrollBar ? 54.0 : 16.0;
 
-    return ListView.builder(
+    final listView = ListView.builder(
       controller: _scrollController,
       shrinkWrap: false, // Explicitly set to false for proper rendering
       // Add right padding only when sorted by name to prevent overlap with alphabet scrollbar
@@ -513,6 +506,18 @@ class _IndexPageState extends State<IndexPage> {
         );
       },
     );
+
+    if (!hasNumberScrollbar) return listView;
+
+    return Scrollbar(
+      controller: _scrollController,
+      thumbVisibility: true,
+      trackVisibility: false,
+      interactive: true,
+      thickness: 4,
+      radius: const Radius.circular(999),
+      child: listView,
+    );
   }
 
   void _navigateToHymnDetail(BuildContext context, Hymn hymn) {
@@ -541,49 +546,6 @@ class _IndexPageState extends State<IndexPage> {
         }
         return const SizedBox();
       },
-    );
-  }
-
-  Widget _buildNumberJumpRail() {
-    return BlocBuilder<HymnsBloc, HymnsState>(
-      builder: (context, state) {
-        if (state is! HymnsLoaded || state.sortType != 'number') {
-          return const SizedBox.shrink();
-        }
-        final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
-        final index = _buildNumericIndex(hymnsToDisplay);
-        if (index.isEmpty) return const SizedBox.shrink();
-        return NumericFastScroller(
-          availableLabels: index.keys.toList(),
-          bottomPadding: NavBarConstants.getBottomPadding(context),
-          onNumberSelected: (label) => _scrollToNumberSection(
-            label,
-            hymnsToDisplay,
-          ),
-        );
-      },
-    );
-  }
-
-  void _scrollToNumberSection(String label, List<Hymn> hymns) {
-    if (!_scrollController.hasClients || hymns.isEmpty) return;
-    final index = _buildNumericIndex(hymns);
-    final order = numericRangeOrderForMax(
-      hymns
-          .map((hymn) => hymn.displayNumber)
-          .fold<int>(0, (max, number) => number > max ? number : max),
-    );
-    final targetIndex = nearestSectionIndex(label, order, index);
-    if (targetIndex == null) return;
-    final scrollPosition =
-        (targetIndex * _estimatedHymnItemExtent) + _listVerticalPadding;
-    final target = scrollPosition
-        .clamp(0.0, _scrollController.position.maxScrollExtent)
-        .toDouble();
-    _scrollController.animateTo(
-      target,
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOutCubic,
     );
   }
 
