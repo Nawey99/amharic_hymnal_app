@@ -10,6 +10,7 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
@@ -117,220 +118,226 @@ class _SettingsPageState extends State<SettingsPage> {
       decoration: _buildBackgroundDecoration(bgService),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text(
-            'ውዳሴ',
-            style: TextStyle(
-              color: AppColors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
         body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
+          child: Column(
             children: [
-              _buildSectionTitle(
-                  AppLocalizations.of(context)?.contentSection ?? 'Content'),
-              SettingsDropdownTile(
-                title:
-                    AppLocalizations.of(context)?.languageLabel ?? 'Language',
-                description:
-                    AppLocalizations.of(context)?.languageDescription ??
-                        'Select the language for hymns',
-                value: _selectedLanguage,
-                items: [
-                  DropdownMenuItem(
-                    value: 'am',
-                    child: Text(AppLocalizations.of(context)?.amharicLanguage ??
-                        'Amharic'),
-                  ),
-                  // Future languages can be added here
-                  // DropdownMenuItem(
-                  //   value: 'en',
-                  //   child: Text(AppLocalizations.of(context)?.englishLanguage ??
-                  //       'English'),
-                  // ),
-                ],
-                onChanged: (value) async {
-                  if (value != null && value != _selectedLanguage) {
-                    final repo = sl<SettingsRepository>();
-                    final bloc = context.read<HymnsBloc>();
-                    await repo.setSelectedLanguage(value);
-
-                    if (!mounted) return;
-                    setState(() => _selectedLanguage = value);
-
-                    if (mounted) {
-                      bloc.add(
-                        ChangeLanguage(
-                          _selectedLanguage,
-                          _selectedVersion,
-                          repo.getSortType(),
+              const MainPageTitleBar(title: 'ቅንብር'),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _buildSectionTitle(
+                        AppLocalizations.of(context)?.contentSection ??
+                            'Content'),
+                    SettingsDropdownTile(
+                      title: AppLocalizations.of(context)?.languageLabel ??
+                          'Language',
+                      description:
+                          AppLocalizations.of(context)?.languageDescription ??
+                              'Select the language for hymns',
+                      value: _selectedLanguage,
+                      items: [
+                        DropdownMenuItem(
+                          value: 'am',
+                          child: Text(
+                              AppLocalizations.of(context)?.amharicLanguage ??
+                                  'Amharic'),
                         ),
-                      );
-                    }
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              SettingsDropdownTile(
-                title: AppLocalizations.of(context)?.versionLabel ?? 'Version',
-                description: AppLocalizations.of(context)?.versionDescription ??
-                    'Select hymnal version',
-                value: _selectedVersion,
-                items: [
-                  const DropdownMenuItem(
-                    value: HymnalVersions.sdaNew,
-                    child: Text('አዲስ የአድቬንቲስት መዝሙር'),
-                  ),
-                  const DropdownMenuItem(
-                    value: HymnalVersions.sdaOld,
-                    child: Text('ቀድሞ የአድቬንቲስት መዝሙር'),
-                  ),
-                  DropdownMenuItem(
-                    value: HymnalVersions.hagerigna,
-                    child: Text(
-                        AppLocalizations.of(context)?.hagerigna ?? 'Hagerigna'),
-                  ),
-                ],
-                onChanged: (value) async {
-                  if (value != null && value != _selectedVersion) {
-                    final repo = sl<SettingsRepository>();
-                    final bloc = context.read<HymnsBloc>();
-                    await repo.setSelectedVersion(value);
+                        // Future languages can be added here
+                        // DropdownMenuItem(
+                        //   value: 'en',
+                        //   child: Text(AppLocalizations.of(context)?.englishLanguage ??
+                        //       'English'),
+                        // ),
+                      ],
+                      onChanged: (value) async {
+                        if (value != null && value != _selectedLanguage) {
+                          final repo = sl<SettingsRepository>();
+                          final bloc = context.read<HymnsBloc>();
+                          await repo.setSelectedLanguage(value);
 
-                    if (!mounted) return;
-                    setState(() => _selectedVersion = value);
+                          if (!mounted) return;
+                          setState(() => _selectedLanguage = value);
 
-                    if (mounted) {
-                      bloc.add(
-                        ChangeVersion(
-                          _selectedLanguage,
-                          _selectedVersion,
-                          repo.getSortType(),
+                          if (mounted) {
+                            bloc.add(
+                              ChangeLanguage(
+                                _selectedLanguage,
+                                _selectedVersion,
+                                repo.getSortType(),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SettingsDropdownTile(
+                      title: AppLocalizations.of(context)?.versionLabel ??
+                          'Version',
+                      description:
+                          AppLocalizations.of(context)?.versionDescription ??
+                              'Select hymnal version',
+                      value: _selectedVersion,
+                      items: [
+                        const DropdownMenuItem(
+                          value: HymnalVersions.sdaNew,
+                          child: Text('አዲስ የአድቬንቲስት መዝሙር'),
                         ),
-                      );
-                    }
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              _buildSectionTitle(
-                  AppLocalizations.of(context)?.displaySection ?? 'Display'),
-              SettingsSliderTile(
-                title:
-                    AppLocalizations.of(context)?.fontSizeLabel ?? 'Font Size',
-                // Ensure value is clamped before passing - SettingsSliderTile also clamps as extra safety
-                value: _fontSize.clamp(12.0, 30.0),
-                min: 12,
-                max: 30,
-                highlight: _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
-                onChanged: (value) async {
-                  // Clamp value to valid range before any operations
-                  final clampedValue = value.clamp(12.0, 30.0);
-                  // Update repository first (it also clamps internally)
-                  final repo = sl<SettingsRepository>();
-                  await repo.setFontSize(clampedValue);
-                  // Notify FontSizeService for real-time updates (it also clamps internally)
-                  await FontSizeService().setFontSize(clampedValue);
-                  // Update state with clamped value
-                  if (mounted) {
-                    setState(() {
-                      _fontSize = clampedValue.clamp(12.0, 30.0);
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              SettingsSwitchTile(
-                title: AppLocalizations.of(context)?.backgroundImageLabel ??
-                    'Background Image',
-                description:
-                    AppLocalizations.of(context)?.backgroundImageDescription ??
-                        'Show background image in hymn view',
-                value: _backgroundImageEnabled,
-                onChanged: (value) async {
-                  final repo = sl<SettingsRepository>();
-                  await repo.setBackgroundImageEnabled(value);
+                        const DropdownMenuItem(
+                          value: HymnalVersions.sdaOld,
+                          child: Text('ቀድሞ የአድቬንቲስት መዝሙር'),
+                        ),
+                        DropdownMenuItem(
+                          value: HymnalVersions.hagerigna,
+                          child: Text(AppLocalizations.of(context)?.hagerigna ??
+                              'Hagerigna'),
+                        ),
+                      ],
+                      onChanged: (value) async {
+                        if (value != null && value != _selectedVersion) {
+                          final repo = sl<SettingsRepository>();
+                          final bloc = context.read<HymnsBloc>();
+                          await repo.setSelectedVersion(value);
 
-                  await BackgroundImageService().setEnabled(value);
+                          if (!mounted) return;
+                          setState(() => _selectedVersion = value);
 
-                  setState(() => _backgroundImageEnabled = value);
-                },
-              ),
-              const SizedBox(height: 24),
-              _buildSectionTitle(
-                  AppLocalizations.of(context)?.generalSection ?? 'General'),
-              SettingsSwitchTile(
-                title: AppLocalizations.of(context)?.keepScreenOnLabel ??
-                    'Keep Screen On',
-                description:
-                    AppLocalizations.of(context)?.keepScreenOnDescription ??
-                        'Prevent screen from turning off',
-                value: _keepScreenOn,
-                onChanged: (value) async {
-                  final repo = sl<SettingsRepository>();
-                  await repo.setKeepScreenOn(value);
+                          if (mounted) {
+                            bloc.add(
+                              ChangeVersion(
+                                _selectedLanguage,
+                                _selectedVersion,
+                                repo.getSortType(),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context)?.displaySection ??
+                            'Display'),
+                    SettingsSliderTile(
+                      title: AppLocalizations.of(context)?.fontSizeLabel ??
+                          'Font Size',
+                      // Ensure value is clamped before passing - SettingsSliderTile also clamps as extra safety
+                      value: _fontSize.clamp(12.0, 30.0),
+                      min: 12,
+                      max: 30,
+                      highlight: _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
+                      onChanged: (value) async {
+                        // Clamp value to valid range before any operations
+                        final clampedValue = value.clamp(12.0, 30.0);
+                        // Update repository first (it also clamps internally)
+                        final repo = sl<SettingsRepository>();
+                        await repo.setFontSize(clampedValue);
+                        // Notify FontSizeService for real-time updates (it also clamps internally)
+                        await FontSizeService().setFontSize(clampedValue);
+                        // Update state with clamped value
+                        if (mounted) {
+                          setState(() {
+                            _fontSize = clampedValue.clamp(12.0, 30.0);
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SettingsSwitchTile(
+                      title:
+                          AppLocalizations.of(context)?.backgroundImageLabel ??
+                              'Background Image',
+                      description: AppLocalizations.of(context)
+                              ?.backgroundImageDescription ??
+                          'Show background image in hymn view',
+                      value: _backgroundImageEnabled,
+                      onChanged: (value) async {
+                        final repo = sl<SettingsRepository>();
+                        await repo.setBackgroundImageEnabled(value);
 
-                  await ScreenService.updateKeepScreenOn(value);
+                        await BackgroundImageService().setEnabled(value);
 
-                  setState(() => _keepScreenOn = value);
-                },
-              ),
-              const SizedBox(height: 24),
-              _buildSectionTitle('ስለ መተግበሪያው'),
-              SettingsTile(
-                icon: Icons.code,
-                title: AppLocalizations.of(context)
-                        ?.developmentContributionLabel ??
-                    'ልማት እና አስተዋፅዖ',
-                description: AppLocalizations.of(context)
-                        ?.developmentContributionDescription ??
-                    'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
-                onTap: () async {
-                  final uri = Uri.parse(
-                      'https://github.com/Nawey99/amharic_hymnal_app');
+                        setState(() => _backgroundImageEnabled = value);
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSectionTitle(
+                        AppLocalizations.of(context)?.generalSection ??
+                            'General'),
+                    SettingsSwitchTile(
+                      title: AppLocalizations.of(context)?.keepScreenOnLabel ??
+                          'Keep Screen On',
+                      description: AppLocalizations.of(context)
+                              ?.keepScreenOnDescription ??
+                          'Prevent screen from turning off',
+                      value: _keepScreenOn,
+                      onChanged: (value) async {
+                        final repo = sl<SettingsRepository>();
+                        await repo.setKeepScreenOn(value);
 
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } else if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              SettingsTile(
-                icon: Icons.favorite,
-                title: AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
-                description: AppLocalizations.of(context)?.donateDescription ??
-                    'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const DonatePage()),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              SettingsTile(
-                icon: Icons.bug_report,
-                title: AppLocalizations.of(context)?.reportBug ?? 'ስህተት ላክ',
-                description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ReportBugPage()),
-                  );
-                },
+                        await ScreenService.updateKeepScreenOn(value);
+
+                        setState(() => _keepScreenOn = value);
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSectionTitle('ስለ መተግበሪያው'),
+                    SettingsTile(
+                      icon: Icons.code,
+                      title: AppLocalizations.of(context)
+                              ?.developmentContributionLabel ??
+                          'ልማት እና አስተዋፅዖ',
+                      description: AppLocalizations.of(context)
+                              ?.developmentContributionDescription ??
+                          'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
+                      onTap: () async {
+                        final uri = Uri.parse(
+                            'https://github.com/Nawey99/amharic_hymnal_app');
+
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        } else if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SettingsTile(
+                      icon: Icons.favorite,
+                      title:
+                          AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
+                      description:
+                          AppLocalizations.of(context)?.donateDescription ??
+                              'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const DonatePage()),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    SettingsTile(
+                      icon: Icons.bug_report,
+                      title:
+                          AppLocalizations.of(context)?.reportBug ?? 'ስህተት ላክ',
+                      description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const ReportBugPage()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

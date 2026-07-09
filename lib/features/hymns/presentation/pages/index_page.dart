@@ -11,8 +11,8 @@ import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
-import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -276,46 +276,21 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-      child: GlassContainer(
-        borderRadius: 16.0,
-        blurSigma: 12.0,
-        opacity: 0.15,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Row(
-          children: [
-            const Expanded(
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'መዝሙር ማውጫ',
-                    style: TextStyle(
-                      color: AppColors.primaryText,
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'NotoSansEthiopic',
-                    ),
-                    maxLines: 1,
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                _isSearchVisible ? Icons.close : Icons.search,
-                color: AppColors.primaryText,
-              ),
-              onPressed: () => _toggleSearch(context),
-            ),
-            IconButton(
-              icon: const Icon(Icons.sort, color: AppColors.primaryText),
-              onPressed: () => _showSortDialog(context),
-            ),
-          ],
+    return MainPageTitleBar(
+      title: 'መዝሙር ማውጫ',
+      actions: [
+        IconButton(
+          icon: Icon(
+            _isSearchVisible ? Icons.close : Icons.search,
+            color: AppColors.primaryText,
+          ),
+          onPressed: () => _toggleSearch(context),
         ),
-      ),
+        IconButton(
+          icon: const Icon(Icons.sort, color: AppColors.primaryText),
+          onPressed: () => _showSortDialog(context),
+        ),
+      ],
     );
   }
 

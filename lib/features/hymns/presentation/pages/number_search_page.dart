@@ -11,6 +11,7 @@ import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
@@ -169,70 +170,25 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () => _openHistory(context),
-            borderRadius: BorderRadius.circular(999),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.accentGreen.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: AppColors.accentGreen.withValues(alpha: 0.3),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.history,
-                    color: AppColors.accentGreen,
-                    size: 20,
-                  ),
-                  SizedBox(width: 6),
-                  Text(
-                    'ታሪክ',
-                    style: TextStyle(
-                      color: AppColors.primaryText,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'NotoSansEthiopic',
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    return MainPageTitleBar(
+      title: 'ውዳሴ',
+      actions: [
+        IconButton(
+          tooltip: 'ታሪክ',
+          icon: const Icon(
+            Icons.history,
+            color: AppColors.primaryText,
           ),
-          const Expanded(
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  'ውዳሴ',
-                  style: TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'NotoSansEthiopic',
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
+          onPressed: () => _openHistory(context),
+        ),
+        IconButton(
+          icon: Icon(
+            _isSearchVisible ? Icons.close : Icons.search,
+            color: AppColors.primaryText,
           ),
-          IconButton(
-            icon: Icon(
-              _isSearchVisible ? Icons.close : Icons.search,
-              color: AppColors.primaryText,
-            ),
-            onPressed: () => _toggleSearch(),
-          ),
-        ],
-      ),
+          onPressed: () => _toggleSearch(),
+        ),
+      ],
     );
   }
 

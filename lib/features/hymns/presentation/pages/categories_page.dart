@@ -6,6 +6,7 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
@@ -56,125 +57,123 @@ class _CategoriesPageState extends State<CategoriesPage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text(
-            'ውዳሴ',
-            style: TextStyle(
-              color: AppColors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
         body: SafeArea(
-          child: BlocBuilder<HymnsBloc, HymnsState>(
-            builder: (context, state) {
-              if (state is HymnsLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-                  ),
-                );
-              }
+          child: Column(
+            children: [
+              const MainPageTitleBar(title: 'ምድቦች'),
+              Expanded(
+                child: BlocBuilder<HymnsBloc, HymnsState>(
+                  builder: (context, state) {
+                    if (state is HymnsLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.accentGreen),
+                        ),
+                      );
+                    }
 
-              if (state is HymnsError) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Text(
-                      state.message,
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
-                        fontSize: 16,
-                        fontFamily: 'NotoSansEthiopic',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              }
+                    if (state is HymnsError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Text(
+                            state.message,
+                            style: const TextStyle(
+                              color: AppColors.primaryText,
+                              fontSize: 16,
+                              fontFamily: 'NotoSansEthiopic',
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
 
-              if (state is HymnsLoaded) {
-                if (HymnalVersions.hasCategories(state.version)) {
-                  // Use exact category ranges for hymnal
-                  final categories = HymnCategories.all;
+                    if (state is HymnsLoaded) {
+                      if (HymnalVersions.hasCategories(state.version)) {
+                        // Use exact category ranges for hymnal
+                        final categories = HymnCategories.all;
 
-                  if (categories.isEmpty) {
+                        if (categories.isEmpty) {
+                          return const EmptyStateWidget(
+                            icon: Icons.category_outlined,
+                            title: 'ምድቦች አልተገኙም',
+                          );
+                        }
+
+                        // Add bottom padding to prevent content from going under navigation bar
+                        final bottomPadding =
+                            NavBarConstants.getBottomPadding(context);
+
+                        return ListView.separated(
+                          controller: _scrollController,
+                          padding:
+                              EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
+                          itemCount: categories.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final category = categories[index];
+                            return _buildCategoryListItem(
+                              context,
+                              category.nameAmharic,
+                              category.startNumber,
+                              category.endNumber,
+                              state.languageCode,
+                              state.version,
+                              bgService.isEnabled,
+                            );
+                          },
+                        );
+                      } else if (state.version == HymnalVersions.hagerigna) {
+                        // Show authors for Hagerigna mode
+                        final authors = _extractAuthors(state.hymns);
+
+                        if (authors.isEmpty) {
+                          return const EmptyStateWidget(
+                            icon: Icons.person_outline,
+                            title: 'ደራሲዎች አልተገኙም',
+                          );
+                        }
+
+                        // Sort authors alphabetically
+                        authors.sort();
+
+                        // Add bottom padding to prevent content from going under navigation bar
+                        final bottomPadding =
+                            NavBarConstants.getBottomPadding(context);
+
+                        return ListView.separated(
+                          controller: _scrollController,
+                          padding:
+                              EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
+                          itemCount: authors.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final author = authors[index];
+                            return _buildAuthorListItem(
+                              context,
+                              author,
+                              state.languageCode,
+                              state.version,
+                              bgService.isEnabled,
+                            );
+                          },
+                        );
+                      }
+                    }
+
+                    // For other versions, show empty state
                     return const EmptyStateWidget(
                       icon: Icons.category_outlined,
-                      title: 'ምድቦች አልተገኙም',
+                      title: 'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
                     );
-                  }
-
-                  // Add bottom padding to prevent content from going under navigation bar
-                  final bottomPadding =
-                      NavBarConstants.getBottomPadding(context);
-
-                  return ListView.separated(
-                    controller: _scrollController,
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
-                    itemCount: categories.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return _buildCategoryListItem(
-                        context,
-                        category.nameAmharic,
-                        category.startNumber,
-                        category.endNumber,
-                        state.languageCode,
-                        state.version,
-                        bgService.isEnabled,
-                      );
-                    },
-                  );
-                } else if (state.version == HymnalVersions.hagerigna) {
-                  // Show authors for Hagerigna mode
-                  final authors = _extractAuthors(state.hymns);
-
-                  if (authors.isEmpty) {
-                    return const EmptyStateWidget(
-                      icon: Icons.person_outline,
-                      title: 'ደራሲዎች አልተገኙም',
-                    );
-                  }
-
-                  // Sort authors alphabetically
-                  authors.sort();
-
-                  // Add bottom padding to prevent content from going under navigation bar
-                  final bottomPadding =
-                      NavBarConstants.getBottomPadding(context);
-
-                  return ListView.separated(
-                    controller: _scrollController,
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
-                    itemCount: authors.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final author = authors[index];
-                      return _buildAuthorListItem(
-                        context,
-                        author,
-                        state.languageCode,
-                        state.version,
-                        bgService.isEnabled,
-                      );
-                    },
-                  );
-                }
-              }
-
-              // For other versions, show empty state
-              return const EmptyStateWidget(
-                icon: Icons.category_outlined,
-                title: 'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
-              );
-            },
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),

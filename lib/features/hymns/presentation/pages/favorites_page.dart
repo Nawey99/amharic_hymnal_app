@@ -9,6 +9,7 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -205,38 +206,17 @@ class _FavoritesPageState extends State<FavoritesPage>
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        children: [
-          const Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                'ውዳሴ',
-                style: TextStyle(
-                  color: AppColors.primaryText,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'NotoSansEthiopic',
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+    return MainPageTitleBar(
+      title: 'ተወዳጆች',
+      actions: [
+        IconButton(
+          icon: Icon(
+            _isSearchVisible ? Icons.close : Icons.search,
+            color: AppColors.primaryText,
           ),
-          IconButton(
-            icon: Icon(
-              _isSearchVisible ? Icons.close : Icons.search,
-              color: AppColors.primaryText,
-            ),
-            onPressed: () => _toggleSearch(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-        ],
-      ),
+          onPressed: () => _toggleSearch(),
+        ),
+      ],
     );
   }
 
