@@ -15,12 +15,14 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 class MusicPlayerWidget extends StatefulWidget {
   final int hymnNumber;
   final String hymnTitle;
+  final String? englishTitle;
   final String version;
 
   const MusicPlayerWidget({
     super.key,
     required this.hymnNumber,
     required this.hymnTitle,
+    this.englishTitle,
     required this.version,
   });
 
@@ -247,13 +249,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   Widget build(BuildContext context) {
     // Check if this hymn is currently playing
     final isThisHymnActive = _currentPlayingHymn == widget.hymnNumber;
+    final englishTitle = widget.englishTitle?.trim();
+    final subtitle = englishTitle != null && englishTitle.isNotEmpty
+        ? englishTitle
+        : 'Audio accompaniment';
 
     return GlassContainer(
       borderRadius: 12.0,
       blurSigma: 12.0,
       opacity: 0.25,
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -275,28 +281,31 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                       widget.hymnTitle,
                       style: const TextStyle(
                         color: AppColors.primaryText,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'NotoSansEthiopic',
+                        height: 1.18,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: AppColors.secondaryText,
+                        fontSize: 12,
+                        height: 1.15,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (isThisHymnActive)
-                      Text(
-                        'መዝሙር ${widget.hymnNumber}',
-                        style: const TextStyle(
-                          color: AppColors.secondaryText,
-                          fontSize: 12,
-                          fontFamily: 'NotoSansEthiopic',
-                        ),
-                      ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           // Error state
           if (_isError) ...[
             Padding(
@@ -343,6 +352,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                         ),
                       )
                     : IconButton(
+                        visualDensity: VisualDensity.compact,
                         icon: Icon(
                           _isPlaying ? Icons.pause : Icons.play_arrow,
                           color: AppColors.accentGreen,
@@ -356,24 +366,36 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 Expanded(
                   child: Column(
                     children: [
-                      Slider(
-                        value: _totalDuration != null &&
-                                _totalDuration!.inMilliseconds > 0
-                            ? _currentPosition.inMilliseconds.toDouble()
-                            : 0.0,
-                        max: _totalDuration != null &&
-                                _totalDuration!.inMilliseconds > 0
-                            ? _totalDuration!.inMilliseconds.toDouble()
-                            : 100.0,
-                        onChanged: (_isLoading || !isThisHymnActive)
-                            ? null
-                            : (value) {
-                                _audioService.seek(
-                                    Duration(milliseconds: value.toInt()));
-                              },
-                        activeColor: AppColors.accentGreen,
-                        inactiveColor:
-                            AppColors.secondaryText.withValues(alpha: 0.3),
+                      SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 3,
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 6,
+                            disabledThumbRadius: 5,
+                          ),
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 14,
+                          ),
+                        ),
+                        child: Slider(
+                          value: _totalDuration != null &&
+                                  _totalDuration!.inMilliseconds > 0
+                              ? _currentPosition.inMilliseconds.toDouble()
+                              : 0.0,
+                          max: _totalDuration != null &&
+                                  _totalDuration!.inMilliseconds > 0
+                              ? _totalDuration!.inMilliseconds.toDouble()
+                              : 100.0,
+                          onChanged: (_isLoading || !isThisHymnActive)
+                              ? null
+                              : (value) {
+                                  _audioService.seek(
+                                      Duration(milliseconds: value.toInt()));
+                                },
+                          activeColor: AppColors.accentGreen,
+                          inactiveColor:
+                              AppColors.secondaryText.withValues(alpha: 0.3),
+                        ),
                       ),
                       // Duration display
                       Row(

@@ -656,13 +656,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildBody(Hymn hymn, double fontSize) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: _buildTitleSection(hymn, fontSize),
-        ),
         if (!hymn.isHagerigna)
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: _buildMediaControls(hymn),
           ),
         Expanded(
@@ -694,54 +690,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: _buildLyricsSection(hymn, fontSize),
-      ),
-    );
-  }
-
-  Widget _buildTitleSection(Hymn hymn, double fontSize) {
-    return GlassContainer(
-      borderRadius: 12.0,
-      blurSigma: 12.0,
-      opacity: 0.25,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '- ${hymn.displayNumber} -',
-            style: TextStyle(
-              color: AppColors.accentGreen,
-              fontSize: (fontSize * 0.95).clamp(16.0, 24.0),
-              fontWeight: FontWeight.w800,
-              fontFamily: 'NotoSansEthiopic',
-            ),
-          ),
-          const SizedBox(height: 6),
-          _buildTitleText(hymn.displayTitle, fontSize),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTitleText(String title, double fontSize) {
-    return Text(
-      title.isNotEmpty ? title : 'ርዕስ የለም',
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: AppColors.primaryText,
-        fontSize: fontSize * 1.3,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'NotoSansEthiopic',
-        height: 1.3,
-        shadows: [
-          Shadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
     );
   }
@@ -792,17 +740,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       hymnTitle: hymn.displayTitle.isNotEmpty
           ? hymn.displayTitle
           : 'መዝሙር ${hymn.displayNumber}',
+      englishTitle: hymn.displayEnglishTitle,
       version: _getVersion(),
     );
   }
 
   Widget _buildMediaControls(Hymn hymn) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: _buildAudioSection(hymn)),
-        const SizedBox(width: 10),
-        FutureBuilder<List<String>>(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final sheetMusicButton = FutureBuilder<List<String>>(
           future: _sheetMusicRepository.getFilesForHymn(hymn),
           builder: (context, snapshot) {
             final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
@@ -811,8 +757,27 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
             );
           },
-        ),
-      ],
+        );
+
+        if (constraints.maxWidth < 340) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildAudioSection(hymn),
+              sheetMusicButton,
+            ],
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _buildAudioSection(hymn)),
+            const SizedBox(width: 10),
+            sheetMusicButton,
+          ],
+        );
+      },
     );
   }
 
