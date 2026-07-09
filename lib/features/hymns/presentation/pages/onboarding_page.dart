@@ -376,6 +376,23 @@ class _FeaturePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final preview = MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(compact ? 8 : 12),
+        child: switch (step.preview) {
+          OnboardingPreview.library => _LibraryPreview(compact: compact),
+          OnboardingPreview.number => _NumberPreview(compact: compact),
+          OnboardingPreview.indexList => _IndexPreview(compact: compact),
+          OnboardingPreview.categories => _CategoriesPreview(compact: compact),
+          OnboardingPreview.lyrics => _LyricsPreview(compact: compact),
+          OnboardingPreview.settings => _SettingsPreview(compact: compact),
+        },
+      ),
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.primaryBackground.withValues(alpha: 0.82),
@@ -385,19 +402,8 @@ class _FeaturePreview extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: AspectRatio(
-          aspectRatio: compact ? 1.22 : 1.48,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: switch (step.preview) {
-              OnboardingPreview.library => _LibraryPreview(compact: compact),
-              OnboardingPreview.number => _NumberPreview(compact: compact),
-              OnboardingPreview.indexList => _IndexPreview(compact: compact),
-              OnboardingPreview.categories =>
-                _CategoriesPreview(compact: compact),
-              OnboardingPreview.lyrics => _LyricsPreview(compact: compact),
-              OnboardingPreview.settings => _SettingsPreview(compact: compact),
-            },
-          ),
+          aspectRatio: compact ? 1.05 : 1.2,
+          child: preview,
         ),
       ),
     );
@@ -488,19 +494,21 @@ class _LibraryPreview extends StatelessWidget {
       actionIcon: Icons.search_rounded,
       selectedTab: 'ቁጥር',
       compact: compact,
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _MiniCard(
             icon: Icons.numbers_rounded,
             title: 'በቁጥር መክፈት',
             subtitle: 'ቁጥር ያስገቡ እና ክፈት ይንኩ',
+            compact: compact,
           ),
-          SizedBox(height: 8),
+          SizedBox(height: compact ? 6 : 8),
           _MiniCard(
             icon: Icons.search_rounded,
             title: 'ፈልግ',
             subtitle: 'በርዕስ ወይም በግጥም',
+            compact: compact,
           ),
         ],
       ),
@@ -581,31 +589,33 @@ class _IndexPreview extends StatelessWidget {
       actionIcon: Icons.sort_rounded,
       selectedTab: 'ማውጫ',
       compact: compact,
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _SongRow(number: '1', title: 'አምላካችን', subtitle: 'Praise God'),
-                SizedBox(height: 7),
                 _SongRow(
-                    number: '11',
-                    title: 'አምባችን',
-                    subtitle: 'A Mighty Fortress'),
-                SizedBox(height: 7),
+                  number: '1',
+                  title: 'አምላካችን',
+                  subtitle: 'Praise God',
+                  compact: compact,
+                ),
+                SizedBox(height: compact ? 5 : 7),
                 _SongRow(
-                    number: '40',
-                    title: 'እንኳን ላምልክ',
-                    subtitle: 'O Worship the King'),
+                  number: '40',
+                  title: 'እንኳን ላምልክ',
+                  subtitle: 'O Worship the King',
+                  compact: compact,
+                ),
               ],
             ),
           ),
-          SizedBox(width: 8),
-          Column(
+          SizedBox(width: compact ? 6 : 8),
+          const Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _RailLabel('1-50'),
-              _RailLabel('51-100'),
               _RailLabel('101+'),
             ],
           ),
@@ -627,13 +637,26 @@ class _CategoriesPreview extends StatelessWidget {
       actionIcon: Icons.category_rounded,
       selectedTab: 'ምድብ',
       compact: compact,
-      child: const Column(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _CategoryRow(icon: Icons.volunteer_activism, label: 'ምስጋና'),
-          SizedBox(height: 7),
-          _CategoryRow(icon: Icons.self_improvement, label: 'ጸሎት'),
-          SizedBox(height: 7),
-          _CategoryRow(icon: Icons.favorite, label: 'ጋብቻ'),
+          _CategoryRow(
+            icon: Icons.volunteer_activism,
+            label: 'ምስጋና',
+            compact: compact,
+          ),
+          SizedBox(height: compact ? 5 : 7),
+          _CategoryRow(
+            icon: Icons.self_improvement,
+            label: 'ጸሎት',
+            compact: compact,
+          ),
+          SizedBox(height: compact ? 5 : 7),
+          _CategoryRow(
+            icon: Icons.favorite,
+            label: 'ጋብቻ',
+            compact: compact,
+          ),
         ],
       ),
     );
@@ -721,13 +744,26 @@ class _SettingsPreview extends StatelessWidget {
       actionIcon: Icons.settings_rounded,
       selectedTab: 'ቅንብር',
       compact: compact,
-      child: const Column(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _SettingRow(icon: Icons.library_books_rounded, label: 'የመዝሙር ስብስብ'),
-          SizedBox(height: 7),
-          _SettingRow(icon: Icons.format_size_rounded, label: 'የፊደል መጠን'),
-          SizedBox(height: 7),
-          _SettingRow(icon: Icons.bug_report_rounded, label: 'ስህተት ሪፖርት'),
+          _SettingRow(
+            icon: Icons.library_books_rounded,
+            label: 'የመዝሙር ስብስብ',
+            compact: compact,
+          ),
+          SizedBox(height: compact ? 5 : 7),
+          _SettingRow(
+            icon: Icons.format_size_rounded,
+            label: 'የፊደል መጠን',
+            compact: compact,
+          ),
+          SizedBox(height: compact ? 5 : 7),
+          _SettingRow(
+            icon: Icons.bug_report_rounded,
+            label: 'ስህተት ሪፖርት',
+            compact: compact,
+          ),
         ],
       ),
     );
@@ -782,11 +818,13 @@ class _MiniCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final bool compact;
 
   const _MiniCard({
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.compact = false,
   });
 
   @override
@@ -798,11 +836,11 @@ class _MiniCard extends StatelessWidget {
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(compact ? 8 : 10),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.accentGreen, size: 23),
-            const SizedBox(width: 10),
+            Icon(icon, color: AppColors.accentGreen, size: compact ? 20 : 23),
+            SizedBox(width: compact ? 8 : 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -810,8 +848,11 @@ class _MiniCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
                       color: AppColors.primaryText,
+                      fontSize: compact ? 12.5 : 14,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',
                     ),
@@ -820,9 +861,9 @@ class _MiniCard extends StatelessWidget {
                     subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.secondaryText,
-                      fontSize: 11,
+                      fontSize: compact ? 10 : 11,
                       fontFamily: 'NotoSansEthiopic',
                     ),
                   ),
@@ -840,11 +881,13 @@ class _SongRow extends StatelessWidget {
   final String number;
   final String title;
   final String subtitle;
+  final bool compact;
 
   const _SongRow({
     required this.number,
     required this.title,
     required this.subtitle,
+    this.compact = false,
   });
 
   @override
@@ -856,16 +899,19 @@ class _SongRow extends StatelessWidget {
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 7 : 9,
+          vertical: compact ? 5 : 7,
+        ),
         child: Row(
           children: [
             SizedBox(
-              width: 26,
+              width: compact ? 22 : 26,
               child: Text(
                 number,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.accentGreen,
-                  fontSize: 11,
+                  fontSize: compact ? 10 : 11,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -879,9 +925,9 @@ class _SongRow extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primaryText,
-                      fontSize: 12.5,
+                      fontSize: compact ? 11.3 : 12.5,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',
                     ),
@@ -890,14 +936,19 @@ class _SongRow extends StatelessWidget {
                     subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        color: AppColors.secondaryText, fontSize: 10.5),
+                    style: TextStyle(
+                      color: AppColors.secondaryText,
+                      fontSize: compact ? 9.5 : 10.5,
+                    ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.secondaryText, size: 18),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.secondaryText,
+              size: compact ? 16 : 18,
+            ),
           ],
         ),
       ),
@@ -908,10 +959,12 @@ class _SongRow extends StatelessWidget {
 class _CategoryRow extends StatelessWidget {
   final IconData icon;
   final String label;
+  final bool compact;
 
   const _CategoryRow({
     required this.icon,
     required this.label,
+    this.compact = false,
   });
 
   @override
@@ -922,23 +975,32 @@ class _CategoryRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 8 : 10,
+          vertical: compact ? 7 : 9,
+        ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.accentGreen, size: 22),
-            const SizedBox(width: 10),
+            Icon(icon, color: AppColors.accentGreen, size: compact ? 19 : 22),
+            SizedBox(width: compact ? 8 : 10),
             Expanded(
               child: Text(
                 label,
-                style: const TextStyle(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
                   color: AppColors.primaryText,
+                  fontSize: compact ? 12.5 : 14,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
                 ),
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.secondaryText, size: 18),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.secondaryText,
+              size: compact ? 16 : 18,
+            ),
           ],
         ),
       ),
@@ -950,6 +1012,7 @@ class _SettingRow extends _CategoryRow {
   const _SettingRow({
     required super.icon,
     required super.label,
+    super.compact,
   });
 }
 

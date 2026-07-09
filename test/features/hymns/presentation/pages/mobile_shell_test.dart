@@ -126,7 +126,10 @@ void main() {
       tester.view.devicePixelRatio = 1;
 
       await tester.pumpWidget(
-        const MaterialApp(home: OnboardingPage()),
+        MaterialApp(
+          key: ValueKey(size),
+          home: const OnboardingPage(),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -135,6 +138,19 @@ void main() {
       expect(find.text('Skip'), findsNothing);
       expect(find.text('Next'), findsNothing);
       expect(tester.takeException(), isNull);
+
+      for (final title in const [
+        'በቁጥር መዝሙር ይክፈቱ',
+        'በማውጫ ይፈልጉ',
+        'በምድብ ያግኙ',
+        'ግጥም፣ ድምፅ እና ኖታ',
+        'ቅንብርን ይቆጣጠሩ',
+      ]) {
+        await tester.tap(find.text('ቀጣይ'));
+        await tester.pumpAndSettle();
+        expect(find.text(title), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      }
     }
 
     tester.view.resetPhysicalSize();
