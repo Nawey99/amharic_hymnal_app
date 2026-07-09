@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
-import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 class MainPageTitleBar extends StatelessWidget {
   final String title;
@@ -21,11 +20,7 @@ class MainPageTitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-      child: GlassContainer(
-        borderRadius: 16.0,
-        blurSigma: 12.0,
-        opacity: 0.15,
-        border: Border.all(color: Colors.transparent, width: 0),
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: leading == null
             ? Row(
