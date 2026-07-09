@@ -72,79 +72,43 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         clipBehavior: Clip.none,
         alignment: Alignment.centerRight,
         children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapDown: (details) => _selectFromGlobalPosition(
-              details.globalPosition,
-            ),
-            onVerticalDragStart: (details) => _selectFromGlobalPosition(
-              details.globalPosition,
-            ),
-            onVerticalDragUpdate: (details) => _selectFromGlobalPosition(
-              details.globalPosition,
-            ),
-            onVerticalDragEnd: (_) => _hideBubble(),
-            onVerticalDragCancel: _hideBubble,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                const verticalPadding = 5.0;
-                final usableHeight =
-                    (constraints.maxHeight - (verticalPadding * 2))
-                        .clamp(0.0, constraints.maxHeight)
-                        .toDouble();
-                const minReadableItemHeight = 10.0;
-                final needsMenu =
-                    usableHeight < widget.labels.length * minReadableItemHeight;
-                if (needsMenu) {
-                  return _buildOverflowMenu();
-                }
-                final itemHeight = (usableHeight / widget.labels.length)
-                    .clamp(8.0, 18.0)
-                    .toDouble();
-                return Container(
-                  width: 34,
-                  margin: const EdgeInsets.only(right: 12),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: verticalPadding,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: widget.labels.map((label) {
-                      final isActive =
-                          widget.activeLabel == label || _bubbleLabel == label;
-                      return SizedBox(
-                        height: itemHeight,
-                        child: Center(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              label,
-                              style: TextStyle(
-                                color: isActive
-                                    ? AppColors.accentGreen
-                                    : AppColors.primaryText,
-                                fontSize: isActive ? 13 : 11,
-                                fontWeight: isActive
-                                    ? FontWeight.w800
-                                    : FontWeight.w600,
-                                fontFamily: 'NotoSansEthiopic',
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                );
-              },
-            ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const verticalPadding = 6.0;
+              const minReadableItemHeight = 18.0;
+              final usableHeight =
+                  (constraints.maxHeight - (verticalPadding * 2))
+                      .clamp(0.0, constraints.maxHeight)
+                      .toDouble();
+              final maxReadableLabels =
+                  (usableHeight / minReadableItemHeight).floor();
+              final isPhoneWidth = MediaQuery.sizeOf(context).width < 600;
+              final needsMenu = widget.labels.length > maxReadableLabels ||
+                  (isPhoneWidth && widget.labels.length > 18);
+
+              if (needsMenu) {
+                return _buildOverflowMenu();
+              }
+
+              final itemHeight = (usableHeight / widget.labels.length)
+                  .clamp(minReadableItemHeight, 22.0)
+                  .toDouble();
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapDown: (details) => _selectFromGlobalPosition(
+                  details.globalPosition,
+                ),
+                onVerticalDragStart: (details) => _selectFromGlobalPosition(
+                  details.globalPosition,
+                ),
+                onVerticalDragUpdate: (details) => _selectFromGlobalPosition(
+                  details.globalPosition,
+                ),
+                onVerticalDragEnd: (_) => _hideBubble(),
+                onVerticalDragCancel: _hideBubble,
+                child: _buildInlineRail(itemHeight, verticalPadding),
+              );
+            },
           ),
           if (_bubbleLabel != null)
             Positioned(
@@ -186,10 +150,54 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
     );
   }
 
+  Widget _buildInlineRail(double itemHeight, double verticalPadding) {
+    return Container(
+      width: 38,
+      margin: const EdgeInsets.only(right: 10),
+      padding: EdgeInsets.symmetric(
+        vertical: verticalPadding,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: widget.labels.map((label) {
+          final isActive = widget.activeLabel == label || _bubbleLabel == label;
+          return SizedBox(
+            height: itemHeight,
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive
+                        ? AppColors.accentGreen
+                        : AppColors.primaryText,
+                    fontSize: isActive ? 14 : 12,
+                    fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                    fontFamily: 'NotoSansEthiopic',
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(growable: false),
+      ),
+    );
+  }
+
   Widget _buildOverflowMenu() {
     return Container(
-      width: 42,
+      width: 46,
       margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(999),
@@ -197,46 +205,114 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
           color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
-      child: PopupMenuButton<String>(
-        tooltip: 'ፊደል ይምረጡ',
-        icon: const Icon(
-          Icons.more_vert,
-          color: AppColors.primaryText,
-          size: 22,
-        ),
-        color: AppColors.surface,
-        constraints: const BoxConstraints(
-          minWidth: 72,
-          maxHeight: 360,
-        ),
-        onSelected: (label) {
-          HapticFeedback.selectionClick();
-          setState(() {
-            _bubbleLabel = null;
-            _bubbleTop = null;
-          });
-          widget.onLabelSelected(label);
-        },
-        itemBuilder: (context) {
-          return widget.labels.map((label) {
-            final isActive = widget.activeLabel == label;
-            return PopupMenuItem<String>(
-              value: label,
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color:
-                      isActive ? AppColors.accentGreen : AppColors.primaryText,
-                  fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: _showLabelPicker,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.activeLabel ?? widget.labels.first,
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+                style: const TextStyle(
+                  color: AppColors.accentGreen,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
                 ),
               ),
-            );
-          }).toList(growable: false);
-        },
+              const SizedBox(height: 2),
+              const Icon(
+                Icons.more_vert,
+                color: AppColors.primaryText,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  Future<void> _showLabelPicker() async {
+    HapticFeedback.selectionClick();
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
+      builder: (context) {
+        return SafeArea(
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.96),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
+            ),
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemCount: widget.labels.length,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 54,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1.05,
+              ),
+              itemBuilder: (context, index) {
+                final label = widget.labels[index];
+                final isActive = widget.activeLabel == label;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => Navigator.of(context).pop(label),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? AppColors.accentGreen.withValues(alpha: 0.24)
+                          : Colors.white.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isActive
+                            ? AppColors.accentGreen.withValues(alpha: 0.55)
+                            : Colors.white.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          color: isActive
+                              ? AppColors.accentGreen
+                              : AppColors.primaryText,
+                          fontSize: 18,
+                          fontWeight:
+                              isActive ? FontWeight.w800 : FontWeight.w600,
+                          fontFamily: 'NotoSansEthiopic',
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selected == null || !mounted) return;
+    HapticFeedback.selectionClick();
+    setState(() {
+      _bubbleLabel = null;
+      _bubbleTop = null;
+    });
+    widget.onLabelSelected(selected);
   }
 }
 
