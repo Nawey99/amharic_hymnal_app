@@ -121,10 +121,19 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   void _showInvalidNumberMessage(String message) {
+    final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
+    final bottomMargin = keyboardHeight > 0
+        ? keyboardHeight + 16
+        : NavBarConstants.getBottomPadding(context);
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.fromLTRB(16, 0, 16, bottomMargin),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
