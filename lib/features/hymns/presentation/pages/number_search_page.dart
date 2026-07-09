@@ -426,6 +426,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       child: TextField(
         controller: _numberController,
         focusNode: _numberFocusNode,
+        cursorColor:
+            _numberErrorMessage == null ? AppColors.accentGreen : Colors.red,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (_) => _clearNumberError(),
@@ -452,6 +454,11 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
             ),
           ),
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         ),
