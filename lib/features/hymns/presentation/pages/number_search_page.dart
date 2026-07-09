@@ -419,9 +419,9 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       opacity: 0.15,
       border: Border.all(
         color: _numberErrorMessage == null
-            ? Colors.white.withValues(alpha: 0.3)
+            ? AppColors.accentGreen.withValues(alpha: 0.45)
             : Colors.red,
-        width: _numberErrorMessage == null ? 1.5 : 1.8,
+        width: 1.5,
       ),
       child: TextField(
         controller: _numberController,
