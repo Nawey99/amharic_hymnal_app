@@ -30,8 +30,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bgService = BackgroundImageService();
+    return ListenableBuilder(
+      listenable: BackgroundImageService(),
+      builder: (context, _) {
+        final bgService = BackgroundImageService();
+        return _buildPage(context, bgService);
+      },
+    );
+  }
 
+  Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
     return Container(
       decoration: BoxDecoration(
         image: bgService.isEnabled
@@ -128,6 +136,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         category.endNumber,
                         state.languageCode,
                         state.version,
+                        bgService.isEnabled,
                       );
                     },
                   );
@@ -161,6 +170,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         author,
                         state.languageCode,
                         state.version,
+                        bgService.isEnabled,
                       );
                     },
                   );
@@ -197,6 +207,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     int endNumber,
     String languageCode,
     String version,
+    bool backgroundImageEnabled,
   ) {
     return Material(
       color: Colors.transparent,
@@ -219,7 +230,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
         child: GlassContainer(
           borderRadius: 12.0,
           blurSigma: 12.0,
-          opacity: 0.22,
+          opacity: backgroundImageEnabled ? 0.22 : 0.62,
+          color: AppColors.surface,
+          border: Border.all(
+            color: backgroundImageEnabled
+                ? Colors.white.withValues(alpha: 0.3)
+                : AppColors.accentGreen.withValues(alpha: 0.16),
+            width: 1.2,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
@@ -282,6 +300,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     String author,
     String languageCode,
     String version,
+    bool backgroundImageEnabled,
   ) {
     return Material(
       color: Colors.transparent,
@@ -305,7 +324,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
         child: GlassContainer(
           borderRadius: 12.0,
           blurSigma: 12.0,
-          opacity: 0.22,
+          opacity: backgroundImageEnabled ? 0.22 : 0.62,
+          color: AppColors.surface,
+          border: Border.all(
+            color: backgroundImageEnabled
+                ? Colors.white.withValues(alpha: 0.3)
+                : AppColors.accentGreen.withValues(alpha: 0.16),
+            width: 1.2,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [

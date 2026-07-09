@@ -50,8 +50,16 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bgService = BackgroundImageService();
+    return ListenableBuilder(
+      listenable: BackgroundImageService(),
+      builder: (context, _) {
+        final bgService = BackgroundImageService();
+        return _buildPage(context, bgService);
+      },
+    );
+  }
 
+  Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
     return Container(
       decoration: BoxDecoration(
         image: bgService.isEnabled

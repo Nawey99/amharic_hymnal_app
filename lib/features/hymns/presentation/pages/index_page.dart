@@ -236,16 +236,10 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Optimize: Only listen to background image changes when enabled
-    final bgService = BackgroundImageService();
-    if (bgService.isEnabled) {
-      return ListenableBuilder(
-        listenable: bgService,
-        builder: (context, _) => _buildPageContent(context),
-      );
-    }
-    // Skip ListenableBuilder when background is disabled for better performance
-    return _buildPageContent(context);
+    return ListenableBuilder(
+      listenable: BackgroundImageService(),
+      builder: (context, _) => _buildPageContent(context),
+    );
   }
 
   Widget _buildPageContent(BuildContext context) {

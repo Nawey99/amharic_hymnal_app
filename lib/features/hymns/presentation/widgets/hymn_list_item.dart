@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -24,6 +25,7 @@ class HymnListItem extends StatelessWidget {
     final settingsRepository = sl<SettingsRepository>();
     final fontSize = settingsRepository.getFontSize();
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final backgroundImageEnabled = BackgroundImageService().isEnabled;
 
     return Material(
       color: Colors.transparent,
@@ -34,7 +36,14 @@ class HymnListItem extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 10),
           borderRadius: 12.0,
           blurSigma: 12.0,
-          opacity: 0.22,
+          opacity: backgroundImageEnabled ? 0.22 : 0.62,
+          color: AppColors.surface,
+          border: Border.all(
+            color: backgroundImageEnabled
+                ? Colors.white.withValues(alpha: 0.3)
+                : AppColors.accentGreen.withValues(alpha: 0.16),
+            width: 1.2,
+          ),
           padding: EdgeInsets.symmetric(
             horizontal: compactHorizontalPadding(textScale),
             vertical: 10,
