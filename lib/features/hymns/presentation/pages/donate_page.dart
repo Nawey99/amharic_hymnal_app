@@ -196,9 +196,8 @@ class NationalBankDonationPage extends StatelessWidget {
 
   static const _fields = [
     ('ባንክ', 'የኢትዮጵያ ንግድ ባንክ'),
-    ('የመለያ ስም', 'Wudase App Support'),
+    ('የባንክ አካውንት ስም', 'Filowha Seventh day adventist church'),
     ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
-    ('ምክንያት', 'የውዳሴ መተግበሪያ ለመደገፍ'),
   ];
 
   @override
