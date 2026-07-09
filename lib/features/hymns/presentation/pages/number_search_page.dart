@@ -417,19 +417,37 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildNumberInput(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildNumberInputField(),
-            _buildNumberErrorMessage(),
-            const SizedBox(height: 16),
-            _buildOpenButton(),
-          ],
-        ),
-      ),
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    final bottomPadding = keyboardInset > 0 ? keyboardInset + 18.0 : 24.0;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableHeight = constraints.maxHeight - bottomPadding - 24;
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.fromLTRB(30, 24, 30, bottomPadding),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: availableHeight > 0 ? availableHeight : 0,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildNumberInputField(),
+                    _buildNumberErrorMessage(),
+                    const SizedBox(height: 16),
+                    _buildOpenButton(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
