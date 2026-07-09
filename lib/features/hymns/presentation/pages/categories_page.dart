@@ -8,9 +8,11 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
+import 'package:amharic_hymnal_app/core/models/hymn_category.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -93,7 +95,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     if (state is HymnsLoaded) {
                       if (HymnalVersions.hasCategories(state.version)) {
                         // Use exact category ranges for hymnal
-                        final categories = HymnCategories.all;
+                        final categories = _categoriesWithSongs(state.hymns);
 
                         if (categories.isEmpty) {
                           return const EmptyStateWidget(
@@ -189,6 +191,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
       }
     }
     return authors.toList();
+  }
+
+  List<HymnCategory> _categoriesWithSongs(List<Hymn> hymns) {
+    final availableNumbers = hymns
+        .map((hymn) => hymn.displayNumber)
+        .where((number) => number > 0)
+        .toSet();
+
+    return HymnCategories.all.where((category) {
+      for (var number = category.startNumber;
+          number <= category.endNumber;
+          number++) {
+        if (availableNumbers.contains(number)) return true;
+      }
+      return false;
+    }).toList(growable: false);
   }
 
   Widget _buildCategoryListItem(
