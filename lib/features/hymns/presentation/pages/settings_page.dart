@@ -180,18 +180,23 @@ class _SettingsPageState extends State<SettingsPage> {
                               'Select hymnal version',
                       value: _selectedVersion,
                       items: [
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: HymnalVersions.sdaNew,
-                          child: Text('አዲስ የአድቬንቲስት መዝሙር'),
+                          child: Text(
+                            HymnalVersions.newHymnal.label,
+                          ),
                         ),
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: HymnalVersions.sdaOld,
-                          child: Text('ቀድሞ የአድቬንቲስት መዝሙር'),
+                          child: Text(
+                            HymnalVersions.oldHymnal.label,
+                          ),
                         ),
                         DropdownMenuItem(
                           value: HymnalVersions.hagerigna,
-                          child: Text(AppLocalizations.of(context)?.hagerigna ??
-                              'Hagerigna'),
+                          child: Text(
+                            HymnalVersions.hagerignaSongs.label,
+                          ),
                         ),
                       ],
                       onChanged: (value) async {

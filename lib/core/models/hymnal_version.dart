@@ -27,8 +27,8 @@ class HymnalVersions {
 
   static const HymnalVersion newHymnal = HymnalVersion(
     id: sdaNew,
-    label: 'New SDA Hymnal',
-    shortLabel: 'New Hymnal',
+    label: 'የ2004 ውዳሴ መዝሙር',
+    shortLabel: '2004 ውዳሴ',
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
@@ -36,8 +36,8 @@ class HymnalVersions {
 
   static const HymnalVersion oldHymnal = HymnalVersion(
     id: sdaOld,
-    label: 'Old SDA Hymnal',
-    shortLabel: 'Old Hymnal',
+    label: 'የ1990 ውዳሴ መዝሙር',
+    shortLabel: '1990 ውዳሴ',
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
@@ -45,8 +45,8 @@ class HymnalVersions {
 
   static const HymnalVersion hagerignaSongs = HymnalVersion(
     id: hagerigna,
-    label: 'Hagerigna',
-    shortLabel: 'Hagerigna',
+    label: 'የሀገርኛ መዝሙር',
+    shortLabel: 'ሀገርኛ',
     isSda: false,
     hasCategories: false,
     fallbackDatabaseVersion: hagerigna,
