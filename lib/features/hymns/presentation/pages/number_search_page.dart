@@ -172,15 +172,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   Widget _buildHeader(BuildContext context) {
     return MainPageTitleBar(
       title: 'ውዳሴ',
+      leading: _buildHistoryButton(context),
       actions: [
-        IconButton(
-          tooltip: 'ታሪክ',
-          icon: const Icon(
-            Icons.history,
-            color: AppColors.primaryText,
-          ),
-          onPressed: () => _openHistory(context),
-        ),
         IconButton(
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
@@ -189,6 +182,47 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           onPressed: () => _toggleSearch(),
         ),
       ],
+    );
+  }
+
+  Widget _buildHistoryButton(BuildContext context) {
+    return Tooltip(
+      message: 'ታሪክ',
+      child: InkWell(
+        onTap: () => _openHistory(context),
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.accentGreen.withValues(alpha: 0.18),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: AppColors.accentGreen.withValues(alpha: 0.5),
+              width: 1.2,
+            ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.history,
+                color: AppColors.accentGreen,
+                size: 19,
+              ),
+              SizedBox(width: 5),
+              Text(
+                'ታሪክ',
+                style: TextStyle(
+                  color: AppColors.primaryText,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'NotoSansEthiopic',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
