@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Splash screen with placeholder logo (API 21+) -->
+<!-- Black splash screen with centered app logo (API 21+). -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Match the in-app splash background so startup reads as one flow. -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#141218" />
+            <solid android:color="#000000" />
         </shape>
     </item>
 
-    <!-- Splash logo centered -->
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/splash_logo" />
-    </item>
+    <item
+        android:width="144dp"
+        android:height="144dp"
+        android:gravity="center"
+        android:drawable="@mipmap/ic_launcher" />
 </layer-list>
