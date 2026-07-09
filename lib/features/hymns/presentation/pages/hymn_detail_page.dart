@@ -792,6 +792,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       hymnTitle: hymn.displayTitle.isNotEmpty
           ? hymn.displayTitle
           : 'መዝሙር ${hymn.displayNumber}',
+      version: _getVersion(),
     );
   }
 

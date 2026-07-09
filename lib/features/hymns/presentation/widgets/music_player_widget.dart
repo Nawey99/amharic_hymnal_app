@@ -15,11 +15,13 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 class MusicPlayerWidget extends StatefulWidget {
   final int hymnNumber;
   final String hymnTitle;
+  final String version;
 
   const MusicPlayerWidget({
     super.key,
     required this.hymnNumber,
     required this.hymnTitle,
+    required this.version,
   });
 
   @override
@@ -118,6 +120,23 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     });
 
     try {
+      final localTrack = await _audioRepository.getTrackForNumber(
+        widget.hymnNumber,
+        title: widget.hymnTitle,
+        version: widget.version,
+      );
+      if (localTrack != null &&
+          localTrack.url.startsWith(GlobalAudioService.localAssetAudioScheme)) {
+        await _audioService.playAsset(
+          widget.hymnNumber,
+          localTrack.url.substring(
+            GlobalAudioService.localAssetAudioScheme.length,
+          ),
+          hymnTitle: widget.hymnTitle,
+        );
+        return;
+      }
+
       if (widget.hymnNumber != LocalDummyAudioRepository.dummyHymnNumber) {
         final playedCached = await _playCachedOrDownloadRemoteAudio();
         if (playedCached) return;

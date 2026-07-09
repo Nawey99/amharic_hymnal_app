@@ -17,6 +17,7 @@ class GlobalAudioService {
   GlobalAudioService._internal();
 
   static const String dummyAudioScheme = 'dummy://';
+  static const String localAssetAudioScheme = 'asset://';
   static const String dummyAudioAsset = 'audio/dummy_hymn_1.mp3';
   static const Duration dummyDuration = Duration(seconds: 30);
 
@@ -234,6 +235,15 @@ class GlobalAudioService {
         return;
       }
 
+      if (audioUrl.startsWith(localAssetAudioScheme)) {
+        await playAsset(
+          hymnNumber,
+          audioUrl.substring(localAssetAudioScheme.length),
+          hymnTitle: hymnTitle,
+        );
+        return;
+      }
+
       final player = _player;
       if (!_audioBackendAvailable || player == null) {
         throw Exception('Audio playback is not available on this platform');
@@ -272,6 +282,32 @@ class GlobalAudioService {
     _currentHymnNumber = hymnNumber;
     _currentAudioUrl = filePath;
     _currentHymnController.add(hymnNumber);
+  }
+
+  Future<void> playAsset(
+    int hymnNumber,
+    String assetPath, {
+    String? hymnTitle,
+  }) async {
+    final player = _player;
+    if (!_audioBackendAvailable || player == null) {
+      throw Exception('Audio playback is not available on this platform');
+    }
+
+    final normalizedAssetPath = assetPath.startsWith('assets/')
+        ? assetPath.substring('assets/'.length)
+        : assetPath;
+
+    await player.stop();
+    await player.play(AssetSource(normalizedAssetPath));
+    _isDummyPlayback = false;
+    _currentHymnNumber = hymnNumber;
+    _currentAudioUrl = '$localAssetAudioScheme$normalizedAssetPath';
+    _currentHymnController.add(hymnNumber);
+
+    if (kDebugMode) {
+      debugPrint('🎵 Playing local asset for hymn #$hymnNumber: $assetPath');
+    }
   }
 
   Future<void> _playDummyTrack(int hymnNumber, String audioUrl) async {

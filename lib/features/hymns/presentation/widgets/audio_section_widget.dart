@@ -16,11 +16,13 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/music_pla
 class AudioSectionWidget extends StatefulWidget {
   final int hymnNumber;
   final String hymnTitle;
+  final String version;
 
   const AudioSectionWidget({
     super.key,
     required this.hymnNumber,
     required this.hymnTitle,
+    required this.version,
   });
 
   @override
@@ -62,6 +64,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
       final track = await _audioRepository.getTrackForNumber(
         widget.hymnNumber,
         title: widget.hymnTitle,
+        version: widget.version,
       );
 
       if (mounted) {
@@ -97,6 +100,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
       return MusicPlayerWidget(
         hymnNumber: widget.hymnNumber,
         hymnTitle: widget.hymnTitle,
+        version: widget.version,
       );
     }
 
