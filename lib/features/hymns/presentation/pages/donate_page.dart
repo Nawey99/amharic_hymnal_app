@@ -196,7 +196,7 @@ class NationalBankDonationPage extends StatelessWidget {
 
   static const _fields = [
     ('ባንክ', 'የኢትዮጵያ ንግድ ባንክ'),
-    ('የባንክ አካውንት ስም', 'Filowha Seventh day adventist church'),
+    ('የባንክ አካውንት ስም', 'Filowha Seventh Day Adventist Church'),
     ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
   ];
 
