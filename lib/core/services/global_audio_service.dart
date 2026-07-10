@@ -250,6 +250,8 @@ class GlobalAudioService {
       }
 
       await player.stop();
+      _currentPosition = Duration.zero;
+      _positionController.add(_currentPosition);
       await player.play(UrlSource(audioUrl));
 
       _currentHymnNumber = hymnNumber;
@@ -276,6 +278,8 @@ class GlobalAudioService {
     if (!_audioBackendAvailable || player == null) {
       throw Exception('Audio playback is not available on this platform');
     }
+    _currentPosition = Duration.zero;
+    _positionController.add(_currentPosition);
     await player.stop();
     await player.play(DeviceFileSource(filePath));
     _isDummyPlayback = false;
@@ -298,6 +302,8 @@ class GlobalAudioService {
         ? assetPath.substring('assets/'.length)
         : assetPath;
 
+    _currentPosition = Duration.zero;
+    _positionController.add(_currentPosition);
     await player.stop();
     await player.play(AssetSource(normalizedAssetPath));
     _isDummyPlayback = false;
@@ -494,6 +500,9 @@ class GlobalAudioService {
   Future<void> togglePlayPause() async {
     if (_playbackState == PlayerState.playing) {
       await pause();
+    } else if (_playbackState == PlayerState.completed) {
+      await seek(Duration.zero);
+      await resume();
     } else {
       await resume();
     }
