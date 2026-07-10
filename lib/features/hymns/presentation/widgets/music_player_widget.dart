@@ -274,76 +274,71 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         ? englishTitle
         : 'Audio accompaniment';
 
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOutCubic,
-      alignment: Alignment.topCenter,
-      child: GlassContainer(
-        borderRadius: 18.0,
-        blurSigma: 12.0,
-        opacity: 0.2,
-        padding: EdgeInsets.zero,
-        margin: const EdgeInsets.only(bottom: 10),
-        child: Material(
-          color: const Color(0xE6292929),
-          borderRadius: BorderRadius.circular(18),
-          clipBehavior: Clip.antiAlias,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: _isError || widget.condensed ? null : _toggleExpanded,
-            child: Padding(
-              padding: widget.condensed
-                  ? const EdgeInsets.fromLTRB(10, 6, 10, 6)
-                  : const EdgeInsets.fromLTRB(10, 8, 12, 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!widget.condensed)
-                    Row(
-                      children: [
-                        _buildPlayButton(isThisHymnActive),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                widget.hymnTitle,
-                                style: const TextStyle(
-                                  color: AppColors.primaryText,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: 'NotoSansEthiopic',
-                                  height: 1.08,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+    return GlassContainer(
+      borderRadius: 18.0,
+      blurSigma: 12.0,
+      opacity: 0.2,
+      padding: EdgeInsets.zero,
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: const Color(0xE6292929),
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _isError || widget.condensed ? null : _toggleExpanded,
+          child: Padding(
+            padding: widget.condensed
+                ? const EdgeInsets.fromLTRB(10, 6, 10, 6)
+                : const EdgeInsets.fromLTRB(10, 8, 12, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!widget.condensed)
+                  Row(
+                    children: [
+                      _buildPlayButton(isThisHymnActive),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              widget.hymnTitle,
+                              style: const TextStyle(
+                                color: AppColors.primaryText,
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'NotoSansEthiopic',
+                                height: 1.08,
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                subtitle,
-                                style: const TextStyle(
-                                  color: AppColors.secondaryText,
-                                  fontSize: 12,
-                                  height: 1.0,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              subtitle,
+                              style: const TextStyle(
+                                color: AppColors.secondaryText,
+                                fontSize: 12,
+                                height: 1.0,
                               ),
-                            ],
-                          ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  if (_isError)
-                    _buildErrorMessage()
-                  else if (widget.condensed)
-                    _buildCondensedScrubber(isThisHymnActive)
-                  else
-                    _buildExpandableScrubber(isThisHymnActive),
-                ],
-              ),
+                      ),
+                    ],
+                  ),
+                if (_isError)
+                  _buildErrorMessage()
+                else if (widget.condensed)
+                  _buildCondensedScrubber(isThisHymnActive)
+                else
+                  _buildExpandableScrubber(isThisHymnActive),
+              ],
             ),
           ),
         ),
@@ -445,23 +440,28 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   }
 
   Widget _buildExpandableScrubber(bool isThisHymnActive) {
-    return ClipRect(
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        alignment: Alignment.topCenter,
-        child: !_isExpanded
-            ? const SizedBox.shrink()
-            : Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Column(
-                  children: [
-                    _buildProgressSlider(isThisHymnActive),
-                    _buildTimeLabels(),
-                  ],
-                ),
-              ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: _isExpanded ? 1 : 0),
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutCubic,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Column(
+          children: [
+            _buildProgressSlider(isThisHymnActive),
+            _buildTimeLabels(),
+          ],
+        ),
       ),
+      builder: (context, heightFactor, child) {
+        return ClipRect(
+          child: Align(
+            alignment: Alignment.topCenter,
+            heightFactor: heightFactor,
+            child: child,
+          ),
+        );
+      },
     );
   }
 
