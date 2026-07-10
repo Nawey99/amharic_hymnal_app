@@ -17,10 +17,19 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.d
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart'
-    show initDependencies, sl;
+    show initDependencies, registerAudioHandler, sl;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    final audioHandler = await GlobalAudioService().initialize();
+    if (audioHandler != null) registerAudioHandler(audioHandler);
+  } catch (error) {
+    if (kDebugMode) {
+      debugPrint('Background audio initialization failed: $error');
+    }
+  }
 
   // Set system UI overlay style first (only for mobile)
   if (!kIsWeb) {
@@ -62,19 +71,6 @@ class _AppInitializerState extends State<AppInitializer> {
       // Initialize dependencies (includes Drift database initialization)
       // Drift works on all platforms including web (uses IndexedDB on web)
       await initDependencies();
-
-      // Initialize global audio service (without API config - can be set later)
-      try {
-        await GlobalAudioService().initialize();
-        if (kDebugMode) {
-          debugPrint('✅ GlobalAudioService initialized');
-        }
-      } catch (e) {
-        if (kDebugMode) {
-          debugPrint('⚠️ GlobalAudioService initialization failed: $e');
-        }
-        // Continue without audio service
-      }
 
       // Initialize screen service (keep screen on)
       await ScreenService.initialize();

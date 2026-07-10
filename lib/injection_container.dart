@@ -1,5 +1,6 @@
 // lib/injection_container.dart
 import 'dart:async';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint, kIsWeb;
 import 'package:get_it/get_it.dart';
 
@@ -25,6 +26,12 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.d
 
 final sl = GetIt.instance;
 bool _databaseInitializationStarted = false;
+
+void registerAudioHandler(AudioHandler handler) {
+  if (!sl.isRegistered<AudioHandler>()) {
+    sl.registerSingleton<AudioHandler>(handler);
+  }
+}
 
 Future<void> initDependencies({bool startDatabase = true}) async {
   try {

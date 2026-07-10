@@ -1,11 +1,11 @@
 package com.example.amharic_hymnal_app
 
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import android.view.WindowManager
+import com.ryanheise.audioservice.AudioServiceActivity
 
-class MainActivity: FlutterActivity() {
+class MainActivity: AudioServiceActivity() {
     private val secureScreenChannel = "wudase/secure_screen"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

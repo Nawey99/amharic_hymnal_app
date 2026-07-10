@@ -1,7 +1,6 @@
 // lib/features/hymns/presentation/widgets/music_player_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
@@ -38,12 +37,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   final DownloadRepository _downloadRepository = DownloadRepository();
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration?>? _durationSubscription;
-  StreamSubscription<PlayerState>? _playbackStateSubscription;
+  StreamSubscription<AudioPlayerState>? _playbackStateSubscription;
   StreamSubscription<int?>? _currentHymnSubscription;
 
   Duration _currentPosition = Duration.zero;
   Duration? _totalDuration;
-  PlayerState? _playbackState;
+  AudioPlayerState? _playbackState;
   int? _currentPlayingHymn;
   bool _isLoading = false;
   bool _isError = false;
@@ -83,7 +82,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       if (mounted) {
         setState(() {
           _playbackState = state;
-          _isLoading = false;
+          _isLoading = state == AudioPlayerState.loading ||
+              state == AudioPlayerState.buffering;
           if (_shouldAutoExpandFor(_currentPlayingHymn, state)) {
             _isExpanded = true;
           }
@@ -127,11 +127,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     // Do not auto-start audio when the widget appears; playback is user-driven.
   }
 
-  bool _shouldAutoExpandFor(int? hymnNumber, PlayerState? state) {
+  bool _shouldAutoExpandFor(int? hymnNumber, AudioPlayerState? state) {
     return hymnNumber == widget.hymnNumber &&
-        (state == PlayerState.playing ||
-            state == PlayerState.paused ||
-            state == PlayerState.completed);
+        (state == AudioPlayerState.playing ||
+            state == AudioPlayerState.paused ||
+            state == AudioPlayerState.completed);
   }
 
   Future<void> _loadAudio() async {
@@ -155,6 +155,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             GlobalAudioService.localAssetAudioScheme.length,
           ),
           hymnTitle: widget.hymnTitle,
+          version: widget.version,
         );
         return;
       }
@@ -166,6 +167,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       await _audioService.play(
         widget.hymnNumber,
         hymnTitle: widget.hymnTitle,
+        version: widget.version,
       );
     } catch (e) {
       if (mounted) {
@@ -198,6 +200,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         widget.hymnNumber,
         cachedPath,
         hymnTitle: widget.hymnTitle,
+        version: widget.version,
       );
       return true;
     }
@@ -241,6 +244,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       widget.hymnNumber,
       cached.path,
       hymnTitle: widget.hymnTitle,
+      version: widget.version,
     );
     return true;
   }
@@ -261,7 +265,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   }
 
   bool get _isPlaying {
-    return _playbackState == PlayerState.playing &&
+    return _playbackState == AudioPlayerState.playing &&
         _currentPlayingHymn == widget.hymnNumber;
   }
 
@@ -405,7 +409,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       setState(() => _isExpanded = true);
     }
 
-    if (isThisHymnActive && _playbackState == PlayerState.completed) {
+    if (isThisHymnActive && _playbackState == AudioPlayerState.completed) {
       await _loadAudio();
     } else if (isThisHymnActive) {
       await _togglePlayPause();

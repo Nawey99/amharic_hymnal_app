@@ -1,130 +1,151 @@
-// lib/core/services/global_audio_service.dart
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kDebugMode, debugPrint;
+    show TargetPlatform, defaultTargetPlatform, kDebugMode, kIsWeb, debugPrint;
 import 'package:http/http.dart' as http;
 
-/// Global audio service - single source of truth for all audio playback
-///
-/// Simplified implementation using `audioplayers` so it works on all
-/// supported platforms (including Windows) without extra native setup.
+import 'package:amharic_hymnal_app/core/services/hymnal_audio_handler.dart';
+import 'package:amharic_hymnal_app/core/services/media_artwork_service.dart';
+
+enum AudioPlayerState {
+  stopped,
+  loading,
+  buffering,
+  playing,
+  paused,
+  completed,
+  error,
+}
+
 class GlobalAudioService {
   static final GlobalAudioService _instance = GlobalAudioService._internal();
+
   factory GlobalAudioService() => _instance;
+
   GlobalAudioService._internal();
 
   static const String dummyAudioScheme = 'dummy://';
   static const String localAssetAudioScheme = 'asset://';
   static const String dummyAudioAsset = 'audio/dummy_hymn_1.mp3';
   static const Duration dummyDuration = Duration(seconds: 30);
+  static const String notificationChannelId =
+      'com.example.amharic_hymnal_app.audio';
+  static const String notificationChannelName = 'Audio Playback';
+  static const String appAlbumName = 'ውዳሴ';
 
-  AudioPlayer? _player;
-  Timer? _dummyPlaybackTimer;
+  final StreamController<Duration> _positionController =
+      StreamController<Duration>.broadcast();
+  final StreamController<Duration?> _durationController =
+      StreamController<Duration?>.broadcast();
+  final StreamController<AudioPlayerState> _playbackStateController =
+      StreamController<AudioPlayerState>.broadcast();
+  final StreamController<int?> _currentHymnController =
+      StreamController<int?>.broadcast();
+
+  AudioHandler? _handler;
+  StreamSubscription<PlaybackState>? _playbackSubscription;
+  StreamSubscription<MediaItem?>? _mediaItemSubscription;
+  StreamSubscription<Duration>? _positionSubscription;
 
   String? _apiKey;
   String? _baseUrl;
   int? _currentHymnNumber;
   String? _currentAudioUrl;
-
-  // Stream controllers for state changes
-  final StreamController<Duration> _positionController =
-      StreamController<Duration>.broadcast();
-  final StreamController<Duration?> _durationController =
-      StreamController<Duration?>.broadcast();
-  final StreamController<PlayerState> _playbackStateController =
-      StreamController<PlayerState>.broadcast();
-  final StreamController<int?> _currentHymnController =
-      StreamController<int?>.broadcast();
-
-  // Current state
   Duration _currentPosition = Duration.zero;
   Duration? _totalDuration;
-  PlayerState _playbackState = PlayerState.stopped;
-
+  AudioPlayerState _playbackState = AudioPlayerState.stopped;
   bool _isInitialized = false;
-  bool _audioBackendAvailable = true;
-  bool _isDummyPlayback = false;
+  bool _audioBackendAvailable = false;
 
-  /// Initialize the audio service with API configuration
-  ///
-  /// [apiKey] - API key for audio URL resolution (optional)
-  /// [baseUrl] - Base URL for audio API (optional, can be set later)
-  Future<void> initialize({String? apiKey, String? baseUrl}) async {
-    if (_isInitialized) {
-      if (kDebugMode) {
-        debugPrint('⚠️ GlobalAudioService already initialized');
-      }
-      return;
-    }
+  Future<AudioHandler?> initialize({String? apiKey, String? baseUrl}) async {
+    setApiConfig(apiKey: apiKey, baseUrl: baseUrl);
+    if (_isInitialized) return _handler;
 
-    _apiKey = apiKey;
-    _baseUrl = baseUrl;
-
-    if (!_isNativeAudioBackendSupported) {
-      _audioBackendAvailable = false;
+    if (!_isSupportedPlatform) {
       _isInitialized = true;
+      _audioBackendAvailable = false;
       if (kDebugMode) {
         debugPrint(
-          'ℹ️ Audio playback disabled on this platform until a supported backend is configured.',
+          'Audio playback is unavailable on this desktop platform.',
         );
       }
-      return;
+      return null;
     }
 
-    _player = AudioPlayer();
-    _setupPlayerListeners();
+    final handler = await AudioService.init(
+      builder: HymnalAudioHandler.new,
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: notificationChannelId,
+        androidNotificationChannelName: notificationChannelName,
+        androidNotificationChannelDescription:
+            'Hymn accompaniment playback controls',
+        androidStopForegroundOnPause: false,
+        fastForwardInterval: HymnalAudioHandler.seekInterval,
+        rewindInterval: HymnalAudioHandler.seekInterval,
+        preloadArtwork: true,
+      ),
+    );
+
+    _attachHandler(handler);
+    _audioBackendAvailable = true;
     _isInitialized = true;
-
     if (kDebugMode) {
-      debugPrint('✅ GlobalAudioService initialized (audioplayers)');
+      debugPrint('GlobalAudioService initialized with audio_service.');
     }
+    return handler;
   }
 
-  /// Set API configuration (can be called after initialization)
   void setApiConfig({String? apiKey, String? baseUrl}) {
-    _apiKey = apiKey;
-    _baseUrl = baseUrl;
+    if (apiKey != null) _apiKey = apiKey;
+    if (baseUrl != null) _baseUrl = baseUrl;
   }
 
-  /// Set up player event listeners
-  void _setupPlayerListeners() {
-    final player = _player;
-    if (player == null) {
-      return;
+  void _attachHandler(AudioHandler handler) {
+    _handler = handler;
+    _playbackSubscription?.cancel();
+    _mediaItemSubscription?.cancel();
+    _positionSubscription?.cancel();
+
+    _playbackSubscription = handler.playbackState.listen(_onPlaybackState);
+    _mediaItemSubscription = handler.mediaItem.listen(_onMediaItem);
+    _positionSubscription = AudioService.position.listen(_onPosition);
+
+    _onPlaybackState(handler.playbackState.value);
+    _onMediaItem(handler.mediaItem.value);
+  }
+
+  void _onPlaybackState(PlaybackState state) {
+    _playbackState = audioPlayerStateFromPlaybackState(
+      state,
+      hasMediaItem: _handler?.mediaItem.value != null,
+    );
+    _playbackStateController.add(_playbackState);
+    _onPosition(state.updatePosition);
+  }
+
+  void _onMediaItem(MediaItem? item) {
+    final extras = item?.extras;
+    final hymnNumber = extras?['hymnNumber'];
+    _currentHymnNumber = hymnNumber is num ? hymnNumber.toInt() : null;
+    _currentAudioUrl = extras?[HymnalAudioHandler.sourceExtra] as String?;
+    _totalDuration = item?.duration;
+    _currentHymnController.add(_currentHymnNumber);
+    _durationController.add(_totalDuration);
+
+    if (item == null) {
+      _onPosition(Duration.zero);
     }
-
-    // Listen to position changes
-    player.onPositionChanged.listen((position) {
-      _currentPosition = position;
-      _positionController.add(position);
-    });
-
-    // Listen to duration changes
-    player.onDurationChanged.listen((duration) {
-      _totalDuration = duration;
-      _durationController.add(duration);
-      if (kDebugMode) {
-        debugPrint('🎵 Audio duration: ${duration.inSeconds}s');
-      }
-    });
-
-    // Listen to player state changes
-    player.onPlayerStateChanged.listen((state) {
-      _playbackState = state;
-      _playbackStateController.add(state);
-    });
   }
 
-  /// Resolve audio URL from API for a given hymn number
-  ///
-  /// [hymnNumber] - The hymn number to get audio for
-  /// Returns the audio URL if found, null otherwise
-  ///
-  /// API format: {baseUrl}/audio/{hymnNumber}?apiKey={apiKey}
-  /// Can be customized based on actual API structure
+  void _onPosition(Duration position) {
+    final normalizedPosition =
+        _currentHymnNumber == null ? Duration.zero : position;
+    _currentPosition = normalizedPosition;
+    _positionController.add(normalizedPosition);
+  }
+
   Future<String?> resolveAudioUrl(int hymnNumber) async {
     if (hymnNumber == 1) {
       return '${dummyAudioScheme}hymn-1';
@@ -132,7 +153,7 @@ class GlobalAudioService {
 
     if (_baseUrl == null || _baseUrl!.isEmpty) {
       if (kDebugMode) {
-        debugPrint('⚠️ Base URL not configured for audio API');
+        debugPrint('Base URL is not configured for the audio API.');
       }
       return null;
     }
@@ -141,404 +162,279 @@ class GlobalAudioService {
       final url = _apiKey != null && _apiKey!.isNotEmpty
           ? '$_baseUrl/audio/$hymnNumber?apiKey=$_apiKey'
           : '$_baseUrl/audio/$hymnNumber';
-
-      if (kDebugMode) {
-        debugPrint('🔍 Resolving audio URL for hymn #$hymnNumber: $url');
-      }
-
       final response = await http.get(Uri.parse(url)).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          if (kDebugMode) {
-            debugPrint('⏱️ Audio API request timeout for hymn #$hymnNumber');
-          }
-          throw Exception('Audio API request timed out');
-        },
-      );
-
-      if (response.statusCode == 200) {
-        try {
-          final data = json.decode(response.body) as Map<String, dynamic>;
-
-          final audioUrl = data['url'] as String? ??
-              data['audioUrl'] as String? ??
-              data['audio_url'] as String? ??
-              data['audio'] as String?;
-
-          if (audioUrl != null && audioUrl.isNotEmpty) {
-            if (kDebugMode) {
-              debugPrint('✅ Resolved audio URL: $audioUrl');
-            }
-            return audioUrl;
-          } else {
-            if (kDebugMode) {
-              debugPrint(
-                '⚠️ Audio URL not found in API response for hymn #$hymnNumber',
-              );
-            }
-          }
-        } catch (e) {
-          if (kDebugMode) {
-            debugPrint(
-              '❌ Failed to parse API response for hymn #$hymnNumber: $e',
-            );
-          }
-        }
-      } else if (response.statusCode == 404) {
-        if (kDebugMode) {
-          debugPrint('ℹ️ Audio not found (404) for hymn #$hymnNumber');
-        }
-      } else {
-        if (kDebugMode) {
-          debugPrint(
-            '⚠️ API returned status ${response.statusCode} for hymn #$hymnNumber',
+            const Duration(seconds: 10),
           );
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to resolve audio URL for hymn #$hymnNumber: $e');
-      }
-    }
 
-    return null;
+      if (response.statusCode != 200) return null;
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final audioUrl = data['url'] as String? ??
+          data['audioUrl'] as String? ??
+          data['audio_url'] as String? ??
+          data['audio'] as String?;
+      return audioUrl == null || audioUrl.isEmpty ? null : audioUrl;
+    } catch (error) {
+      if (kDebugMode) {
+        debugPrint('Audio URL resolution failed for hymn $hymnNumber: $error');
+      }
+      return null;
+    }
   }
 
-  /// Play audio for a specific hymn number
-  ///
-  /// Automatically stops previous hymn if one is playing
-  /// Resolves audio URL from API if not already cached
   Future<void> play(
     int hymnNumber, {
     String? hymnTitle,
     String? artist,
+    String version = 'sda_new',
   }) async {
-    try {
-      // Stop previous hymn if different
-      if (_currentHymnNumber != null &&
-          _currentHymnNumber != hymnNumber &&
-          _playbackState == PlayerState.playing) {
-        await stop();
-      }
-
-      final audioUrl = await resolveAudioUrl(hymnNumber);
-
-      if (audioUrl == null || audioUrl.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No audio URL found for hymn #$hymnNumber');
-        }
-        throw Exception('Audio not available for hymn #$hymnNumber');
-      }
-
-      if (audioUrl.startsWith(dummyAudioScheme)) {
-        await _playDummyTrack(hymnNumber, audioUrl);
-        return;
-      }
-
-      if (audioUrl.startsWith(localAssetAudioScheme)) {
-        await playAsset(
-          hymnNumber,
-          audioUrl.substring(localAssetAudioScheme.length),
-          hymnTitle: hymnTitle,
-        );
-        return;
-      }
-
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        throw Exception('Audio playback is not available on this platform');
-      }
-
-      await player.stop();
-      _currentPosition = Duration.zero;
-      _positionController.add(_currentPosition);
-      await player.play(UrlSource(audioUrl));
-
-      _currentHymnNumber = hymnNumber;
-      _currentAudioUrl = audioUrl;
-      _currentHymnController.add(hymnNumber);
-
-      if (kDebugMode) {
-        debugPrint('🎵 Playing hymn #$hymnNumber: $audioUrl');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to play hymn #$hymnNumber: $e');
-      }
-      rethrow;
+    final audioUrl = await resolveAudioUrl(hymnNumber);
+    if (audioUrl == null || audioUrl.isEmpty) {
+      throw StateError('Audio is not available for hymn $hymnNumber.');
     }
+
+    if (audioUrl.startsWith(dummyAudioScheme)) {
+      await _playAsset(
+        hymnNumber,
+        dummyAudioAsset,
+        mediaId: audioUrl,
+        hymnTitle: hymnTitle,
+        artist: artist,
+        version: version,
+      );
+      return;
+    }
+
+    if (audioUrl.startsWith(localAssetAudioScheme)) {
+      await playAsset(
+        hymnNumber,
+        audioUrl.substring(localAssetAudioScheme.length),
+        hymnTitle: hymnTitle,
+        artist: artist,
+        version: version,
+      );
+      return;
+    }
+
+    await _playSource(
+      hymnNumber: hymnNumber,
+      mediaId: audioUrl,
+      sourceType: HymnalAudioHandler.sourceTypeUri,
+      source: audioUrl,
+      hymnTitle: hymnTitle,
+      artist: artist,
+      version: version,
+    );
   }
 
   Future<void> playLocalFile(
     int hymnNumber,
     String filePath, {
     String? hymnTitle,
-  }) async {
-    final player = _player;
-    if (!_audioBackendAvailable || player == null) {
-      throw Exception('Audio playback is not available on this platform');
-    }
-    _currentPosition = Duration.zero;
-    _positionController.add(_currentPosition);
-    await player.stop();
-    await player.play(DeviceFileSource(filePath));
-    _isDummyPlayback = false;
-    _currentHymnNumber = hymnNumber;
-    _currentAudioUrl = filePath;
-    _currentHymnController.add(hymnNumber);
+    String? artist,
+    String version = 'sda_new',
+  }) {
+    return _playSource(
+      hymnNumber: hymnNumber,
+      mediaId: Uri.file(filePath).toString(),
+      sourceType: HymnalAudioHandler.sourceTypeFile,
+      source: filePath,
+      hymnTitle: hymnTitle,
+      artist: artist,
+      version: version,
+    );
   }
 
   Future<void> playAsset(
     int hymnNumber,
     String assetPath, {
     String? hymnTitle,
+    String? artist,
+    String version = 'sda_new',
+  }) {
+    return _playAsset(
+      hymnNumber,
+      assetPath,
+      hymnTitle: hymnTitle,
+      artist: artist,
+      version: version,
+    );
+  }
+
+  Future<void> _playAsset(
+    int hymnNumber,
+    String assetPath, {
+    String? mediaId,
+    String? hymnTitle,
+    String? artist,
+    required String version,
+  }) {
+    final normalizedPath =
+        assetPath.startsWith('assets/') ? assetPath : 'assets/$assetPath';
+    return _playSource(
+      hymnNumber: hymnNumber,
+      mediaId: mediaId ?? 'asset:///$normalizedPath?version=$version',
+      sourceType: HymnalAudioHandler.sourceTypeAsset,
+      source: normalizedPath,
+      hymnTitle: hymnTitle,
+      artist: artist,
+      version: version,
+    );
+  }
+
+  Future<void> _playSource({
+    required int hymnNumber,
+    required String mediaId,
+    required String sourceType,
+    required String source,
+    required String version,
+    String? hymnTitle,
+    String? artist,
   }) async {
-    final player = _player;
-    if (!_audioBackendAvailable || player == null) {
-      throw Exception('Audio playback is not available on this platform');
+    final handler = _handler;
+    if (!_audioBackendAvailable || handler == null) {
+      throw StateError('Audio playback is not available on this platform.');
     }
 
-    final normalizedAssetPath = assetPath.startsWith('assets/')
-        ? assetPath.substring('assets/'.length)
-        : assetPath;
+    final artworkUri = await MediaArtworkService.instance.getArtworkUri();
+    final normalizedTitle = hymnTitle?.trim();
+    final normalizedArtist = artist?.trim();
+    final item = buildHymnMediaItem(
+      hymnNumber: hymnNumber,
+      mediaId: mediaId,
+      sourceType: sourceType,
+      source: source,
+      version: version,
+      hymnTitle: normalizedTitle,
+      artist: normalizedArtist,
+      artworkUri: artworkUri,
+    );
 
-    _currentPosition = Duration.zero;
-    _positionController.add(_currentPosition);
-    await player.stop();
-    await player.play(AssetSource(normalizedAssetPath));
-    _isDummyPlayback = false;
-    _currentHymnNumber = hymnNumber;
-    _currentAudioUrl = '$localAssetAudioScheme$normalizedAssetPath';
-    _currentHymnController.add(hymnNumber);
-
-    if (kDebugMode) {
-      debugPrint('🎵 Playing local asset for hymn #$hymnNumber: $assetPath');
+    try {
+      await handler.playMediaItem(item);
+    } catch (error) {
+      if (kDebugMode) {
+        debugPrint('Audio playback failed for hymn $hymnNumber: $error');
+      }
+      rethrow;
     }
   }
 
-  Future<void> _playDummyTrack(int hymnNumber, String audioUrl) async {
-    _dummyPlaybackTimer?.cancel();
-    final player = _player;
-    if (_audioBackendAvailable && player != null) {
-      await player.stop();
-      await player.play(AssetSource(dummyAudioAsset));
-      _isDummyPlayback = false;
-      _currentHymnNumber = hymnNumber;
-      _currentAudioUrl = audioUrl;
-      _totalDuration = dummyDuration;
-      _currentHymnController.add(hymnNumber);
-      _durationController.add(_totalDuration);
-      if (kDebugMode) {
-        debugPrint('🎵 Playing audible dummy hymn audio asset');
-      }
+  Future<void> pause() async {
+    await _handler?.pause();
+  }
+
+  Future<void> resume() async {
+    await _handler?.play();
+  }
+
+  Future<void> stop() async {
+    await _handler?.stop();
+  }
+
+  Future<void> seek(Duration position) async {
+    await _handler?.seek(position);
+  }
+
+  Future<void> seekBackward() async {
+    await _handler?.rewind();
+  }
+
+  Future<void> seekForward() async {
+    await _handler?.fastForward();
+  }
+
+  Future<void> skipToPrevious() async {
+    await _handler?.skipToPrevious();
+  }
+
+  Future<void> skipToNext() async {
+    await _handler?.skipToNext();
+  }
+
+  Future<void> togglePlayPause() async {
+    if (_playbackState == AudioPlayerState.playing) {
+      await pause();
       return;
     }
-
-    _isDummyPlayback = true;
-    _currentHymnNumber = hymnNumber;
-    _currentAudioUrl = audioUrl;
-    _currentPosition = Duration.zero;
-    _totalDuration = dummyDuration;
-    _playbackState = PlayerState.playing;
-    _currentHymnController.add(hymnNumber);
-    _positionController.add(_currentPosition);
-    _durationController.add(_totalDuration);
-    _playbackStateController.add(_playbackState);
-    _startDummyTimer();
-  }
-
-  void _startDummyTimer() {
-    _dummyPlaybackTimer?.cancel();
-    _dummyPlaybackTimer =
-        Timer.periodic(const Duration(milliseconds: 500), (_) {
-      if (_playbackState != PlayerState.playing || !_isDummyPlayback) {
-        return;
-      }
-
-      final next = _currentPosition + const Duration(milliseconds: 500);
-      if (next >= dummyDuration) {
-        _currentPosition = dummyDuration;
-        _positionController.add(_currentPosition);
-        _playbackState = PlayerState.completed;
-        _playbackStateController.add(_playbackState);
-        _dummyPlaybackTimer?.cancel();
-        return;
-      }
-
-      _currentPosition = next;
-      _positionController.add(_currentPosition);
-    });
-  }
-
-  /// Pause playback
-  Future<void> pause() async {
-    try {
-      if (_isDummyPlayback) {
-        _dummyPlaybackTimer?.cancel();
-        _playbackState = PlayerState.paused;
-        _playbackStateController.add(_playbackState);
-        return;
-      }
-
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        return;
-      }
-      await player.pause();
-      if (kDebugMode) {
-        debugPrint('⏸️ Audio paused');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to pause audio: $e');
-      }
-    }
-  }
-
-  /// Resume playback
-  Future<void> resume() async {
-    try {
-      if (_isDummyPlayback) {
-        if (_playbackState == PlayerState.completed) {
-          _currentPosition = Duration.zero;
-          _positionController.add(_currentPosition);
-        }
-        _playbackState = PlayerState.playing;
-        _playbackStateController.add(_playbackState);
-        _startDummyTimer();
-        return;
-      }
-
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        return;
-      }
-      await player.resume();
-      if (kDebugMode) {
-        debugPrint('▶️ Audio resumed');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to resume audio: $e');
-      }
-    }
-  }
-
-  /// Stop playback and reset state
-  Future<void> stop() async {
-    try {
-      if (_isDummyPlayback) {
-        _dummyPlaybackTimer?.cancel();
-        _isDummyPlayback = false;
-        _currentPosition = Duration.zero;
-        _positionController.add(_currentPosition);
-        _totalDuration = null;
-        _durationController.add(_totalDuration);
-        _playbackState = PlayerState.stopped;
-        _playbackStateController.add(_playbackState);
-        _currentHymnNumber = null;
-        _currentAudioUrl = null;
-        _currentHymnController.add(null);
-        return;
-      }
-
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        return;
-      }
-      await player.stop();
-      _currentPosition = Duration.zero;
-      _positionController.add(_currentPosition);
-      _currentHymnNumber = null;
-      _currentAudioUrl = null;
-      _currentHymnController.add(null);
-
-      if (kDebugMode) {
-        debugPrint('⏹️ Audio stopped');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to stop audio: $e');
-      }
-    }
-  }
-
-  /// Seek to a specific position
-  Future<void> seek(Duration position) async {
-    try {
-      if (_isDummyPlayback) {
-        final clamped = Duration(
-          milliseconds: position.inMilliseconds.clamp(
-            0,
-            dummyDuration.inMilliseconds,
-          ),
-        );
-        _currentPosition = clamped;
-        _positionController.add(_currentPosition);
-        return;
-      }
-
-      final player = _player;
-      if (!_audioBackendAvailable || player == null) {
-        return;
-      }
-      await player.seek(position);
-      _currentPosition = position;
-      _positionController.add(position);
-
-      if (kDebugMode) {
-        debugPrint('⏩ Seeked to: ${position.inSeconds}s');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to seek: $e');
-      }
-    }
-  }
-
-  /// Toggle play/pause
-  Future<void> togglePlayPause() async {
-    if (_playbackState == PlayerState.playing) {
-      await pause();
-    } else if (_playbackState == PlayerState.completed) {
+    if (_playbackState == AudioPlayerState.completed) {
       await seek(Duration.zero);
-      await resume();
-    } else {
-      await resume();
     }
+    await resume();
   }
 
-  // Streams for reactive UI
   Stream<Duration> get positionStream => _positionController.stream;
   Stream<Duration?> get durationStream => _durationController.stream;
-  Stream<PlayerState> get playbackStateStream =>
+  Stream<AudioPlayerState> get playbackStateStream =>
       _playbackStateController.stream;
   Stream<int?> get currentHymnStream => _currentHymnController.stream;
 
-  // Current state properties
+  AudioHandler? get audioHandler => _handler;
   int? get currentHymnNumber => _currentHymnNumber;
   Duration get position => _currentPosition;
   Duration? get duration => _totalDuration;
-  PlayerState get playbackState => _playbackState;
-  bool get isPlaying => _playbackState == PlayerState.playing;
-  bool get isPaused => _playbackState == PlayerState.paused;
-  bool get isStopped => _playbackState == PlayerState.stopped;
+  AudioPlayerState get playbackState => _playbackState;
+  bool get isPlaying => _playbackState == AudioPlayerState.playing;
+  bool get isPaused => _playbackState == AudioPlayerState.paused;
+  bool get isStopped => _playbackState == AudioPlayerState.stopped;
   String? get currentAudioUrl => _currentAudioUrl;
 
-  bool get _isNativeAudioBackendSupported {
-    return defaultTargetPlatform != TargetPlatform.windows;
+  bool get _isSupportedPlatform {
+    if (kIsWeb) return true;
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.android ||
+      TargetPlatform.iOS ||
+      TargetPlatform.macOS =>
+        true,
+      _ => false,
+    };
   }
+}
 
-  /// Dispose resources
-  void dispose() {
-    _dummyPlaybackTimer?.cancel();
-    _positionController.close();
-    _durationController.close();
-    _playbackStateController.close();
-    _currentHymnController.close();
-    _player?.dispose();
-    _player = null;
-    _audioBackendAvailable = true;
-    _isInitialized = false;
-  }
+AudioPlayerState audioPlayerStateFromPlaybackState(
+  PlaybackState state, {
+  required bool hasMediaItem,
+}) {
+  return switch (state.processingState) {
+    AudioProcessingState.error => AudioPlayerState.error,
+    AudioProcessingState.loading => AudioPlayerState.loading,
+    AudioProcessingState.buffering => AudioPlayerState.buffering,
+    AudioProcessingState.completed => AudioPlayerState.completed,
+    AudioProcessingState.idle => AudioPlayerState.stopped,
+    AudioProcessingState.ready => state.playing
+        ? AudioPlayerState.playing
+        : hasMediaItem
+            ? AudioPlayerState.paused
+            : AudioPlayerState.stopped,
+  };
+}
+
+MediaItem buildHymnMediaItem({
+  required int hymnNumber,
+  required String mediaId,
+  required String sourceType,
+  required String source,
+  required String version,
+  String? hymnTitle,
+  String? artist,
+  Uri? artworkUri,
+}) {
+  final normalizedTitle = hymnTitle?.trim();
+  final normalizedArtist = artist?.trim();
+  return MediaItem(
+    id: mediaId,
+    title: normalizedTitle == null || normalizedTitle.isEmpty
+        ? 'መዝሙር $hymnNumber'
+        : normalizedTitle,
+    album: GlobalAudioService.appAlbumName,
+    artist: normalizedArtist == null || normalizedArtist.isEmpty
+        ? null
+        : normalizedArtist,
+    artUri: artworkUri,
+    extras: {
+      'hymnNumber': hymnNumber,
+      'version': version,
+      HymnalAudioHandler.sourceTypeExtra: sourceType,
+      HymnalAudioHandler.sourceExtra: source,
+    },
+  );
 }
