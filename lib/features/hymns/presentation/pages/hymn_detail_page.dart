@@ -877,10 +877,7 @@ class _SheetMusicPreviewBox extends StatelessWidget {
           borderRadius: 18,
           blurSigma: 12,
           opacity: enabled ? 0.25 : 0.12,
-          padding: EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: condensed ? 8 : 12,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           margin: const EdgeInsets.only(bottom: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -890,10 +887,10 @@ class _SheetMusicPreviewBox extends StatelessWidget {
                 Icons.library_music_outlined,
                 color:
                     enabled ? AppColors.accentGreen : AppColors.secondaryText,
-                size: condensed ? 22 : 24,
+                size: condensed ? 22 : 20,
               ),
               if (!condensed) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: 2),
                 Text(
                   enabled ? 'ኖታ' : 'የለም',
                   maxLines: 1,
@@ -902,7 +899,8 @@ class _SheetMusicPreviewBox extends StatelessWidget {
                     color: enabled
                         ? AppColors.primaryText
                         : AppColors.secondaryText,
-                    fontSize: 12,
+                    fontSize: 11,
+                    height: 1,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'NotoSansEthiopic',
                   ),
