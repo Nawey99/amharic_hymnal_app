@@ -13,12 +13,15 @@ import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class FavoritesPage extends StatefulWidget {
-  const FavoritesPage({super.key});
+  final HymnOpenCallback? onOpenHymn;
+
+  const FavoritesPage({super.key, this.onOpenHymn});
 
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
@@ -312,6 +315,11 @@ class _FavoritesPageState extends State<FavoritesPage>
             key: ValueKey('favorite_${hymn.id}_${hymn.displayNumber}'),
             hymn: hymn,
             onTap: () {
+              final onOpenHymn = widget.onOpenHymn;
+              if (onOpenHymn != null) {
+                onOpenHymn(hymn);
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -13,10 +13,13 @@ import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
 
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({super.key});
+  final HymnOpenCallback? onOpenHymn;
+
+  const CategoriesPage({super.key, this.onOpenHymn});
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
@@ -231,6 +234,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 toNumber: endNumber,
                 languageCode: languageCode,
                 version: version,
+                onOpenHymn: widget.onOpenHymn,
               ),
             ),
           );
@@ -325,6 +329,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 languageCode: languageCode,
                 version: version,
                 author: author,
+                onOpenHymn: widget.onOpenHymn,
               ),
             ),
           );

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
@@ -13,6 +14,10 @@ Future<HymnsBloc> _pumpShell(
   String version = 'sda_new',
   double textScale = 1,
   Size size = const Size(390, 844),
+  String initialDestination = 'number',
+  Hymn? initialActiveHymn,
+  String? initialActiveDestination,
+  HymnDetailBuilder? hymnDetailBuilder,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -37,9 +42,13 @@ Future<HymnsBloc> _pumpShell(
             size: size,
             textScaler: TextScaler.linear(textScale),
           ),
-          child: const MainNavigationPage(
+          child: MainNavigationPage(
             loadInitialData: false,
             usePlaceholderPagesForTesting: true,
+            initialDestination: initialDestination,
+            initialActiveHymn: initialActiveHymn,
+            initialActiveDestination: initialActiveDestination,
+            hymnDetailBuilder: hymnDetailBuilder,
           ),
         ),
       ),
@@ -112,6 +121,73 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('source tab restores its active hymn after visiting another tab',
+      (tester) async {
+    const hymn = Hymn(
+      id: 'stored-number-hymn',
+      number: 42,
+      title: 'Stored hymn',
+      lyrics: 'Stored lyrics',
+    );
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'index',
+      initialActiveHymn: hymn,
+      initialActiveDestination: 'number',
+      hymnDetailBuilder: _buildTestHymnDetail,
+    );
+    addTearDown(bloc.close);
+
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('detail-index')));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.byKey(const ValueKey('detail-number')));
+    await _pumpNavigation(tester);
+  });
+
+  testWidgets('tapping the owning tab from its hymn clears hymn memory',
+      (tester) async {
+    const hymn = Hymn(
+      id: 'toggle-number-hymn',
+      number: 17,
+      title: 'Toggle hymn',
+      lyrics: 'Toggle lyrics',
+    );
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'index',
+      initialActiveHymn: hymn,
+      initialActiveDestination: 'number',
+      hymnDetailBuilder: _buildTestHymnDetail,
+    );
+    addTearDown(bloc.close);
+
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('detail-number')));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+
+    await tester.tap(find.text('ማውጫ'));
+    await tester.pump();
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('onboarding renders without overflow on mobile constraints',
       (tester) async {
     const sizes = [
@@ -157,4 +233,35 @@ void main() {
     tester.view.resetDevicePixelRatio();
     expect(tester.takeException(), isNull);
   });
+}
+
+Future<void> _pumpNavigation(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 350));
+}
+
+Widget _buildTestHymnDetail(
+  Hymn hymn,
+  String sourceDestination,
+  ValueChanged<String> onDestinationSelected,
+  ValueChanged<Hymn> onHymnChanged,
+) {
+  return Scaffold(
+    key: const ValueKey('test-hymn-detail'),
+    body: Text('${hymn.displayNumber}:$sourceDestination'),
+    bottomNavigationBar: Row(
+      children: [
+        TextButton(
+          key: const ValueKey('detail-index'),
+          onPressed: () => onDestinationSelected('index'),
+          child: const Text('Index'),
+        ),
+        TextButton(
+          key: const ValueKey('detail-number'),
+          onPressed: () => onDestinationSelected('number'),
+          child: const Text('Number'),
+        ),
+      ],
+    ),
+  );
 }

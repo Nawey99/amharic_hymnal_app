@@ -24,11 +24,17 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 class HymnDetailPage extends StatefulWidget {
   final Hymn? hymn;
   final int? hymnNumber;
+  final String sourceDestination;
+  final ValueChanged<String>? onDestinationSelected;
+  final ValueChanged<Hymn>? onHymnChanged;
 
   const HymnDetailPage({
     super.key,
     this.hymn,
     this.hymnNumber,
+    this.sourceDestination = 'number',
+    this.onDestinationSelected,
+    this.onHymnChanged,
   });
 
   @override
@@ -299,7 +305,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         label: 'ቅንብር',
       ),
     ];
-    final selectedIndex = items.indexWhere((item) => item.id == 'number');
+    final selectedIndex = items.indexWhere(
+      (item) => item.id == widget.sourceDestination,
+    );
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final compactLabels =
         textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
@@ -349,6 +357,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           onDestinationSelected: (index) {
             final item = items[index];
+            final onDestinationSelected = widget.onDestinationSelected;
+            if (onDestinationSelected != null) {
+              onDestinationSelected(item.id);
+              return;
+            }
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (_) => MainNavigationPage(
@@ -405,10 +418,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         _showComingSoonMessage('መዝሙር #$nextNumber አልተገኘም');
         return;
       }
+      widget.onHymnChanged?.call(hymn);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HymnDetailPage(hymn: hymn),
+          builder: (_) => HymnDetailPage(
+            hymn: hymn,
+            sourceDestination: widget.sourceDestination,
+            onDestinationSelected: widget.onDestinationSelected,
+            onHymnChanged: widget.onHymnChanged,
+          ),
         ),
       );
     }).whenComplete(() {

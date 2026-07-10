@@ -15,13 +15,16 @@ import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/history_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class NumberSearchPage extends StatefulWidget {
-  const NumberSearchPage({super.key});
+  final HymnOpenCallback? onOpenHymn;
+
+  const NumberSearchPage({super.key, this.onOpenHymn});
 
   @override
   State<NumberSearchPage> createState() => _NumberSearchPageState();
@@ -117,6 +120,11 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
 
     // Navigate to hymn detail page with number
     _dismissInputFocus();
+    final onOpenHymn = widget.onOpenHymn;
+    if (loadedHymn != null && onOpenHymn != null) {
+      onOpenHymn(loadedHymn);
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -252,7 +260,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const HistoryPage(),
+        builder: (_) => HistoryPage(onOpenHymn: widget.onOpenHymn),
       ),
     );
   }
@@ -408,8 +416,13 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     );
   }
 
-  void _navigateToHymnDetail(BuildContext context, dynamic hymn) {
+  void _navigateToHymnDetail(BuildContext context, Hymn hymn) {
     _dismissInputFocus();
+    final onOpenHymn = widget.onOpenHymn;
+    if (onOpenHymn != null) {
+      onOpenHymn(hymn);
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => HymnDetailPage(hymn: hymn)),

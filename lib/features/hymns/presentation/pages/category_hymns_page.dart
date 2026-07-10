@@ -7,6 +7,7 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 
@@ -17,6 +18,7 @@ class CategoryHymnsPage extends StatefulWidget {
   final String languageCode;
   final String version;
   final String? author; // For Hagerigna mode: filter by author
+  final HymnOpenCallback? onOpenHymn;
 
   const CategoryHymnsPage({
     super.key,
@@ -26,6 +28,7 @@ class CategoryHymnsPage extends StatefulWidget {
     required this.languageCode,
     required this.version,
     this.author,
+    this.onOpenHymn,
   });
 
   @override
@@ -237,6 +240,11 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                             'category_${hymn.id}_${hymn.displayNumber}'),
                         hymn: hymn,
                         onTap: () {
+                          final onOpenHymn = widget.onOpenHymn;
+                          if (onOpenHymn != null) {
+                            onOpenHymn(hymn);
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(

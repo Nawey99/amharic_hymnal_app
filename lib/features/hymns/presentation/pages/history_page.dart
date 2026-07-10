@@ -11,12 +11,15 @@ import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+  final HymnOpenCallback? onOpenHymn;
+
+  const HistoryPage({super.key, this.onOpenHymn});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -170,6 +173,11 @@ class _HistoryPageState extends State<HistoryPage> {
                         child: HymnListItem(
                           hymn: hymn,
                           onTap: () {
+                            final onOpenHymn = widget.onOpenHymn;
+                            if (onOpenHymn != null) {
+                              onOpenHymn(hymn);
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
