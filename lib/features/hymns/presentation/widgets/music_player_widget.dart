@@ -287,7 +287,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                             widget.hymnTitle,
                             style: const TextStyle(
                               color: AppColors.primaryText,
-                              fontSize: 17,
+                              fontSize: 19,
                               fontWeight: FontWeight.w700,
                               fontFamily: 'NotoSansEthiopic',
                               height: 1.08,
@@ -363,10 +363,22 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           color: AppColors.primaryText,
           size: 24,
         ),
-        onPressed: isThisHymnActive ? _togglePlayPause : _loadAudio,
+        onPressed: () => _handlePlayButtonPressed(isThisHymnActive),
         tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
       ),
     );
+  }
+
+  Future<void> _handlePlayButtonPressed(bool isThisHymnActive) async {
+    if (!_isExpanded && mounted) {
+      setState(() => _isExpanded = true);
+    }
+
+    if (isThisHymnActive) {
+      await _togglePlayPause();
+    } else {
+      await _loadAudio();
+    }
   }
 
   Widget _buildErrorMessage() {
@@ -467,7 +479,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
-  void _togglePlayPause() async {
+  Future<void> _togglePlayPause() async {
     try {
       await _audioService.togglePlayPause();
     } catch (e) {
