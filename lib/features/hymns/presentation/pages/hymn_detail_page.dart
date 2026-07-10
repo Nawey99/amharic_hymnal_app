@@ -780,7 +780,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         final shouldStack = constraints.maxWidth < 320;
         final sheetButtonWidth = compact ? 62.0 : 72.0;
         final mediaGap = compact ? 8.0 : 10.0;
-        final compactRowHeight = compact ? 64.0 : null;
 
         Widget buildSheetMusicButton({required bool stretch}) {
           return FutureBuilder<List<String>>(
@@ -821,13 +820,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             ),
           ],
         );
-
-        if (compactRowHeight != null) {
-          return SizedBox(
-            height: compactRowHeight,
-            child: mediaRow,
-          );
-        }
 
         return IntrinsicHeight(
           child: mediaRow,

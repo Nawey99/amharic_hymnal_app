@@ -466,8 +466,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   }
 
   Widget _buildCondensedScrubber(bool isThisHymnActive) {
-    return SizedBox(
-      height: 42,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 42),
       child: Row(
         children: [
           _buildPlayButton(
