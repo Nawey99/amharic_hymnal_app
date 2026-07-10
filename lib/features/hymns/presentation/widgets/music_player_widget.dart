@@ -374,7 +374,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       setState(() => _isExpanded = true);
     }
 
-    if (isThisHymnActive) {
+    if (isThisHymnActive && _playbackState == PlayerState.completed) {
+      await _loadAudio();
+    } else if (isThisHymnActive) {
       await _togglePlayPause();
     } else {
       await _loadAudio();
