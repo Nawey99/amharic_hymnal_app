@@ -45,6 +45,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   int? _currentPlayingHymn;
   bool _isLoading = false;
   bool _isError = false;
+  bool _isExpanded = false;
   String? _errorMessage;
 
   @override
@@ -255,178 +256,214 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         : 'Audio accompaniment';
 
     return GlassContainer(
-      borderRadius: 12.0,
+      borderRadius: 18.0,
       blurSigma: 12.0,
-      opacity: 0.25,
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+      opacity: 0.2,
+      padding: EdgeInsets.zero,
       margin: const EdgeInsets.only(bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Title and hymn number
-          Row(
-            children: [
-              const Icon(
-                Icons.music_note,
-                color: AppColors.accentGreen,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: const Color(0xE6292929),
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: _isError
+              ? null
+              : () => setState(() => _isExpanded = !_isExpanded),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 8, 12, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      widget.hymnTitle,
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'NotoSansEthiopic',
-                        height: 1.18,
+                    _buildPlayButton(isThisHymnActive),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            widget.hymnTitle,
+                            style: const TextStyle(
+                              color: AppColors.primaryText,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'NotoSansEthiopic',
+                              height: 1.08,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle,
+                            style: const TextStyle(
+                              color: AppColors.secondaryText,
+                              fontSize: 12,
+                              height: 1.0,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.secondaryText,
-                        fontSize: 12,
-                        height: 1.15,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Error state
-          if (_isError) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 16,
+                if (_isError)
+                  _buildErrorMessage()
+                else
+                  _buildExpandableScrubber(
+                    isThisHymnActive,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _errorMessage ?? 'ድምፅ አልተገኘም',
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlayButton(bool isThisHymnActive) {
+    if (_isLoading) {
+      return const SizedBox(
+        width: 36,
+        height: 36,
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.accentGreen,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: 36,
+      height: 36,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        style: IconButton.styleFrom(
+          side: BorderSide(
+            color: AppColors.primaryText.withValues(alpha: 0.88),
+            width: 2,
+          ),
+          shape: const CircleBorder(),
+        ),
+        icon: Icon(
+          _isPlaying ? Icons.pause : Icons.play_arrow,
+          color: AppColors.primaryText,
+          size: 24,
+        ),
+        onPressed: isThisHymnActive ? _togglePlayPause : _loadAudio,
+        tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.error_outline,
+            color: Colors.redAccent,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              _errorMessage ?? 'ድምፅ አልተገኘም',
+              style: const TextStyle(
+                color: Colors.redAccent,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExpandableScrubber(bool isThisHymnActive) {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutCubic,
+      alignment: Alignment.topCenter,
+      child: !_isExpanded
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                children: [
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
+                        disabledThumbRadius: 5,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 14,
                       ),
                     ),
+                    child: Slider(
+                      value: _totalDuration != null &&
+                              _totalDuration!.inMilliseconds > 0
+                          ? _currentPosition.inMilliseconds.toDouble().clamp(
+                                0.0,
+                                _totalDuration!.inMilliseconds.toDouble(),
+                              )
+                          : 0.0,
+                      max: _totalDuration != null &&
+                              _totalDuration!.inMilliseconds > 0
+                          ? _totalDuration!.inMilliseconds.toDouble()
+                          : 100.0,
+                      onChanged: (_isLoading || !isThisHymnActive)
+                          ? null
+                          : (value) {
+                              _audioService.seek(
+                                Duration(milliseconds: value.toInt()),
+                              );
+                            },
+                      activeColor: AppColors.accentGreen,
+                      inactiveColor:
+                          AppColors.secondaryText.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatDuration(_currentPosition),
+                        style: const TextStyle(
+                          color: AppColors.secondaryText,
+                          fontSize: 11,
+                        ),
+                      ),
+                      Text(
+                        _totalDuration != null
+                            ? _formatDuration(_totalDuration!)
+                            : '--:--',
+                        style: const TextStyle(
+                          color: AppColors.secondaryText,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ] else ...[
-            // Controls
-            Row(
-              children: [
-                // Play/Pause button
-                _isLoading
-                    ? const SizedBox(
-                        width: 48,
-                        height: 48,
-                        child: Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.accentGreen),
-                            ),
-                          ),
-                        ),
-                      )
-                    : IconButton(
-                        visualDensity: VisualDensity.compact,
-                        icon: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: AppColors.accentGreen,
-                        ),
-                        onPressed:
-                            isThisHymnActive ? _togglePlayPause : _loadAudio,
-                        tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
-                      ),
-                const SizedBox(width: 8),
-                // Progress slider
-                Expanded(
-                  child: Column(
-                    children: [
-                      SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 3,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 6,
-                            disabledThumbRadius: 5,
-                          ),
-                          overlayShape: const RoundSliderOverlayShape(
-                            overlayRadius: 14,
-                          ),
-                        ),
-                        child: Slider(
-                          value: _totalDuration != null &&
-                                  _totalDuration!.inMilliseconds > 0
-                              ? _currentPosition.inMilliseconds.toDouble()
-                              : 0.0,
-                          max: _totalDuration != null &&
-                                  _totalDuration!.inMilliseconds > 0
-                              ? _totalDuration!.inMilliseconds.toDouble()
-                              : 100.0,
-                          onChanged: (_isLoading || !isThisHymnActive)
-                              ? null
-                              : (value) {
-                                  _audioService.seek(
-                                      Duration(milliseconds: value.toInt()));
-                                },
-                          activeColor: AppColors.accentGreen,
-                          inactiveColor:
-                              AppColors.secondaryText.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      // Duration display
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _formatDuration(_currentPosition),
-                            style: const TextStyle(
-                              color: AppColors.secondaryText,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            _totalDuration != null
-                                ? _formatDuration(_totalDuration!)
-                                : '--:--',
-                            style: const TextStyle(
-                              color: AppColors.secondaryText,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ],
-      ),
     );
   }
 
