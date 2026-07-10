@@ -288,10 +288,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           color: const Color(0xE6292929),
           borderRadius: BorderRadius.circular(18),
           clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: _isError || widget.condensed
-                ? null
-                : () => setState(() => _isExpanded = !_isExpanded),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: _isError || widget.condensed ? null : _toggleExpanded,
             child: Padding(
               padding: widget.condensed
                   ? const EdgeInsets.fromLTRB(10, 6, 10, 6)
@@ -350,6 +349,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         ),
       ),
     );
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
   }
 
   Widget _buildPlayButton(
@@ -440,21 +445,23 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   }
 
   Widget _buildExpandableScrubber(bool isThisHymnActive) {
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOutCubic,
-      alignment: Alignment.topCenter,
-      child: !_isExpanded
-          ? const SizedBox.shrink()
-          : Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Column(
-                children: [
-                  _buildProgressSlider(isThisHymnActive),
-                  _buildTimeLabels(),
-                ],
+    return ClipRect(
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        alignment: Alignment.topCenter,
+        child: !_isExpanded
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(
+                  children: [
+                    _buildProgressSlider(isThisHymnActive),
+                    _buildTimeLabels(),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
