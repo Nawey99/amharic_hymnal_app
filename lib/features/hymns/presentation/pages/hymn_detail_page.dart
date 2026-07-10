@@ -748,34 +748,39 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildMediaControls(Hymn hymn) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final sheetMusicButton = FutureBuilder<List<String>>(
-          future: _sheetMusicRepository.getFilesForHymn(hymn),
-          builder: (context, snapshot) {
-            final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
-            return _SheetMusicPreviewBox(
-              enabled: hasSheetMusic,
-              onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
-            );
-          },
-        );
+        Widget buildSheetMusicButton({required bool stretch}) {
+          return FutureBuilder<List<String>>(
+            future: _sheetMusicRepository.getFilesForHymn(hymn),
+            builder: (context, snapshot) {
+              final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
+              return _SheetMusicPreviewBox(
+                enabled: hasSheetMusic,
+                stretch: stretch,
+                onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
+              );
+            },
+          );
+        }
 
         if (constraints.maxWidth < 340) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildAudioSection(hymn),
-              sheetMusicButton,
+              buildSheetMusicButton(stretch: false),
             ],
           );
         }
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: _buildAudioSection(hymn)),
-            const SizedBox(width: 10),
-            sheetMusicButton,
-          ],
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _buildAudioSection(hymn)),
+              const SizedBox(width: 10),
+              buildSheetMusicButton(stretch: true),
+            ],
+          ),
         );
       },
     );
@@ -816,10 +821,12 @@ class _LyricsNavItem {
 
 class _SheetMusicPreviewBox extends StatelessWidget {
   final bool enabled;
+  final bool stretch;
   final VoidCallback? onTap;
 
   const _SheetMusicPreviewBox({
     required this.enabled,
+    required this.stretch,
     this.onTap,
   });
 
@@ -830,16 +837,18 @@ class _SheetMusicPreviewBox extends StatelessWidget {
       button: enabled,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: GlassContainer(
           width: 72,
-          borderRadius: 12,
+          height: stretch ? double.infinity : null,
+          borderRadius: 18,
           blurSigma: 12,
           opacity: enabled ? 0.25 : 0.12,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.library_music_outlined,

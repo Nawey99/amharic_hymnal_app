@@ -82,6 +82,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         setState(() {
           _playbackState = state;
           _isLoading = false;
+          if (_shouldAutoExpandFor(_currentPlayingHymn, state)) {
+            _isExpanded = true;
+          }
         });
       }
     });
@@ -92,6 +95,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       if (mounted) {
         setState(() {
           _currentPlayingHymn = hymnNumber;
+          if (_shouldAutoExpandFor(hymnNumber, _playbackState)) {
+            _isExpanded = true;
+          } else if (hymnNumber != widget.hymnNumber && hymnNumber != null) {
+            _isExpanded = false;
+          }
           // If a different hymn starts playing, update UI
           if (hymnNumber != widget.hymnNumber && hymnNumber != null) {
             // Another hymn is playing - show that state
@@ -110,9 +118,18 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       _currentPosition = _audioService.position;
       _totalDuration = _audioService.duration;
       _playbackState = _audioService.playbackState;
+      _isExpanded =
+          _shouldAutoExpandFor(currentHymn, _audioService.playbackState);
     });
 
     // Do not auto-start audio when the widget appears; playback is user-driven.
+  }
+
+  bool _shouldAutoExpandFor(int? hymnNumber, PlayerState? state) {
+    return hymnNumber == widget.hymnNumber &&
+        (state == PlayerState.playing ||
+            state == PlayerState.paused ||
+            state == PlayerState.completed);
   }
 
   Future<void> _loadAudio() async {
