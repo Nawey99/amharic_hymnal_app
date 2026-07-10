@@ -52,7 +52,7 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // Find the favorite button
       final favoriteButton = find.byIcon(Icons.favorite_border);
@@ -89,7 +89,7 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
 
       // Verify favorite button is present when hymn is favorited
       final favoriteButton = find.byIcon(Icons.favorite);

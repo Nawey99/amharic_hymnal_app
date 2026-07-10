@@ -36,6 +36,8 @@ class HymnDetailPage extends StatefulWidget {
 }
 
 class _HymnDetailPageState extends State<HymnDetailPage> {
+  static const double _mediaCondenseOffset = 24;
+
   double _horizontalDragStart = 0.0;
   bool _isHorizontalDrag = false;
   Future<Hymn?>? _numberLookupFuture;
@@ -46,15 +48,36 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   final Map<int, bool> _favoriteOverrides = {};
   final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
   final DownloadRepository _downloadRepository = DownloadRepository();
+  final ScrollController _lyricsScrollController = ScrollController();
+  bool _isMediaCondensed = false;
 
   @override
   void initState() {
     super.initState();
+    _lyricsScrollController.addListener(_handleLyricsScroll);
     if (widget.hymnNumber != null && widget.hymn == null) {
       _numberLookupFuture = _loadHymnByNumber(widget.hymnNumber!);
     }
     // Track hymn view in history
     _trackHymnView();
+  }
+
+  @override
+  void dispose() {
+    _lyricsScrollController.removeListener(_handleLyricsScroll);
+    _lyricsScrollController.dispose();
+    super.dispose();
+  }
+
+  void _handleLyricsScroll() {
+    if (!_lyricsScrollController.hasClients) return;
+
+    final position = _lyricsScrollController.position;
+    final shouldCondense =
+        position.maxScrollExtent > 0 && position.pixels > _mediaCondenseOffset;
+    if (shouldCondense == _isMediaCondensed || !mounted) return;
+
+    setState(() => _isMediaCondensed = shouldCondense);
   }
 
   void _trackHymnView() async {
@@ -659,7 +682,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         if (!hymn.isHagerigna)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: _buildMediaControls(hymn),
+            child: _buildMediaControls(
+              hymn,
+              condensed: _isMediaCondensed,
+            ),
           ),
         Expanded(
           child: _buildLyricsViewport(hymn, fontSize),
@@ -688,6 +714,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         });
       },
       child: SingleChildScrollView(
+        controller: _lyricsScrollController,
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: _buildLyricsSection(hymn, fontSize),
       ),
@@ -734,7 +761,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Widget _buildAudioSection(Hymn hymn) {
+  Widget _buildAudioSection(Hymn hymn, {required bool condensed}) {
     return AudioSectionWidget(
       hymnNumber: hymn.displayNumber,
       hymnTitle: hymn.displayTitle.isNotEmpty
@@ -742,10 +769,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           : 'መዝሙር ${hymn.displayNumber}',
       englishTitle: hymn.displayEnglishTitle,
       version: _getVersion(),
+      condensed: condensed,
     );
   }
 
-  Widget _buildMediaControls(Hymn hymn) {
+  Widget _buildMediaControls(Hymn hymn, {required bool condensed}) {
     return LayoutBuilder(
       builder: (context, constraints) {
         Widget buildSheetMusicButton({required bool stretch}) {
@@ -756,17 +784,18 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               return _SheetMusicPreviewBox(
                 enabled: hasSheetMusic,
                 stretch: stretch,
+                condensed: condensed,
                 onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
               );
             },
           );
         }
 
-        if (constraints.maxWidth < 340) {
+        if (constraints.maxWidth < 340 && !condensed) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildAudioSection(hymn),
+              _buildAudioSection(hymn, condensed: false),
               buildSheetMusicButton(stretch: false),
             ],
           );
@@ -776,7 +805,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _buildAudioSection(hymn)),
+              Expanded(
+                child: _buildAudioSection(hymn, condensed: condensed),
+              ),
               const SizedBox(width: 10),
               buildSheetMusicButton(stretch: true),
             ],
@@ -822,11 +853,13 @@ class _LyricsNavItem {
 class _SheetMusicPreviewBox extends StatelessWidget {
   final bool enabled;
   final bool stretch;
+  final bool condensed;
   final VoidCallback? onTap;
 
   const _SheetMusicPreviewBox({
     required this.enabled,
     required this.stretch,
+    required this.condensed,
     this.onTap,
   });
 
@@ -844,7 +877,10 @@ class _SheetMusicPreviewBox extends StatelessWidget {
           borderRadius: 18,
           blurSigma: 12,
           opacity: enabled ? 0.25 : 0.12,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: condensed ? 8 : 12,
+          ),
           margin: const EdgeInsets.only(bottom: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -854,21 +890,24 @@ class _SheetMusicPreviewBox extends StatelessWidget {
                 Icons.library_music_outlined,
                 color:
                     enabled ? AppColors.accentGreen : AppColors.secondaryText,
-                size: 24,
+                size: condensed ? 22 : 24,
               ),
-              const SizedBox(height: 6),
-              Text(
-                enabled ? 'ኖታ' : 'የለም',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color:
-                      enabled ? AppColors.primaryText : AppColors.secondaryText,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSansEthiopic',
+              if (!condensed) ...[
+                const SizedBox(height: 6),
+                Text(
+                  enabled ? 'ኖታ' : 'የለም',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: enabled
+                        ? AppColors.primaryText
+                        : AppColors.secondaryText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'NotoSansEthiopic',
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

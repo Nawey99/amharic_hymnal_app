@@ -18,6 +18,7 @@ class AudioSectionWidget extends StatefulWidget {
   final String hymnTitle;
   final String? englishTitle;
   final String version;
+  final bool condensed;
 
   const AudioSectionWidget({
     super.key,
@@ -25,6 +26,7 @@ class AudioSectionWidget extends StatefulWidget {
     required this.hymnTitle,
     this.englishTitle,
     required this.version,
+    this.condensed = false,
   });
 
   @override
@@ -104,6 +106,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
         hymnTitle: widget.hymnTitle,
         englishTitle: widget.englishTitle,
         version: widget.version,
+        condensed: widget.condensed,
       );
     }
 
@@ -112,6 +115,20 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
   }
 
   Widget _buildLoadingState() {
+    if (widget.condensed) {
+      return _buildCondensedStatus(
+        icon: const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+          ),
+        ),
+        label: 'ድምፅ በመፈተሽ ላይ...',
+      );
+    }
+
     return const GlassContainer(
       borderRadius: 12.0,
       blurSigma: 12.0,
@@ -150,6 +167,17 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
   }
 
   Widget _buildUnavailableState() {
+    if (widget.condensed) {
+      return _buildCondensedStatus(
+        icon: const Icon(
+          Icons.music_off,
+          color: AppColors.secondaryText,
+          size: 20,
+        ),
+        label: 'ድምፅ አልተገኘም',
+      );
+    }
+
     return const GlassContainer(
       borderRadius: 12.0,
       blurSigma: 12.0,
@@ -170,6 +198,37 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
               style: TextStyle(
                 color: AppColors.secondaryText,
                 fontSize: 14,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCondensedStatus({
+    required Widget icon,
+    required String label,
+  }) {
+    return GlassContainer(
+      borderRadius: 18,
+      blurSigma: 12,
+      opacity: 0.25,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.secondaryText,
+                fontSize: 12,
                 fontFamily: 'NotoSansEthiopic',
               ),
             ),

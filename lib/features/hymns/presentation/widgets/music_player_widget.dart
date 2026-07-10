@@ -17,6 +17,7 @@ class MusicPlayerWidget extends StatefulWidget {
   final String hymnTitle;
   final String? englishTitle;
   final String version;
+  final bool condensed;
 
   const MusicPlayerWidget({
     super.key,
@@ -24,6 +25,7 @@ class MusicPlayerWidget extends StatefulWidget {
     required this.hymnTitle,
     this.englishTitle,
     required this.version,
+    this.condensed = false,
   });
 
   @override
@@ -272,69 +274,77 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         ? englishTitle
         : 'Audio accompaniment';
 
-    return GlassContainer(
-      borderRadius: 18.0,
-      blurSigma: 12.0,
-      opacity: 0.2,
-      padding: EdgeInsets.zero,
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: const Color(0xE6292929),
-        borderRadius: BorderRadius.circular(18),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: _isError
-              ? null
-              : () => setState(() => _isExpanded = !_isExpanded),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 8, 12, 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    _buildPlayButton(isThisHymnActive),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            widget.hymnTitle,
-                            style: const TextStyle(
-                              color: AppColors.primaryText,
-                              fontSize: 19,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'NotoSansEthiopic',
-                              height: 1.08,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutCubic,
+      alignment: Alignment.topCenter,
+      child: GlassContainer(
+        borderRadius: 18.0,
+        blurSigma: 12.0,
+        opacity: 0.2,
+        padding: EdgeInsets.zero,
+        margin: const EdgeInsets.only(bottom: 10),
+        child: Material(
+          color: const Color(0xE6292929),
+          borderRadius: BorderRadius.circular(18),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: _isError || widget.condensed
+                ? null
+                : () => setState(() => _isExpanded = !_isExpanded),
+            child: Padding(
+              padding: widget.condensed
+                  ? const EdgeInsets.fromLTRB(10, 6, 10, 6)
+                  : const EdgeInsets.fromLTRB(10, 8, 12, 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!widget.condensed)
+                    Row(
+                      children: [
+                        _buildPlayButton(isThisHymnActive),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                widget.hymnTitle,
+                                style: const TextStyle(
+                                  color: AppColors.primaryText,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'NotoSansEthiopic',
+                                  height: 1.08,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                subtitle,
+                                style: const TextStyle(
+                                  color: AppColors.secondaryText,
+                                  fontSize: 12,
+                                  height: 1.0,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            subtitle,
-                            style: const TextStyle(
-                              color: AppColors.secondaryText,
-                              fontSize: 12,
-                              height: 1.0,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                if (_isError)
-                  _buildErrorMessage()
-                else
-                  _buildExpandableScrubber(
-                    isThisHymnActive,
-                  ),
-              ],
+                  if (_isError)
+                    _buildErrorMessage()
+                  else if (widget.condensed)
+                    _buildCondensedScrubber(isThisHymnActive)
+                  else
+                    _buildExpandableScrubber(isThisHymnActive),
+                ],
+              ),
             ),
           ),
         ),
@@ -342,15 +352,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
-  Widget _buildPlayButton(bool isThisHymnActive) {
+  Widget _buildPlayButton(
+    bool isThisHymnActive, {
+    double size = 36,
+    double iconSize = 24,
+  }) {
     if (_isLoading) {
-      return const SizedBox(
-        width: 36,
-        height: 36,
-        child: Center(
+      return SizedBox(
+        width: size,
+        height: size,
+        child: const Center(
           child: SizedBox(
-            width: 20,
-            height: 20,
+            width: 18,
+            height: 18,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
@@ -363,8 +377,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     }
 
     return SizedBox(
-      width: 36,
-      height: 36,
+      width: size,
+      height: size,
       child: IconButton(
         padding: EdgeInsets.zero,
         visualDensity: VisualDensity.compact,
@@ -378,7 +392,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         icon: Icon(
           _isPlaying ? Icons.pause : Icons.play_arrow,
           color: AppColors.primaryText,
-          size: 24,
+          size: iconSize,
         ),
         onPressed: () => _handlePlayButtonPressed(isThisHymnActive),
         tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
@@ -436,65 +450,99 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
               padding: const EdgeInsets.only(top: 8),
               child: Column(
                 children: [
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 6,
-                        disabledThumbRadius: 5,
-                      ),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 14,
-                      ),
-                    ),
-                    child: Slider(
-                      value: _totalDuration != null &&
-                              _totalDuration!.inMilliseconds > 0
-                          ? _currentPosition.inMilliseconds.toDouble().clamp(
-                                0.0,
-                                _totalDuration!.inMilliseconds.toDouble(),
-                              )
-                          : 0.0,
-                      max: _totalDuration != null &&
-                              _totalDuration!.inMilliseconds > 0
-                          ? _totalDuration!.inMilliseconds.toDouble()
-                          : 100.0,
-                      onChanged: (_isLoading || !isThisHymnActive)
-                          ? null
-                          : (value) {
-                              _audioService.seek(
-                                Duration(milliseconds: value.toInt()),
-                              );
-                            },
-                      activeColor: AppColors.accentGreen,
-                      inactiveColor:
-                          AppColors.secondaryText.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _formatDuration(_currentPosition),
-                        style: const TextStyle(
-                          color: AppColors.secondaryText,
-                          fontSize: 11,
-                        ),
-                      ),
-                      Text(
-                        _totalDuration != null
-                            ? _formatDuration(_totalDuration!)
-                            : '--:--',
-                        style: const TextStyle(
-                          color: AppColors.secondaryText,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildProgressSlider(isThisHymnActive),
+                  _buildTimeLabels(),
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildCondensedScrubber(bool isThisHymnActive) {
+    return SizedBox(
+      height: 42,
+      child: Row(
+        children: [
+          _buildPlayButton(
+            isThisHymnActive,
+            size: 32,
+            iconSize: 21,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 25,
+                  child: _buildProgressSlider(
+                    isThisHymnActive,
+                    compact: true,
+                  ),
+                ),
+                _buildTimeLabels(compact: true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressSlider(
+    bool isThisHymnActive, {
+    bool compact = false,
+  }) {
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        trackHeight: compact ? 2.5 : 3,
+        thumbShape: RoundSliderThumbShape(
+          enabledThumbRadius: compact ? 5 : 6,
+          disabledThumbRadius: compact ? 4 : 5,
+        ),
+        overlayShape: RoundSliderOverlayShape(
+          overlayRadius: compact ? 12 : 14,
+        ),
+      ),
+      child: Slider(
+        value: _totalDuration != null && _totalDuration!.inMilliseconds > 0
+            ? _currentPosition.inMilliseconds.toDouble().clamp(
+                  0.0,
+                  _totalDuration!.inMilliseconds.toDouble(),
+                )
+            : 0.0,
+        max: _totalDuration != null && _totalDuration!.inMilliseconds > 0
+            ? _totalDuration!.inMilliseconds.toDouble()
+            : 100.0,
+        onChanged: (_isLoading || !isThisHymnActive)
+            ? null
+            : (value) {
+                _audioService.seek(
+                  Duration(milliseconds: value.toInt()),
+                );
+              },
+        activeColor: AppColors.accentGreen,
+        inactiveColor: AppColors.secondaryText.withValues(alpha: 0.3),
+      ),
+    );
+  }
+
+  Widget _buildTimeLabels({bool compact = false}) {
+    final textStyle = TextStyle(
+      color: AppColors.secondaryText,
+      fontSize: compact ? 10 : 11,
+      height: 1,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(_formatDuration(_currentPosition), style: textStyle),
+        Text(
+          _totalDuration != null ? _formatDuration(_totalDuration!) : '--:--',
+          style: textStyle,
+        ),
+      ],
     );
   }
 
