@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
-import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
 import 'package:flutter/material.dart';
@@ -30,11 +29,13 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   static const double _minScale = 1.0;
   static const double _maxScale = 4.0;
   static const double _zoomThreshold = 1.01;
+  static const double _sheetMusicAspectRatio = 2 / 3;
 
   final PageController _pageController = PageController();
   final List<TransformationController> _transformationControllers = [];
   final List<bool> _pageIsZoomed = [];
   int _currentPage = 0;
+  Offset? _doubleTapPosition;
 
   @override
   void initState() {
@@ -97,17 +98,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       return cleanFileName;
     }
     return 'assets/sheet_music/$cleanFileName';
-  }
-
-  /// Get label for sheet music file
-  String _getFileLabel(int index) {
-    if (widget.sheetMusicFiles.length == 2) {
-      // Two files: Label as "2L" and "2R"
-      return index == 0 ? '2L' : '2R';
-    } else {
-      // One file: Show file number
-      return '${index + 1}';
-    }
   }
 
   @override
@@ -217,35 +207,23 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   Widget _buildSheetMusicPage(int index) {
     final fileName = widget.sheetMusicFiles[index];
     final assetPath = _getAssetPath(fileName);
-    final label = _getFileLabel(index);
     final controller = _transformationControllers[index];
 
-    return GlassCard(
-      borderRadius: 12.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // File label
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Text(
-                  'ገጽ $label',
-                  style: const TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'NotoSansEthiopic',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Sheet music image with zoom
-          Expanded(
+    return Center(
+      child: AspectRatio(
+        aspectRatio: _sheetMusicAspectRatio,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: ColoredBox(
+            color: Colors.white,
             child: GestureDetector(
-              onDoubleTap: () => _togglePageZoom(index),
+              onDoubleTapDown: (details) {
+                _doubleTapPosition = details.localPosition;
+              },
+              onDoubleTap: () => _togglePageZoom(
+                index,
+                _doubleTapPosition,
+              ),
               child: InteractiveViewer(
                 transformationController: controller,
                 alignment: Alignment.center,
@@ -271,7 +249,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -293,13 +271,21 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     });
   }
 
-  void _togglePageZoom(int index) {
+  void _togglePageZoom(int index, Offset? focalPoint) {
     final controller = _transformationControllers[index];
     final currentScale = controller.value.getMaxScaleOnAxis();
     final shouldReset = currentScale > _zoomThreshold;
-    controller.value =
-        shouldReset ? Matrix4.identity() : (Matrix4.identity()..scale(2.0));
+    if (shouldReset) {
+      controller.value = Matrix4.identity();
+    } else {
+      final focal = focalPoint ?? Offset.zero;
+      controller.value = Matrix4.identity()
+        ..translate(focal.dx, focal.dy)
+        ..scale(2.0)
+        ..translate(-focal.dx, -focal.dy);
+    }
     _setPageZoomed(index, !shouldReset);
+    _doubleTapPosition = null;
   }
 
   Widget _buildSheetMusicImage(String assetPath) {
@@ -320,14 +306,8 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final cacheHeight = (cacheWidth * 1.5)
             .round(); // Assume 2:3 aspect ratio for sheet music
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: ColoredBox(
-            color: Colors.white,
-            child: SizedBox.expand(
-              child: _buildImage(assetPath, cacheWidth, cacheHeight),
-            ),
-          ),
+        return SizedBox.expand(
+          child: _buildImage(assetPath, cacheWidth, cacheHeight),
         );
       },
     );

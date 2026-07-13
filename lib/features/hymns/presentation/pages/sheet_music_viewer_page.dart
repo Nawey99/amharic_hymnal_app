@@ -43,10 +43,10 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'መዝሙር ${widget.hymn.displayNumber} ኖታ';
-    final subtitle = widget.hymn.displayTitle.isNotEmpty
-        ? widget.hymn.displayTitle
-        : 'ርዕስ የለም';
+    final hymnTitle = _sheetMusicTitle(widget.hymn);
+    final title = hymnTitle.isEmpty
+        ? '${widget.hymn.displayNumber}'
+        : '${widget.hymn.displayNumber} $hymnTitle';
 
     return ListenableBuilder(
       listenable: BackgroundImageService(),
@@ -86,31 +86,16 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.primaryText,
-                                  fontFamily: 'NotoSansEthiopic',
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              Text(
-                                subtitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.secondaryText,
-                                  fontFamily: 'NotoSansEthiopic',
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.primaryText,
+                              fontFamily: 'NotoSansEthiopic',
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                       ],
@@ -132,5 +117,18 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
         );
       },
     );
+  }
+
+  String _sheetMusicTitle(Hymn hymn) {
+    final storedTitle = hymn.displayTitle.trim();
+    final lyrics = hymn.displayLyrics.trim();
+    final firstLyricsLine =
+        lyrics.isEmpty ? '' : lyrics.split('\n').first.trim();
+
+    if (firstLyricsLine.length > storedTitle.length &&
+        firstLyricsLine.startsWith(storedTitle)) {
+      return firstLyricsLine;
+    }
+    return storedTitle.isNotEmpty ? storedTitle : firstLyricsLine;
   }
 }

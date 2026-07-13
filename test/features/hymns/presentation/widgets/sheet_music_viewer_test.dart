@@ -1,3 +1,5 @@
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,5 +45,37 @@ void main() {
     viewer = tester.widget(find.byType(InteractiveViewer));
     expect(viewer.panEnabled, isTrue);
     expect(controller.value.getMaxScaleOnAxis(), 2.0);
+
+    final viewerSize = tester.getSize(find.byType(InteractiveViewer));
+    expect(viewerSize.width / viewerSize.height, closeTo(2 / 3, 0.001));
+    final localCenter = viewerSize.center(Offset.zero);
+    final transformedCenter = MatrixUtils.transformPoint(
+      controller.value,
+      localCenter,
+    );
+    expect(transformedCenter.dx, closeTo(localCenter.dx, 0.001));
+    expect(transformedCenter.dy, closeTo(localCenter.dy, 0.001));
+    expect(find.text('ገጽ 1'), findsNothing);
+  });
+
+  testWidgets('sheet music page combines hymn number and title',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: SheetMusicViewerPage(
+          hymn: Hymn(
+            number: 1,
+            title: 'አምላካችን',
+            lyrics: 'አምላካችን አመስግኑ\nበምድር ያላችሁ ሁሉ',
+          ),
+          sheetMusicFiles: ['01.webp'],
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('1 አምላካችን አመስግኑ'), findsOneWidget);
+    expect(find.text('መዝሙር 1 ኖታ'), findsNothing);
+    expect(find.text('ገጽ 1'), findsNothing);
   });
 }
