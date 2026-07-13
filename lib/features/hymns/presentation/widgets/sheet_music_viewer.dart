@@ -1,10 +1,12 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
-import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
+
 import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
+import 'package:flutter/foundation.dart'
+    show debugPrint, kDebugMode, listEquals;
+import 'package:flutter/material.dart';
 
 /// Widget for displaying sheet music images with zoom and pagination support
 /// Supports 0, 1, or 2 sheet music files per hymn
@@ -25,16 +27,20 @@ class SheetMusicViewer extends StatefulWidget {
 }
 
 class _SheetMusicViewerState extends State<SheetMusicViewer> {
+  static const double _minScale = 1.0;
+  static const double _maxScale = 4.0;
+  static const double _zoomThreshold = 1.01;
+
   final PageController _pageController = PageController();
   final List<TransformationController> _transformationControllers = [];
+  final List<bool> _pageIsZoomed = [];
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    // Initialize transformation controllers for each sheet music page
     for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
-      _transformationControllers.add(TransformationController());
+      _addPageController();
     }
     SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
   }
@@ -42,17 +48,28 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   @override
   void didUpdateWidget(covariant SheetMusicViewer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sheetMusicFiles.length != widget.sheetMusicFiles.length) {
-      while (
-          _transformationControllers.length < widget.sheetMusicFiles.length) {
-        _transformationControllers.add(TransformationController());
+    if (!listEquals(oldWidget.sheetMusicFiles, widget.sheetMusicFiles)) {
+      for (final controller in _transformationControllers) {
+        controller.dispose();
       }
-      while (
-          _transformationControllers.length > widget.sheetMusicFiles.length) {
-        _transformationControllers.removeLast().dispose();
+      _transformationControllers.clear();
+      _pageIsZoomed.clear();
+      for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
+        _addPageController();
       }
+      _currentPage = 0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _pageController.hasClients) {
+          _pageController.jumpToPage(0);
+        }
+      });
       SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
     }
+  }
+
+  void _addPageController() {
+    _transformationControllers.add(TransformationController());
+    _pageIsZoomed.add(false);
   }
 
   @override
@@ -171,9 +188,16 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Widget _buildSheetMusicViewer() {
+    final currentPageIsZoomed = _pageIsZoomed.isNotEmpty &&
+        _currentPage < _pageIsZoomed.length &&
+        _pageIsZoomed[_currentPage];
+
     return Expanded(
       child: PageView.builder(
         controller: _pageController,
+        physics: widget.sheetMusicFiles.length == 1 || currentPageIsZoomed
+            ? const NeverScrollableScrollPhysics()
+            : null,
         onPageChanged: (index) {
           setState(() {
             _currentPage = index;
@@ -219,23 +243,26 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             ),
           ),
           // Sheet music image with zoom
-          // Use 2.0 max scale for sheet music (per requirements), 0.8 min scale
           Expanded(
             child: GestureDetector(
-              onDoubleTap: () => _togglePageZoom(controller),
+              onDoubleTap: () => _togglePageZoom(index),
               child: InteractiveViewer(
                 transformationController: controller,
-                minScale: 1.0,
-                maxScale: 4.0,
-                panEnabled: true,
-                boundaryMargin: const EdgeInsets.all(100),
+                alignment: Alignment.center,
+                minScale: _minScale,
+                maxScale: _maxScale,
+                panEnabled: _pageIsZoomed[index],
+                boundaryMargin: EdgeInsets.zero,
                 constrained: true,
+                clipBehavior: Clip.hardEdge,
+                onInteractionUpdate: (_) => _syncZoomState(index),
                 onInteractionEnd: (_) {
                   final currentScale = controller.value.getMaxScaleOnAxis();
-                  if (currentScale < 1.0) {
+                  if (currentScale <= _zoomThreshold) {
                     controller.value = Matrix4.identity();
-                  } else if (currentScale > 4.0) {
-                    controller.value = Matrix4.identity()..scale(4.0);
+                    _setPageZoomed(index, false);
+                  } else {
+                    _setPageZoomed(index, true);
                   }
                 },
                 child: RepaintBoundary(
@@ -249,11 +276,30 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     );
   }
 
-  void _togglePageZoom(TransformationController controller) {
+  void _syncZoomState(int index) {
+    if (index >= _transformationControllers.length) return;
+    final scale = _transformationControllers[index].value.getMaxScaleOnAxis();
+    _setPageZoomed(index, scale > _zoomThreshold);
+  }
+
+  void _setPageZoomed(int index, bool isZoomed) {
+    if (!mounted ||
+        index >= _pageIsZoomed.length ||
+        _pageIsZoomed[index] == isZoomed) {
+      return;
+    }
+    setState(() {
+      _pageIsZoomed[index] = isZoomed;
+    });
+  }
+
+  void _togglePageZoom(int index) {
+    final controller = _transformationControllers[index];
     final currentScale = controller.value.getMaxScaleOnAxis();
-    controller.value = currentScale > 1.01
-        ? Matrix4.identity()
-        : (Matrix4.identity()..scale(2.0));
+    final shouldReset = currentScale > _zoomThreshold;
+    controller.value =
+        shouldReset ? Matrix4.identity() : (Matrix4.identity()..scale(2.0));
+    _setPageZoomed(index, !shouldReset);
   }
 
   Widget _buildSheetMusicImage(String assetPath) {
@@ -274,14 +320,14 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final cacheHeight = (cacheWidth * 1.5)
             .round(); // Assume 2:3 aspect ratio for sheet music
 
-        return Container(
-          decoration: BoxDecoration(
-            // EXPLICIT: Use theme-aware background for sheet music image container
-            // White background is appropriate for sheet music images for readability
-            color: Colors.white, // Keep white for sheet music contrast
-            borderRadius: BorderRadius.circular(8),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: ColoredBox(
+            color: Colors.white,
+            child: SizedBox.expand(
+              child: _buildImage(assetPath, cacheWidth, cacheHeight),
+            ),
           ),
-          child: _buildImage(assetPath, cacheWidth, cacheHeight),
         );
       },
     );
@@ -294,6 +340,8 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       return Image.file(
         File(assetPath),
         fit: BoxFit.contain,
+        alignment: Alignment.center,
+        gaplessPlayback: true,
         cacheWidth: cacheWidth,
         cacheHeight: cacheHeight,
         errorBuilder: (context, error, stackTrace) {
@@ -309,6 +357,8 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     return Image.asset(
       assetPath,
       fit: BoxFit.contain,
+      alignment: Alignment.center,
+      gaplessPlayback: true,
       cacheWidth: cacheWidth,
       cacheHeight: cacheHeight,
       errorBuilder: (context, error, stackTrace) {
