@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:amharic_hymnal_app/main.dart' as app;
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -78,18 +79,12 @@ void main() {
       }
     });
 
-    testWidgets('Sheet music viewer loads correctly',
+    testWidgets('Sheet music viewer is closed on initial launch',
         (WidgetTester tester) async {
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
-      // Navigate to a hymn with sheet music (SDA Hymnal)
-      // This test would need specific hymn numbers that have sheet music
-      // For now, just verify the viewer widget exists when sheet music is present
-      // Sheet music viewer uses PageView internally
-      // This is a basic smoke test - full test would require specific hymn data
-      expect(find.byType(PageView),
-          findsNothing); // No sheet music on initial load
+      expect(find.byType(SheetMusicViewerPage), findsNothing);
     });
   });
 }
