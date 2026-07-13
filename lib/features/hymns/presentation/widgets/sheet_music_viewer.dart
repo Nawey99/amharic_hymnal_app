@@ -1,7 +1,6 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
 import 'dart:io';
 
-import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
@@ -9,8 +8,6 @@ import 'package:flutter/material.dart';
 
 /// Widget for displaying sheet music images with zoom and pagination support
 /// Supports 0, 1, or 2 sheet music files per hymn
-/// For 2 files: Labels them as "2L" (left) and "2R" (right)
-/// For 1 file: Shows file number
 class SheetMusicViewer extends StatefulWidget {
   final List<String> sheetMusicFiles;
   final int hymnNumber;
@@ -43,7 +40,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
       _addPageController();
     }
-    SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
   }
 
   @override
@@ -64,7 +60,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
           _pageController.jumpToPage(0);
         }
       });
-      SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
     }
   }
 
@@ -79,7 +74,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     for (final controller in _transformationControllers) {
       controller.dispose();
     }
-    SecureScreenService.setProtected(false);
     super.dispose();
   }
 

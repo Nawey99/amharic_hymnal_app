@@ -1,7 +1,10 @@
+import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_viewer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -60,6 +63,12 @@ void main() {
 
   testWidgets('sheet music page combines hymn number and title',
       (tester) async {
+    await SecureScreenService.resetForTesting();
+    SecureScreenService.platformInvokerForTesting = (method) async {
+      if (method == 'isCaptured') return false;
+      return null;
+    };
+
     await tester.pumpWidget(
       const MaterialApp(
         home: SheetMusicViewerPage(
@@ -77,5 +86,85 @@ void main() {
     expect(find.text('1 አምላካችን አመስግኑ'), findsOneWidget);
     expect(find.text('መዝሙር 1 ኖታ'), findsNothing);
     expect(find.text('ገጽ 1'), findsNothing);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await SecureScreenService.resetForTesting();
+  });
+
+  testWidgets('iOS privacy overlay follows capture and app lifecycle',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    addTearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    await SecureScreenService.resetForTesting();
+    final platformCalls = <String>[];
+    SecureScreenService.platformInvokerForTesting = (method) async {
+      platformCalls.add(method);
+      if (method == 'isCaptured') return false;
+      return null;
+    };
+    addTearDown(() async {
+      await SecureScreenService.resetForTesting();
+    });
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: SheetMusicViewerPage(
+          hymn: Hymn(
+            number: 1,
+            title: 'አምላካችን',
+            lyrics: 'አምላካችን አመስግኑ',
+          ),
+          sheetMusicFiles: ['01.webp'],
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.runAsync(SecureScreenService.settleForTesting);
+
+    const privacyMessage = 'Screen capture is not allowed for this content.';
+    expect(find.text(privacyMessage), findsNothing);
+
+    await SecureScreenService.dispatchPlatformCallForTesting(
+      const MethodCall('captureChanged', true),
+    );
+    await tester.pump();
+    expect(find.text(privacyMessage), findsOneWidget);
+
+    await SecureScreenService.dispatchPlatformCallForTesting(
+      const MethodCall('captureChanged', false),
+    );
+    await tester.pump();
+    expect(find.text(privacyMessage), findsNothing);
+
+    final dynamic pageState = tester.state(find.byType(SheetMusicViewerPage));
+    pageState.didChangeAppLifecycleState(AppLifecycleState.paused);
+    await tester.pump();
+    expect(find.text(privacyMessage), findsOneWidget);
+
+    pageState.didChangeAppLifecycleState(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pump();
+    expect(find.text(privacyMessage), findsNothing);
+
+    await SecureScreenService.dispatchPlatformCallForTesting(
+      const MethodCall('screenshotTaken'),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(
+      find.text('Screenshots of sheet music are not permitted.'),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(SecureScreenService.settleForTesting);
+    expect(platformCalls.where((method) => method == 'enable'), hasLength(1));
+    expect(platformCalls.where((method) => method == 'disable'), hasLength(1));
+    debugDefaultTargetPlatformOverride = null;
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -20,25 +22,158 @@ class SheetMusicViewerPage extends StatefulWidget {
   State<SheetMusicViewerPage> createState() => _SheetMusicViewerPageState();
 }
 
-class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
+class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
+    with WidgetsBindingObserver {
+  final Object _screenProtectionOwner = Object();
+
+  StreamSubscription<SecureScreenEvent>? _secureScreenSubscription;
+  bool _screenProtectionActive = false;
+  bool _isCaptureActive = false;
+  bool _isBackgrounded = false;
+
+  bool get _isPrivacyOverlayVisible =>
+      SecureScreenService.usesPrivacyOverlay &&
+      (_isCaptureActive || _isBackgrounded);
+
   @override
   void initState() {
     super.initState();
-    SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
+    WidgetsBinding.instance.addObserver(this);
+    if (widget.sheetMusicFiles.isNotEmpty) {
+      _startScreenProtection();
+    }
   }
 
   @override
   void didUpdateWidget(covariant SheetMusicViewerPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sheetMusicFiles.length != widget.sheetMusicFiles.length) {
-      SecureScreenService.setProtected(widget.sheetMusicFiles.isNotEmpty);
+    final wasProtected = oldWidget.sheetMusicFiles.isNotEmpty;
+    final shouldProtect = widget.sheetMusicFiles.isNotEmpty;
+    if (wasProtected == shouldProtect) return;
+
+    if (shouldProtect) {
+      _startScreenProtection();
+    } else {
+      _stopScreenProtection();
     }
   }
 
   @override
   void dispose() {
-    SecureScreenService.setProtected(false);
+    WidgetsBinding.instance.removeObserver(this);
+    _stopScreenProtection();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!SecureScreenService.usesPrivacyOverlay || !_screenProtectionActive) {
+      return;
+    }
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        unawaited(_resumeFromBackground());
+        return;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        if (!_isBackgrounded && mounted) {
+          setState(() {
+            _isBackgrounded = true;
+          });
+        }
+        return;
+    }
+  }
+
+  void _startScreenProtection() {
+    if (_screenProtectionActive) return;
+    _screenProtectionActive = true;
+
+    if (SecureScreenService.usesPrivacyOverlay) {
+      final lifecycleState = WidgetsBinding.instance.lifecycleState;
+      _isBackgrounded =
+          lifecycleState != null && lifecycleState != AppLifecycleState.resumed;
+      _secureScreenSubscription =
+          SecureScreenService.events.listen(_handleSecureScreenEvent);
+    }
+
+    unawaited(
+      SecureScreenService.acquire(_screenProtectionOwner).then((captured) {
+        if (!mounted || !_screenProtectionActive) return;
+        if (_isCaptureActive != captured) {
+          setState(() {
+            _isCaptureActive = captured;
+          });
+        }
+      }),
+    );
+  }
+
+  void _stopScreenProtection() {
+    if (!_screenProtectionActive) return;
+    _screenProtectionActive = false;
+
+    final subscription = _secureScreenSubscription;
+    _secureScreenSubscription = null;
+    if (subscription != null) {
+      unawaited(subscription.cancel());
+    }
+    unawaited(SecureScreenService.release(_screenProtectionOwner));
+    _isCaptureActive = false;
+    _isBackgrounded = false;
+  }
+
+  void _handleSecureScreenEvent(SecureScreenEvent event) {
+    if (!mounted || !_screenProtectionActive) return;
+
+    switch (event.type) {
+      case SecureScreenEventType.captureChanged:
+        final captured = event.isCaptured ?? false;
+        if (_isCaptureActive != captured) {
+          setState(() {
+            _isCaptureActive = captured;
+          });
+        }
+        return;
+      case SecureScreenEventType.screenshotTaken:
+        _showScreenshotWarning();
+        return;
+    }
+  }
+
+  Future<void> _resumeFromBackground() async {
+    final captured = await SecureScreenService.refreshCaptureState();
+    if (!mounted || !_screenProtectionActive) return;
+
+    setState(() {
+      _isCaptureActive = captured;
+      _isBackgrounded = false;
+    });
+  }
+
+  void _showScreenshotWarning() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_screenProtectionActive) return;
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      if (messenger == null) return;
+
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Screenshots of sheet music are not permitted.',
+              style: TextStyle(color: AppColors.primaryText),
+            ),
+            backgroundColor: Color(0xFFB3261E),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
+        );
+    });
   }
 
   @override
@@ -104,9 +239,36 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                      child: SheetMusicViewer(
-                        sheetMusicFiles: widget.sheetMusicFiles,
-                        hymnNumber: widget.hymn.displayNumber,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          SheetMusicViewer(
+                            sheetMusicFiles: widget.sheetMusicFiles,
+                            hymnNumber: widget.hymn.displayNumber,
+                          ),
+                          if (_isPrivacyOverlayVisible)
+                            const Positioned.fill(
+                              child: AbsorbPointer(
+                                child: ColoredBox(
+                                  color: Colors.black,
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(24),
+                                      child: Text(
+                                        'Screen capture is not allowed for this content.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: AppColors.primaryText,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
