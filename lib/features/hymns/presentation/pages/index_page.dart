@@ -33,6 +33,7 @@ class IndexPage extends StatefulWidget {
 class _IndexPageState extends State<IndexPage> {
   static const double _estimatedHymnItemExtent = 96.0;
   static const double _listVerticalPadding = 8.0;
+  static const double _alphabetRailBottomPadding = 8.0;
 
   final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
@@ -44,6 +45,8 @@ class _IndexPageState extends State<IndexPage> {
   String _currentSectionLetter =
       ''; // Track current section letter for dynamic updates
   String _sortTypeBeforeSearch = 'number';
+  int _sectionJumpGeneration = 0;
+  bool _isSectionJumpInProgress = false;
   @override
   void initState() {
     super.initState();
@@ -67,7 +70,7 @@ class _IndexPageState extends State<IndexPage> {
 
   /// Update section indicator based on current scroll position
   void _updateSectionIndicator() {
-    if (!_scrollController.hasClients) return;
+    if (!_scrollController.hasClients || _isSectionJumpInProgress) return;
 
     final state = context.read<HymnsBloc>().state;
     if (state is! HymnsLoaded ||
@@ -121,12 +124,14 @@ class _IndexPageState extends State<IndexPage> {
       index,
     );
     if (position != null && _scrollController.hasClients) {
+      final jumpGeneration = ++_sectionJumpGeneration;
+      _isSectionJumpInProgress = true;
       setState(() {
         _currentSectionLetter = letter;
       });
 
-      // Calculate an approximate scroll position. Rows have dynamic height to
-      // avoid overflow when text scale or window size changes.
+      // Jump immediately while the user scrubs across letters. The generation
+      // guard prevents an older post-frame alignment from winning a rapid drag.
       const itemHeight = _estimatedHymnItemExtent;
       const listPadding = _listVerticalPadding;
       final scrollPosition = (position * itemHeight) + listPadding;
@@ -136,15 +141,22 @@ class _IndexPageState extends State<IndexPage> {
         final maxScroll = _scrollController.position.maxScrollExtent;
         final targetPosition = scrollPosition.clamp(0.0, maxScroll);
 
-        _scrollController.animateTo(
-          targetPosition,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-        Future.delayed(const Duration(milliseconds: 340), () {
-          if (!mounted || position >= hymnsToDisplay.length) return;
+        _scrollController.jumpTo(targetPosition);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted ||
+              jumpGeneration != _sectionJumpGeneration ||
+              position >= hymnsToDisplay.length) {
+            return;
+          }
           _alignHymnWithViewportTop(hymnsToDisplay[position]);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted || jumpGeneration != _sectionJumpGeneration) return;
+            _isSectionJumpInProgress = false;
+            _updateSectionIndicator();
+          });
         });
+      } else {
+        _isSectionJumpInProgress = false;
       }
     }
   }
@@ -209,11 +221,9 @@ class _IndexPageState extends State<IndexPage> {
           _scrollController.position.maxScrollExtent,
         )
         .toDouble();
-    _scrollController.animateTo(
-      target,
-      duration: const Duration(milliseconds: 140),
-      curve: Curves.easeOut,
-    );
+    if ((_scrollController.offset - target).abs() >= 1) {
+      _scrollController.jumpTo(target);
+    }
   }
 
   GlobalKey _keyForHymn(Hymn hymn) {
@@ -396,64 +406,97 @@ class _IndexPageState extends State<IndexPage> {
 
   Widget _buildHymnList() {
     return Expanded(
-      child: Stack(
-        key: _listViewportKey,
-        children: [
-          _buildHymnListView(),
-          _buildAlphabetScrollBar(),
-        ],
+      child: BlocBuilder<HymnsBloc, HymnsState>(
+        buildWhen: (previous, current) {
+          if (previous.runtimeType != current.runtimeType) return true;
+          if (previous is HymnsLoaded && current is HymnsLoaded) {
+            return previous.hymns.length != current.hymns.length ||
+                previous.sortType != current.sortType ||
+                previous.version != current.version;
+          }
+          return true;
+        },
+        builder: (context, state) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final labels = _alphabetLabelsForState(state);
+              final useHorizontalAlphabetRail = labels.isNotEmpty &&
+                  IndexedFastScroller.shouldUseHorizontalLayout(
+                    labelCount: labels.length,
+                    availableHeight: constraints.maxHeight,
+                    bottomPadding: _alphabetRailBottomPadding,
+                  );
+
+              return Stack(
+                key: _listViewportKey,
+                children: [
+                  _buildHymnListView(
+                    state,
+                    useHorizontalAlphabetRail: useHorizontalAlphabetRail,
+                  ),
+                  if (labels.isNotEmpty)
+                    AlphabetScrollBar(
+                      availableLabels: labels,
+                      activeLabel: labels.contains(_currentSectionLetter)
+                          ? _currentSectionLetter
+                          : labels.first,
+                      onLetterSelected: _scrollToLetter,
+                      bottomPadding: _alphabetRailBottomPadding,
+                      useHorizontalLayout: useHorizontalAlphabetRail,
+                    ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  Widget _buildHymnListView() {
-    return BlocBuilder<HymnsBloc, HymnsState>(
-      buildWhen: (previous, current) {
-        // Only rebuild when state type changes or hymns list changes
-        if (previous.runtimeType != current.runtimeType) return true;
-        if (previous is HymnsLoaded && current is HymnsLoaded) {
-          return previous.hymns.length != current.hymns.length ||
-              previous.sortType != current.sortType ||
-              previous.version != current.version;
-        }
-        return true;
-      },
-      builder: (context, state) {
-        if (state is HymnsLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
-            ),
-          );
-        }
-        if (state is HymnsError) {
-          return ErrorStateWidget(
-            message: state.message,
-          );
-        }
-        if (state is HymnsLoaded) {
-          if (state.hymns.isEmpty) {
-            return EmptyStateWidget(
-              icon: Icons.music_note,
-              title: AppLocalizations.of(context)?.noHymnsFound ??
-                  'No hymns found',
-            );
-          }
-          return _buildHymnListItems(state.hymns);
-        }
-        return const SizedBox();
-      },
+  List<String> _alphabetLabelsForState(HymnsState state) {
+    if (state is! HymnsLoaded || state.sortType != 'name') return const [];
+
+    final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
+    final availableLabels = _buildAlphabetIndex(hymnsToDisplay).keys.toList();
+    return AlphabetScrollBar.visibleLetters(availableLabels);
+  }
+
+  Widget _buildHymnListView(
+    HymnsState state, {
+    required bool useHorizontalAlphabetRail,
+  }) {
+    if (state is HymnsLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+        ),
+      );
+    }
+    if (state is HymnsError) {
+      return ErrorStateWidget(message: state.message);
+    }
+    if (state is! HymnsLoaded) return const SizedBox();
+    if (state.hymns.isEmpty) {
+      return EmptyStateWidget(
+        icon: Icons.music_note,
+        title: AppLocalizations.of(context)?.noHymnsFound ?? 'No hymns found',
+      );
+    }
+
+    return _buildHymnListItems(
+      state,
+      useHorizontalAlphabetRail: useHorizontalAlphabetRail,
     );
   }
 
-  Widget _buildHymnListItems(List<Hymn> hymns) {
-    final state = context.read<HymnsBloc>().state;
+  Widget _buildHymnListItems(
+    HymnsLoaded state, {
+    required bool useHorizontalAlphabetRail,
+  }) {
     final hasAlphabetScrollBar =
-        state is HymnsLoaded && state.sortType == 'name';
-    final hasNumberScrollbar =
-        state is HymnsLoaded && state.sortType == 'number';
-    final sortType = state is HymnsLoaded ? state.sortType : null;
-    final hymnsToDisplay = _hymnsForDisplay(hymns, sortType);
+        state.sortType == 'name' && state.hymns.isNotEmpty;
+    final hasNumberScrollbar = state.sortType == 'number';
+    final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
 
     // Step 5: Add empty state handling
     if (hymnsToDisplay.isEmpty) {
@@ -463,15 +506,12 @@ class _IndexPageState extends State<IndexPage> {
       return EmptyStateWidget(
         icon: Icons.music_note,
         title: AppLocalizations.of(context)?.noHymnsFound ?? 'No hymns found',
-        message: state is HymnsLoaded && state.sortType == 'name'
-            ? 'በስም ለማደራጀት መዝሙር አልተገኘም'
-            : null,
+        message: state.sortType == 'name' ? 'በስም ለማደራጀት መዝሙር አልተገኘም' : null,
       );
     }
 
-    // Step 3: Fix ListView Rendering - Ensure proper constraints and visibility
-    // Conditionally apply right padding only when sorted by name (for alphabet scrollbar)
-    final rightPadding = hasAlphabetScrollBar ? 54.0 : 16.0;
+    final rightPadding =
+        hasAlphabetScrollBar && !useHorizontalAlphabetRail ? 54.0 : 16.0;
 
     final listView = ListView.builder(
       controller: _scrollController,
@@ -502,9 +542,7 @@ class _IndexPageState extends State<IndexPage> {
           child: HymnListItem(
             hymn: hymn,
             onTap: () => _navigateToHymnDetail(context, hymn),
-            sortType: state is HymnsLoaded
-                ? state.sortType
-                : null, // Pass sort type for height adjustment
+            sortType: state.sortType,
           ),
         );
       },
@@ -532,28 +570,6 @@ class _IndexPageState extends State<IndexPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => HymnDetailPage(hymn: hymn)),
-    );
-  }
-
-  Widget _buildAlphabetScrollBar() {
-    return BlocBuilder<HymnsBloc, HymnsState>(
-      builder: (context, state) {
-        if (state is HymnsLoaded && state.sortType == 'name') {
-          final hymnsToDisplay = _hymnsForDisplay(
-            state.hymns,
-            state.sortType,
-          );
-          final letters = _buildAlphabetIndex(hymnsToDisplay).keys.toList();
-          if (letters.isEmpty) return const SizedBox();
-          return AlphabetScrollBar(
-            availableLabels: letters,
-            activeLabel: _currentSectionLetter,
-            onLetterSelected: _scrollToLetter,
-            bottomPadding: NavBarConstants.getBottomPadding(context),
-          );
-        }
-        return const SizedBox();
-      },
     );
   }
 
