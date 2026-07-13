@@ -1,0 +1,240 @@
+// lib/features/hymns/presentation/widgets/audio_section_widget.dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
+import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/music_player_widget.dart';
+
+/// Automatic audio section widget for hymn detail page
+///
+/// Automatically detects if audio is available for the hymn
+/// Transitions from static section to full player when audio is available
+/// Shows "Audio unavailable" state when no audio is found
+/// Subscribes to GlobalAudioService for reactive state updates
+class AudioSectionWidget extends StatefulWidget {
+  final int hymnNumber;
+  final String hymnTitle;
+  final String? englishTitle;
+  final String version;
+  final bool condensed;
+
+  const AudioSectionWidget({
+    super.key,
+    required this.hymnNumber,
+    required this.hymnTitle,
+    this.englishTitle,
+    required this.version,
+    this.condensed = false,
+  });
+
+  @override
+  State<AudioSectionWidget> createState() => _AudioSectionWidgetState();
+}
+
+class _AudioSectionWidgetState extends State<AudioSectionWidget> {
+  final GlobalAudioService _audioService = GlobalAudioService();
+  final AudioRepository _audioRepository = AudioRepository();
+  bool _isChecking = true;
+  bool _hasAudio = false;
+  StreamSubscription<int?>? _currentHymnSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAudioAvailability();
+    _setupListener();
+  }
+
+  void _setupListener() {
+    // Listen to current hymn changes to update UI when another hymn starts
+    _currentHymnSubscription =
+        _audioService.currentHymnStream.listen((hymnNumber) {
+      if (mounted) {
+        setState(() {
+          // UI will update automatically via MusicPlayerWidget
+        });
+      }
+    });
+  }
+
+  Future<void> _checkAudioAvailability() async {
+    setState(() {
+      _isChecking = true;
+    });
+
+    try {
+      final track = await _audioRepository.getTrackForNumber(
+        widget.hymnNumber,
+        title: widget.hymnTitle,
+        version: widget.version,
+      );
+
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _hasAudio = track != null;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _hasAudio = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _currentHymnSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isChecking) {
+      return _buildLoadingState();
+    }
+
+    if (_hasAudio) {
+      // Show full player UI
+      return MusicPlayerWidget(
+        hymnNumber: widget.hymnNumber,
+        hymnTitle: widget.hymnTitle,
+        englishTitle: widget.englishTitle,
+        version: widget.version,
+        condensed: widget.condensed,
+      );
+    }
+
+    // Show unavailable state
+    return _buildUnavailableState();
+  }
+
+  Widget _buildLoadingState() {
+    if (widget.condensed) {
+      return _buildCondensedStatus(
+        icon: const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+          ),
+        ),
+        label: 'ድምፅ በመፈተሽ ላይ...',
+      );
+    }
+
+    return const GlassContainer(
+      borderRadius: 12.0,
+      blurSigma: 12.0,
+      opacity: 0.25,
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Icon(
+            Icons.music_note,
+            color: AppColors.accentGreen,
+            size: 20,
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'ድምፅ በመፈተሽ ላይ...',
+              style: TextStyle(
+                color: AppColors.secondaryText,
+                fontSize: 14,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUnavailableState() {
+    if (widget.condensed) {
+      return _buildCondensedStatus(
+        icon: const Icon(
+          Icons.music_off,
+          color: AppColors.secondaryText,
+          size: 20,
+        ),
+        label: 'ድምፅ አልተገኘም',
+      );
+    }
+
+    return const GlassContainer(
+      borderRadius: 12.0,
+      blurSigma: 12.0,
+      opacity: 0.25,
+      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Icon(
+            Icons.music_off,
+            color: AppColors.secondaryText,
+            size: 20,
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'ድምፅ አልተገኘም',
+              style: TextStyle(
+                color: AppColors.secondaryText,
+                fontSize: 14,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCondensedStatus({
+    required Widget icon,
+    required String label,
+  }) {
+    return GlassContainer(
+      borderRadius: 18,
+      blurSigma: 12,
+      opacity: 0.25,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.secondaryText,
+                fontSize: 12,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

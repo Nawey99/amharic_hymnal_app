@@ -1,17 +1,27 @@
-# amharic_hymnal_app
+# ውዳሴ
 
-A new Flutter project.
+ውዳሴ is a Flutter hymnal app for Amharic SDA church members. The app currently includes the Amharic SDA Hymnal and Hagerigna Amharic worship songs, with a roadmap for more Ethiopian languages and books in future releases.
 
-## Getting Started
+## Current Direction
 
-This project is a starting point for a Flutter application.
+- Keep this Flutter app as the source of truth.
+- Use older Xamarin/Flutter hymnal apps only as feature inspiration.
+- Prioritize Android and iOS, while keeping web important.
+- Keep lyrics available offline.
+- Move large sheet music toward a hybrid remote plus offline-cache model.
+- Preserve a scalable feature-based architecture for future hymnals and languages.
 
-A few resources to get you started if this is your first Flutter project:
+## Development
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```powershell
+flutter pub get
+flutter analyze --no-pub lib test integration_test
+flutter test --no-pub
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# amharic_hymnal_app
+## Key Docs
+
+- [Product decisions](docs/PRODUCT_DECISIONS.md)
+- [Architecture](docs/architecture.md)
+- [Lyrics feature](docs/lyrics-feature.md)
+- [Handoff](docs/Handoff.md)
