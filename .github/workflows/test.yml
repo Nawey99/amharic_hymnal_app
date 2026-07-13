@@ -36,8 +36,7 @@ jobs:
         run: flutter test
 
       - name: Run integration tests
-        run: flutter test integration_test/app_test.dart
-        continue-on-error: true  # Integration tests may require device
+        run: flutter test integration_test/app_test.dart -d linux
 
   lint:
     name: Lint Code
