@@ -155,25 +155,37 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
   }
 
   void _showScreenshotWarning() {
+    if (!mounted || !_screenProtectionActive) return;
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger != null) {
+      _presentScreenshotWarning(messenger);
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_screenProtectionActive) return;
-      final messenger = ScaffoldMessenger.maybeOf(context);
-      if (messenger == null) return;
-
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Screenshots of sheet music are not permitted.',
-              style: TextStyle(color: AppColors.primaryText),
-            ),
-            backgroundColor: Color(0xFFB3261E),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
+      final deferredMessenger = ScaffoldMessenger.maybeOf(context);
+      if (deferredMessenger != null) {
+        _presentScreenshotWarning(deferredMessenger);
+      }
     });
+  }
+
+  void _presentScreenshotWarning(ScaffoldMessengerState messenger) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Screenshots of sheet music are not permitted.',
+            style: TextStyle(color: AppColors.primaryText),
+          ),
+          backgroundColor: Color(0xFFB3261E),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
   }
 
   @override

@@ -50,7 +50,11 @@ void main() {
     expect(controller.value.getMaxScaleOnAxis(), 2.0);
 
     final viewerSize = tester.getSize(find.byType(InteractiveViewer));
-    expect(viewerSize.width / viewerSize.height, closeTo(2 / 3, 0.001));
+    final contentSize = tester.getSize(
+      find.byKey(const ValueKey('sheet-music-content-0')),
+    );
+    expect(contentSize.width, closeTo(viewerSize.width, 0.001));
+    expect(contentSize.height, greaterThan(contentSize.width));
     final localCenter = viewerSize.center(Offset.zero);
     final transformedCenter = MatrixUtils.transformPoint(
       controller.value,
@@ -59,6 +63,132 @@ void main() {
     expect(transformedCenter.dx, closeTo(localCenter.dx, 0.001));
     expect(transformedCenter.dy, closeTo(localCenter.dy, 0.001));
     expect(find.text('ገጽ 1'), findsNothing);
+  });
+
+  testWidgets('sheet music fits the full width in landscape', (tester) async {
+    tester.view.physicalSize = const Size(720, 360);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SheetMusicViewer(
+            sheetMusicFiles: ['01.webp'],
+            hymnNumber: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewerSize = tester.getSize(find.byType(InteractiveViewer));
+    final contentSize = tester.getSize(
+      find.byKey(const ValueKey('sheet-music-content-0')),
+    );
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+
+    expect(viewerSize.width, closeTo(720, 0.001));
+    expect(contentSize.width, closeTo(viewerSize.width, 0.001));
+    expect(contentSize.height, greaterThan(viewerSize.height));
+    expect(viewer.constrained, isFalse);
+    expect(viewer.panEnabled, isTrue);
+  });
+
+  testWidgets('zoomed sheet can pan to every page edge', (tester) async {
+    tester.view.physicalSize = const Size(360, 360);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SheetMusicViewer(
+            sheetMusicFiles: ['01.webp'],
+            hymnNumber: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewerFinder = find.byType(InteractiveViewer);
+    final contentFinder = find.byKey(const ValueKey('sheet-music-content-0'));
+    final contentCenter = tester.getCenter(contentFinder);
+    await tester.tapAt(contentCenter);
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tapAt(contentCenter);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final viewer = tester.widget<InteractiveViewer>(viewerFinder);
+    final controller = viewer.transformationController!;
+    final viewerSize = tester.getSize(viewerFinder);
+    final contentSize = tester.getSize(contentFinder);
+    expect(controller.value.getMaxScaleOnAxis(), 2.0);
+
+    await tester.drag(viewerFinder, const Offset(-1200, -1200));
+    await tester.pumpAndSettle();
+    final bottomRight = controller.toScene(
+      Offset(viewerSize.width, viewerSize.height),
+    );
+    expect(bottomRight.dx, closeTo(contentSize.width, 0.5));
+    expect(bottomRight.dy, closeTo(contentSize.height, 0.5));
+
+    await tester.drag(viewerFinder, const Offset(1200, 1200));
+    await tester.pumpAndSettle();
+    final topLeft = controller.toScene(Offset.zero);
+    expect(topLeft.dx, closeTo(0, 0.5));
+    expect(topLeft.dy, closeTo(0, 0.5));
+  });
+
+  testWidgets('rotation refits the page width and resets stale zoom',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SheetMusicViewer(
+            sheetMusicFiles: ['01.webp'],
+            hymnNumber: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final center = tester.getCenter(find.byType(InteractiveViewer));
+    await tester.tapAt(center);
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tapAt(center);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    InteractiveViewer viewer = tester.widget(find.byType(InteractiveViewer));
+    final controller = viewer.transformationController!;
+    expect(controller.value.getMaxScaleOnAxis(), 2.0);
+
+    tester.view.physicalSize = const Size(720, 360);
+    await tester.pump();
+    await tester.pump();
+
+    viewer = tester.widget(find.byType(InteractiveViewer));
+    final contentSize = tester.getSize(
+      find.byKey(const ValueKey('sheet-music-content-0')),
+    );
+    expect(tester.getSize(find.byType(InteractiveViewer)).width, 720);
+    expect(contentSize.width, 720);
+    expect(
+      controller.value.storage,
+      orderedEquals(Matrix4.identity().storage),
+    );
+    expect(viewer.panEnabled, isTrue);
   });
 
   testWidgets('sheet music page combines hymn number and title',

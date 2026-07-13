@@ -26,12 +26,15 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   static const double _minScale = 1.0;
   static const double _maxScale = 4.0;
   static const double _zoomThreshold = 1.01;
-  static const double _sheetMusicAspectRatio = 2 / 3;
+  static const double _sheetMusicAspectRatio = 2200 / 3122;
+  static const double _layoutTolerance = 0.5;
 
   final PageController _pageController = PageController();
   final List<TransformationController> _transformationControllers = [];
   final List<bool> _pageIsZoomed = [];
   int _currentPage = 0;
+  Size? _lastViewportSize;
+  int _viewportRevision = 0;
   Offset? _doubleTapPosition;
 
   @override
@@ -189,10 +192,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         },
         itemCount: widget.sheetMusicFiles.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: _buildSheetMusicPage(index),
-          );
+          return _buildSheetMusicPage(index);
         },
       ),
     );
@@ -203,49 +203,92 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     final assetPath = _getAssetPath(fileName);
     final controller = _transformationControllers[index];
 
-    return Center(
-      child: AspectRatio(
-        aspectRatio: _sheetMusicAspectRatio,
-        child: ClipRRect(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewportSize = Size(
+          constraints.maxWidth,
+          constraints.maxHeight,
+        );
+        _scheduleViewportRefit(viewportSize);
+
+        final fittedPageHeight = viewportSize.width / _sheetMusicAspectRatio;
+        final needsBasePan =
+            fittedPageHeight > viewportSize.height + _layoutTolerance;
+
+        return ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: ColoredBox(
-            color: Colors.white,
-            child: GestureDetector(
-              onDoubleTapDown: (details) {
-                _doubleTapPosition = details.localPosition;
-              },
-              onDoubleTap: () => _togglePageZoom(
-                index,
-                _doubleTapPosition,
-              ),
-              child: InteractiveViewer(
-                transformationController: controller,
-                alignment: Alignment.center,
-                minScale: _minScale,
-                maxScale: _maxScale,
-                panEnabled: _pageIsZoomed[index],
-                boundaryMargin: EdgeInsets.zero,
-                constrained: true,
-                clipBehavior: Clip.hardEdge,
-                onInteractionUpdate: (_) => _syncZoomState(index),
-                onInteractionEnd: (_) {
-                  final currentScale = controller.value.getMaxScaleOnAxis();
-                  if (currentScale <= _zoomThreshold) {
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onDoubleTapDown: (details) {
+              _doubleTapPosition = details.localPosition;
+            },
+            onDoubleTap: () => _togglePageZoom(
+              index,
+              _doubleTapPosition,
+            ),
+            child: InteractiveViewer(
+              key: ValueKey('sheet-music-viewport-$index'),
+              transformationController: controller,
+              alignment: Alignment.topCenter,
+              minScale: _minScale,
+              maxScale: _maxScale,
+              panEnabled: _pageIsZoomed[index] || needsBasePan,
+              boundaryMargin: EdgeInsets.zero,
+              constrained: false,
+              clipBehavior: Clip.hardEdge,
+              onInteractionUpdate: (_) => _syncZoomState(index),
+              onInteractionEnd: (_) {
+                final currentScale = controller.value.getMaxScaleOnAxis();
+                if (currentScale <= _zoomThreshold) {
+                  if (!needsBasePan) {
                     controller.value = Matrix4.identity();
-                    _setPageZoomed(index, false);
-                  } else {
-                    _setPageZoomed(index, true);
                   }
-                },
-                child: RepaintBoundary(
-                  child: _buildSheetMusicImage(assetPath),
+                  _setPageZoomed(index, false);
+                } else {
+                  _setPageZoomed(index, true);
+                }
+              },
+              child: SizedBox(
+                key: ValueKey('sheet-music-content-$index'),
+                width: viewportSize.width,
+                height: fittedPageHeight,
+                child: ColoredBox(
+                  color: Colors.white,
+                  child: RepaintBoundary(
+                    child: _buildSheetMusicImage(assetPath),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  void _scheduleViewportRefit(Size viewportSize) {
+    if (_lastViewportSize == viewportSize) return;
+
+    final hadPreviousLayout = _lastViewportSize != null;
+    _lastViewportSize = viewportSize;
+    if (!hadPreviousLayout) return;
+
+    final revision = ++_viewportRevision;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || revision != _viewportRevision) return;
+
+      for (final controller in _transformationControllers) {
+        controller.value = Matrix4.identity();
+      }
+
+      if (_pageIsZoomed.any((isZoomed) => isZoomed)) {
+        setState(() {
+          for (var index = 0; index < _pageIsZoomed.length; index++) {
+            _pageIsZoomed[index] = false;
+          }
+        });
+      }
+    });
   }
 
   void _syncZoomState(int index) {
@@ -273,10 +316,11 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       controller.value = Matrix4.identity();
     } else {
       final focal = focalPoint ?? Offset.zero;
+      final scenePoint = controller.toScene(focal);
       controller.value = Matrix4.identity()
         ..translate(focal.dx, focal.dy)
         ..scale(2.0)
-        ..translate(-focal.dx, -focal.dy);
+        ..translate(-scenePoint.dx, -scenePoint.dy);
     }
     _setPageZoomed(index, !shouldReset);
     _doubleTapPosition = null;
@@ -297,8 +341,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final cacheWidth = (screenWidth * 2)
             .round()
             .clamp(400, 1200); // Cap between 400-1200px
-        final cacheHeight = (cacheWidth * 1.5)
-            .round(); // Assume 2:3 aspect ratio for sheet music
+        final cacheHeight = (cacheWidth / _sheetMusicAspectRatio).round();
 
         return SizedBox.expand(
           child: _buildImage(assetPath, cacheWidth, cacheHeight),
