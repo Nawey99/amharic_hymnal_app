@@ -65,6 +65,43 @@ void main() {
     }
   });
 
+  testWidgets('vertical rail fits Samsung-height constraints without overflow',
+      (tester) async {
+    final labels = amharicFidelIndexOrder.take(25).toList();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              key: const ValueKey('samsung-height-host'),
+              width: 360,
+              height: 554,
+              child: Stack(
+                children: [
+                  AlphabetScrollBar(
+                    availableLabels: labels,
+                    bottomPadding: 8,
+                    onLetterSelected: (_) {},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final rail = find.byKey(const ValueKey('alphabet-vertical-rail'));
+    expect(rail, findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    final hostRect = tester.getRect(
+      find.byKey(const ValueKey('samsung-height-host')),
+    );
+    expect(tester.getRect(rail).bottom, lessThanOrEqualTo(hostRect.bottom - 8));
+  });
+
   testWidgets('horizontal rail scrubs letters immediately without a modal',
       (tester) async {
     final selectedLabels = <String>[];

@@ -7,6 +7,9 @@ import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 
 class IndexedFastScroller extends StatefulWidget {
   static const double verticalPadding = 6;
+  static const double verticalBorderWidth = 1;
+  static const double verticalChromeHeight =
+      (verticalPadding * 2) + (verticalBorderWidth * 2);
   static const double minReadableItemHeight = 18;
   static const double horizontalItemExtent = 44;
   static const double horizontalRailHeight = 54;
@@ -37,8 +40,11 @@ class IndexedFastScroller extends StatefulWidget {
   }) {
     if (labelCount <= 0 || !availableHeight.isFinite) return false;
 
-    final railHeight = availableHeight - topPadding - bottomPadding;
-    final usableHeight = railHeight - (verticalPadding * 2);
+    final railHeight = (availableHeight - topPadding - bottomPadding)
+        .clamp(0.0, double.infinity)
+        .toDouble();
+    final usableHeight =
+        (railHeight - verticalChromeHeight).clamp(0.0, railHeight).toDouble();
     return usableHeight < labelCount * minReadableItemHeight;
   }
 
@@ -294,10 +300,9 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
   Widget _buildVerticalRail(double availableHeight) {
     final railHeight =
         availableHeight - widget.topPadding - widget.bottomPadding;
-    final usableHeight =
-        (railHeight - (IndexedFastScroller.verticalPadding * 2))
-            .clamp(0.0, railHeight)
-            .toDouble();
+    final usableHeight = (railHeight - IndexedFastScroller.verticalChromeHeight)
+        .clamp(0.0, railHeight)
+        .toDouble();
     final itemHeight = (usableHeight / widget.labels.length)
         .clamp(
           IndexedFastScroller.minReadableItemHeight,
@@ -346,6 +351,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.12),
+          width: IndexedFastScroller.verticalBorderWidth,
         ),
       ),
       child: Column(
