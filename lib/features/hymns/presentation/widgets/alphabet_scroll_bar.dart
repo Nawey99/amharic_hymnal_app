@@ -10,6 +10,7 @@ class IndexedFastScroller extends StatefulWidget {
   static const double minReadableItemHeight = 18;
   static const double horizontalItemExtent = 44;
   static const double horizontalRailHeight = 54;
+  static const double horizontalContentPadding = 4;
 
   final List<String> labels;
   final ValueChanged<String> onLabelSelected;
@@ -52,6 +53,8 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
   final ScrollController _horizontalController = ScrollController();
   final GlobalKey _verticalRailKey = GlobalKey();
   final GlobalKey _horizontalRailKey = GlobalKey();
+  final Map<String, GlobalKey> _verticalLabelKeys = {};
+  final Map<String, GlobalKey> _horizontalLabelKeys = {};
 
   String? _bubbleLabel;
   double? _bubbleTop;
@@ -96,7 +99,8 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
     if (index < 0) return;
 
     final position = _horizontalController.position;
-    final centeredOffset = (index * IndexedFastScroller.horizontalItemExtent) -
+    final centeredOffset = IndexedFastScroller.horizontalContentPadding +
+        (index * IndexedFastScroller.horizontalItemExtent) -
         ((position.viewportDimension -
                 IndexedFastScroller.horizontalItemExtent) /
             2);
@@ -124,12 +128,12 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
       return;
     }
 
-    final local = railBox.globalToLocal(globalPosition);
-    final railHeight = railBox.size.height;
-    final clampedDy = local.dy.clamp(0.0, railHeight).toDouble();
-    final index = (clampedDy / railHeight * widget.labels.length)
-        .floor()
-        .clamp(0, widget.labels.length - 1);
+    final index = _nearestRenderedLabelIndex(
+      globalCoordinate: globalPosition.dy,
+      axis: Axis.vertical,
+      labelKeys: _verticalLabelKeys,
+    );
+    if (index == null) return;
     final overlayPosition = overlayBox.globalToLocal(globalPosition);
     final maxBubbleTop =
         (overlayBox.size.height - widget.bottomPadding - _selectionBubbleSize)
@@ -158,14 +162,12 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
       return;
     }
 
-    final local = railBox.globalToLocal(globalPosition);
-    final horizontalOffset =
-        _horizontalController.hasClients ? _horizontalController.offset : 0.0;
-    const contentPadding = 4.0;
-    final contentX = local.dx + horizontalOffset - contentPadding;
-    final index = (contentX / IndexedFastScroller.horizontalItemExtent)
-        .floor()
-        .clamp(0, widget.labels.length - 1);
+    final index = _nearestRenderedLabelIndex(
+      globalCoordinate: globalPosition.dx,
+      axis: Axis.horizontal,
+      labelKeys: _horizontalLabelKeys,
+    );
+    if (index == null) return;
     final overlayPosition = overlayBox.globalToLocal(globalPosition);
     final maxBubbleLeft = (overlayBox.size.width - _selectionBubbleSize - 8)
         .clamp(8.0, double.infinity);
@@ -178,6 +180,33 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
       axis: Axis.horizontal,
       bubbleLeft: bubbleLeft,
     );
+  }
+
+  int? _nearestRenderedLabelIndex({
+    required double globalCoordinate,
+    required Axis axis,
+    required Map<String, GlobalKey> labelKeys,
+  }) {
+    int? nearestIndex;
+    double? nearestDistance;
+
+    for (var index = 0; index < widget.labels.length; index++) {
+      final key = labelKeys[widget.labels[index]];
+      final box = key?.currentContext?.findRenderObject() as RenderBox?;
+      if (box == null || !box.hasSize) continue;
+
+      final origin = box.localToGlobal(Offset.zero);
+      final center = axis == Axis.horizontal
+          ? origin.dx + (box.size.width / 2)
+          : origin.dy + (box.size.height / 2);
+      final distance = (globalCoordinate - center).abs();
+      if (nearestDistance == null || distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    }
+
+    return nearestIndex;
   }
 
   void _selectLabel(
@@ -324,6 +353,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         children: widget.labels.map((label) {
           final isActive = widget.activeLabel == label || _bubbleLabel == label;
           return SizedBox(
+            key: _verticalLabelKeys.putIfAbsent(label, GlobalKey.new),
             height: itemHeight,
             child: Center(
               child: FittedBox(
@@ -397,7 +427,12 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
                     controller: _horizontalController,
                     scrollDirection: Axis.horizontal,
                     physics: const ClampingScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(4, 2, 4, 5),
+                    padding: const EdgeInsets.fromLTRB(
+                      IndexedFastScroller.horizontalContentPadding,
+                      2,
+                      IndexedFastScroller.horizontalContentPadding,
+                      5,
+                    ),
                     child: Row(
                       children: widget.labels
                           .map(_buildHorizontalLabel)
@@ -425,11 +460,12 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         widget.onLabelSelected(label);
       },
       child: SizedBox(
+        key: _horizontalLabelKeys.putIfAbsent(label, GlobalKey.new),
         width: IndexedFastScroller.horizontalItemExtent,
         height: 44,
         child: Center(
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
+            duration: const Duration(milliseconds: 90),
             curve: Curves.easeOut,
             width: 34,
             height: 34,
@@ -457,7 +493,9 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
 
   Widget _buildSelectionBubble() {
     final isHorizontal = _bubbleAxis == Axis.horizontal;
-    return Positioned(
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 60),
+      curve: Curves.easeOutCubic,
       right: isHorizontal ? null : 58,
       top: isHorizontal ? null : _bubbleTop,
       left: isHorizontal ? _bubbleLeft : null,

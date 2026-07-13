@@ -33,13 +33,15 @@ void main() {
 
   testWidgets('alphabet scrollbar stays vertical when all labels fit',
       (tester) async {
+    final selectedLabels = <String>[];
+    const labels = ['አ', 'ለ', 'መ', 'ሰ'];
     await tester.pumpWidget(
       MaterialApp(
         home: Stack(
           children: [
             AlphabetScrollBar(
-              availableLabels: const ['አ', 'ለ', 'መ', 'ሰ'],
-              onLetterSelected: (_) {},
+              availableLabels: labels,
+              onLetterSelected: selectedLabels.add,
             ),
           ],
         ),
@@ -55,6 +57,12 @@ void main() {
       findsNothing,
     );
     expect(find.byType(SingleChildScrollView), findsNothing);
+
+    for (final label in labels) {
+      await tester.tap(find.text(label));
+      await tester.pump();
+      expect(selectedLabels.last, label);
+    }
   });
 
   testWidgets('horizontal rail scrubs letters immediately without a modal',
@@ -88,6 +96,25 @@ void main() {
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 
     final railRect = tester.getRect(horizontalRail);
+    Future<Set<String>> verifyVisibleLetters() async {
+      final verified = <String>{};
+      for (final label in amharicFidelIndexOrder) {
+        final visibleLabel = find.text(label).hitTestable();
+        if (visibleLabel.evaluate().isEmpty) continue;
+        final center = tester.getCenter(visibleLabel);
+        if (!railRect.contains(center)) continue;
+
+        await tester.tapAt(center);
+        await tester.pump();
+        expect(selectedLabels.last, label);
+        verified.add(label);
+      }
+      return verified;
+    }
+
+    final initiallyVerified = await verifyVisibleLetters();
+    expect(initiallyVerified.length, greaterThan(3));
+
     final gesture = await tester.startGesture(
       Offset(railRect.left + 18, railRect.center.dy),
     );
@@ -112,5 +139,107 @@ void main() {
       find.byKey(const ValueKey('fast-scroller-selection-bubble')),
       findsNothing,
     );
+
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(-700, 0),
+    );
+    await tester.pumpAndSettle();
+    final scrolledVerified = await verifyVisibleLetters();
+    expect(scrolledVerified.difference(initiallyVerified), isNotEmpty);
+  });
+
+  testWidgets('active letter glides smoothly to the rail center',
+      (tester) async {
+    final targetLabel = amharicFidelIndexOrder[12];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 320,
+              height: 180,
+              child: Stack(
+                children: [
+                  AlphabetScrollBar(
+                    availableLabels: amharicFidelIndexOrder,
+                    activeLabel: targetLabel,
+                    useHorizontalLayout: true,
+                    onLetterSelected: (_) {},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    final rail = find.byKey(const ValueKey('alphabet-horizontal-rail'));
+    final target = find.text(targetLabel);
+    final railCenterX = tester.getCenter(rail).dx;
+    final initialDistance = (tester.getCenter(target).dx - railCenterX).abs();
+
+    await tester.pump(const Duration(milliseconds: 90));
+    final midwayDistance = (tester.getCenter(target).dx - railCenterX).abs();
+    await tester.pumpAndSettle();
+    final finalDistance = (tester.getCenter(target).dx - railCenterX).abs();
+
+    expect(midwayDistance, lessThan(initialDistance));
+    expect(finalDistance, lessThan(midwayDistance));
+    expect(finalDistance, lessThan(1));
+  });
+
+  testWidgets('every horizontal letter returns itself across the full rail',
+      (tester) async {
+    final selectedLabels = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 320,
+              height: 180,
+              child: Stack(
+                children: [
+                  AlphabetScrollBar(
+                    availableLabels: amharicFidelIndexOrder,
+                    useHorizontalLayout: true,
+                    onLetterSelected: selectedLabels.add,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final rail = find.byKey(const ValueKey('alphabet-horizontal-rail'));
+    final railRect = tester.getRect(rail);
+    final verifiedLabels = <String>{};
+
+    for (var page = 0; page < 8; page++) {
+      for (final label in amharicFidelIndexOrder) {
+        final visibleLabel = find.text(label).hitTestable();
+        if (visibleLabel.evaluate().isEmpty) continue;
+        final center = tester.getCenter(visibleLabel);
+        if (!railRect.contains(center)) continue;
+
+        await tester.tapAt(center);
+        await tester.pump();
+        expect(selectedLabels.last, label);
+        verifiedLabels.add(label);
+      }
+
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(-180, 0),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    expect(verifiedLabels, containsAll(amharicFidelIndexOrder));
   });
 }
