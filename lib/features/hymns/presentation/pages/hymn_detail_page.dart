@@ -259,6 +259,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           _buildBackground(),
           Scaffold(
             backgroundColor: Colors.transparent,
+            extendBody: true,
             appBar: _buildAppBar(hymn, isFavorite),
             resizeToAvoidBottomInset: false,
             bottomNavigationBar: _buildLyricsBottomNavigation(version),

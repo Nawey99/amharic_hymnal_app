@@ -50,114 +50,149 @@ class AppBottomNavigationBar extends StatelessWidget {
         : NavBarConstants.raisedExtent;
     final primaryDiameter = compactLandscape ? 46.0 : (compact ? 54.0 : 58.0);
     final primarySlotWidth = compactLandscape ? 58.0 : (compact ? 68.0 : 74.0);
+    final horizontalInset = compactLandscape ? 6.0 : 10.0;
+    final bottomMargin =
+        compactLandscape ? 4.0 : NavBarConstants.navBarBottomMargin;
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final controlsHeight = surfaceHeight + raisedExtent;
+    final innerRadius = compactLandscape ? 18.0 : 24.0;
+    final outerRadius = compactLandscape ? 22.0 : 30.0;
     final primaryIndex = destinations.indexWhere(
       (destination) => destination.id == primaryDestinationId,
     );
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: compactLandscape ? 6 : 10),
-      child: SafeArea(
-        top: false,
-        minimum: EdgeInsets.only(
-          bottom: compactLandscape ? 4 : NavBarConstants.navBarBottomMargin,
-        ),
-        child: SizedBox(
-          key: const ValueKey('app-bottom-navigation-bar'),
-          height: surfaceHeight + raisedExtent,
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: [
-              Positioned(
-                top: raisedExtent,
-                left: 0,
-                right: 0,
-                bottom: 0,
+    return SizedBox(
+      key: const ValueKey('app-bottom-navigation-bar'),
+      height: controlsHeight + bottomMargin + bottomInset,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(outerRadius),
+              ),
+              child: BackdropFilter(
+                key: const ValueKey('navigation-outer-glass'),
+                filter: ImageFilter.blur(
+                  sigmaX: 8,
+                  sigmaY: 8,
+                  tileMode: TileMode.clamp,
+                ),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      compactLandscape ? 18 : 24,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.46),
-                        blurRadius: 16,
-                        offset: const Offset(0, 5),
+                    color: AppColors.primaryBackground.withValues(alpha: 0.08),
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.13),
+                        width: 0.8,
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      compactLandscape ? 18 : 24,
                     ),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBackground.withValues(
-                            alpha: 0.58,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            compactLandscape ? 18 : 24,
-                          ),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            width: 0.8,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: horizontalInset,
+            right: horizontalInset,
+            height: controlsHeight,
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: [
+                Positioned(
+                  top: raisedExtent,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(innerRadius),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 18,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(innerRadius),
+                      child: BackdropFilter(
+                        key: const ValueKey('navigation-inner-glass'),
+                        filter: ImageFilter.blur(
+                          sigmaX: 4,
+                          sigmaY: 4,
+                          tileMode: TileMode.clamp,
+                        ),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBackground.withValues(
+                              alpha: 0.14,
+                            ),
+                            borderRadius: BorderRadius.circular(innerRadius),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.28),
+                              width: 1,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: raisedExtent,
-                left: 4,
-                right: 4,
-                bottom: 0,
-                child: primaryIndex < 0
-                    ? _buildDestinationRow(
-                        context,
-                        start: 0,
-                        end: destinations.length,
-                        compact: compact,
-                      )
-                    : Row(
-                        children: [
-                          Expanded(
-                            child: _buildDestinationRow(
-                              context,
-                              start: 0,
-                              end: primaryIndex,
-                              compact: compact,
+                Positioned(
+                  top: raisedExtent,
+                  left: 4,
+                  right: 4,
+                  bottom: 0,
+                  child: primaryIndex < 0
+                      ? _buildDestinationRow(
+                          context,
+                          start: 0,
+                          end: destinations.length,
+                          compact: compact,
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: _buildDestinationRow(
+                                context,
+                                start: 0,
+                                end: primaryIndex,
+                                compact: compact,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: primarySlotWidth),
-                          Expanded(
-                            child: _buildDestinationRow(
-                              context,
-                              start: primaryIndex + 1,
-                              end: destinations.length,
-                              compact: compact,
+                            SizedBox(width: primarySlotWidth),
+                            Expanded(
+                              child: _buildDestinationRow(
+                                context,
+                                start: primaryIndex + 1,
+                                end: destinations.length,
+                                compact: compact,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-              ),
-              if (primaryIndex >= 0)
-                _PrimaryNavigationAction(
-                  destination: destinations[primaryIndex],
-                  selected: selectedIndex == primaryIndex,
-                  diameter: primaryDiameter,
-                  compact: compact,
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    onDestinationSelected(primaryIndex);
-                  },
+                          ],
+                        ),
                 ),
-            ],
+                if (primaryIndex >= 0)
+                  _PrimaryNavigationAction(
+                    destination: destinations[primaryIndex],
+                    selected: selectedIndex == primaryIndex,
+                    diameter: primaryDiameter,
+                    compact: compact,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      onDestinationSelected(primaryIndex);
+                    },
+                  ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

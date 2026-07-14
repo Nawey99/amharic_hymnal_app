@@ -283,25 +283,35 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         );
         final useSideNavigation = ResponsiveLayout.useSideNavigation(context);
 
+        final selectedNavIndex =
+            effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex;
+
         return Scaffold(
-          extendBody: !useSideNavigation,
           resizeToAvoidBottomInset: false,
           body: useSideNavigation
               ? Row(
                   children: [
                     _buildLandscapeNavigationRail(
                       items,
-                      effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
+                      selectedNavIndex,
                     ),
                     Expanded(child: activePage),
                   ],
                 )
-              : activePage,
-          bottomNavigationBar: useSideNavigation
-              ? null
-              : _buildBottomNavigationBar(
-                  items,
-                  effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
+              : Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    activePage,
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _buildBottomNavigationBar(
+                        items,
+                        selectedNavIndex,
+                      ),
+                    ),
+                  ],
                 ),
         );
       },

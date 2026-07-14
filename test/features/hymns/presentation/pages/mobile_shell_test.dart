@@ -77,18 +77,17 @@ void main() {
     final navBar = tester.widget<AppBottomNavigationBar>(
       find.byType(AppBottomNavigationBar),
     );
+    final shell = tester.widget<Scaffold>(find.byType(Scaffold));
+    expect(shell.bottomNavigationBar, isNull);
     expect(navBar.selectedIndex, 2);
     expect(
       navBar.destinations.map((destination) => destination.id),
       ['category', 'index', 'number', 'favorites', 'settings'],
     );
     expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('app-bottom-navigation-bar')),
-        matching: find.byType(BackdropFilter),
-      ),
-      findsOneWidget,
-    );
+        find.byKey(const ValueKey('navigation-outer-glass')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('navigation-inner-glass')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
