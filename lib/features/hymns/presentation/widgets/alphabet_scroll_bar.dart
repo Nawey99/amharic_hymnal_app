@@ -125,12 +125,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
   void _selectVerticalFromGlobalPosition(Offset globalPosition) {
     final railBox =
         _verticalRailKey.currentContext?.findRenderObject() as RenderBox?;
-    final overlayBox = context.findRenderObject() as RenderBox?;
-    if (railBox == null ||
-        overlayBox == null ||
-        !railBox.hasSize ||
-        !overlayBox.hasSize ||
-        widget.labels.isEmpty) {
+    if (railBox == null || !railBox.hasSize || widget.labels.isEmpty) {
       return;
     }
 
@@ -140,19 +135,10 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
       labelKeys: _verticalLabelKeys,
     );
     if (index == null) return;
-    final overlayPosition = overlayBox.globalToLocal(globalPosition);
-    final maxBubbleTop =
-        (overlayBox.size.height - widget.bottomPadding - _selectionBubbleSize)
-            .clamp(widget.topPadding, double.infinity)
-            .toDouble();
-    final bubbleTop = (overlayPosition.dy - (_selectionBubbleSize / 2))
-        .clamp(widget.topPadding, maxBubbleTop)
-        .toDouble();
 
     _selectLabel(
       widget.labels[index],
       axis: Axis.vertical,
-      bubbleTop: bubbleTop,
     );
   }
 
@@ -289,7 +275,8 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
                 _buildHorizontalRail()
               else
                 _buildVerticalRail(constraints.maxHeight),
-              if (_bubbleLabel != null) _buildSelectionBubble(),
+              if (_bubbleLabel != null && _bubbleAxis == Axis.horizontal)
+                _buildSelectionBubble(),
             ],
           );
         },
@@ -357,11 +344,21 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: widget.labels.map((label) {
-          final isActive = widget.activeLabel == label || _bubbleLabel == label;
+          final isActive = _isLabelActive(label);
           return SizedBox(
             key: _verticalLabelKeys.putIfAbsent(label, GlobalKey.new),
             height: itemHeight,
-            child: Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 80),
+              curve: Curves.easeOut,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? AppColors.accentGreen.withValues(alpha: 0.18)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+              ),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
@@ -455,7 +452,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
   }
 
   Widget _buildHorizontalLabel(String label) {
-    final isActive = widget.activeLabel == label || _bubbleLabel == label;
+    final isActive = _isLabelActive(label);
     return Semantics(
       button: true,
       selected: isActive,
@@ -495,6 +492,13 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         ),
       ),
     );
+  }
+
+  bool _isLabelActive(String label) {
+    final interactionLabel = _bubbleLabel;
+    return interactionLabel != null
+        ? interactionLabel == label
+        : widget.activeLabel == label;
   }
 
   Widget _buildSelectionBubble() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/alphabet_scroll_bar.dart';
 
@@ -100,6 +101,45 @@ void main() {
       find.byKey(const ValueKey('samsung-height-host')),
     );
     expect(tester.getRect(rail).bottom, lessThanOrEqualTo(hostRect.bottom - 8));
+  });
+
+  testWidgets('vertical scrubbing uses one inline highlight without a popup',
+      (tester) async {
+    const labels = ['አ', 'ለ', 'መ', 'ሰ'];
+    final selectedLabels = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              AlphabetScrollBar(
+                availableLabels: labels,
+                activeLabel: labels.first,
+                onLetterSelected: selectedLabels.add,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Text labelText(String label) => tester.widget<Text>(find.text(label));
+
+    expect(labelText('አ').style?.color, AppColors.accentGreen);
+    final gesture = await tester.startGesture(tester.getCenter(find.text('መ')));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(selectedLabels.last, 'መ');
+    expect(
+      find.byKey(const ValueKey('fast-scroller-selection-bubble')),
+      findsNothing,
+    );
+    expect(labelText('መ').style?.color, AppColors.accentGreen);
+    expect(labelText('አ').style?.color, AppColors.primaryText);
+
+    await gesture.up();
+    await tester.pump();
+    expect(labelText('አ').style?.color, AppColors.accentGreen);
   });
 
   testWidgets('horizontal rail scrubs letters immediately without a modal',

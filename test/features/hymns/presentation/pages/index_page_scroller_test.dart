@@ -17,7 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('selecting a letter displays hymns from that Fidel group',
+  testWidgets('selected letter, indicator, and first hymn stay in sync',
       (tester) async {
     tester.view.physicalSize = const Size(360, 780);
     tester.view.devicePixelRatio = 1;
@@ -63,27 +63,55 @@ void main() {
     await tester.tap(targetLetter);
     await tester.pumpAndSettle();
 
-    final listRect = tester.getRect(find.byType(ListView));
-    final visibleItems = <({double top, Hymn hymn})>[];
-    final itemFinder = find.byType(HymnListItem);
-    for (var index = 0; index < itemFinder.evaluate().length; index++) {
-      final finder = itemFinder.at(index);
-      final rect = tester.getRect(finder);
-      if (rect.bottom > listRect.top && rect.top < listRect.bottom) {
-        visibleItems.add((
-          top: rect.top,
-          hymn: tester.widget<HymnListItem>(finder).hymn,
-        ));
-      }
-    }
-    visibleItems.sort((a, b) => a.top.compareTo(b.top));
-
+    var visibleItems = _visibleHymns(tester);
     expect(visibleItems, isNotEmpty);
     expect(
       amharicSectionForText(visibleItems.first.hymn.displayTitle),
       'ተ',
     );
+
+    final endLetter = find.descendant(
+      of: rail,
+      matching: find.text('ጸ'),
+    );
+    expect(endLetter, findsOneWidget);
+
+    await tester.tap(endLetter);
+    await tester.pumpAndSettle();
+
+    visibleItems = _visibleHymns(tester);
+    expect(visibleItems, isNotEmpty);
+    expect(
+      amharicSectionForText(visibleItems.first.hymn.displayTitle),
+      'ጸ',
+    );
+    expect(
+      tester
+          .widget<Text>(
+            find.byKey(const ValueKey('index-section-indicator')),
+          )
+          .data,
+      'ጸ',
+    );
   });
+}
+
+List<({double top, Hymn hymn})> _visibleHymns(WidgetTester tester) {
+  final listRect = tester.getRect(find.byType(ListView));
+  final visibleItems = <({double top, Hymn hymn})>[];
+  final itemFinder = find.byType(HymnListItem);
+  for (var index = 0; index < itemFinder.evaluate().length; index++) {
+    final finder = itemFinder.at(index);
+    final rect = tester.getRect(finder);
+    if (rect.bottom > listRect.top && rect.top < listRect.bottom) {
+      visibleItems.add((
+        top: rect.top,
+        hymn: tester.widget<HymnListItem>(finder).hymn,
+      ));
+    }
+  }
+  visibleItems.sort((a, b) => a.top.compareTo(b.top));
+  return visibleItems;
 }
 
 List<Hymn> _buildGroupedHymns() {
@@ -98,6 +126,14 @@ List<Hymn> _buildGroupedHymns() {
           lyrics: '$letter መዝሙር',
           englishTitleOld: 'Test hymn $index',
         ),
+    for (var index = 0; index < 2; index++)
+      Hymn(
+        id: 'grouped-${number.toString().padLeft(3, '0')}',
+        number: number++,
+        title: 'ጸ መዝሙር ${index.toString().padLeft(2, '0')}',
+        lyrics: 'ጸ መዝሙር',
+        englishTitleOld: 'End hymn $index',
+      ),
   ];
 }
 

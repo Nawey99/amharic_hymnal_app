@@ -146,6 +146,7 @@ class _IndexPageState extends State<IndexPage> {
         _scheduleSectionJumpRefinement(
           hymns: hymnsToDisplay,
           targetIndex: position,
+          targetLetter: letter,
           jumpGeneration: jumpGeneration,
         );
       } else {
@@ -157,6 +158,7 @@ class _IndexPageState extends State<IndexPage> {
   void _scheduleSectionJumpRefinement({
     required List<Hymn> hymns,
     required int targetIndex,
+    required String targetLetter,
     required int jumpGeneration,
     int attempt = 0,
   }) {
@@ -169,7 +171,7 @@ class _IndexPageState extends State<IndexPage> {
       }
 
       if (_alignHymnWithViewportTop(hymns[targetIndex])) {
-        _finishSectionJump(jumpGeneration);
+        _finishSectionJump(jumpGeneration, targetLetter);
         return;
       }
 
@@ -191,21 +193,26 @@ class _IndexPageState extends State<IndexPage> {
         _scheduleSectionJumpRefinement(
           hymns: hymns,
           targetIndex: targetIndex,
+          targetLetter: targetLetter,
           jumpGeneration: jumpGeneration,
           attempt: attempt + 1,
         );
         return;
       }
 
-      _finishSectionJump(jumpGeneration);
+      _finishSectionJump(jumpGeneration, targetLetter);
     });
   }
 
-  void _finishSectionJump(int jumpGeneration) {
+  void _finishSectionJump(int jumpGeneration, String targetLetter) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || jumpGeneration != _sectionJumpGeneration) return;
       _isSectionJumpInProgress = false;
-      _updateSectionIndicator();
+      if (_currentSectionLetter != targetLetter) {
+        setState(() {
+          _currentSectionLetter = targetLetter;
+        });
+      }
     });
   }
 
@@ -451,6 +458,7 @@ class _IndexPageState extends State<IndexPage> {
               alignment: Alignment.centerLeft,
               child: Text(
                 displayLetter,
+                key: const ValueKey('index-section-indicator'),
                 style: TextStyle(
                   color: AppColors.accentGreen,
                   fontSize: 20,
@@ -502,6 +510,7 @@ class _IndexPageState extends State<IndexPage> {
                   _buildHymnListView(
                     state,
                     useHorizontalAlphabetRail: useHorizontalAlphabetRail,
+                    viewportHeight: constraints.maxHeight,
                   ),
                   if (labels.isNotEmpty)
                     AlphabetScrollBar(
@@ -533,6 +542,7 @@ class _IndexPageState extends State<IndexPage> {
   Widget _buildHymnListView(
     HymnsState state, {
     required bool useHorizontalAlphabetRail,
+    required double viewportHeight,
   }) {
     if (state is HymnsLoading) {
       return const Center(
@@ -555,12 +565,14 @@ class _IndexPageState extends State<IndexPage> {
     return _buildHymnListItems(
       state,
       useHorizontalAlphabetRail: useHorizontalAlphabetRail,
+      viewportHeight: viewportHeight,
     );
   }
 
   Widget _buildHymnListItems(
     HymnsLoaded state, {
     required bool useHorizontalAlphabetRail,
+    required double viewportHeight,
   }) {
     final hasAlphabetScrollBar =
         state.sortType == 'name' && state.hymns.isNotEmpty;
@@ -581,6 +593,16 @@ class _IndexPageState extends State<IndexPage> {
 
     final rightPadding =
         hasAlphabetScrollBar && !useHorizontalAlphabetRail ? 54.0 : 16.0;
+    final standardBottomPadding = NavBarConstants.getBottomPadding(context);
+    // Let even the final alphabet section align with the viewport top.
+    final sectionAlignmentBottomPadding = hasAlphabetScrollBar
+        ? (viewportHeight - _lastMeasuredHymnItemExtent)
+            .clamp(0.0, double.infinity)
+            .toDouble()
+        : 0.0;
+    final bottomPadding = sectionAlignmentBottomPadding > standardBottomPadding
+        ? sectionAlignmentBottomPadding
+        : standardBottomPadding;
 
     final listView = ListView.builder(
       controller: _scrollController,
@@ -590,7 +612,7 @@ class _IndexPageState extends State<IndexPage> {
         16,
         8,
         rightPadding,
-        NavBarConstants.getBottomPadding(context),
+        bottomPadding,
       ),
       itemCount: hymnsToDisplay.length,
       // Performance: Cache items for smoother scrolling
