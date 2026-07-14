@@ -82,6 +82,13 @@ void main() {
       navBar.destinations.map((destination) => destination.id),
       ['category', 'index', 'number', 'favorites', 'settings'],
     );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('app-bottom-navigation-bar')),
+        matching: find.byType(BackdropFilter),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 

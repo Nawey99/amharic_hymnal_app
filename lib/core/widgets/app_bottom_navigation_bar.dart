@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -73,15 +75,8 @@ class AppBottomNavigationBar extends StatelessWidget {
                 bottom: 0,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.secondaryBackground.withValues(
-                      alpha: 0.98,
-                    ),
                     borderRadius: BorderRadius.circular(
                       compactLandscape ? 18 : 24,
-                    ),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.17),
-                      width: 0.8,
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -90,6 +85,28 @@ class AppBottomNavigationBar extends StatelessWidget {
                         offset: const Offset(0, 5),
                       ),
                     ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      compactLandscape ? 18 : 24,
+                    ),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBackground.withValues(
+                            alpha: 0.58,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            compactLandscape ? 18 : 24,
+                          ),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            width: 0.8,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
