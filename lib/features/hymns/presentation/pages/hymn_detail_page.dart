@@ -1,4 +1,6 @@
 // lib/features/hymns/presentation/pages/hymn_detail_page.dart
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -49,8 +51,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Future<Hymn?>? _numberLookupFuture;
   bool _isLoadingAdjacentHymn = false;
   int? _displayedHymnNumber;
-  double _lyricsZoomScale = AppConstants.defaultZoomScale;
-  double _scaleStartZoom = AppConstants.defaultZoomScale;
+  double? _lyricsPreviewFontSize;
+  double _pinchStartFontSize = AppConstants.defaultFontSize;
   final Map<int, Offset> _activeLyricsPointers = {};
   List<int>? _lyricsPinchPointerIds;
   double _lyricsPinchStartDistance = 0;
@@ -399,8 +401,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   void _syncDisplayedHymn(Hymn hymn) {
     if (_displayedHymnNumber == hymn.displayNumber) return;
     _displayedHymnNumber = hymn.displayNumber;
-    _lyricsZoomScale = AppConstants.defaultZoomScale;
-    _scaleStartZoom = AppConstants.defaultZoomScale;
+    _lyricsPreviewFontSize = null;
+    _pinchStartFontSize = FontSizeService().getFontSize();
     _activeLyricsPointers.clear();
     _lyricsPinchPointerIds = null;
     _lyricsPinchStartDistance = 0;
@@ -759,7 +761,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
     _lyricsPinchPointerIds = pointerIds;
     _lyricsPinchStartDistance = startDistance;
-    _scaleStartZoom = _lyricsZoomScale;
+    _pinchStartFontSize =
+        _lyricsPreviewFontSize ?? FontSizeService().getFontSize();
     _isHorizontalDrag = false;
     if (!_isLyricsPinching && mounted) {
       setState(() => _isLyricsPinching = true);
@@ -778,12 +781,14 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
     final distance = (firstPosition - secondPosition).distance;
     final scaleDelta = distance / _lyricsPinchStartDistance;
-    final nextScale = (_scaleStartZoom * scaleDelta).clamp(
-      AppConstants.minZoomScale,
-      AppConstants.maxZoomScale,
+    final nextFontSize = (_pinchStartFontSize * scaleDelta).clamp(
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
     );
-    if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
-    setState(() => _lyricsZoomScale = nextScale);
+    final currentFontSize =
+        _lyricsPreviewFontSize ?? FontSizeService().getFontSize();
+    if ((nextFontSize - currentFontSize).abs() < 0.005) return;
+    setState(() => _lyricsPreviewFontSize = nextFontSize);
   }
 
   void _handleLyricsPointerEnd(PointerEvent event) {
@@ -793,26 +798,36 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     }
     if (!_isLyricsPinching || _activeLyricsPointers.isNotEmpty) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _activeLyricsPointers.isNotEmpty || !_isLyricsPinching) {
-        return;
-      }
-      setState(() => _isLyricsPinching = false);
-    });
+    final previewFontSize = _lyricsPreviewFontSize;
+    setState(() => _isLyricsPinching = false);
+    if (previewFontSize != null) {
+      unawaited(_persistLyricsFontSize(previewFontSize));
+    }
+  }
+
+  Future<void> _persistLyricsFontSize(double fontSize) async {
+    await FontSizeService().setFontSize(fontSize);
+    if (!mounted || _isLyricsPinching) return;
+
+    final previewFontSize = _lyricsPreviewFontSize;
+    if (previewFontSize == null || (previewFontSize - fontSize).abs() > 0.005) {
+      return;
+    }
+    setState(() => _lyricsPreviewFontSize = null);
   }
 
   Widget _buildLyricsSection(Hymn hymn, double fontSize) {
+    final effectiveFontSize = (_lyricsPreviewFontSize ?? fontSize).clamp(
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
+    );
     // Reduced padding for more compact lyrics card
     // Keep horizontal padding consistent, reduce vertical padding
-    final padding = fontSize > 24
+    final padding = effectiveFontSize > 24
         ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
-        : (fontSize < 16
+        : (effectiveFontSize < 16
             ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
             : const EdgeInsets.symmetric(horizontal: 16, vertical: 10));
-    final effectiveFontSize = (fontSize * _lyricsZoomScale).clamp(
-      AppConstants.minFontSize * AppConstants.minZoomScale,
-      AppConstants.maxFontSize * AppConstants.maxZoomScale,
-    );
 
     return GlassContainer(
       borderRadius: 12.0,

@@ -1,4 +1,5 @@
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
@@ -22,6 +23,7 @@ void main() {
 
   setUp(() async {
     await di.sl<SettingsRepository>().setFavoriteHymns([]);
+    await FontSizeService().setFontSize(20);
     hymnsBloc = di.sl<HymnsBloc>();
   });
 
@@ -29,7 +31,7 @@ void main() {
     hymnsBloc.close();
   });
 
-  testWidgets('pinch zoom works directly over selectable lyrics',
+  testWidgets('pinch zoom updates shared setting over selectable lyrics',
       (tester) async {
     tester.view.physicalSize = const Size(360, 720);
     tester.view.devicePixelRatio = 1;
@@ -76,11 +78,29 @@ void main() {
     await secondFinger.moveTo(center.translate(72, 0));
     await tester.pump();
     await firstFinger.up();
+    await tester.pump();
     await secondFinger.up();
     await tester.pump();
+    await tester.pumpAndSettle();
 
     final zoomedText = tester.widget<SelectableText>(lyricsFinder);
     expect(zoomedText.style!.fontSize, greaterThan(initialFontSize));
+    expect(
+      tester
+          .widget<SingleChildScrollView>(
+            find.byType(SingleChildScrollView),
+          )
+          .physics,
+      isNull,
+    );
+    expect(
+      FontSizeService().getFontSize(),
+      closeTo(zoomedText.style!.fontSize!, 0.01),
+    );
+    expect(
+      di.sl<SettingsRepository>().getFontSize(),
+      closeTo(zoomedText.style!.fontSize!, 0.01),
+    );
   });
 
   testWidgets('one-finger lyrics scrolling remains available', (tester) async {
