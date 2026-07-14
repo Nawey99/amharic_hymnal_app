@@ -5,6 +5,7 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
@@ -273,6 +274,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         final useSideNavigation = ResponsiveLayout.useSideNavigation(context);
 
         return Scaffold(
+          extendBody: !useSideNavigation,
           resizeToAvoidBottomInset: false,
           body: useSideNavigation
               ? Row(
@@ -369,65 +371,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   Widget _buildBottomNavigationBar(List<_NavItem> items, int selectedIndex) {
-    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final compactLabels =
-        textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
-
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
-        indicatorColor: Colors.transparent,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return TextStyle(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            fontSize: selected
-                ? (compactLabels ? 11 : 12)
-                : (compactLabels ? 10 : 11),
-            fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
-            fontFamily: 'NotoSansEthiopic',
-          );
-        }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            color: selected ? AppColors.accentGreen : AppColors.secondaryText,
-            size: selected ? 28 : 24,
-          );
-        }),
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.15),
-              width: 0.5,
+    return AppBottomNavigationBar(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: _onItemTapped,
+      destinations: items
+          .map(
+            (item) => AppNavigationDestination(
+              id: item.destination.id,
+              icon: item.icon,
+              selectedIcon: item.selectedIcon,
+              label: item.label,
             ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: NavigationBar(
-          selectedIndex: selectedIndex,
-          height: compactLabels ? 66 : 70,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          onDestinationSelected: _onItemTapped,
-          destinations: items
-              .map(
-                (item) => NavigationDestination(
-                  icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
-                  label: item.label,
-                ),
-              )
-              .toList(growable: false),
-        ),
-      ),
+          )
+          .toList(growable: false),
     );
   }
 

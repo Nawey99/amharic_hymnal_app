@@ -10,6 +10,7 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
@@ -120,6 +121,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     final itemGap = compactLandscape ? 8.0 : 12.0;
     final sectionGap = compactLandscape ? 14.0 : 24.0;
+    final bottomPadding = NavBarConstants.getBottomPadding(context);
 
     return Container(
       decoration: _buildBackgroundDecoration(bgService),
@@ -135,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     16,
                     compactLandscape ? 6 : 16,
                     16,
-                    compactLandscape ? 10 : 16,
+                    bottomPadding,
                   ),
                   children: [
                     _buildSectionTitle(

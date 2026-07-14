@@ -15,6 +15,7 @@ import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
@@ -321,80 +322,34 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     final selectedIndex = items.indexWhere(
       (item) => item.id == widget.sourceDestination,
     );
-    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final compactLabels =
-        textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
-
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
-        indicatorColor: Colors.transparent,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return TextStyle(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            fontSize: selected
-                ? (compactLabels ? 11 : 12)
-                : (compactLabels ? 10 : 11),
-            fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
-            fontFamily: 'NotoSansEthiopic',
-          );
-        }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            size: selected ? 28 : 24,
-          );
-        }),
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.15),
-              width: 0.5,
+    return AppBottomNavigationBar(
+      selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+      destinations: items
+          .map(
+            (item) => AppNavigationDestination(
+              id: item.id,
+              icon: item.icon,
+              selectedIcon: item.selectedIcon,
+              label: item.label,
+            ),
+          )
+          .toList(growable: false),
+      onDestinationSelected: (index) {
+        final item = items[index];
+        final onDestinationSelected = widget.onDestinationSelected;
+        if (onDestinationSelected != null) {
+          onDestinationSelected(item.id);
+          return;
+        }
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => MainNavigationPage(
+              initialDestination: item.id,
             ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: NavigationBar(
-          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-          height: compactLabels ? 66 : 70,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          onDestinationSelected: (index) {
-            final item = items[index];
-            final onDestinationSelected = widget.onDestinationSelected;
-            if (onDestinationSelected != null) {
-              onDestinationSelected(item.id);
-              return;
-            }
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => MainNavigationPage(
-                  initialDestination: item.id,
-                ),
-              ),
-              (route) => false,
-            );
-          },
-          destinations: items
-              .map(
-                (item) => NavigationDestination(
-                  icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
-                  label: item.label,
-                ),
-              )
-              .toList(growable: false),
-        ),
-      ),
+          (route) => false,
+        );
+      },
     );
   }
 
