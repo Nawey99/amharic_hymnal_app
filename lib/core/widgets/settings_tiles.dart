@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 /// Reusable settings tile widget with icon, title, and description
@@ -23,16 +24,24 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
       opacity: 0.12,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: compactLandscape ? 14 : 16,
+        vertical: compactLandscape ? 8 : 12,
+      ),
       onTap: onTap ?? () {},
       child: Row(
         children: [
-          Icon(icon, color: AppColors.accentGreen, size: 24),
-          const SizedBox(width: 16),
+          Icon(
+            icon,
+            color: AppColors.accentGreen,
+            size: compactLandscape ? 22 : 24,
+          ),
+          SizedBox(width: compactLandscape ? 12 : 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +54,7 @@ class SettingsTile extends StatelessWidget {
                     color: AppColors.primaryText,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: compactLandscape ? 2 : 4),
                 Text(
                   description,
                   style: const TextStyle(
@@ -81,11 +90,15 @@ class SettingsSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
       opacity: 0.12,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: compactLandscape ? 14 : 16,
+        vertical: compactLandscape ? 8 : 12,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -101,7 +114,7 @@ class SettingsSwitchTile extends StatelessWidget {
                     color: AppColors.primaryText,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: compactLandscape ? 2 : 4),
                 Text(
                   description,
                   style: const TextStyle(
@@ -145,9 +158,10 @@ class SettingsDropdownTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = constraints.maxWidth < 390;
-        final menuWidth = compact ? constraints.maxWidth : 220.0;
-        final dropdownWidth = compact
+        final stackControls = constraints.maxWidth < 390;
+        final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
+        final menuWidth = stackControls ? constraints.maxWidth : 220.0;
+        final dropdownWidth = stackControls
             ? constraints.maxWidth
             : menuWidth.clamp(160.0, constraints.maxWidth);
         final values =
@@ -167,7 +181,7 @@ class SettingsDropdownTile extends StatelessWidget {
                 color: AppColors.primaryText,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: compactLandscape ? 2 : 4),
             Text(
               description,
               style: const TextStyle(
@@ -200,9 +214,9 @@ class SettingsDropdownTile extends StatelessWidget {
               isDense: true,
               filled: true,
               fillColor: AppColors.surface.withValues(alpha: 0.72),
-              contentPadding: const EdgeInsets.symmetric(
+              contentPadding: EdgeInsets.symmetric(
                 horizontal: 12,
-                vertical: 12,
+                vertical: compactLandscape ? 8 : 12,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -263,13 +277,16 @@ class SettingsDropdownTile extends StatelessWidget {
           borderRadius: 16,
           blurSigma: 12,
           opacity: 0.12,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: compact
+          padding: EdgeInsets.symmetric(
+            horizontal: compactLandscape ? 14 : 16,
+            vertical: compactLandscape ? 8 : 12,
+          ),
+          child: stackControls
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     label,
-                    const SizedBox(height: 12),
+                    SizedBox(height: compactLandscape ? 8 : 12),
                     dropdown,
                   ],
                 )
@@ -316,6 +333,7 @@ class SettingsSliderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     // CRITICAL: Clamp value BEFORE any widget construction to prevent Slider assertion errors
     // Handle NaN, infinity, and out-of-range cases with maximum defensive programming
 
@@ -348,7 +366,10 @@ class SettingsSliderTile extends StatelessWidget {
       borderRadius: 16,
       blurSigma: 12,
       opacity: 0.12,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: compactLandscape ? 14 : 16,
+        vertical: compactLandscape ? 8 : 12,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -376,7 +397,7 @@ class SettingsSliderTile extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: compactLandscape ? 4 : 8),
           Slider(
             value: finalValue,
             min: min,

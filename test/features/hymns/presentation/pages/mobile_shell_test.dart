@@ -7,6 +7,7 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.d
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
 
 Future<HymnsBloc> _pumpShell(
@@ -18,6 +19,7 @@ Future<HymnsBloc> _pumpShell(
   Hymn? initialActiveHymn,
   String? initialActiveDestination,
   HymnDetailBuilder? hymnDetailBuilder,
+  bool usePlaceholderPagesForTesting = true,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -44,7 +46,7 @@ Future<HymnsBloc> _pumpShell(
           ),
           child: MainNavigationPage(
             loadInitialData: false,
-            usePlaceholderPagesForTesting: true,
+            usePlaceholderPagesForTesting: usePlaceholderPagesForTesting,
             initialDestination: initialDestination,
             initialActiveHymn: initialActiveHymn,
             initialActiveDestination: initialActiveDestination,
@@ -118,6 +120,87 @@ void main() {
     addTearDown(bloc.close);
 
     expect(find.byType(NavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape shell moves destinations into a compact side rail',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(844, 390),
+      initialDestination: 'index',
+    );
+    addTearDown(bloc.close);
+
+    expect(
+      find.byKey(const ValueKey('landscape-navigation-rail')),
+      findsOneWidget,
+    );
+    expect(find.byType(NavigationBar), findsNothing);
+    for (final label in const ['ምድብ', 'ማውጫ', 'ቁጥር', 'ተወዳጅ', 'ቅንብር']) {
+      expect(find.text(label), findsOneWidget);
+    }
+
+    final settingsDestination = find.byKey(
+      const ValueKey('landscape-nav-settings'),
+    );
+    expect(
+      find.descendant(
+        of: settingsDestination,
+        matching: find.byIcon(Icons.settings_outlined),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(settingsDestination);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+        of: settingsDestination,
+        matching: find.byIcon(Icons.settings_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape rail survives short height and larger text',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(640, 320),
+      textScale: 1.6,
+      initialDestination: 'settings',
+    );
+    addTearDown(bloc.close);
+
+    expect(
+      find.byKey(const ValueKey('landscape-navigation-rail')),
+      findsOneWidget,
+    );
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape settings keeps a tall scrollable content area',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(844, 390),
+      initialDestination: 'settings',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SettingsPage), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(tester.getSize(find.byType(ListView)).height, greaterThan(300));
+
+    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    await tester.pumpAndSettle();
+    expect(find.text('ስህተት ላክ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
