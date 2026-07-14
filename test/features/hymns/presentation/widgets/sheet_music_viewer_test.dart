@@ -145,6 +145,76 @@ void main() {
     expect(topLeft.dy, closeTo(0, 0.5));
   });
 
+  testWidgets('pinch-zoomed portrait sheet paints both horizontal edges',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SheetMusicViewer(
+            sheetMusicFiles: ['01.webp'],
+            hymnNumber: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewerFinder = find.byType(InteractiveViewer);
+    final contentFinder = find.byKey(const ValueKey('sheet-music-content-0'));
+    final contentCenter = tester.getCenter(contentFinder);
+    final firstFinger = await tester.startGesture(
+      contentCenter.translate(-20, 0),
+      pointer: 1,
+    );
+    final secondFinger = await tester.startGesture(
+      contentCenter.translate(20, 0),
+      pointer: 2,
+    );
+    addTearDown(firstFinger.removePointer);
+    addTearDown(secondFinger.removePointer);
+    await tester.pump();
+    await firstFinger.moveTo(contentCenter.translate(-60, 0));
+    await secondFinger.moveTo(contentCenter.translate(40, 0));
+    await tester.pump();
+    await firstFinger.up();
+    await secondFinger.up();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final viewer = tester.widget<InteractiveViewer>(viewerFinder);
+    final controller = viewer.transformationController!;
+    final viewerSize = tester.getSize(viewerFinder);
+    final contentSize = tester.getSize(contentFinder);
+    expect(controller.value.getMaxScaleOnAxis(), inExclusiveRange(1.4, 1.42));
+    expect(viewer.panEnabled, isTrue);
+
+    await tester.drag(viewerFinder, const Offset(-1600, 0));
+    await tester.pump(const Duration(milliseconds: 500));
+    final rightEdge = controller.toScene(
+      Offset(viewerSize.width, contentSize.height / 2),
+    );
+    expect(rightEdge.dx, closeTo(contentSize.width, 0.5));
+    expect(
+      tester.getRect(contentFinder).right,
+      closeTo(tester.getRect(viewerFinder).right, 0.5),
+    );
+
+    await tester.drag(viewerFinder, const Offset(1600, 0));
+    await tester.pump(const Duration(milliseconds: 500));
+    final leftEdge = controller.toScene(
+      Offset(0, contentSize.height / 2),
+    );
+    expect(leftEdge.dx, closeTo(0, 0.5));
+    expect(
+      tester.getRect(contentFinder).left,
+      closeTo(tester.getRect(viewerFinder).left, 0.5),
+    );
+  });
+
   testWidgets('rotation refits the page width and resets stale zoom',
       (tester) async {
     tester.view.physicalSize = const Size(360, 720);

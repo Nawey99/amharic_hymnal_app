@@ -229,7 +229,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             child: InteractiveViewer(
               key: ValueKey('sheet-music-viewport-$index'),
               transformationController: controller,
-              alignment: Alignment.topCenter,
+              alignment: Alignment.topLeft,
               minScale: _minScale,
               maxScale: _maxScale,
               panEnabled: _pageIsZoomed[index] || needsBasePan,
