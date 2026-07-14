@@ -51,6 +51,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   int? _displayedHymnNumber;
   double _lyricsZoomScale = AppConstants.defaultZoomScale;
   double _scaleStartZoom = AppConstants.defaultZoomScale;
+  final Map<int, Offset> _activeLyricsPointers = {};
+  List<int>? _lyricsPinchPointerIds;
+  double _lyricsPinchStartDistance = 0;
+  bool _isLyricsPinching = false;
   final Map<int, bool> _favoriteOverrides = {};
   final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
   final DownloadRepository _downloadRepository = DownloadRepository();
@@ -220,10 +224,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
+        if (_isLyricsPinching) return;
         _horizontalDragStart = details.globalPosition.dx;
         _isHorizontalDrag = false;
       },
       onHorizontalDragUpdate: (details) {
+        if (_isLyricsPinching) {
+          _isHorizontalDrag = false;
+          return;
+        }
         // Check if this is a primarily horizontal drag (not diagonal)
         final deltaX = details.globalPosition.dx - _horizontalDragStart;
         final deltaY = details.delta.dy.abs();
@@ -234,7 +243,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         }
       },
       onHorizontalDragEnd: (details) {
-        if (_isHorizontalDrag && details.primaryVelocity != null) {
+        if (!_isLyricsPinching &&
+            _isHorizontalDrag &&
+            details.primaryVelocity != null) {
           _handleSwipe(details, hymn.displayNumber);
         }
         _isHorizontalDrag = false;
@@ -390,6 +401,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     _displayedHymnNumber = hymn.displayNumber;
     _lyricsZoomScale = AppConstants.defaultZoomScale;
     _scaleStartZoom = AppConstants.defaultZoomScale;
+    _activeLyricsPointers.clear();
+    _lyricsPinchPointerIds = null;
+    _lyricsPinchStartDistance = 0;
+    _isLyricsPinching = false;
   }
 
   String _getVersion() {
@@ -714,30 +729,76 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildLyricsViewport(Hymn hymn, double fontSize) {
-    return GestureDetector(
+    return Listener(
       behavior: HitTestBehavior.opaque,
-      onScaleStart: (details) {
-        if (details.pointerCount >= 2) {
-          _scaleStartZoom = _lyricsZoomScale;
-        }
-      },
-      onScaleUpdate: (details) {
-        if (details.pointerCount < 2) return;
-        final nextScale = (_scaleStartZoom * details.scale).clamp(
-          AppConstants.minZoomScale,
-          AppConstants.maxZoomScale,
-        );
-        if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
-        setState(() {
-          _lyricsZoomScale = nextScale;
-        });
-      },
+      onPointerDown: _handleLyricsPointerDown,
+      onPointerMove: _handleLyricsPointerMove,
+      onPointerUp: _handleLyricsPointerEnd,
+      onPointerCancel: _handleLyricsPointerEnd,
       child: SingleChildScrollView(
         controller: _lyricsScrollController,
+        physics:
+            _isLyricsPinching ? const NeverScrollableScrollPhysics() : null,
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: _buildLyricsSection(hymn, fontSize),
       ),
     );
+  }
+
+  void _handleLyricsPointerDown(PointerDownEvent event) {
+    _activeLyricsPointers[event.pointer] = event.localPosition;
+    if (_lyricsPinchPointerIds != null || _activeLyricsPointers.length < 2) {
+      return;
+    }
+
+    final pointerIds = _activeLyricsPointers.keys.take(2).toList();
+    final firstPosition = _activeLyricsPointers[pointerIds.first]!;
+    final secondPosition = _activeLyricsPointers[pointerIds.last]!;
+    final startDistance = (firstPosition - secondPosition).distance;
+    if (startDistance <= 0) return;
+
+    _lyricsPinchPointerIds = pointerIds;
+    _lyricsPinchStartDistance = startDistance;
+    _scaleStartZoom = _lyricsZoomScale;
+    _isHorizontalDrag = false;
+    if (!_isLyricsPinching && mounted) {
+      setState(() => _isLyricsPinching = true);
+    }
+  }
+
+  void _handleLyricsPointerMove(PointerMoveEvent event) {
+    if (!_activeLyricsPointers.containsKey(event.pointer)) return;
+    _activeLyricsPointers[event.pointer] = event.localPosition;
+
+    final pointerIds = _lyricsPinchPointerIds;
+    if (pointerIds == null || !pointerIds.contains(event.pointer)) return;
+    final firstPosition = _activeLyricsPointers[pointerIds.first];
+    final secondPosition = _activeLyricsPointers[pointerIds.last];
+    if (firstPosition == null || secondPosition == null) return;
+
+    final distance = (firstPosition - secondPosition).distance;
+    final scaleDelta = distance / _lyricsPinchStartDistance;
+    final nextScale = (_scaleStartZoom * scaleDelta).clamp(
+      AppConstants.minZoomScale,
+      AppConstants.maxZoomScale,
+    );
+    if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
+    setState(() => _lyricsZoomScale = nextScale);
+  }
+
+  void _handleLyricsPointerEnd(PointerEvent event) {
+    _activeLyricsPointers.remove(event.pointer);
+    if (_lyricsPinchPointerIds?.contains(event.pointer) ?? false) {
+      _lyricsPinchPointerIds = null;
+    }
+    if (!_isLyricsPinching || _activeLyricsPointers.isNotEmpty) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _activeLyricsPointers.isNotEmpty || !_isLyricsPinching) {
+        return;
+      }
+      setState(() => _isLyricsPinching = false);
+    });
   }
 
   Widget _buildLyricsSection(Hymn hymn, double fontSize) {
