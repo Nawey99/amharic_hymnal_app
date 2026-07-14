@@ -50,13 +50,13 @@ class AppBottomNavigationBar extends StatelessWidget {
         : NavBarConstants.raisedExtent;
     final primaryDiameter = compactLandscape ? 46.0 : (compact ? 54.0 : 58.0);
     final primarySlotWidth = compactLandscape ? 58.0 : (compact ? 68.0 : 74.0);
-    final horizontalInset = compactLandscape ? 6.0 : 10.0;
+    final horizontalInset = compactLandscape ? 8.0 : 12.0;
     final bottomMargin =
         compactLandscape ? 4.0 : NavBarConstants.navBarBottomMargin;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final controlsHeight = surfaceHeight + raisedExtent;
-    final innerRadius = compactLandscape ? 18.0 : 24.0;
-    final outerRadius = compactLandscape ? 22.0 : 30.0;
+    final innerRadius = surfaceHeight / 2;
+    final outerRadius = compactLandscape ? 24.0 : 32.0;
     final primaryIndex = destinations.indexWhere(
       (destination) => destination.id == primaryDestinationId,
     );
@@ -69,24 +69,34 @@ class AppBottomNavigationBar extends StatelessWidget {
         alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(outerRadius),
-              ),
-              child: BackdropFilter(
-                key: const ValueKey('navigation-outer-glass'),
-                filter: ImageFilter.blur(
-                  sigmaX: 8,
-                  sigmaY: 8,
-                  tileMode: TileMode.clamp,
+            child: ShaderMask(
+              key: const ValueKey('navigation-outer-fade'),
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (bounds) => LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.82),
+                  Colors.black,
+                ],
+                stops: const [0, 0.32, 0.62],
+              ).createShader(bounds),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(outerRadius),
                 ),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryBackground.withValues(alpha: 0.08),
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.13),
-                        width: 0.8,
+                child: BackdropFilter(
+                  key: const ValueKey('navigation-outer-glass'),
+                  filter: ImageFilter.blur(
+                    sigmaX: 8,
+                    sigmaY: 8,
+                    tileMode: TileMode.clamp,
+                  ),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBackground.withValues(
+                        alpha: 0.06,
                       ),
                     ),
                   ),
@@ -113,9 +123,9 @@ class AppBottomNavigationBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(innerRadius),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 18,
-                          offset: const Offset(0, 5),
+                          color: Colors.black.withValues(alpha: 0.22),
+                          blurRadius: 14,
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -130,13 +140,13 @@ class AppBottomNavigationBar extends StatelessWidget {
                         ),
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: AppColors.secondaryBackground.withValues(
-                              alpha: 0.14,
+                            color: AppColors.surface.withValues(
+                              alpha: 0.15,
                             ),
                             borderRadius: BorderRadius.circular(innerRadius),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.28),
-                              width: 1,
+                              color: Colors.white.withValues(alpha: 0.24),
+                              width: 0.9,
                             ),
                           ),
                         ),
@@ -213,7 +223,10 @@ class AppBottomNavigationBar extends StatelessWidget {
               destination: destinations[index],
               selected: selectedIndex == index,
               compact: compact,
-              onTap: () => onDestinationSelected(index),
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onDestinationSelected(index);
+              },
             ),
           ),
       ],
@@ -253,13 +266,16 @@ class _NavigationDestinationButton extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
-              margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+              margin: EdgeInsets.symmetric(
+                horizontal: 2,
+                vertical: compact ? 3 : 5,
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 3),
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.accentGreen.withValues(alpha: 0.13)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: selected
                       ? AppColors.accentGreen.withValues(alpha: 0.36)

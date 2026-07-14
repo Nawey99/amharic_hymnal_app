@@ -85,9 +85,26 @@ void main() {
       ['category', 'index', 'number', 'favorites', 'settings'],
     );
     expect(
-        find.byKey(const ValueKey('navigation-outer-glass')), findsOneWidget);
+      find.byKey(const ValueKey('navigation-outer-fade')),
+      findsOneWidget,
+    );
     expect(
-        find.byKey(const ValueKey('navigation-inner-glass')), findsOneWidget);
+      find.byKey(const ValueKey('navigation-outer-glass')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('navigation-inner-glass')),
+      findsOneWidget,
+    );
+
+    final outerGlass = tester.getRect(
+      find.byKey(const ValueKey('navigation-outer-glass')),
+    );
+    final innerGlass = tester.getRect(
+      find.byKey(const ValueKey('navigation-inner-glass')),
+    );
+    expect(outerGlass.width, greaterThan(innerGlass.width));
+    expect(outerGlass.bottom, greaterThan(innerGlass.bottom));
     expect(tester.takeException(), isNull);
   });
 
