@@ -49,6 +49,10 @@ class MainNavigationPage extends StatefulWidget {
 class _MainNavigationPageState extends State<MainNavigationPage> {
   _NavDestination _selectedDestination = _NavDestination.number;
   final HymnTabSession _hymnSession = HymnTabSession();
+  final Map<_NavDestination, GlobalKey<NavigatorState>> _tabNavigatorKeys = {
+    for (final destination in _NavDestination.values)
+      destination: GlobalKey<NavigatorState>(),
+  };
   bool _isHymnDetailOpen = false;
 
   @override
@@ -100,7 +104,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final activeHymnIsCurrent = ownsActiveHymn &&
         _hymnSession.isCurrentFor(destination.id, _currentVersion());
 
-    if (destination == _selectedDestination && !ownsActiveHymn) return;
+    if (destination == _selectedDestination && !ownsActiveHymn) {
+      final navigator = _tabNavigatorKeys[destination]?.currentState;
+      if (navigator?.canPop() ?? false) {
+        navigator!.popUntil((route) => route.isFirst);
+      }
+      return;
+    }
 
     FocusManager.instance.primaryFocus?.unfocus();
     if (destination != _selectedDestination || !activeHymnIsCurrent) {
@@ -266,7 +276,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
               enabled: isActive,
               child: FocusScope(
                 canRequestFocus: isActive,
-                child: item.page,
+                child: _buildTabNavigator(item, isActive),
               ),
             );
           }).toList(growable: false),
@@ -368,6 +378,21 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       return const SizedBox.shrink();
     }
     return page;
+  }
+
+  Widget _buildTabNavigator(_NavItem item, bool isActive) {
+    final navigatorKey = _tabNavigatorKeys[item.destination]!;
+    return NavigatorPopHandler<Object?>(
+      enabled: isActive,
+      onPopWithResult: (_) => navigatorKey.currentState?.maybePop(),
+      child: Navigator(
+        key: navigatorKey,
+        onGenerateRoute: (_) => MaterialPageRoute<void>(
+          settings: RouteSettings(name: '/${item.destination.id}'),
+          builder: (_) => item.page,
+        ),
+      ),
+    );
   }
 
   Widget _buildBottomNavigationBar(List<_NavItem> items, int selectedIndex) {

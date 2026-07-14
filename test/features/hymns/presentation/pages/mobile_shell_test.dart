@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
@@ -141,6 +142,69 @@ void main() {
     );
     addTearDown(bloc.close);
 
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('category subpages keep the shell navigation visible',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'category',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    final categoryContext = tester.element(find.byType(CategoriesPage));
+    Navigator.of(categoryContext).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(
+          key: ValueKey('category-subpage'),
+          body: Text('Category songs'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-subpage')), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-category')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-subpage')), findsNothing);
+    expect(find.byType(CategoriesPage), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('system back returns from a category subpage before the shell',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'category',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    final categoryContext = tester.element(find.byType(CategoriesPage));
+    Navigator.of(categoryContext).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(
+          key: ValueKey('category-back-subpage'),
+          body: Text('Category songs'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-back-subpage')), findsNothing);
+    expect(find.byType(CategoriesPage), findsOneWidget);
     expect(find.byType(AppBottomNavigationBar), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
