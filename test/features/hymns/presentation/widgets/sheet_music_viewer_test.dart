@@ -215,6 +215,64 @@ void main() {
     );
   });
 
+  testWidgets('pinching out returns portrait sheet to its fitted scale',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SheetMusicViewer(
+            sheetMusicFiles: ['01.webp'],
+            hymnNumber: 1,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewerFinder = find.byType(InteractiveViewer);
+    final contentCenter = tester.getCenter(
+      find.byKey(const ValueKey('sheet-music-content-0')),
+    );
+    await tester.tapAt(contentCenter);
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tapAt(contentCenter);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    InteractiveViewer viewer = tester.widget(viewerFinder);
+    final controller = viewer.transformationController!;
+    expect(controller.value.getMaxScaleOnAxis(), 2.0);
+
+    final firstFinger = await tester.startGesture(
+      contentCenter.translate(-120, 0),
+      pointer: 1,
+    );
+    final secondFinger = await tester.startGesture(
+      contentCenter.translate(120, 0),
+      pointer: 2,
+    );
+    addTearDown(firstFinger.removePointer);
+    addTearDown(secondFinger.removePointer);
+    await tester.pump();
+    await firstFinger.moveTo(contentCenter.translate(-20, 0));
+    await secondFinger.moveTo(contentCenter.translate(20, 0));
+    await tester.pump();
+    await firstFinger.up();
+    await secondFinger.up();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    viewer = tester.widget(viewerFinder);
+    expect(
+      controller.value.storage,
+      orderedEquals(Matrix4.identity().storage),
+    );
+    expect(viewer.panEnabled, isFalse);
+  });
+
   testWidgets('rotation refits the page width and resets stale zoom',
       (tester) async {
     tester.view.physicalSize = const Size(360, 720);

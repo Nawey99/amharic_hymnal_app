@@ -1,5 +1,6 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:flutter/foundation.dart'
@@ -26,12 +27,14 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   static const double _minScale = 1.0;
   static const double _maxScale = 4.0;
   static const double _zoomThreshold = 1.01;
+  static const double _scaleBoundaryTolerance = 0.01;
   static const double _sheetMusicAspectRatio = 2200 / 3122;
   static const double _layoutTolerance = 0.5;
 
   final PageController _pageController = PageController();
   final List<TransformationController> _transformationControllers = [];
   final List<bool> _pageIsZoomed = [];
+  final Set<int> _pagesRequestingZoomOut = {};
   int _currentPage = 0;
   Size? _lastViewportSize;
   int _viewportRevision = 0;
@@ -54,6 +57,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       }
       _transformationControllers.clear();
       _pageIsZoomed.clear();
+      _pagesRequestingZoomOut.clear();
       for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
         _addPageController();
       }
@@ -214,6 +218,10 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final fittedPageHeight = viewportSize.width / _sheetMusicAspectRatio;
         final needsBasePan =
             fittedPageHeight > viewportSize.height + _layoutTolerance;
+        final interactionScaleFloor = math.max(
+          _minScale,
+          viewportSize.height / fittedPageHeight,
+        );
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(6),
@@ -236,10 +244,25 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
               boundaryMargin: EdgeInsets.zero,
               constrained: false,
               clipBehavior: Clip.hardEdge,
-              onInteractionUpdate: (_) => _syncZoomState(index),
+              onInteractionStart: (_) {
+                _pagesRequestingZoomOut.remove(index);
+              },
+              onInteractionUpdate: (details) {
+                if (details.scale < _minScale) {
+                  _pagesRequestingZoomOut.add(index);
+                }
+                _syncZoomState(index);
+              },
               onInteractionEnd: (_) {
                 final currentScale = controller.value.getMaxScaleOnAxis();
-                if (currentScale <= _zoomThreshold) {
+                final requestedZoomOut = _pagesRequestingZoomOut.remove(index);
+                final reachedFittedBoundary = requestedZoomOut &&
+                    currentScale <=
+                        interactionScaleFloor + _scaleBoundaryTolerance;
+                if (reachedFittedBoundary) {
+                  controller.value = Matrix4.identity();
+                  _setPageZoomed(index, false);
+                } else if (currentScale <= _zoomThreshold) {
                   if (!needsBasePan) {
                     controller.value = Matrix4.identity();
                   }
