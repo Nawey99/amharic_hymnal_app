@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kDebugMode, kIsWeb, debugPrint;
-import 'package:http/http.dart' as http;
 
 import 'package:amharic_hymnal_app/core/services/hymnal_audio_handler.dart';
 import 'package:amharic_hymnal_app/core/services/media_artwork_service.dart';
@@ -26,10 +24,6 @@ class GlobalAudioService {
 
   GlobalAudioService._internal();
 
-  static const String dummyAudioScheme = 'dummy://';
-  static const String localAssetAudioScheme = 'asset://';
-  static const String dummyAudioAsset = 'audio/dummy_hymn_1.mp3';
-  static const Duration dummyDuration = Duration(seconds: 30);
   static const String notificationChannelId =
       'com.example.amharic_hymnal_app.audio';
   static const String notificationChannelName = 'Audio Playback';
@@ -49,8 +43,6 @@ class GlobalAudioService {
   StreamSubscription<MediaItem?>? _mediaItemSubscription;
   StreamSubscription<Duration>? _positionSubscription;
 
-  String? _apiKey;
-  String? _baseUrl;
   int? _currentHymnNumber;
   String? _currentAudioUrl;
   Duration _currentPosition = Duration.zero;
@@ -60,7 +52,6 @@ class GlobalAudioService {
   bool _audioBackendAvailable = false;
 
   Future<AudioHandler?> initialize({String? apiKey, String? baseUrl}) async {
-    setApiConfig(apiKey: apiKey, baseUrl: baseUrl);
     if (_isInitialized) return _handler;
 
     if (!_isSupportedPlatform) {
@@ -97,9 +88,18 @@ class GlobalAudioService {
     return handler;
   }
 
+  /// Retained for source compatibility with older app integrations.
+  ///
+  /// Media endpoints are no longer inferred from one base URL. The content API
+  /// must provide each audio URL in hymn metadata before playback is offered.
+  @Deprecated('Supply explicit audio URLs through hymn content metadata.')
   void setApiConfig({String? apiKey, String? baseUrl}) {
-    if (apiKey != null) _apiKey = apiKey;
-    if (baseUrl != null) _baseUrl = baseUrl;
+    if (kDebugMode &&
+        ((apiKey?.isNotEmpty ?? false) || (baseUrl?.isNotEmpty ?? false))) {
+      debugPrint(
+        'Global audio endpoint configuration is ignored; use hymn metadata.',
+      );
+    }
   }
 
   void _attachHandler(AudioHandler handler) {
@@ -146,39 +146,10 @@ class GlobalAudioService {
     _positionController.add(normalizedPosition);
   }
 
+  /// Legacy resolver retained without inventing an endpoint contract.
+  @Deprecated('Read the explicit audio URL from Hymn.audioUrl instead.')
   Future<String?> resolveAudioUrl(int hymnNumber) async {
-    if (hymnNumber == 1) {
-      return '${dummyAudioScheme}hymn-1';
-    }
-
-    if (_baseUrl == null || _baseUrl!.isEmpty) {
-      if (kDebugMode) {
-        debugPrint('Base URL is not configured for the audio API.');
-      }
-      return null;
-    }
-
-    try {
-      final url = _apiKey != null && _apiKey!.isNotEmpty
-          ? '$_baseUrl/audio/$hymnNumber?apiKey=$_apiKey'
-          : '$_baseUrl/audio/$hymnNumber';
-      final response = await http.get(Uri.parse(url)).timeout(
-            const Duration(seconds: 10),
-          );
-
-      if (response.statusCode != 200) return null;
-      final data = json.decode(response.body) as Map<String, dynamic>;
-      final audioUrl = data['url'] as String? ??
-          data['audioUrl'] as String? ??
-          data['audio_url'] as String? ??
-          data['audio'] as String?;
-      return audioUrl == null || audioUrl.isEmpty ? null : audioUrl;
-    } catch (error) {
-      if (kDebugMode) {
-        debugPrint('Audio URL resolution failed for hymn $hymnNumber: $error');
-      }
-      return null;
-    }
+    return null;
   }
 
   Future<void> play(
@@ -187,42 +158,9 @@ class GlobalAudioService {
     String? artist,
     String version = 'sda_new',
   }) async {
-    final audioUrl = await resolveAudioUrl(hymnNumber);
-    if (audioUrl == null || audioUrl.isEmpty) {
-      throw StateError('Audio is not available for hymn $hymnNumber.');
-    }
-
-    if (audioUrl.startsWith(dummyAudioScheme)) {
-      await _playAsset(
-        hymnNumber,
-        dummyAudioAsset,
-        mediaId: audioUrl,
-        hymnTitle: hymnTitle,
-        artist: artist,
-        version: version,
-      );
-      return;
-    }
-
-    if (audioUrl.startsWith(localAssetAudioScheme)) {
-      await playAsset(
-        hymnNumber,
-        audioUrl.substring(localAssetAudioScheme.length),
-        hymnTitle: hymnTitle,
-        artist: artist,
-        version: version,
-      );
-      return;
-    }
-
-    await _playSource(
-      hymnNumber: hymnNumber,
-      mediaId: audioUrl,
-      sourceType: HymnalAudioHandler.sourceTypeUri,
-      source: audioUrl,
-      hymnTitle: hymnTitle,
-      artist: artist,
-      version: version,
+    throw StateError(
+      'Audio playback requires an explicit downloaded file for hymn '
+      '$hymnNumber.',
     );
   }
 
@@ -238,43 +176,6 @@ class GlobalAudioService {
       mediaId: Uri.file(filePath).toString(),
       sourceType: HymnalAudioHandler.sourceTypeFile,
       source: filePath,
-      hymnTitle: hymnTitle,
-      artist: artist,
-      version: version,
-    );
-  }
-
-  Future<void> playAsset(
-    int hymnNumber,
-    String assetPath, {
-    String? hymnTitle,
-    String? artist,
-    String version = 'sda_new',
-  }) {
-    return _playAsset(
-      hymnNumber,
-      assetPath,
-      hymnTitle: hymnTitle,
-      artist: artist,
-      version: version,
-    );
-  }
-
-  Future<void> _playAsset(
-    int hymnNumber,
-    String assetPath, {
-    String? mediaId,
-    String? hymnTitle,
-    String? artist,
-    required String version,
-  }) {
-    final normalizedPath =
-        assetPath.startsWith('assets/') ? assetPath : 'assets/$assetPath';
-    return _playSource(
-      hymnNumber: hymnNumber,
-      mediaId: mediaId ?? 'asset:///$normalizedPath?version=$version',
-      sourceType: HymnalAudioHandler.sourceTypeAsset,
-      source: normalizedPath,
       hymnTitle: hymnTitle,
       artist: artist,
       version: version,

@@ -11,11 +11,13 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_mus
 class SheetMusicViewerPage extends StatefulWidget {
   final Hymn hymn;
   final List<String> sheetMusicFiles;
+  final SheetMusicImageBuilder? imageBuilder;
 
   const SheetMusicViewerPage({
     super.key,
     required this.hymn,
     required this.sheetMusicFiles,
+    this.imageBuilder,
   });
 
   @override
@@ -257,6 +259,7 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                           SheetMusicViewer(
                             sheetMusicFiles: widget.sheetMusicFiles,
                             hymnNumber: widget.hymn.displayNumber,
+                            imageBuilder: widget.imageBuilder,
                           ),
                           if (_isPrivacyOverlayVisible)
                             const Positioned.fill(

@@ -1,237 +1,211 @@
-import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
-import 'package:amharic_hymnal_app/core/services/sheet_music_discovery_service.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
-import 'package:flutter/services.dart';
+import 'package:amharic_hymnal_app/core/services/media_reference.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 
+/// Playable audio metadata for one hymn.
 class AudioTrack {
   final int hymnNumber;
   final String title;
-  final String url;
+  final MediaReference source;
   final Duration? duration;
-  final bool isDummy;
 
   const AudioTrack({
     required this.hymnNumber,
     required this.title,
-    required this.url,
+    required this.source,
     this.duration,
-    this.isDummy = false,
   });
+
+  String get url => source.value;
 }
 
-class LocalDummyAudioRepository {
-  static const int dummyHymnNumber = 1;
+/// Resolves audio references supplied by hymn content metadata.
+abstract interface class AudioMediaRepository {
+  AudioTrack? getTrackForHymn(Hymn hymn);
 
-  Future<AudioTrack?> getTrackForNumber(
+  AudioTrack? getTrackForNumber(
     int hymnNumber, {
     String? title,
-  }) async {
-    if (hymnNumber != dummyHymnNumber) return null;
-    return AudioTrack(
-      hymnNumber: hymnNumber,
-      title: title ?? 'Hymn #$hymnNumber',
-      url: '${GlobalAudioService.dummyAudioScheme}hymn-$hymnNumber',
-      duration: GlobalAudioService.dummyDuration,
-      isDummy: true,
-    );
-  }
+    String version,
+    String? mediaSource,
+  });
+
+  Future<String?> cachedPathFor(Uri source);
 }
 
-class LocalTestAudioRepository {
-  static const Set<String> supportedVersions = {'sda_new', 'hymnal'};
-  static const int firstTestHymnNumber = 1;
-  static const int lastTestHymnNumber = 43;
+/// Audio repository that never guesses a backend URL from a hymn number.
+class AudioRepository implements AudioMediaRepository {
+  final MediaCache _cache;
 
-  final Map<int, String> _assetCache = {};
-  bool _isInitialized = false;
+  AudioRepository({MediaCache? cache})
+      : _cache = cache ?? LocalMediaCacheService.instance;
 
-  Future<AudioTrack?> getTrackForNumber(
-    int hymnNumber, {
-    required String version,
-    String? title,
-  }) async {
-    if (!supportedVersions.contains(version) ||
-        hymnNumber < firstTestHymnNumber ||
-        hymnNumber > lastTestHymnNumber) {
-      return null;
-    }
-
-    await _initialize();
-    final assetPath = _assetCache[hymnNumber];
-    if (assetPath == null) return null;
-
-    final playerAssetPath = assetPath.startsWith('assets/')
-        ? assetPath.substring('assets/'.length)
-        : assetPath;
-
-    return AudioTrack(
-      hymnNumber: hymnNumber,
-      title: title ?? 'Hymn #$hymnNumber',
-      url: '${GlobalAudioService.localAssetAudioScheme}$playerAssetPath',
-    );
-  }
-
-  Future<void> _initialize() async {
-    if (_isInitialized) return;
-
-    try {
-      final manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final manifest = jsonDecode(manifestContent) as Map<String, dynamic>;
-      final audioAssets = manifest.keys
-          .where((key) => key.startsWith('assets/audio/'))
-          .where(_isSupportedAudioAsset)
-          .toList()
-        ..sort();
-
-      for (final assetPath in audioAssets) {
-        final fileName = assetPath.split('/').last;
-        final number = int.tryParse(fileName.split('.').first);
-        if (number == null ||
-            number < firstTestHymnNumber ||
-            number > lastTestHymnNumber) {
-          continue;
-        }
-        _assetCache.putIfAbsent(number, () => assetPath);
-      }
-
-      if (kDebugMode) {
-        debugPrint(
-          '🎧 Local test audio discovered for ${_assetCache.length} hymns',
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('⚠️ Local test audio discovery failed: $e');
-      }
-    } finally {
-      _isInitialized = true;
-    }
-  }
-
-  bool _isSupportedAudioAsset(String assetPath) {
-    final lower = assetPath.toLowerCase();
-    return lower.endsWith('.mp3') ||
-        lower.endsWith('.m4a') ||
-        lower.endsWith('.wav') ||
-        lower.endsWith('.wav.ts') ||
-        lower.endsWith('.aac') ||
-        lower.endsWith('.ogg');
-  }
-}
-
-class AudioRepository {
-  final LocalTestAudioRepository _localTestAudioRepository =
-      LocalTestAudioRepository();
-  final LocalDummyAudioRepository _localDummyAudioRepository =
-      LocalDummyAudioRepository();
-  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
-  final RemoteAudioDataSource _remoteAudioDataSource =
-      const RemoteAudioDataSource();
-
-  Future<AudioTrack?> getTrackForHymn(Hymn hymn) async {
+  @override
+  AudioTrack? getTrackForHymn(Hymn hymn) {
     return getTrackForNumber(
       hymn.displayNumber,
       title: hymn.displayTitle,
+      mediaSource: hymn.audioUrl,
     );
   }
 
-  Future<AudioTrack?> getTrackForNumber(
+  @override
+  AudioTrack? getTrackForNumber(
     int hymnNumber, {
     String? title,
     String version = 'sda_new',
-  }) async {
-    final localTrack = await _localTestAudioRepository.getTrackForNumber(
-      hymnNumber,
-      version: version,
-      title: title,
-    );
-    if (localTrack != null) return localTrack;
+    String? mediaSource,
+  }) {
+    final reference = MediaReference.tryParse(mediaSource);
+    if (reference == null) return null;
 
-    if (LocalTestAudioRepository.supportedVersions.contains(version)) {
-      final dummyTrack = await _localDummyAudioRepository.getTrackForNumber(
-        hymnNumber,
-        title: title,
-      );
-      if (dummyTrack != null) return dummyTrack;
-    }
-
-    final url = await GlobalAudioService().resolveAudioUrl(hymnNumber);
-    if (url == null || url.isEmpty) return null;
     return AudioTrack(
       hymnNumber: hymnNumber,
-      title: title ?? 'Hymn #$hymnNumber',
-      url: url,
-      duration: url.startsWith(GlobalAudioService.dummyAudioScheme)
-          ? GlobalAudioService.dummyDuration
-          : null,
-      isDummy: url.startsWith(GlobalAudioService.dummyAudioScheme),
+      title: title?.trim().isNotEmpty == true
+          ? title!.trim()
+          : 'Hymn #$hymnNumber',
+      source: reference,
     );
   }
 
-  Future<Uri?> remoteSourceForNumber(int hymnNumber) {
-    return _remoteAudioDataSource.resolve(hymnNumber);
-  }
-
+  @override
   Future<String?> cachedPathFor(Uri source) {
-    return _cache.cachedPath(source, 'audio');
+    return _cache.cachedPath(source, MediaType.audio);
   }
 }
 
-class SheetMusicRepository {
-  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
-  final RemoteSheetMusicDataSource _remoteSheetMusicDataSource =
-      const RemoteSheetMusicDataSource();
+/// Resolves sheet-music references and their downloaded cache entries.
+abstract interface class SheetMusicMediaRepository {
+  bool hasMediaForHymn(Hymn hymn);
 
+  List<MediaReference> referencesForHymn(Hymn hymn);
+
+  Future<List<String>> getFilesForHymn(Hymn hymn);
+
+  Future<List<String>> cachedFilesForSources(List<Uri> sources);
+}
+
+/// Sheet-music repository backed by content metadata and the local media cache.
+class SheetMusicRepository implements SheetMusicMediaRepository {
+  final MediaCache _cache;
+
+  SheetMusicRepository({MediaCache? cache})
+      : _cache = cache ?? LocalMediaCacheService.instance;
+
+  @override
+  bool hasMediaForHymn(Hymn hymn) => referencesForHymn(hymn).isNotEmpty;
+
+  @override
+  List<MediaReference> referencesForHymn(Hymn hymn) {
+    final references = <MediaReference>[];
+    final seen = <String>{};
+
+    for (final value in hymn.sheetMusic ?? const <String>[]) {
+      final reference = MediaReference.tryParse(value);
+      if (reference == null || !seen.add(reference.uri.toString())) continue;
+      references.add(reference);
+    }
+
+    return List<MediaReference>.unmodifiable(references);
+  }
+
+  /// Returns local paths for downloaded media and URLs for files still remote.
+  @override
   Future<List<String>> getFilesForHymn(Hymn hymn) async {
-    final provided = hymn.sheetMusic
-            ?.where((item) => item.trim().isNotEmpty)
-            .toList(growable: false) ??
-        const <String>[];
-    if (provided.isNotEmpty) return provided;
+    final files = <String>[];
+    for (final reference in referencesForHymn(hymn)) {
+      if (reference.isLocalFile) {
+        files.add(reference.localPath);
+        continue;
+      }
 
-    final discoveryService = SheetMusicDiscoveryService();
-    final discovered = discoveryService.getSheetMusicFiles(hymn.displayNumber);
-    if (discovered.isNotEmpty) return discovered;
-
-    final remote = await remoteSourcesForHymn(hymn);
-    return remote.map((source) => source.toString()).toList();
+      final cached = await _cache.cachedPath(
+        reference.uri,
+        MediaType.sheetMusic,
+      );
+      files.add(cached ?? reference.uri.toString());
+    }
+    return files;
   }
 
-  Future<List<Uri>> remoteSourcesForHymn(Hymn hymn) {
-    return _remoteSheetMusicDataSource.resolve(hymn.displayNumber);
+  /// Returns only explicit remote URLs present in hymn metadata.
+  Future<List<Uri>> remoteSourcesForHymn(Hymn hymn) async {
+    return referencesForHymn(hymn)
+        .where((reference) => reference.isRemote)
+        .map((reference) => reference.uri)
+        .toList(growable: false);
   }
 
+  @override
   Future<List<String>> cachedFilesForSources(List<Uri> sources) async {
     final paths = <String>[];
     for (final source in sources) {
-      final cached = await _cache.cachedPath(source, 'sheet_music');
+      final cached = await _cache.cachedPath(source, MediaType.sheetMusic);
       if (cached != null) paths.add(cached);
     }
     return paths;
   }
 }
 
-class DownloadRepository {
-  final LocalMediaCacheService _cache = LocalMediaCacheService.instance;
-
-  Future<bool> isDownloadAvailable(String mediaType, Uri? source) async {
-    return source != null && source.scheme.startsWith('http');
-  }
+/// Downloads and manages media files selected by the user.
+abstract interface class MediaDownloadRepository {
+  Future<bool> isDownloadAvailable(String mediaType, Uri? source);
 
   Future<CachedMediaFile> requestDownload({
     required String mediaType,
     required int hymnNumber,
     required Uri source,
     void Function(int received, int? total)? onProgress,
-  }) async {
+  });
+
+  Future<bool> deleteDownload(String mediaType, Uri source);
+
+  Future<void> clearDownloads(String mediaType);
+}
+
+/// Media download repository backed by application-support storage.
+class DownloadRepository implements MediaDownloadRepository {
+  final MediaCache _cache;
+
+  DownloadRepository({MediaCache? cache})
+      : _cache = cache ?? LocalMediaCacheService.instance;
+
+  @override
+  Future<bool> isDownloadAvailable(String mediaType, Uri? source) async {
+    return !kIsWeb &&
+        source != null &&
+        MediaReference.isDownloadableUri(source);
+  }
+
+  @override
+  Future<CachedMediaFile> requestDownload({
+    required String mediaType,
+    required int hymnNumber,
+    required Uri source,
+    void Function(int received, int? total)? onProgress,
+  }) {
     return _cache.download(
       source,
       mediaType,
       onProgress: onProgress,
     );
   }
+
+  @override
+  Future<bool> deleteDownload(String mediaType, Uri source) {
+    return _cache.delete(source, mediaType);
+  }
+
+  @override
+  Future<void> clearDownloads(String mediaType) {
+    return _cache.clearMediaType(mediaType);
+  }
+}
+
+/// Stable cache directory names shared by download and playback features.
+abstract final class MediaType {
+  static const String audio = 'audio';
+  static const String sheetMusic = 'sheet_music';
 }

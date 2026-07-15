@@ -507,26 +507,35 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     if (!mounted) return;
 
     final remoteSources = files
-        .where(
-            (file) => file.startsWith('http://') || file.startsWith('https://'))
-        .map(Uri.parse)
-        .toList();
+        .map(Uri.tryParse)
+        .whereType<Uri>()
+        .where((source) => source.scheme == 'http' || source.scheme == 'https')
+        .toList(growable: false);
     if (remoteSources.isNotEmpty) {
-      final cached = await _sheetMusicRepository.cachedFilesForSources(
-        remoteSources,
+      final canDownload = await _downloadRepository.isDownloadAvailable(
+        MediaType.sheetMusic,
+        remoteSources.first,
       );
       if (!mounted) return;
-      if (cached.isNotEmpty) {
-        files = cached;
-      } else {
-        final downloaded = await _confirmAndDownloadSheetMusic(
-          hymn,
-          remoteSources,
-        );
-        if (!mounted) return;
-        if (downloaded.isEmpty) return;
-        files = downloaded;
+      if (!canDownload) {
+        _showComingSoonMessage('በዚህ መሣሪያ ላይ ኖታ ማውረድ አይቻልም');
+        return;
       }
+
+      final downloaded = await _confirmAndDownloadSheetMusic(
+        hymn,
+        remoteSources,
+      );
+      if (!mounted || downloaded.length != remoteSources.length) return;
+
+      var downloadedIndex = 0;
+      files = files.map((file) {
+        final uri = Uri.tryParse(file);
+        if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
+          return file;
+        }
+        return downloaded[downloadedIndex++];
+      }).toList(growable: false);
     }
 
     if (files.isEmpty) {
@@ -611,7 +620,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     try {
       for (final source in sources) {
         final file = await _downloadRepository.requestDownload(
-          mediaType: 'sheet_music',
+          mediaType: MediaType.sheetMusic,
           hymnNumber: hymn.displayNumber,
           source: source,
           onProgress: (received, total) {
@@ -622,6 +631,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         downloaded.add(file.path);
       }
     } catch (_) {
+      downloaded.clear();
       if (mounted) {
         _showComingSoonMessage('ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
       }
@@ -819,6 +829,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           ? hymn.displayTitle
           : 'መዝሙር ${hymn.displayNumber}',
       englishTitle: hymn.displayEnglishTitle,
+      audioSource: hymn.audioUrl,
       version: _getVersion(),
       condensed: condensed,
     );
@@ -833,18 +844,13 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         final mediaGap = compact ? 8.0 : 10.0;
 
         Widget buildSheetMusicButton({required bool stretch}) {
-          return FutureBuilder<List<String>>(
-            future: _sheetMusicRepository.getFilesForHymn(hymn),
-            builder: (context, snapshot) {
-              final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
-              return _SheetMusicPreviewBox(
-                enabled: hasSheetMusic,
-                width: stretch ? sheetButtonWidth : null,
-                stretch: stretch,
-                condensed: condensed,
-                onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
-              );
-            },
+          final hasSheetMusic = _sheetMusicRepository.hasMediaForHymn(hymn);
+          return _SheetMusicPreviewBox(
+            enabled: hasSheetMusic,
+            width: stretch ? sheetButtonWidth : null,
+            stretch: stretch,
+            condensed: condensed,
+            onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
           );
         }
 

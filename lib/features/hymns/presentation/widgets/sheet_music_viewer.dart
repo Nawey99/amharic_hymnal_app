@@ -2,21 +2,30 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:amharic_hymnal_app/core/services/media_reference.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
 import 'package:flutter/material.dart';
 
-/// Widget for displaying sheet music images with zoom and pagination support
-/// Supports 0, 1, or 2 sheet music files per hymn
+typedef SheetMusicImageBuilder = Widget Function(
+  BuildContext context,
+  String filePath,
+  int cacheWidth,
+  int cacheHeight,
+);
+
+/// Displays downloaded sheet music with zoom and pagination support.
 class SheetMusicViewer extends StatefulWidget {
   final List<String> sheetMusicFiles;
   final int hymnNumber;
+  final SheetMusicImageBuilder? imageBuilder;
 
   const SheetMusicViewer({
     super.key,
     required this.sheetMusicFiles,
     required this.hymnNumber,
+    this.imageBuilder,
   });
 
   @override
@@ -82,23 +91,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       controller.dispose();
     }
     super.dispose();
-  }
-
-  /// Get asset path for sheet music image
-  String _getAssetPath(String fileName) {
-    if (fileName.startsWith('/') ||
-        RegExp(r'^[A-Za-z]:\\').hasMatch(fileName)) {
-      return fileName;
-    }
-    // Remove any path separators and clean the filename
-    final cleanFileName = fileName.replaceAll('\\', '/').split('/').last;
-    // Construct asset path: files are directly in assets/sheet_music/
-    // File names are like "01.jpg", "08L.jpg", "08R.jpg", etc.
-    // If fileName already contains path, use it directly, otherwise prepend assets/sheet_music/
-    if (cleanFileName.startsWith('assets/')) {
-      return cleanFileName;
-    }
-    return 'assets/sheet_music/$cleanFileName';
   }
 
   @override
@@ -204,7 +196,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
 
   Widget _buildSheetMusicPage(int index) {
     final fileName = widget.sheetMusicFiles[index];
-    final assetPath = _getAssetPath(fileName);
     final controller = _transformationControllers[index];
 
     return LayoutBuilder(
@@ -278,7 +269,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
                 child: ColoredBox(
                   color: Colors.white,
                   child: RepaintBoundary(
-                    child: _buildSheetMusicImage(assetPath),
+                    child: _buildSheetMusicImage(fileName),
                   ),
                 ),
               ),
@@ -349,10 +340,9 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     _doubleTapPosition = null;
   }
 
-  Widget _buildSheetMusicImage(String assetPath) {
-    // Debug: Log asset path for troubleshooting
+  Widget _buildSheetMusicImage(String filePath) {
     if (kDebugMode) {
-      debugPrint('🎵 Loading sheet music from: $assetPath');
+      debugPrint('Loading downloaded sheet music: $filePath');
     }
 
     // Get screen size for cache dimensions (optimize for low-memory devices)
@@ -367,35 +357,25 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final cacheHeight = (cacheWidth / _sheetMusicAspectRatio).round();
 
         return SizedBox.expand(
-          child: _buildImage(assetPath, cacheWidth, cacheHeight),
+          child: _buildImage(filePath, cacheWidth, cacheHeight),
         );
       },
     );
   }
 
-  Widget _buildImage(String assetPath, int cacheWidth, int cacheHeight) {
-    final isLocalFile = assetPath.startsWith('/') ||
-        RegExp(r'^[A-Za-z]:\\').hasMatch(assetPath);
-    if (isLocalFile) {
-      return Image.file(
-        File(assetPath),
-        fit: BoxFit.contain,
-        alignment: Alignment.center,
-        gaplessPlayback: true,
-        cacheWidth: cacheWidth,
-        cacheHeight: cacheHeight,
-        errorBuilder: (context, error, stackTrace) {
-          if (kDebugMode) {
-            debugPrint('❌ Failed to load cached sheet music: $assetPath');
-            debugPrint('   Error: $error');
-          }
-          return _buildErrorWithRetry(context, assetPath);
-        },
-      );
+  Widget _buildImage(String filePath, int cacheWidth, int cacheHeight) {
+    final customBuilder = widget.imageBuilder;
+    if (customBuilder != null) {
+      return customBuilder(context, filePath, cacheWidth, cacheHeight);
     }
 
-    return Image.asset(
-      assetPath,
+    final reference = MediaReference.tryParse(filePath);
+    if (reference == null || !reference.isLocalFile) {
+      return _buildUnavailableImage();
+    }
+
+    return Image.file(
+      File(reference.localPath),
       fit: BoxFit.contain,
       alignment: Alignment.center,
       gaplessPlayback: true,
@@ -403,10 +383,9 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       cacheHeight: cacheHeight,
       errorBuilder: (context, error, stackTrace) {
         if (kDebugMode) {
-          debugPrint('❌ Failed to load sheet music: $assetPath');
-          debugPrint('   Error: $error');
+          debugPrint('Failed to load downloaded sheet music: $error');
         }
-        return _buildErrorWithRetry(context, assetPath);
+        return _buildUnavailableImage();
       },
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded || frame != null) return child;
@@ -419,42 +398,26 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     );
   }
 
-  /// Build error widget with retry logic for alternative file extensions
-  Widget _buildErrorWithRetry(BuildContext context, String assetPath) {
-    // Try alternative extensions if original failed
-    final basePath = assetPath.split('.').first;
-    final extensions = ['jpg', 'jpeg', 'png', 'pdf'];
-
-    return Center(
+  Widget _buildUnavailableImage() {
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.broken_image,
             size: 48,
             color: AppColors.secondaryText,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
-            'የኖታ ምስል አልተገኘም\n$assetPath',
+            'የኖታ ምስል አልተገኘም',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.secondaryText,
               fontSize: 12,
               fontFamily: 'NotoSansEthiopic',
             ),
           ),
-          if (kDebugMode) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Tried: ${extensions.map((e) => '$basePath.$e').join(', ')}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.tertiaryText,
-                fontSize: 10,
-              ),
-            ),
-          ],
         ],
       ),
     );

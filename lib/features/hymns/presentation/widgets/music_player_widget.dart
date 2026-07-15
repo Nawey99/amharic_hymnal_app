@@ -15,16 +15,22 @@ class MusicPlayerWidget extends StatefulWidget {
   final int hymnNumber;
   final String hymnTitle;
   final String? englishTitle;
+  final String audioSource;
   final String version;
   final bool condensed;
+  final AudioMediaRepository? audioRepository;
+  final MediaDownloadRepository? downloadRepository;
 
   const MusicPlayerWidget({
     super.key,
     required this.hymnNumber,
     required this.hymnTitle,
     this.englishTitle,
+    required this.audioSource,
     required this.version,
     this.condensed = false,
+    this.audioRepository,
+    this.downloadRepository,
   });
 
   @override
@@ -33,8 +39,8 @@ class MusicPlayerWidget extends StatefulWidget {
 
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   final GlobalAudioService _audioService = GlobalAudioService();
-  final AudioRepository _audioRepository = AudioRepository();
-  final DownloadRepository _downloadRepository = DownloadRepository();
+  late final AudioMediaRepository _audioRepository;
+  late final MediaDownloadRepository _downloadRepository;
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration?>? _durationSubscription;
   StreamSubscription<AudioPlayerState>? _playbackStateSubscription;
@@ -52,8 +58,31 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   @override
   void initState() {
     super.initState();
+    _audioRepository = widget.audioRepository ?? AudioRepository();
+    _downloadRepository = widget.downloadRepository ?? DownloadRepository();
     _setupListeners();
     _checkCurrentState();
+  }
+
+  @override
+  void didUpdateWidget(covariant MusicPlayerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.hymnNumber == widget.hymnNumber &&
+        oldWidget.audioSource == widget.audioSource) {
+      return;
+    }
+
+    _currentPlayingHymn = _audioService.currentHymnNumber;
+    _currentPosition = _audioService.position;
+    _totalDuration = _audioService.duration;
+    _playbackState = _audioService.playbackState;
+    _isExpanded = _shouldAutoExpandFor(
+      _currentPlayingHymn,
+      _playbackState,
+    );
+    _isLoading = false;
+    _isError = false;
+    _errorMessage = null;
   }
 
   void _setupListeners() {
@@ -142,33 +171,27 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     });
 
     try {
-      final localTrack = await _audioRepository.getTrackForNumber(
+      final track = _audioRepository.getTrackForNumber(
         widget.hymnNumber,
         title: widget.hymnTitle,
         version: widget.version,
+        mediaSource: widget.audioSource,
       );
-      if (localTrack != null &&
-          localTrack.url.startsWith(GlobalAudioService.localAssetAudioScheme)) {
-        await _audioService.playAsset(
+      if (track == null) {
+        throw StateError('Audio is unavailable for this hymn.');
+      }
+
+      if (track.source.isLocalFile) {
+        await _audioService.playLocalFile(
           widget.hymnNumber,
-          localTrack.url.substring(
-            GlobalAudioService.localAssetAudioScheme.length,
-          ),
+          track.source.localPath,
           hymnTitle: widget.hymnTitle,
           version: widget.version,
         );
         return;
       }
 
-      if (widget.hymnNumber != LocalDummyAudioRepository.dummyHymnNumber) {
-        final playedCached = await _playCachedOrDownloadRemoteAudio();
-        if (playedCached) return;
-      }
-      await _audioService.play(
-        widget.hymnNumber,
-        hymnTitle: widget.hymnTitle,
-        version: widget.version,
-      );
+      await _playCachedOrDownloadRemoteAudio(track.source.uri);
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -188,12 +211,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     }
   }
 
-  Future<bool> _playCachedOrDownloadRemoteAudio() async {
-    final source = await _audioRepository.remoteSourceForNumber(
-      widget.hymnNumber,
-    );
-    if (source == null) return false;
-
+  Future<void> _playCachedOrDownloadRemoteAudio(Uri source) async {
     final cachedPath = await _audioRepository.cachedPathFor(source);
     if (cachedPath != null) {
       await _audioService.playLocalFile(
@@ -202,10 +220,20 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         hymnTitle: widget.hymnTitle,
         version: widget.version,
       );
-      return true;
+      return;
     }
 
-    if (!mounted) return true;
+    final canDownload = await _downloadRepository.isDownloadAvailable(
+      MediaType.audio,
+      source,
+    );
+    if (!canDownload) {
+      throw UnsupportedError(
+        'Audio downloads are unavailable on this platform.',
+      );
+    }
+
+    if (!mounted) return;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -231,12 +259,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       ),
     );
     if (confirmed != true || !mounted) {
-      setState(() => _isLoading = false);
-      return true;
+      if (mounted) setState(() => _isLoading = false);
+      return;
     }
 
     final cached = await _downloadRepository.requestDownload(
-      mediaType: 'audio',
+      mediaType: MediaType.audio,
       hymnNumber: widget.hymnNumber,
       source: source,
     );
@@ -246,7 +274,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       hymnTitle: widget.hymnTitle,
       version: widget.version,
     );
-    return true;
   }
 
   @override

@@ -95,9 +95,9 @@ void main() {
     final artwork = Uri.file('/tmp/wudase_media_artwork.png');
     final item = buildHymnMediaItem(
       hymnNumber: 12,
-      mediaId: 'asset:///assets/audio/12.mp3?version=sda_new',
-      sourceType: HymnalAudioHandler.sourceTypeAsset,
-      source: 'assets/audio/12.mp3',
+      mediaId: 'file:///tmp/wudase-audio-12.mp3',
+      sourceType: HymnalAudioHandler.sourceTypeFile,
+      source: '/tmp/wudase-audio-12.mp3',
       version: 'sda_new',
       hymnTitle: 'Test hymn',
       artworkUri: artwork,
@@ -110,7 +110,7 @@ void main() {
     expect(item.extras?['version'], 'sda_new');
     expect(
       item.extras?[HymnalAudioHandler.sourceExtra],
-      'assets/audio/12.mp3',
+      '/tmp/wudase-audio-12.mp3',
     );
   });
 

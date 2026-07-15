@@ -7,6 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Widget _buildTestSheetImage(
+  BuildContext context,
+  String filePath,
+  int cacheWidth,
+  int cacheHeight,
+) {
+  return const ColoredBox(color: Colors.white);
+}
+
 void main() {
   testWidgets('sheet music stays fixed until the user zooms in',
       (tester) async {
@@ -21,6 +30,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -77,6 +87,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -110,6 +121,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -158,6 +170,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -228,6 +241,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -286,6 +300,7 @@ void main() {
           body: SheetMusicViewer(
             sheetMusicFiles: ['01.webp'],
             hymnNumber: 1,
+            imageBuilder: _buildTestSheetImage,
           ),
         ),
       ),
@@ -336,6 +351,7 @@ void main() {
             lyrics: 'አምላካችን አመስግኑ\nበምድር ያላችሁ ሁሉ',
           ),
           sheetMusicFiles: ['01.webp'],
+          imageBuilder: _buildTestSheetImage,
         ),
       ),
     );
@@ -377,6 +393,7 @@ void main() {
             lyrics: 'አምላካችን አመስግኑ',
           ),
           sheetMusicFiles: ['01.webp'],
+          imageBuilder: _buildTestSheetImage,
         ),
       ),
     );
