@@ -10,7 +10,6 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
-import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
@@ -20,8 +19,7 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_media_controls.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HymnDetailPage extends StatefulWidget {
@@ -59,8 +57,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   double _lyricsPinchStartDistance = 0;
   bool _isLyricsPinching = false;
   final Map<int, bool> _favoriteOverrides = {};
-  final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
-  final DownloadRepository _downloadRepository = DownloadRepository();
   final ScrollController _lyricsScrollController = ScrollController();
   bool _isMediaCondensed = false;
 
@@ -502,145 +498,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Future<void> _openSheetMusic(Hymn hymn) async {
-    var files = await _sheetMusicRepository.getFilesForHymn(hymn);
-    if (!mounted) return;
-
-    final remoteSources = files
-        .map(Uri.tryParse)
-        .whereType<Uri>()
-        .where((source) => source.scheme == 'http' || source.scheme == 'https')
-        .toList(growable: false);
-    if (remoteSources.isNotEmpty) {
-      final canDownload = await _downloadRepository.isDownloadAvailable(
-        MediaType.sheetMusic,
-        remoteSources.first,
-      );
-      if (!mounted) return;
-      if (!canDownload) {
-        _showComingSoonMessage('በዚህ መሣሪያ ላይ ኖታ ማውረድ አይቻልም');
-        return;
-      }
-
-      final downloaded = await _confirmAndDownloadSheetMusic(
-        hymn,
-        remoteSources,
-      );
-      if (!mounted || downloaded.length != remoteSources.length) return;
-
-      var downloadedIndex = 0;
-      files = files.map((file) {
-        final uri = Uri.tryParse(file);
-        if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
-          return file;
-        }
-        return downloaded[downloadedIndex++];
-      }).toList(growable: false);
-    }
-
-    if (files.isEmpty) {
-      _showComingSoonMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SheetMusicViewerPage(
-          hymn: hymn,
-          sheetMusicFiles: files,
-        ),
-      ),
-    );
-  }
-
-  Future<List<String>> _confirmAndDownloadSheetMusic(
-    Hymn hymn,
-    List<Uri> sources,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
-          'ኖታ ይውረድ?',
-          style: TextStyle(color: AppColors.primaryText),
-        ),
-        content: const Text(
-          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።',
-          style: TextStyle(color: AppColors.secondaryText),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('ይቅር'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('አውርድ'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return const [];
-    if (!mounted) return const [];
-
-    var progress = 0.0;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            backgroundColor: AppColors.surface,
-            title: const Text(
-              'ኖታ በማውረድ ላይ',
-              style: TextStyle(color: AppColors.primaryText),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LinearProgressIndicator(
-                  value: progress == 0 ? null : progress,
-                  color: AppColors.accentGreen,
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'እባክዎ ይጠብቁ...',
-                  style: TextStyle(color: AppColors.secondaryText),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    final downloaded = <String>[];
-    try {
-      for (final source in sources) {
-        final file = await _downloadRepository.requestDownload(
-          mediaType: MediaType.sheetMusic,
-          hymnNumber: hymn.displayNumber,
-          source: source,
-          onProgress: (received, total) {
-            if (total == null || total <= 0) return;
-            progress = (received / total).clamp(0.0, 1.0);
-          },
-        );
-        downloaded.add(file.path);
-      }
-    } catch (_) {
-      downloaded.clear();
-      if (mounted) {
-        _showComingSoonMessage('ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
-      }
-    } finally {
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    }
-    return downloaded;
-  }
-
   Widget _buildFavoriteButton(Hymn hymn, bool isFavorite) {
     // Simple favorite button - no loading indicator, just instant toggle
     return IconButton(
@@ -684,8 +541,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         if (!hymn.isHagerigna)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: _buildMediaControls(
-              hymn,
+            child: HymnMediaControls(
+              hymn: hymn,
+              version: _getVersion(),
               condensed: _isMediaCondensed,
             ),
           ),
@@ -822,69 +680,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Widget _buildAudioSection(Hymn hymn, {required bool condensed}) {
-    return AudioSectionWidget(
-      hymnNumber: hymn.displayNumber,
-      hymnTitle: hymn.displayTitle.isNotEmpty
-          ? hymn.displayTitle
-          : 'መዝሙር ${hymn.displayNumber}',
-      englishTitle: hymn.displayEnglishTitle,
-      audioSource: hymn.audioUrl,
-      version: _getVersion(),
-      condensed: condensed,
-    );
-  }
-
-  Widget _buildMediaControls(Hymn hymn, {required bool condensed}) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final compact = condensed || constraints.maxWidth < 380;
-        final shouldStack = constraints.maxWidth < 320;
-        final sheetButtonWidth = compact ? 62.0 : 72.0;
-        final mediaGap = compact ? 8.0 : 10.0;
-
-        Widget buildSheetMusicButton({required bool stretch}) {
-          final hasSheetMusic = _sheetMusicRepository.hasMediaForHymn(hymn);
-          return _SheetMusicPreviewBox(
-            enabled: hasSheetMusic,
-            width: stretch ? sheetButtonWidth : null,
-            stretch: stretch,
-            condensed: condensed,
-            onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
-          );
-        }
-
-        if (shouldStack || (constraints.maxWidth < 340 && !condensed)) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildAudioSection(hymn, condensed: false),
-              buildSheetMusicButton(stretch: false),
-            ],
-          );
-        }
-
-        final mediaRow = Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: _buildAudioSection(hymn, condensed: condensed),
-            ),
-            SizedBox(width: mediaGap),
-            SizedBox(
-              width: sheetButtonWidth,
-              child: buildSheetMusicButton(stretch: true),
-            ),
-          ],
-        );
-
-        return IntrinsicHeight(
-          child: mediaRow,
-        );
-      },
-    );
-  }
-
   void _shareHymn(Hymn hymn) async {
     final text = '${hymn.displayTitle}\n\n${hymn.displayLyrics}';
     try {
@@ -916,70 +711,4 @@ class _LyricsNavItem {
     required this.selectedIcon,
     required this.label,
   });
-}
-
-class _SheetMusicPreviewBox extends StatelessWidget {
-  final bool enabled;
-  final double? width;
-  final bool stretch;
-  final bool condensed;
-  final VoidCallback? onTap;
-
-  const _SheetMusicPreviewBox({
-    required this.enabled,
-    this.width,
-    required this.stretch,
-    required this.condensed,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: 'ኖታ ክፈት',
-      button: enabled,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: GlassContainer(
-          width: width ?? double.infinity,
-          height: stretch ? double.infinity : null,
-          borderRadius: 18,
-          blurSigma: 12,
-          opacity: enabled ? 0.25 : 0.12,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          margin: const EdgeInsets.only(bottom: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.library_music_outlined,
-                color:
-                    enabled ? AppColors.accentGreen : AppColors.secondaryText,
-                size: condensed ? 22 : 20,
-              ),
-              if (!condensed) ...[
-                const SizedBox(height: 2),
-                Text(
-                  enabled ? 'ኖታ' : 'የለም',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: enabled
-                        ? AppColors.primaryText
-                        : AppColors.secondaryText,
-                    fontSize: 11,
-                    height: 1,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'NotoSansEthiopic',
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
