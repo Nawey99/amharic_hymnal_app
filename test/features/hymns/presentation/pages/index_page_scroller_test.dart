@@ -17,6 +17,59 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  testWidgets('sort dialog applies name choice from nested tab navigator',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 780);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    SharedPreferences.setMockInitialValues({
+      'selected_language': 'am',
+      'selected_version': 'sda_new',
+      'sort_type': 'number',
+    });
+    await di.initDependencies(startDatabase: false);
+
+    final repository = _FakeHymnRepository(_buildGroupedHymns());
+    final bloc = HymnsBloc(
+      getHymns: GetHymns(repository),
+      searchHymns: SearchHymns(repository),
+      getHymnByNumber: GetHymnByNumber(repository),
+      settingsRepository: di.sl<SettingsRepository>(),
+    );
+    addTearDown(bloc.close);
+
+    await tester.pumpWidget(
+      BlocProvider<HymnsBloc>.value(
+        value: bloc,
+        child: MaterialApp(
+          home: Scaffold(
+            body: Navigator(
+              onGenerateRoute: (_) => MaterialPageRoute<void>(
+                builder: (_) => const IndexPage(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    bloc.add(LoadHymns('am', 'sda_new', 'number'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.sort));
+    await tester.pumpAndSettle();
+    expect(find.text('አደራደር'), findsOneWidget);
+
+    await tester.tap(find.text('በስም'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('አደራደር'), findsNothing);
+    expect(find.byType(IndexPage), findsOneWidget);
+    expect((bloc.state as HymnsLoaded).sortType, 'name');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('selected letter, indicator, and first hymn stay in sync',
       (tester) async {
     tester.view.physicalSize = const Size(360, 780);

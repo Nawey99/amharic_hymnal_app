@@ -673,13 +673,14 @@ class _IndexPageState extends State<IndexPage> {
         : currentState.sortType;
     final selectedSortType = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierColor: Colors.black.withValues(alpha: 0.32),
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.surface,
         title: const Text(
           'አደራደር',
           style: TextStyle(color: AppColors.primaryText),
         ),
-        content: _buildSortOptions(effectiveSortType),
+        content: _buildSortOptions(dialogContext, effectiveSortType),
       ),
     );
 
@@ -695,16 +696,21 @@ class _IndexPageState extends State<IndexPage> {
     _applySort(latestState, selectedSortType);
   }
 
-  Widget _buildSortOptions(String currentSortType) {
+  Widget _buildSortOptions(
+    BuildContext dialogContext,
+    String currentSortType,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildSortOption(
+          dialogContext,
           'በቁጥር',
           'number',
           currentSortType,
         ),
         _buildSortOption(
+          dialogContext,
           'በስም',
           'name',
           currentSortType,
@@ -714,6 +720,7 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _buildSortOption(
+    BuildContext dialogContext,
     String title,
     String value,
     String currentValue,
@@ -737,7 +744,7 @@ class _IndexPageState extends State<IndexPage> {
     }
 
     return InkWell(
-      onTap: () => Navigator.of(context).pop(value),
+      onTap: () => Navigator.of(dialogContext).pop(value),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
