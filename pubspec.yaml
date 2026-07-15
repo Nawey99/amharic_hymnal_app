@@ -84,7 +84,6 @@ flutter:
   assets:
     - assets/data/database/HagerignaData.json
     - assets/data/database/SDA_Hymnal.json
-    - assets/fonts/NotoSansEthiopic-Regular.ttf
     - assets/images/background.jpg
     - assets/images/favicon.png
     - assets/images/media_artwork.png
