@@ -11,11 +11,13 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_mus
 class SheetMusicViewerPage extends StatefulWidget {
   final Hymn hymn;
   final List<String> sheetMusicFiles;
+  final SheetMusicImageBuilder? imageBuilder;
 
   const SheetMusicViewerPage({
     super.key,
     required this.hymn,
     required this.sheetMusicFiles,
+    this.imageBuilder,
   });
 
   @override
@@ -155,25 +157,37 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
   }
 
   void _showScreenshotWarning() {
+    if (!mounted || !_screenProtectionActive) return;
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger != null) {
+      _presentScreenshotWarning(messenger);
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_screenProtectionActive) return;
-      final messenger = ScaffoldMessenger.maybeOf(context);
-      if (messenger == null) return;
-
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Screenshots of sheet music are not permitted.',
-              style: TextStyle(color: AppColors.primaryText),
-            ),
-            backgroundColor: Color(0xFFB3261E),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
+      final deferredMessenger = ScaffoldMessenger.maybeOf(context);
+      if (deferredMessenger != null) {
+        _presentScreenshotWarning(deferredMessenger);
+      }
     });
+  }
+
+  void _presentScreenshotWarning(ScaffoldMessengerState messenger) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Screenshots of sheet music are not permitted.',
+            style: TextStyle(color: AppColors.primaryText),
+          ),
+          backgroundColor: Color(0xFFB3261E),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
   }
 
   @override
@@ -245,6 +259,7 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                           SheetMusicViewer(
                             sheetMusicFiles: widget.sheetMusicFiles,
                             hymnNumber: widget.hymn.displayNumber,
+                            imageBuilder: widget.imageBuilder,
                           ),
                           if (_isPrivacyOverlayVisible)
                             const Positioned.fill(

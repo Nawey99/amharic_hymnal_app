@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 
 class MainPageTitleBar extends StatelessWidget {
   final String title;
@@ -18,14 +19,28 @@ class MainPageTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        compactLandscape ? 2 : 8,
+        16,
+        compactLandscape ? 2 : 8,
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(
+          horizontal: compactLandscape ? 8 : 12,
+          vertical: compactLandscape ? 2 : 6,
+        ),
         child: leading == null
             ? Row(
                 children: [
-                  Expanded(child: _TitleText(title)),
+                  Expanded(
+                    child: _TitleText(
+                      title,
+                      compact: compactLandscape,
+                    ),
+                  ),
                   ...actions,
                 ],
               )
@@ -38,7 +53,12 @@ class MainPageTitleBar extends StatelessWidget {
                       child: leading,
                     ),
                   ),
-                  Expanded(child: _TitleText(title)),
+                  Expanded(
+                    child: _TitleText(
+                      title,
+                      compact: compactLandscape,
+                    ),
+                  ),
                   SizedBox(
                     width: sideWidth,
                     child: Align(
@@ -58,8 +78,9 @@ class MainPageTitleBar extends StatelessWidget {
 
 class _TitleText extends StatelessWidget {
   final String title;
+  final bool compact;
 
-  const _TitleText(this.title);
+  const _TitleText(this.title, {required this.compact});
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +89,9 @@ class _TitleText extends StatelessWidget {
         fit: BoxFit.scaleDown,
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.primaryText,
-            fontSize: 23,
+            fontSize: compact ? 21 : 23,
             fontWeight: FontWeight.bold,
             fontFamily: 'NotoSansEthiopic',
           ),

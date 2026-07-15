@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
 
 Future<HymnsBloc> _pumpShell(
@@ -18,6 +21,7 @@ Future<HymnsBloc> _pumpShell(
   Hymn? initialActiveHymn,
   String? initialActiveDestination,
   HymnDetailBuilder? hymnDetailBuilder,
+  bool usePlaceholderPagesForTesting = true,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -44,7 +48,7 @@ Future<HymnsBloc> _pumpShell(
           ),
           child: MainNavigationPage(
             loadInitialData: false,
-            usePlaceholderPagesForTesting: true,
+            usePlaceholderPagesForTesting: usePlaceholderPagesForTesting,
             initialDestination: initialDestination,
             initialActiveHymn: initialActiveHymn,
             initialActiveDestination: initialActiveDestination,
@@ -70,31 +74,69 @@ void main() {
     expect(find.text('ተወዳጅ'), findsOneWidget);
     expect(find.text('ቅንብር'), findsOneWidget);
 
-    final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    final navBar = tester.widget<AppBottomNavigationBar>(
+      find.byType(AppBottomNavigationBar),
+    );
+    final shell = tester.widget<Scaffold>(find.byType(Scaffold));
+    expect(shell.bottomNavigationBar, isNull);
     expect(navBar.selectedIndex, 2);
+    expect(
+      navBar.destinations.map((destination) => destination.id),
+      ['category', 'index', 'number', 'favorites', 'settings'],
+    );
+    expect(
+      find.byKey(const ValueKey('navigation-outer-fade')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('navigation-outer-glass')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('navigation-inner-glass')),
+      findsOneWidget,
+    );
+
+    final outerGlass = tester.getRect(
+      find.byKey(const ValueKey('navigation-outer-glass')),
+    );
+    final innerGlass = tester.getRect(
+      find.byKey(const ValueKey('navigation-inner-glass')),
+    );
+    expect(outerGlass.width, greaterThan(innerGlass.width));
+    expect(outerGlass.bottom, greaterThan(innerGlass.bottom));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('active bottom nav item has no selected pill container',
+  testWidgets('number destination is raised, centered, and tappable',
       (tester) async {
-    final bloc = await _pumpShell(tester);
+    final bloc = await _pumpShell(tester, initialDestination: 'index');
     addTearDown(bloc.close);
 
-    final selectedDestination = tester.widget<NavigationDestination>(
-      find
-          .ancestor(
-            of: find.text('ቁጥር'),
-            matching: find.byType(NavigationDestination),
-          )
-          .first,
+    final numberDestination = find.byKey(
+      const ValueKey('bottom-nav-number'),
+    );
+    final categoryDestination = find.byKey(
+      const ValueKey('bottom-nav-category'),
     );
 
-    expect(selectedDestination.selectedIcon, isA<Icon>());
-    expect((selectedDestination.icon as Icon).icon, Icons.numbers_rounded);
+    expect(numberDestination, findsOneWidget);
     expect(
-      (selectedDestination.selectedIcon as Icon).icon,
-      Icons.numbers_rounded,
+      tester.getCenter(numberDestination).dx,
+      closeTo(tester.view.physicalSize.width / 2, 0.5),
     );
+    expect(
+      tester.getTopLeft(numberDestination).dy,
+      lessThan(tester.getTopLeft(categoryDestination).dy),
+    );
+
+    await tester.tap(numberDestination);
+    await tester.pumpAndSettle();
+
+    final navBar = tester.widget<AppBottomNavigationBar>(
+      find.byType(AppBottomNavigationBar),
+    );
+    expect(navBar.selectedIndex, 2);
     expect(tester.takeException(), isNull);
   });
 
@@ -103,8 +145,14 @@ void main() {
     addTearDown(bloc.close);
 
     expect(find.text('ምድብ'), findsNothing);
-    final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    final navBar = tester.widget<AppBottomNavigationBar>(
+      find.byType(AppBottomNavigationBar),
+    );
     expect(navBar.selectedIndex, 1);
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('bottom-nav-number'))).dx,
+      closeTo(tester.view.physicalSize.width / 2, 0.5),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -117,7 +165,151 @@ void main() {
     );
     addTearDown(bloc.close);
 
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('category subpages keep the shell navigation visible',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'category',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    final categoryContext = tester.element(find.byType(CategoriesPage));
+    Navigator.of(categoryContext).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(
+          key: ValueKey('category-subpage'),
+          body: Text('Category songs'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-subpage')), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-category')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-subpage')), findsNothing);
+    expect(find.byType(CategoriesPage), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('system back returns from a category subpage before the shell',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'category',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    final categoryContext = tester.element(find.byType(CategoriesPage));
+    Navigator.of(categoryContext).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(
+          key: ValueKey('category-back-subpage'),
+          body: Text('Category songs'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('category-back-subpage')), findsNothing);
+    expect(find.byType(CategoriesPage), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape shell moves destinations into a compact side rail',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(844, 390),
+      initialDestination: 'index',
+    );
+    addTearDown(bloc.close);
+
+    expect(
+      find.byKey(const ValueKey('landscape-navigation-rail')),
+      findsOneWidget,
+    );
+    expect(find.byType(AppBottomNavigationBar), findsNothing);
+    for (final label in const ['ምድብ', 'ማውጫ', 'ቁጥር', 'ተወዳጅ', 'ቅንብር']) {
+      expect(find.text(label), findsOneWidget);
+    }
+
+    final settingsDestination = find.byKey(
+      const ValueKey('landscape-nav-settings'),
+    );
+    expect(
+      find.descendant(
+        of: settingsDestination,
+        matching: find.byIcon(Icons.settings_outlined),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(settingsDestination);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+        of: settingsDestination,
+        matching: find.byIcon(Icons.settings_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape rail survives short height and larger text',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(640, 320),
+      textScale: 1.6,
+      initialDestination: 'settings',
+    );
+    addTearDown(bloc.close);
+
+    expect(
+      find.byKey(const ValueKey('landscape-navigation-rail')),
+      findsOneWidget,
+    );
+    expect(find.byType(AppBottomNavigationBar), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape settings keeps a tall scrollable content area',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(844, 390),
+      initialDestination: 'settings',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SettingsPage), findsOneWidget);
+    expect(find.byType(AppBottomNavigationBar), findsNothing);
+    expect(tester.getSize(find.byType(ListView)).height, greaterThan(300));
+
+    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    await tester.pumpAndSettle();
+    expect(find.text('ስህተት ላክ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

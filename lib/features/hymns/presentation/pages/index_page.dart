@@ -34,6 +34,7 @@ class _IndexPageState extends State<IndexPage> {
   static const double _estimatedHymnItemExtent = 96.0;
   static const double _listVerticalPadding = 8.0;
   static const double _alphabetRailBottomPadding = 8.0;
+  static const int _maxSectionJumpRefinements = 4;
 
   final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
@@ -47,6 +48,7 @@ class _IndexPageState extends State<IndexPage> {
   String _sortTypeBeforeSearch = 'number';
   int _sectionJumpGeneration = 0;
   bool _isSectionJumpInProgress = false;
+  double _lastMeasuredHymnItemExtent = _estimatedHymnItemExtent;
   @override
   void initState() {
     super.initState();
@@ -130,11 +132,10 @@ class _IndexPageState extends State<IndexPage> {
         _currentSectionLetter = letter;
       });
 
-      // Jump immediately while the user scrubs across letters. The generation
-      // guard prevents an older post-frame alignment from winning a rapid drag.
-      const itemHeight = _estimatedHymnItemExtent;
-      const listPadding = _listVerticalPadding;
-      final scrollPosition = (position * itemHeight) + listPadding;
+      // Jump immediately while the user scrubs across letters. Rendered rows
+      // are measured because their responsive height is not a fixed 96 pixels.
+      final itemHeight = _measuredHymnItemExtent(hymnsToDisplay);
+      final scrollPosition = (position * itemHeight) + _listVerticalPadding;
 
       // Ensure we don't scroll beyond the list
       if (_scrollController.position.maxScrollExtent > 0) {
@@ -142,23 +143,97 @@ class _IndexPageState extends State<IndexPage> {
         final targetPosition = scrollPosition.clamp(0.0, maxScroll);
 
         _scrollController.jumpTo(targetPosition);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted ||
-              jumpGeneration != _sectionJumpGeneration ||
-              position >= hymnsToDisplay.length) {
-            return;
-          }
-          _alignHymnWithViewportTop(hymnsToDisplay[position]);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!mounted || jumpGeneration != _sectionJumpGeneration) return;
-            _isSectionJumpInProgress = false;
-            _updateSectionIndicator();
-          });
-        });
+        _scheduleSectionJumpRefinement(
+          hymns: hymnsToDisplay,
+          targetIndex: position,
+          targetLetter: letter,
+          jumpGeneration: jumpGeneration,
+        );
       } else {
         _isSectionJumpInProgress = false;
       }
     }
+  }
+
+  void _scheduleSectionJumpRefinement({
+    required List<Hymn> hymns,
+    required int targetIndex,
+    required String targetLetter,
+    required int jumpGeneration,
+    int attempt = 0,
+  }) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          jumpGeneration != _sectionJumpGeneration ||
+          targetIndex >= hymns.length ||
+          !_scrollController.hasClients) {
+        return;
+      }
+
+      if (_alignHymnWithViewportTop(hymns[targetIndex])) {
+        _finishSectionJump(jumpGeneration, targetLetter);
+        return;
+      }
+
+      final visibleIndex = _topVisibleHymnIndex(hymns);
+      if (visibleIndex != null &&
+          visibleIndex != targetIndex &&
+          attempt < _maxSectionJumpRefinements) {
+        final itemHeight = _measuredHymnItemExtent(hymns);
+        final target = (_scrollController.offset +
+                ((targetIndex - visibleIndex) * itemHeight))
+            .clamp(
+              0.0,
+              _scrollController.position.maxScrollExtent,
+            )
+            .toDouble();
+        if ((_scrollController.offset - target).abs() >= 1) {
+          _scrollController.jumpTo(target);
+        }
+        _scheduleSectionJumpRefinement(
+          hymns: hymns,
+          targetIndex: targetIndex,
+          targetLetter: targetLetter,
+          jumpGeneration: jumpGeneration,
+          attempt: attempt + 1,
+        );
+        return;
+      }
+
+      _finishSectionJump(jumpGeneration, targetLetter);
+    });
+  }
+
+  void _finishSectionJump(int jumpGeneration, String targetLetter) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || jumpGeneration != _sectionJumpGeneration) return;
+      _isSectionJumpInProgress = false;
+      if (_currentSectionLetter != targetLetter) {
+        setState(() {
+          _currentSectionLetter = targetLetter;
+        });
+      }
+    });
+  }
+
+  double _measuredHymnItemExtent(List<Hymn> hymns) {
+    final renderedHeights = <double>[];
+    for (final hymn in hymns) {
+      final itemBox =
+          _keyForHymn(hymn).currentContext?.findRenderObject() as RenderBox?;
+      if (itemBox != null && itemBox.hasSize && itemBox.size.height > 0) {
+        renderedHeights.add(itemBox.size.height);
+      }
+    }
+    if (renderedHeights.isEmpty) return _lastMeasuredHymnItemExtent;
+
+    renderedHeights.sort();
+    final middle = renderedHeights.length ~/ 2;
+    final median = renderedHeights.length.isOdd
+        ? renderedHeights[middle]
+        : (renderedHeights[middle - 1] + renderedHeights[middle]) / 2;
+    _lastMeasuredHymnItemExtent = median;
+    return median;
   }
 
   int? _topVisibleHymnIndex(List<Hymn> hymns) {
@@ -194,13 +269,13 @@ class _IndexPageState extends State<IndexPage> {
   int? _estimatedTopVisibleIndex(int hymnCount) {
     if (hymnCount == 0 || !_scrollController.hasClients) return null;
     final estimated = ((_scrollController.offset - _listVerticalPadding) /
-            _estimatedHymnItemExtent)
+            _lastMeasuredHymnItemExtent)
         .floor();
     return estimated.clamp(0, hymnCount - 1).toInt();
   }
 
-  void _alignHymnWithViewportTop(Hymn hymn) {
-    if (!_scrollController.hasClients) return;
+  bool _alignHymnWithViewportTop(Hymn hymn) {
+    if (!_scrollController.hasClients) return false;
 
     final viewportContext = _listViewportKey.currentContext;
     final viewportBox = viewportContext?.findRenderObject() as RenderBox?;
@@ -210,7 +285,7 @@ class _IndexPageState extends State<IndexPage> {
         itemBox == null ||
         !viewportBox.hasSize ||
         !itemBox.hasSize) {
-      return;
+      return false;
     }
 
     final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
@@ -224,6 +299,7 @@ class _IndexPageState extends State<IndexPage> {
     if ((_scrollController.offset - target).abs() >= 1) {
       _scrollController.jumpTo(target);
     }
+    return true;
   }
 
   GlobalKey _keyForHymn(Hymn hymn) {
@@ -382,6 +458,7 @@ class _IndexPageState extends State<IndexPage> {
               alignment: Alignment.centerLeft,
               child: Text(
                 displayLetter,
+                key: const ValueKey('index-section-indicator'),
                 style: TextStyle(
                   color: AppColors.accentGreen,
                   fontSize: 20,
@@ -433,6 +510,7 @@ class _IndexPageState extends State<IndexPage> {
                   _buildHymnListView(
                     state,
                     useHorizontalAlphabetRail: useHorizontalAlphabetRail,
+                    viewportHeight: constraints.maxHeight,
                   ),
                   if (labels.isNotEmpty)
                     AlphabetScrollBar(
@@ -464,6 +542,7 @@ class _IndexPageState extends State<IndexPage> {
   Widget _buildHymnListView(
     HymnsState state, {
     required bool useHorizontalAlphabetRail,
+    required double viewportHeight,
   }) {
     if (state is HymnsLoading) {
       return const Center(
@@ -486,12 +565,14 @@ class _IndexPageState extends State<IndexPage> {
     return _buildHymnListItems(
       state,
       useHorizontalAlphabetRail: useHorizontalAlphabetRail,
+      viewportHeight: viewportHeight,
     );
   }
 
   Widget _buildHymnListItems(
     HymnsLoaded state, {
     required bool useHorizontalAlphabetRail,
+    required double viewportHeight,
   }) {
     final hasAlphabetScrollBar =
         state.sortType == 'name' && state.hymns.isNotEmpty;
@@ -512,6 +593,16 @@ class _IndexPageState extends State<IndexPage> {
 
     final rightPadding =
         hasAlphabetScrollBar && !useHorizontalAlphabetRail ? 54.0 : 16.0;
+    final standardBottomPadding = NavBarConstants.getBottomPadding(context);
+    // Let even the final alphabet section align with the viewport top.
+    final sectionAlignmentBottomPadding = hasAlphabetScrollBar
+        ? (viewportHeight - _lastMeasuredHymnItemExtent)
+            .clamp(0.0, double.infinity)
+            .toDouble()
+        : 0.0;
+    final bottomPadding = sectionAlignmentBottomPadding > standardBottomPadding
+        ? sectionAlignmentBottomPadding
+        : standardBottomPadding;
 
     final listView = ListView.builder(
       controller: _scrollController,
@@ -521,7 +612,7 @@ class _IndexPageState extends State<IndexPage> {
         16,
         8,
         rightPadding,
-        NavBarConstants.getBottomPadding(context),
+        bottomPadding,
       ),
       itemCount: hymnsToDisplay.length,
       // Performance: Cache items for smoother scrolling
@@ -582,13 +673,14 @@ class _IndexPageState extends State<IndexPage> {
         : currentState.sortType;
     final selectedSortType = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierColor: Colors.black.withValues(alpha: 0.32),
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.surface,
         title: const Text(
           'አደራደር',
           style: TextStyle(color: AppColors.primaryText),
         ),
-        content: _buildSortOptions(effectiveSortType),
+        content: _buildSortOptions(dialogContext, effectiveSortType),
       ),
     );
 
@@ -604,16 +696,21 @@ class _IndexPageState extends State<IndexPage> {
     _applySort(latestState, selectedSortType);
   }
 
-  Widget _buildSortOptions(String currentSortType) {
+  Widget _buildSortOptions(
+    BuildContext dialogContext,
+    String currentSortType,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildSortOption(
+          dialogContext,
           'በቁጥር',
           'number',
           currentSortType,
         ),
         _buildSortOption(
+          dialogContext,
           'በስም',
           'name',
           currentSortType,
@@ -623,6 +720,7 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _buildSortOption(
+    BuildContext dialogContext,
     String title,
     String value,
     String currentValue,
@@ -646,7 +744,7 @@ class _IndexPageState extends State<IndexPage> {
     }
 
     return InkWell(
-      onTap: () => Navigator.of(context).pop(value),
+      onTap: () => Navigator.of(dialogContext).pop(value),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),

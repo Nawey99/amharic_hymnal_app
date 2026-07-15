@@ -1,16 +1,22 @@
 // lib/core/utils/nav_bar_constants.dart
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
+
 /// Navigation bar layout constants
 ///
 /// These constants define the exact dimensions of the floating navigation bar
 /// to ensure consistent bottom padding across all scrollable pages.
 class NavBarConstants {
-  /// Height of the navigation bar container (from FloatingNavigationBar)
-  static const double navBarHeight = 64.0;
+  static const double surfaceHeight = 68.0;
+  static const double compactSurfaceHeight = 56.0;
+  static const double raisedExtent = 16.0;
+  static const double compactRaisedExtent = 8.0;
 
-  /// Bottom margin of the navigation bar (from Positioned bottom: 16)
-  static const double navBarBottomMargin = 16.0;
+  /// Full portrait height, including the raised number action.
+  static const double navBarHeight = surfaceHeight + raisedExtent;
+
+  static const double navBarBottomMargin = 8.0;
 
   /// Total space needed from bottom of screen to account for nav bar
   /// This is: navBarHeight + navBarBottomMargin
@@ -20,9 +26,12 @@ class NavBarConstants {
   static const double contentPadding = 16.0;
 
   /// Total bottom padding needed for scrollable content
-  /// Formula: safeAreaBottom + navBarTotalSpace + contentPadding
+  /// Side-navigation layouts only need the safe area and content inset.
   static double getBottomPadding(BuildContext context) {
     final safeAreaBottom = MediaQuery.of(context).padding.bottom;
+    if (ResponsiveLayout.useSideNavigation(context)) {
+      return safeAreaBottom + contentPadding;
+    }
     return safeAreaBottom + navBarTotalSpace + contentPadding;
   }
 }

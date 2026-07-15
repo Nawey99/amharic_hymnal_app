@@ -111,7 +111,6 @@ Presentation → Domain ← Data
 - **SheetMusicDiscoveryService**: Automatic sheet music file discovery
 - **OfflineCacheService**: Offline data caching (NEW)
 - **SyncService**: Background sync operations (NEW)
-- **SecureStorageService**: Secure storage for tokens/credentials (NEW)
 - **BugReportQueueService**: Offline bug report queue (NEW)
 
 ### Dependency Injection
@@ -127,7 +126,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => SettingsService());
   sl.registerLazySingleton(() => OfflineCacheService.instance);
   sl.registerLazySingleton(() => SyncService.instance);
-  sl.registerLazySingleton(() => SecureStorageService.instance);
   sl.registerLazySingleton(() => BugReportQueueService.instance);
   
   // Repositories

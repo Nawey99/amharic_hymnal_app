@@ -12,6 +12,7 @@ import 'package:amharic_hymnal_app/core/models/hymn_category.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
@@ -46,6 +47,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Container(
       decoration: BoxDecoration(
         image: bgService.isEnabled
@@ -113,11 +115,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
                         return ListView.separated(
                           controller: _scrollController,
-                          padding:
-                              EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            compactLandscape ? 4 : 8,
+                            16,
+                            bottomPadding,
+                          ),
                           itemCount: categories.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 10),
+                          separatorBuilder: (_, __) => SizedBox(
+                            height: compactLandscape ? 6 : 10,
+                          ),
                           itemBuilder: (context, index) {
                             final category = categories[index];
                             return _buildCategoryListItem(
@@ -151,11 +158,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
                         return ListView.separated(
                           controller: _scrollController,
-                          padding:
-                              EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            compactLandscape ? 4 : 8,
+                            16,
+                            bottomPadding,
+                          ),
                           itemCount: authors.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 10),
+                          separatorBuilder: (_, __) => SizedBox(
+                            height: compactLandscape ? 6 : 10,
+                          ),
                           itemBuilder: (context, index) {
                             final author = authors[index];
                             return _buildAuthorListItem(
@@ -221,6 +233,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     String version,
     bool backgroundImageEnabled,
   ) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -251,11 +264,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 : AppColors.accentGreen.withValues(alpha: 0.16),
             width: 1.2,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: EdgeInsets.symmetric(
+            horizontal: compactLandscape ? 10 : 12,
+            vertical: compactLandscape ? 6 : 10,
+          ),
           child: Row(
             children: [
-              _buildCategoryThumbnail(category),
-              const SizedBox(width: 12),
+              _buildCategoryThumbnail(category, compactLandscape),
+              SizedBox(width: compactLandscape ? 10 : 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,9 +281,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       category,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.primaryText,
-                        fontSize: 17,
+                        fontSize: compactLandscape ? 16 : 17,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'NotoSansEthiopic',
                         height: 1.25,
@@ -289,10 +305,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Widget _buildCategoryThumbnail(String category) {
+  Widget _buildCategoryThumbnail(String category, bool compactLandscape) {
     return Container(
-      width: 58,
-      height: 58,
+      width: compactLandscape ? 44 : 58,
+      height: compactLandscape ? 44 : 58,
       decoration: BoxDecoration(
         color: AppColors.accentGreen.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(8),
@@ -303,7 +319,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       child: Icon(
         CategoryIconMapper.iconFor(category),
         color: AppColors.accentGreen,
-        size: 28,
+        size: compactLandscape ? 24 : 28,
       ),
     );
   }
@@ -315,6 +331,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     String version,
     bool backgroundImageEnabled,
   ) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -346,12 +363,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 : AppColors.accentGreen.withValues(alpha: 0.16),
             width: 1.2,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: EdgeInsets.symmetric(
+            horizontal: compactLandscape ? 10 : 12,
+            vertical: compactLandscape ? 6 : 10,
+          ),
           child: Row(
             children: [
               Container(
-                width: 58,
-                height: 58,
+                width: compactLandscape ? 44 : 58,
+                height: compactLandscape ? 44 : 58,
                 decoration: BoxDecoration(
                   color: AppColors.accentGreen.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(8),
@@ -359,21 +379,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     color: AppColors.accentGreen.withValues(alpha: 0.35),
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person,
                   color: AppColors.accentGreen,
-                  size: 28,
+                  size: compactLandscape ? 24 : 28,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: compactLandscape ? 10 : 12),
               Expanded(
                 child: Text(
                   author,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primaryText,
-                    fontSize: 17,
+                    fontSize: compactLandscape ? 16 : 17,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'NotoSansEthiopic',
                     height: 1.25,

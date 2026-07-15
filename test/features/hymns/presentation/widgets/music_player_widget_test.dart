@@ -27,6 +27,7 @@ void main() {
                         hymnNumber: 5,
                         hymnTitle: 'ለየሱስ ስም እልል በሉ',
                         englishTitle: 'All Hail the Power of Jesus Name',
+                        audioSource: 'https://media.example.org/audio/5.mp3',
                         version: 'sda_new',
                       ),
                     ),

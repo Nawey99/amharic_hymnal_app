@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
@@ -47,6 +49,10 @@ class MainNavigationPage extends StatefulWidget {
 class _MainNavigationPageState extends State<MainNavigationPage> {
   _NavDestination _selectedDestination = _NavDestination.number;
   final HymnTabSession _hymnSession = HymnTabSession();
+  final Map<_NavDestination, GlobalKey<NavigatorState>> _tabNavigatorKeys = {
+    for (final destination in _NavDestination.values)
+      destination: GlobalKey<NavigatorState>(),
+  };
   bool _isHymnDetailOpen = false;
 
   @override
@@ -98,7 +104,13 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     final activeHymnIsCurrent = ownsActiveHymn &&
         _hymnSession.isCurrentFor(destination.id, _currentVersion());
 
-    if (destination == _selectedDestination && !ownsActiveHymn) return;
+    if (destination == _selectedDestination && !ownsActiveHymn) {
+      final navigator = _tabNavigatorKeys[destination]?.currentState;
+      if (navigator?.canPop() ?? false) {
+        navigator!.popUntil((route) => route.isFirst);
+      }
+      return;
+    }
 
     FocusManager.instance.primaryFocus?.unfocus();
     if (destination != _selectedDestination || !activeHymnIsCurrent) {
@@ -256,25 +268,51 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           });
         }
 
+        final activePage = IndexedStack(
+          index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
+          children: items.map((item) {
+            final isActive = item.destination == _selectedDestination;
+            return TickerMode(
+              enabled: isActive,
+              child: FocusScope(
+                canRequestFocus: isActive,
+                child: _buildTabNavigator(item, isActive),
+              ),
+            );
+          }).toList(growable: false),
+        );
+        final useSideNavigation = ResponsiveLayout.useSideNavigation(context);
+
+        final selectedNavIndex =
+            effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex;
+
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: IndexedStack(
-            index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
-            children: items.map((item) {
-              final isActive = item.destination == _selectedDestination;
-              return TickerMode(
-                enabled: isActive,
-                child: FocusScope(
-                  canRequestFocus: isActive,
-                  child: item.page,
+          body: useSideNavigation
+              ? Row(
+                  children: [
+                    _buildLandscapeNavigationRail(
+                      items,
+                      selectedNavIndex,
+                    ),
+                    Expanded(child: activePage),
+                  ],
+                )
+              : Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    activePage,
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _buildBottomNavigationBar(
+                        items,
+                        selectedNavIndex,
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            }).toList(growable: false),
-          ),
-          bottomNavigationBar: _buildBottomNavigationBar(
-            items,
-            effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
-          ),
         );
       },
     );
@@ -352,64 +390,134 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     return page;
   }
 
-  Widget _buildBottomNavigationBar(List<_NavItem> items, int selectedIndex) {
-    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final compactLabels =
-        textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
-
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
-        indicatorColor: Colors.transparent,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return TextStyle(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            fontSize: selected
-                ? (compactLabels ? 11 : 12)
-                : (compactLabels ? 10 : 11),
-            fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
-            fontFamily: 'NotoSansEthiopic',
-          );
-        }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            color: selected ? AppColors.accentGreen : AppColors.secondaryText,
-            size: selected ? 28 : 24,
-          );
-        }),
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.15),
-              width: 0.5,
-            ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+  Widget _buildTabNavigator(_NavItem item, bool isActive) {
+    final navigatorKey = _tabNavigatorKeys[item.destination]!;
+    return NavigatorPopHandler<Object?>(
+      enabled: isActive,
+      onPopWithResult: (_) => navigatorKey.currentState?.maybePop(),
+      child: Navigator(
+        key: navigatorKey,
+        onGenerateRoute: (_) => MaterialPageRoute<void>(
+          settings: RouteSettings(name: '/${item.destination.id}'),
+          builder: (_) => item.page,
         ),
-        child: NavigationBar(
-          selectedIndex: selectedIndex,
-          height: compactLabels ? 66 : 70,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          onDestinationSelected: _onItemTapped,
-          destinations: items
-              .map(
-                (item) => NavigationDestination(
-                  icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
-                  label: item.label,
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar(List<_NavItem> items, int selectedIndex) {
+    return AppBottomNavigationBar(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: _onItemTapped,
+      destinations: items
+          .map(
+            (item) => AppNavigationDestination(
+              id: item.destination.id,
+              icon: item.icon,
+              selectedIcon: item.selectedIcon,
+              label: item.label,
+            ),
+          )
+          .toList(growable: false),
+    );
+  }
+
+  Widget _buildLandscapeNavigationRail(
+    List<_NavItem> items,
+    int selectedIndex,
+  ) {
+    return DecoratedBox(
+      key: const ValueKey('landscape-navigation-rail'),
+      decoration: BoxDecoration(
+        color: AppColors.primaryBackground.withValues(alpha: 0.97),
+        border: Border(
+          right: BorderSide(
+            color: Colors.white.withValues(alpha: 0.14),
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        right: false,
+        minimum: const EdgeInsets.symmetric(vertical: 4),
+        child: SizedBox(
+          width: 70,
+          child: Column(
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final selected = index == selectedIndex;
+              return Expanded(
+                child: Tooltip(
+                  message: item.label,
+                  excludeFromSemantics: true,
+                  child: Semantics(
+                    button: true,
+                    selected: selected,
+                    label: item.label,
+                    excludeSemantics: true,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        key: ValueKey(
+                          'landscape-nav-${item.destination.id}',
+                        ),
+                        onTap: () => _onItemTapped(index),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 160),
+                          curve: Curves.easeOut,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color: selected
+                                    ? AppColors.accentGreen
+                                    : Colors.transparent,
+                                width: 3,
+                              ),
+                            ),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 3,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                selected ? item.selectedIcon : item.icon,
+                                color: selected
+                                    ? AppColors.accentGreen
+                                    : AppColors.secondaryText,
+                                size: selected ? 25 : 22,
+                              ),
+                              const SizedBox(height: 2),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  item.label,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: selected
+                                        ? AppColors.accentGreen
+                                        : AppColors.primaryText,
+                                    fontSize: 10,
+                                    fontWeight: selected
+                                        ? FontWeight.w800
+                                        : FontWeight.w500,
+                                    fontFamily: 'NotoSansEthiopic',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              )
-              .toList(growable: false),
+              );
+            }),
+          ),
         ),
       ),
     );

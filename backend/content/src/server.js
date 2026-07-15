@@ -1,13 +1,6 @@
-import { createReadStream, existsSync } from 'node:fs';
-import { extname, normalize, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 
 import { PrismaClient } from '@prisma/client';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const repoRoot = resolve(__dirname, '../../..');
-const sheetMusicRoot = resolve(repoRoot, 'assets/sheet_music');
 
 const port = Number(process.env.PORT ?? 8787);
 const host = process.env.HOST ?? '127.0.0.1';
@@ -105,6 +98,19 @@ const sendJson = (response, statusCode, body) => {
 const toIntOrNull = (value) =>
   value === null || value === undefined ? null : Number(value);
 
+const downloadableMediaUrls = (values) => {
+  if (!Array.isArray(values)) return [];
+  return values.filter((value) => {
+    if (typeof value !== 'string') return false;
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  });
+};
+
 const getSdaHymns = async (version) => {
   const normalizedVersion = normalizeVersion(version);
   const isOld = normalizedVersion === versions.sdaOld;
@@ -167,7 +173,9 @@ const getSdaHymns = async (version) => {
         category_id: category?.id ?? null,
         audio_url: null,
         audio: null,
-        sheet_music: row.sheet_music ?? [],
+        // TODO: Resolve media storage keys through the future media backend.
+        // Only already-downloadable URLs are safe to expose to clients today.
+        sheet_music: downloadableMediaUrls(row.sheet_music),
         new_hymnal_title: row.new_hymnal_title,
         old_hymnal_title: row.old_hymnal_title,
         new_hymnal_lyrics: row.new_hymnal_lyrics,
@@ -216,31 +224,6 @@ const getHagerignaSongs = async () => {
   }));
 };
 
-const serveSheetMusic = (request, response, pathname) => {
-  const fileName = decodeURIComponent(pathname.replace('/sheet_music/', ''));
-  const requestedPath = normalize(resolve(sheetMusicRoot, fileName));
-
-  if (!requestedPath.startsWith(sheetMusicRoot) || !existsSync(requestedPath)) {
-    sendJson(response, 404, { error: 'sheet_music_not_found' });
-    return;
-  }
-
-  const contentType =
-    {
-      '.webp': 'image/webp',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.png': 'image/png',
-    }[extname(requestedPath).toLowerCase()] ?? 'application/octet-stream';
-
-  response.writeHead(200, {
-    'content-type': contentType,
-    'access-control-allow-origin': '*',
-    'cache-control': 'public, max-age=3600',
-  });
-  createReadStream(requestedPath).pipe(response);
-};
-
 const server = http.createServer(async (request, response) => {
   if (request.method === 'OPTIONS') {
     sendJson(response, 204, {});
@@ -273,11 +256,6 @@ const server = http.createServer(async (request, response) => {
         ? sdaCategories
         : [];
       sendJson(response, 200, { data });
-      return;
-    }
-
-    if (request.method === 'GET' && url.pathname.startsWith('/sheet_music/')) {
-      serveSheetMusic(request, response, url.pathname);
       return;
     }
 

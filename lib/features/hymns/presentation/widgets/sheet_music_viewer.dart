@@ -1,21 +1,31 @@
 // lib/features/hymns/presentation/widgets/sheet_music_viewer.dart
 import 'dart:io';
+import 'dart:math' as math;
 
+import 'package:amharic_hymnal_app/core/services/media_reference.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
 import 'package:flutter/material.dart';
 
-/// Widget for displaying sheet music images with zoom and pagination support
-/// Supports 0, 1, or 2 sheet music files per hymn
+typedef SheetMusicImageBuilder = Widget Function(
+  BuildContext context,
+  String filePath,
+  int cacheWidth,
+  int cacheHeight,
+);
+
+/// Displays downloaded sheet music with zoom and pagination support.
 class SheetMusicViewer extends StatefulWidget {
   final List<String> sheetMusicFiles;
   final int hymnNumber;
+  final SheetMusicImageBuilder? imageBuilder;
 
   const SheetMusicViewer({
     super.key,
     required this.sheetMusicFiles,
     required this.hymnNumber,
+    this.imageBuilder,
   });
 
   @override
@@ -26,12 +36,17 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   static const double _minScale = 1.0;
   static const double _maxScale = 4.0;
   static const double _zoomThreshold = 1.01;
-  static const double _sheetMusicAspectRatio = 2 / 3;
+  static const double _scaleBoundaryTolerance = 0.01;
+  static const double _sheetMusicAspectRatio = 2200 / 3122;
+  static const double _layoutTolerance = 0.5;
 
   final PageController _pageController = PageController();
   final List<TransformationController> _transformationControllers = [];
   final List<bool> _pageIsZoomed = [];
+  final Set<int> _pagesRequestingZoomOut = {};
   int _currentPage = 0;
+  Size? _lastViewportSize;
+  int _viewportRevision = 0;
   Offset? _doubleTapPosition;
 
   @override
@@ -51,6 +66,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       }
       _transformationControllers.clear();
       _pageIsZoomed.clear();
+      _pagesRequestingZoomOut.clear();
       for (int i = 0; i < widget.sheetMusicFiles.length; i++) {
         _addPageController();
       }
@@ -75,23 +91,6 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       controller.dispose();
     }
     super.dispose();
-  }
-
-  /// Get asset path for sheet music image
-  String _getAssetPath(String fileName) {
-    if (fileName.startsWith('/') ||
-        RegExp(r'^[A-Za-z]:\\').hasMatch(fileName)) {
-      return fileName;
-    }
-    // Remove any path separators and clean the filename
-    final cleanFileName = fileName.replaceAll('\\', '/').split('/').last;
-    // Construct asset path: files are directly in assets/sheet_music/
-    // File names are like "01.jpg", "08L.jpg", "08R.jpg", etc.
-    // If fileName already contains path, use it directly, otherwise prepend assets/sheet_music/
-    if (cleanFileName.startsWith('assets/')) {
-      return cleanFileName;
-    }
-    return 'assets/sheet_music/$cleanFileName';
   }
 
   @override
@@ -189,10 +188,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         },
         itemCount: widget.sheetMusicFiles.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: _buildSheetMusicPage(index),
-          );
+          return _buildSheetMusicPage(index);
         },
       ),
     );
@@ -200,52 +196,113 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
 
   Widget _buildSheetMusicPage(int index) {
     final fileName = widget.sheetMusicFiles[index];
-    final assetPath = _getAssetPath(fileName);
     final controller = _transformationControllers[index];
 
-    return Center(
-      child: AspectRatio(
-        aspectRatio: _sheetMusicAspectRatio,
-        child: ClipRRect(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewportSize = Size(
+          constraints.maxWidth,
+          constraints.maxHeight,
+        );
+        _scheduleViewportRefit(viewportSize);
+
+        final fittedPageHeight = viewportSize.width / _sheetMusicAspectRatio;
+        final needsBasePan =
+            fittedPageHeight > viewportSize.height + _layoutTolerance;
+        final interactionScaleFloor = math.max(
+          _minScale,
+          viewportSize.height / fittedPageHeight,
+        );
+
+        return ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: ColoredBox(
-            color: Colors.white,
-            child: GestureDetector(
-              onDoubleTapDown: (details) {
-                _doubleTapPosition = details.localPosition;
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onDoubleTapDown: (details) {
+              _doubleTapPosition = details.localPosition;
+            },
+            onDoubleTap: () => _togglePageZoom(
+              index,
+              _doubleTapPosition,
+            ),
+            child: InteractiveViewer(
+              key: ValueKey('sheet-music-viewport-$index'),
+              transformationController: controller,
+              alignment: Alignment.topLeft,
+              minScale: _minScale,
+              maxScale: _maxScale,
+              panEnabled: _pageIsZoomed[index] || needsBasePan,
+              boundaryMargin: EdgeInsets.zero,
+              constrained: false,
+              clipBehavior: Clip.hardEdge,
+              onInteractionStart: (_) {
+                _pagesRequestingZoomOut.remove(index);
               },
-              onDoubleTap: () => _togglePageZoom(
-                index,
-                _doubleTapPosition,
-              ),
-              child: InteractiveViewer(
-                transformationController: controller,
-                alignment: Alignment.center,
-                minScale: _minScale,
-                maxScale: _maxScale,
-                panEnabled: _pageIsZoomed[index],
-                boundaryMargin: EdgeInsets.zero,
-                constrained: true,
-                clipBehavior: Clip.hardEdge,
-                onInteractionUpdate: (_) => _syncZoomState(index),
-                onInteractionEnd: (_) {
-                  final currentScale = controller.value.getMaxScaleOnAxis();
-                  if (currentScale <= _zoomThreshold) {
+              onInteractionUpdate: (details) {
+                if (details.scale < _minScale) {
+                  _pagesRequestingZoomOut.add(index);
+                }
+                _syncZoomState(index);
+              },
+              onInteractionEnd: (_) {
+                final currentScale = controller.value.getMaxScaleOnAxis();
+                final requestedZoomOut = _pagesRequestingZoomOut.remove(index);
+                final reachedFittedBoundary = requestedZoomOut &&
+                    currentScale <=
+                        interactionScaleFloor + _scaleBoundaryTolerance;
+                if (reachedFittedBoundary) {
+                  controller.value = Matrix4.identity();
+                  _setPageZoomed(index, false);
+                } else if (currentScale <= _zoomThreshold) {
+                  if (!needsBasePan) {
                     controller.value = Matrix4.identity();
-                    _setPageZoomed(index, false);
-                  } else {
-                    _setPageZoomed(index, true);
                   }
-                },
-                child: RepaintBoundary(
-                  child: _buildSheetMusicImage(assetPath),
+                  _setPageZoomed(index, false);
+                } else {
+                  _setPageZoomed(index, true);
+                }
+              },
+              child: SizedBox(
+                key: ValueKey('sheet-music-content-$index'),
+                width: viewportSize.width,
+                height: fittedPageHeight,
+                child: ColoredBox(
+                  color: Colors.white,
+                  child: RepaintBoundary(
+                    child: _buildSheetMusicImage(fileName),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  void _scheduleViewportRefit(Size viewportSize) {
+    if (_lastViewportSize == viewportSize) return;
+
+    final hadPreviousLayout = _lastViewportSize != null;
+    _lastViewportSize = viewportSize;
+    if (!hadPreviousLayout) return;
+
+    final revision = ++_viewportRevision;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || revision != _viewportRevision) return;
+
+      for (final controller in _transformationControllers) {
+        controller.value = Matrix4.identity();
+      }
+
+      if (_pageIsZoomed.any((isZoomed) => isZoomed)) {
+        setState(() {
+          for (var index = 0; index < _pageIsZoomed.length; index++) {
+            _pageIsZoomed[index] = false;
+          }
+        });
+      }
+    });
   }
 
   void _syncZoomState(int index) {
@@ -273,19 +330,19 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       controller.value = Matrix4.identity();
     } else {
       final focal = focalPoint ?? Offset.zero;
+      final scenePoint = controller.toScene(focal);
       controller.value = Matrix4.identity()
         ..translate(focal.dx, focal.dy)
         ..scale(2.0)
-        ..translate(-focal.dx, -focal.dy);
+        ..translate(-scenePoint.dx, -scenePoint.dy);
     }
     _setPageZoomed(index, !shouldReset);
     _doubleTapPosition = null;
   }
 
-  Widget _buildSheetMusicImage(String assetPath) {
-    // Debug: Log asset path for troubleshooting
+  Widget _buildSheetMusicImage(String filePath) {
     if (kDebugMode) {
-      debugPrint('🎵 Loading sheet music from: $assetPath');
+      debugPrint('Loading downloaded sheet music: $filePath');
     }
 
     // Get screen size for cache dimensions (optimize for low-memory devices)
@@ -297,39 +354,28 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         final cacheWidth = (screenWidth * 2)
             .round()
             .clamp(400, 1200); // Cap between 400-1200px
-        final cacheHeight = (cacheWidth * 1.5)
-            .round(); // Assume 2:3 aspect ratio for sheet music
+        final cacheHeight = (cacheWidth / _sheetMusicAspectRatio).round();
 
         return SizedBox.expand(
-          child: _buildImage(assetPath, cacheWidth, cacheHeight),
+          child: _buildImage(filePath, cacheWidth, cacheHeight),
         );
       },
     );
   }
 
-  Widget _buildImage(String assetPath, int cacheWidth, int cacheHeight) {
-    final isLocalFile = assetPath.startsWith('/') ||
-        RegExp(r'^[A-Za-z]:\\').hasMatch(assetPath);
-    if (isLocalFile) {
-      return Image.file(
-        File(assetPath),
-        fit: BoxFit.contain,
-        alignment: Alignment.center,
-        gaplessPlayback: true,
-        cacheWidth: cacheWidth,
-        cacheHeight: cacheHeight,
-        errorBuilder: (context, error, stackTrace) {
-          if (kDebugMode) {
-            debugPrint('❌ Failed to load cached sheet music: $assetPath');
-            debugPrint('   Error: $error');
-          }
-          return _buildErrorWithRetry(context, assetPath);
-        },
-      );
+  Widget _buildImage(String filePath, int cacheWidth, int cacheHeight) {
+    final customBuilder = widget.imageBuilder;
+    if (customBuilder != null) {
+      return customBuilder(context, filePath, cacheWidth, cacheHeight);
     }
 
-    return Image.asset(
-      assetPath,
+    final reference = MediaReference.tryParse(filePath);
+    if (reference == null || !reference.isLocalFile) {
+      return _buildUnavailableImage();
+    }
+
+    return Image.file(
+      File(reference.localPath),
       fit: BoxFit.contain,
       alignment: Alignment.center,
       gaplessPlayback: true,
@@ -337,10 +383,9 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       cacheHeight: cacheHeight,
       errorBuilder: (context, error, stackTrace) {
         if (kDebugMode) {
-          debugPrint('❌ Failed to load sheet music: $assetPath');
-          debugPrint('   Error: $error');
+          debugPrint('Failed to load downloaded sheet music: $error');
         }
-        return _buildErrorWithRetry(context, assetPath);
+        return _buildUnavailableImage();
       },
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded || frame != null) return child;
@@ -353,42 +398,26 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
     );
   }
 
-  /// Build error widget with retry logic for alternative file extensions
-  Widget _buildErrorWithRetry(BuildContext context, String assetPath) {
-    // Try alternative extensions if original failed
-    final basePath = assetPath.split('.').first;
-    final extensions = ['jpg', 'jpeg', 'png', 'pdf'];
-
-    return Center(
+  Widget _buildUnavailableImage() {
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.broken_image,
             size: 48,
             color: AppColors.secondaryText,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
-            'የኖታ ምስል አልተገኘም\n$assetPath',
+            'የኖታ ምስል አልተገኘም',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.secondaryText,
               fontSize: 12,
               fontFamily: 'NotoSansEthiopic',
             ),
           ),
-          if (kDebugMode) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Tried: ${extensions.map((e) => '$basePath.$e').join(', ')}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.tertiaryText,
-                fontSize: 10,
-              ),
-            ),
-          ],
         ],
       ),
     );

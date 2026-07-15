@@ -51,7 +51,6 @@ dependencies:
   wakelock_plus: ^1.2.1
   share_plus: ^10.0.2
   http: ^1.2.2
-  flutter_secure_storage: ^9.2.4
   package_info_plus: ^8.0.2
 
 dev_dependencies:
@@ -85,12 +84,9 @@ flutter:
   assets:
     - assets/data/database/HagerignaData.json
     - assets/data/database/SDA_Hymnal.json
-    - assets/fonts/NotoSansEthiopic-Regular.ttf
     - assets/images/background.jpg
     - assets/images/favicon.png
     - assets/images/media_artwork.png
-    - assets/audio/
-    - assets/sheet_music/
     - assets/onboarding/index.webp
     - assets/onboarding/library.webp
     - assets/onboarding/number.webp

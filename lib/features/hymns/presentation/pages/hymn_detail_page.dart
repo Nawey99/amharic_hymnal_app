@@ -1,4 +1,6 @@
 // lib/features/hymns/presentation/pages/hymn_detail_page.dart
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -8,17 +10,16 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
-import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/audio_section_widget.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_media_controls.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HymnDetailPage extends StatefulWidget {
@@ -49,11 +50,13 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Future<Hymn?>? _numberLookupFuture;
   bool _isLoadingAdjacentHymn = false;
   int? _displayedHymnNumber;
-  double _lyricsZoomScale = AppConstants.defaultZoomScale;
-  double _scaleStartZoom = AppConstants.defaultZoomScale;
+  double? _lyricsPreviewFontSize;
+  double _pinchStartFontSize = AppConstants.defaultFontSize;
+  final Map<int, Offset> _activeLyricsPointers = {};
+  List<int>? _lyricsPinchPointerIds;
+  double _lyricsPinchStartDistance = 0;
+  bool _isLyricsPinching = false;
   final Map<int, bool> _favoriteOverrides = {};
-  final SheetMusicRepository _sheetMusicRepository = SheetMusicRepository();
-  final DownloadRepository _downloadRepository = DownloadRepository();
   final ScrollController _lyricsScrollController = ScrollController();
   bool _isMediaCondensed = false;
 
@@ -220,10 +223,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
+        if (_isLyricsPinching) return;
         _horizontalDragStart = details.globalPosition.dx;
         _isHorizontalDrag = false;
       },
       onHorizontalDragUpdate: (details) {
+        if (_isLyricsPinching) {
+          _isHorizontalDrag = false;
+          return;
+        }
         // Check if this is a primarily horizontal drag (not diagonal)
         final deltaX = details.globalPosition.dx - _horizontalDragStart;
         final deltaY = details.delta.dy.abs();
@@ -234,7 +242,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         }
       },
       onHorizontalDragEnd: (details) {
-        if (_isHorizontalDrag && details.primaryVelocity != null) {
+        if (!_isLyricsPinching &&
+            _isHorizontalDrag &&
+            details.primaryVelocity != null) {
           _handleSwipe(details, hymn.displayNumber);
         }
         _isHorizontalDrag = false;
@@ -245,6 +255,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           _buildBackground(),
           Scaffold(
             backgroundColor: Colors.transparent,
+            extendBody: true,
             appBar: _buildAppBar(hymn, isFavorite),
             resizeToAvoidBottomInset: false,
             bottomNavigationBar: _buildLyricsBottomNavigation(version),
@@ -308,88 +319,46 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     final selectedIndex = items.indexWhere(
       (item) => item.id == widget.sourceDestination,
     );
-    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final compactLabels =
-        textScale > 1.25 || MediaQuery.sizeOf(context).width < 375;
-
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        backgroundColor: AppColors.primaryBackground.withValues(alpha: 0.96),
-        indicatorColor: Colors.transparent,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return TextStyle(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            fontSize: selected
-                ? (compactLabels ? 11 : 12)
-                : (compactLabels ? 10 : 11),
-            fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
-            fontFamily: 'NotoSansEthiopic',
-          );
-        }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            color: selected ? AppColors.accentGreen : AppColors.primaryText,
-            size: selected ? 28 : 24,
-          );
-        }),
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.15),
-              width: 0.5,
+    return AppBottomNavigationBar(
+      selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+      destinations: items
+          .map(
+            (item) => AppNavigationDestination(
+              id: item.id,
+              icon: item.icon,
+              selectedIcon: item.selectedIcon,
+              label: item.label,
+            ),
+          )
+          .toList(growable: false),
+      onDestinationSelected: (index) {
+        final item = items[index];
+        final onDestinationSelected = widget.onDestinationSelected;
+        if (onDestinationSelected != null) {
+          onDestinationSelected(item.id);
+          return;
+        }
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => MainNavigationPage(
+              initialDestination: item.id,
             ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: NavigationBar(
-          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-          height: compactLabels ? 66 : 70,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          onDestinationSelected: (index) {
-            final item = items[index];
-            final onDestinationSelected = widget.onDestinationSelected;
-            if (onDestinationSelected != null) {
-              onDestinationSelected(item.id);
-              return;
-            }
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => MainNavigationPage(
-                  initialDestination: item.id,
-                ),
-              ),
-              (route) => false,
-            );
-          },
-          destinations: items
-              .map(
-                (item) => NavigationDestination(
-                  icon: Icon(item.icon),
-                  selectedIcon: Icon(item.selectedIcon),
-                  label: item.label,
-                ),
-              )
-              .toList(growable: false),
-        ),
-      ),
+          (route) => false,
+        );
+      },
     );
   }
 
   void _syncDisplayedHymn(Hymn hymn) {
     if (_displayedHymnNumber == hymn.displayNumber) return;
     _displayedHymnNumber = hymn.displayNumber;
-    _lyricsZoomScale = AppConstants.defaultZoomScale;
-    _scaleStartZoom = AppConstants.defaultZoomScale;
+    _lyricsPreviewFontSize = null;
+    _pinchStartFontSize = FontSizeService().getFontSize();
+    _activeLyricsPointers.clear();
+    _lyricsPinchPointerIds = null;
+    _lyricsPinchStartDistance = 0;
+    _isLyricsPinching = false;
   }
 
   String _getVersion() {
@@ -529,135 +498,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
-  Future<void> _openSheetMusic(Hymn hymn) async {
-    var files = await _sheetMusicRepository.getFilesForHymn(hymn);
-    if (!mounted) return;
-
-    final remoteSources = files
-        .where(
-            (file) => file.startsWith('http://') || file.startsWith('https://'))
-        .map(Uri.parse)
-        .toList();
-    if (remoteSources.isNotEmpty) {
-      final cached = await _sheetMusicRepository.cachedFilesForSources(
-        remoteSources,
-      );
-      if (!mounted) return;
-      if (cached.isNotEmpty) {
-        files = cached;
-      } else {
-        final downloaded = await _confirmAndDownloadSheetMusic(
-          hymn,
-          remoteSources,
-        );
-        if (!mounted) return;
-        if (downloaded.isEmpty) return;
-        files = downloaded;
-      }
-    }
-
-    if (files.isEmpty) {
-      _showComingSoonMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SheetMusicViewerPage(
-          hymn: hymn,
-          sheetMusicFiles: files,
-        ),
-      ),
-    );
-  }
-
-  Future<List<String>> _confirmAndDownloadSheetMusic(
-    Hymn hymn,
-    List<Uri> sources,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
-          'ኖታ ይውረድ?',
-          style: TextStyle(color: AppColors.primaryText),
-        ),
-        content: const Text(
-          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።',
-          style: TextStyle(color: AppColors.secondaryText),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('ይቅር'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('አውርድ'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true) return const [];
-    if (!mounted) return const [];
-
-    var progress = 0.0;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            backgroundColor: AppColors.surface,
-            title: const Text(
-              'ኖታ በማውረድ ላይ',
-              style: TextStyle(color: AppColors.primaryText),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LinearProgressIndicator(
-                  value: progress == 0 ? null : progress,
-                  color: AppColors.accentGreen,
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'እባክዎ ይጠብቁ...',
-                  style: TextStyle(color: AppColors.secondaryText),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    final downloaded = <String>[];
-    try {
-      for (final source in sources) {
-        final file = await _downloadRepository.requestDownload(
-          mediaType: 'sheet_music',
-          hymnNumber: hymn.displayNumber,
-          source: source,
-          onProgress: (received, total) {
-            if (total == null || total <= 0) return;
-            progress = (received / total).clamp(0.0, 1.0);
-          },
-        );
-        downloaded.add(file.path);
-      }
-    } catch (_) {
-      if (mounted) {
-        _showComingSoonMessage('ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
-      }
-    } finally {
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    }
-    return downloaded;
-  }
-
   Widget _buildFavoriteButton(Hymn hymn, bool isFavorite) {
     // Simple favorite button - no loading indicator, just instant toggle
     return IconButton(
@@ -701,8 +541,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         if (!hymn.isHagerigna)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: _buildMediaControls(
-              hymn,
+            child: HymnMediaControls(
+              hymn: hymn,
+              version: _getVersion(),
               condensed: _isMediaCondensed,
             ),
           ),
@@ -714,44 +555,103 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 
   Widget _buildLyricsViewport(Hymn hymn, double fontSize) {
-    return GestureDetector(
+    return Listener(
       behavior: HitTestBehavior.opaque,
-      onScaleStart: (details) {
-        if (details.pointerCount >= 2) {
-          _scaleStartZoom = _lyricsZoomScale;
-        }
-      },
-      onScaleUpdate: (details) {
-        if (details.pointerCount < 2) return;
-        final nextScale = (_scaleStartZoom * details.scale).clamp(
-          AppConstants.minZoomScale,
-          AppConstants.maxZoomScale,
-        );
-        if ((nextScale - _lyricsZoomScale).abs() < 0.005) return;
-        setState(() {
-          _lyricsZoomScale = nextScale;
-        });
-      },
+      onPointerDown: _handleLyricsPointerDown,
+      onPointerMove: _handleLyricsPointerMove,
+      onPointerUp: _handleLyricsPointerEnd,
+      onPointerCancel: _handleLyricsPointerEnd,
       child: SingleChildScrollView(
         controller: _lyricsScrollController,
+        physics:
+            _isLyricsPinching ? const NeverScrollableScrollPhysics() : null,
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         child: _buildLyricsSection(hymn, fontSize),
       ),
     );
   }
 
+  void _handleLyricsPointerDown(PointerDownEvent event) {
+    _activeLyricsPointers[event.pointer] = event.localPosition;
+    if (_lyricsPinchPointerIds != null || _activeLyricsPointers.length < 2) {
+      return;
+    }
+
+    final pointerIds = _activeLyricsPointers.keys.take(2).toList();
+    final firstPosition = _activeLyricsPointers[pointerIds.first]!;
+    final secondPosition = _activeLyricsPointers[pointerIds.last]!;
+    final startDistance = (firstPosition - secondPosition).distance;
+    if (startDistance <= 0) return;
+
+    _lyricsPinchPointerIds = pointerIds;
+    _lyricsPinchStartDistance = startDistance;
+    _pinchStartFontSize =
+        _lyricsPreviewFontSize ?? FontSizeService().getFontSize();
+    _isHorizontalDrag = false;
+    if (!_isLyricsPinching && mounted) {
+      setState(() => _isLyricsPinching = true);
+    }
+  }
+
+  void _handleLyricsPointerMove(PointerMoveEvent event) {
+    if (!_activeLyricsPointers.containsKey(event.pointer)) return;
+    _activeLyricsPointers[event.pointer] = event.localPosition;
+
+    final pointerIds = _lyricsPinchPointerIds;
+    if (pointerIds == null || !pointerIds.contains(event.pointer)) return;
+    final firstPosition = _activeLyricsPointers[pointerIds.first];
+    final secondPosition = _activeLyricsPointers[pointerIds.last];
+    if (firstPosition == null || secondPosition == null) return;
+
+    final distance = (firstPosition - secondPosition).distance;
+    final scaleDelta = distance / _lyricsPinchStartDistance;
+    final nextFontSize = (_pinchStartFontSize * scaleDelta).clamp(
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
+    );
+    final currentFontSize =
+        _lyricsPreviewFontSize ?? FontSizeService().getFontSize();
+    if ((nextFontSize - currentFontSize).abs() < 0.005) return;
+    setState(() => _lyricsPreviewFontSize = nextFontSize);
+  }
+
+  void _handleLyricsPointerEnd(PointerEvent event) {
+    _activeLyricsPointers.remove(event.pointer);
+    if (_lyricsPinchPointerIds?.contains(event.pointer) ?? false) {
+      _lyricsPinchPointerIds = null;
+    }
+    if (!_isLyricsPinching || _activeLyricsPointers.isNotEmpty) return;
+
+    final previewFontSize = _lyricsPreviewFontSize;
+    setState(() => _isLyricsPinching = false);
+    if (previewFontSize != null) {
+      unawaited(_persistLyricsFontSize(previewFontSize));
+    }
+  }
+
+  Future<void> _persistLyricsFontSize(double fontSize) async {
+    await FontSizeService().setFontSize(fontSize);
+    if (!mounted || _isLyricsPinching) return;
+
+    final previewFontSize = _lyricsPreviewFontSize;
+    if (previewFontSize == null || (previewFontSize - fontSize).abs() > 0.005) {
+      return;
+    }
+    setState(() => _lyricsPreviewFontSize = null);
+  }
+
   Widget _buildLyricsSection(Hymn hymn, double fontSize) {
+    final effectiveFontSize = (_lyricsPreviewFontSize ?? fontSize).clamp(
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
+    );
     // Reduced padding for more compact lyrics card
     // Keep horizontal padding consistent, reduce vertical padding
-    final padding = fontSize > 24
+    final padding = effectiveFontSize > 24
         ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
-        : (fontSize < 16
+        : (effectiveFontSize < 16
             ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
             : const EdgeInsets.symmetric(horizontal: 16, vertical: 10));
-    final effectiveFontSize = (fontSize * _lyricsZoomScale).clamp(
-      AppConstants.minFontSize * AppConstants.minZoomScale,
-      AppConstants.maxFontSize * AppConstants.maxZoomScale,
-    );
 
     return GlassContainer(
       borderRadius: 12.0,
@@ -777,73 +677,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         textAlign: TextAlign.start,
         textWidthBasis: TextWidthBasis.parent,
       ),
-    );
-  }
-
-  Widget _buildAudioSection(Hymn hymn, {required bool condensed}) {
-    return AudioSectionWidget(
-      hymnNumber: hymn.displayNumber,
-      hymnTitle: hymn.displayTitle.isNotEmpty
-          ? hymn.displayTitle
-          : 'መዝሙር ${hymn.displayNumber}',
-      englishTitle: hymn.displayEnglishTitle,
-      version: _getVersion(),
-      condensed: condensed,
-    );
-  }
-
-  Widget _buildMediaControls(Hymn hymn, {required bool condensed}) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final compact = condensed || constraints.maxWidth < 380;
-        final shouldStack = constraints.maxWidth < 320;
-        final sheetButtonWidth = compact ? 62.0 : 72.0;
-        final mediaGap = compact ? 8.0 : 10.0;
-
-        Widget buildSheetMusicButton({required bool stretch}) {
-          return FutureBuilder<List<String>>(
-            future: _sheetMusicRepository.getFilesForHymn(hymn),
-            builder: (context, snapshot) {
-              final hasSheetMusic = snapshot.data?.isNotEmpty ?? false;
-              return _SheetMusicPreviewBox(
-                enabled: hasSheetMusic,
-                width: stretch ? sheetButtonWidth : null,
-                stretch: stretch,
-                condensed: condensed,
-                onTap: hasSheetMusic ? () => _openSheetMusic(hymn) : null,
-              );
-            },
-          );
-        }
-
-        if (shouldStack || (constraints.maxWidth < 340 && !condensed)) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildAudioSection(hymn, condensed: false),
-              buildSheetMusicButton(stretch: false),
-            ],
-          );
-        }
-
-        final mediaRow = Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: _buildAudioSection(hymn, condensed: condensed),
-            ),
-            SizedBox(width: mediaGap),
-            SizedBox(
-              width: sheetButtonWidth,
-              child: buildSheetMusicButton(stretch: true),
-            ),
-          ],
-        );
-
-        return IntrinsicHeight(
-          child: mediaRow,
-        );
-      },
     );
   }
 
@@ -878,70 +711,4 @@ class _LyricsNavItem {
     required this.selectedIcon,
     required this.label,
   });
-}
-
-class _SheetMusicPreviewBox extends StatelessWidget {
-  final bool enabled;
-  final double? width;
-  final bool stretch;
-  final bool condensed;
-  final VoidCallback? onTap;
-
-  const _SheetMusicPreviewBox({
-    required this.enabled,
-    this.width,
-    required this.stretch,
-    required this.condensed,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: 'ኖታ ክፈት',
-      button: enabled,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: GlassContainer(
-          width: width ?? double.infinity,
-          height: stretch ? double.infinity : null,
-          borderRadius: 18,
-          blurSigma: 12,
-          opacity: enabled ? 0.25 : 0.12,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          margin: const EdgeInsets.only(bottom: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.library_music_outlined,
-                color:
-                    enabled ? AppColors.accentGreen : AppColors.secondaryText,
-                size: condensed ? 22 : 20,
-              ),
-              if (!condensed) ...[
-                const SizedBox(height: 2),
-                Text(
-                  enabled ? 'ኖታ' : 'የለም',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: enabled
-                        ? AppColors.primaryText
-                        : AppColors.secondaryText,
-                    fontSize: 11,
-                    height: 1,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'NotoSansEthiopic',
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

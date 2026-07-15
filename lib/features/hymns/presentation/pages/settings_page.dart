@@ -10,6 +10,8 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -116,6 +118,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildPageContent(BuildContext context) {
     final bgService = BackgroundImageService();
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
+    final itemGap = compactLandscape ? 8.0 : 12.0;
+    final sectionGap = compactLandscape ? 14.0 : 24.0;
+    final bottomPadding = NavBarConstants.getBottomPadding(context);
 
     return Container(
       decoration: _buildBackgroundDecoration(bgService),
@@ -127,7 +133,12 @@ class _SettingsPageState extends State<SettingsPage> {
               const MainPageTitleBar(title: 'ቅንብር'),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    compactLandscape ? 6 : 16,
+                    16,
+                    bottomPadding,
+                  ),
                   children: [
                     _buildSectionTitle(
                         AppLocalizations.of(context)?.contentSection ??
@@ -174,7 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: itemGap),
                     SettingsDropdownTile(
                       title: AppLocalizations.of(context)?.versionLabel ??
                           'Version',
@@ -223,7 +234,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: sectionGap),
                     _buildSectionTitle(
                         AppLocalizations.of(context)?.displaySection ??
                             'Display'),
@@ -251,7 +262,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: itemGap),
                     SettingsSwitchTile(
                       title:
                           AppLocalizations.of(context)?.backgroundImageLabel ??
@@ -269,7 +280,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() => _backgroundImageEnabled = value);
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: sectionGap),
                     _buildSectionTitle(
                         AppLocalizations.of(context)?.generalSection ??
                             'General'),
@@ -289,7 +300,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() => _keepScreenOn = value);
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: sectionGap),
                     _buildSectionTitle('ስለ መተግበሪያው'),
                     SettingsTile(
                       icon: Icons.code,
@@ -301,7 +312,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
                       onTap: _openContributionLink,
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: itemGap),
                     SettingsTile(
                       icon: Icons.favorite,
                       title:
@@ -316,7 +327,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         );
                       },
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: itemGap),
                     SettingsTile(
                       icon: Icons.bug_report,
                       title:
@@ -372,8 +383,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 8),
+      padding: EdgeInsets.only(
+        bottom: compactLandscape ? 7 : 12,
+        top: compactLandscape ? 3 : 8,
+      ),
       child: Text(
         title,
         style: const TextStyle(

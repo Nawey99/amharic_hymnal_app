@@ -10,7 +10,6 @@ class HymnalAudioHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
   static const String sourceTypeExtra = 'sourceType';
   static const String sourceExtra = 'source';
-  static const String sourceTypeAsset = 'asset';
   static const String sourceTypeFile = 'file';
   static const String sourceTypeUri = 'uri';
   static const Duration seekInterval = Duration(seconds: 10);
@@ -115,7 +114,6 @@ class HymnalAudioHandler extends BaseAudioHandler
     }
 
     return switch (sourceType) {
-      sourceTypeAsset => AudioSource.asset(source, tag: item),
       sourceTypeFile => AudioSource.file(source, tag: item),
       sourceTypeUri => AudioSource.uri(_validatedUri(source), tag: item),
       _ => throw ArgumentError(

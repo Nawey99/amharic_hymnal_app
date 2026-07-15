@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
-import 'package:amharic_hymnal_app/core/services/sheet_music_discovery_service.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
@@ -74,13 +73,6 @@ class _AppInitializerState extends State<AppInitializer> {
 
       // Initialize screen service (keep screen on)
       await ScreenService.initialize();
-
-      // Initialize sheet music discovery service (scans assets)
-      SheetMusicDiscoveryService().initialize().catchError((e) {
-        if (kDebugMode) {
-          debugPrint('Warning: Sheet music discovery failed: $e');
-        }
-      });
 
       if (mounted) {
         setState(() {

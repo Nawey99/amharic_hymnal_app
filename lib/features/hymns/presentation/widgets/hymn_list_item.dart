@@ -5,6 +5,7 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -26,6 +27,7 @@ class HymnListItem extends StatelessWidget {
     final fontSize = settingsRepository.getFontSize();
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final backgroundImageEnabled = BackgroundImageService().isEnabled;
+    final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
 
     return Material(
       color: Colors.transparent,
@@ -33,7 +35,7 @@ class HymnListItem extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: GlassContainer(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: EdgeInsets.only(bottom: compactLandscape ? 6 : 10),
           borderRadius: 12.0,
           blurSigma: 12.0,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
@@ -46,7 +48,7 @@ class HymnListItem extends StatelessWidget {
           ),
           padding: EdgeInsets.symmetric(
             horizontal: compactHorizontalPadding(textScale),
-            vertical: 10,
+            vertical: compactLandscape ? 6 : 10,
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -62,6 +64,7 @@ class HymnListItem extends StatelessWidget {
                       context,
                       hymn,
                       fontSize,
+                      compactLandscape,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -108,6 +111,7 @@ class HymnListItem extends StatelessWidget {
     BuildContext context,
     Hymn hymn,
     double fontSize,
+    bool compactLandscape,
   ) {
     String amharicTitle = hymn.displayTitle.trim();
     if (amharicTitle.isEmpty) {
@@ -150,7 +154,7 @@ class HymnListItem extends StatelessWidget {
             textAlign: TextAlign.start,
           ),
           if (hasEnglishTitle) ...[
-            const SizedBox(height: 3),
+            SizedBox(height: compactLandscape ? 1 : 3),
             Text(
               englishTitle,
               style: TextStyle(
