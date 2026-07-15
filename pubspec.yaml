@@ -89,8 +89,6 @@ flutter:
     - assets/images/background.jpg
     - assets/images/favicon.png
     - assets/images/media_artwork.png
-    - assets/audio/
-    - assets/sheet_music/
     - assets/onboarding/index.webp
     - assets/onboarding/library.webp
     - assets/onboarding/number.webp
