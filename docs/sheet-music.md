@@ -2,16 +2,23 @@
 
 ## Current Behavior
 
-Sheet music is no longer bundled into the base Flutter asset manifest. The UI shows a compact sheet-music box beside the audio area on the lyrics page. Tapping it opens a full-screen viewer with an X close button.
+Sheet music is not bundled in the Flutter asset manifest. The lyrics page shows
+its compact sheet-music control only when the selected hymn contains at least
+one valid remote URL or downloaded local path.
 
-The viewer supports:
+When remote sheet music is not cached, the app asks in Amharic before
+downloading. Completed files are stored in app-support storage and can be opened
+offline later. Missing, relative, or invalid references are handled without a
+crash.
 
-- full-screen image area
-- pinch zoom and pan
-- page indicators for multiple pages
-- screenshot blocking on Android through the existing secure-screen service
-- cached local file paths and bundled asset paths
+The full-screen viewer preserves:
 
-## Download Flow
+- width-fitted pages in portrait and landscape
+- pinch zoom, double-tap zoom, and bounded pan
+- pagination for multiple downloaded pages
+- Android screenshot blocking
+- iOS capture/background privacy overlays
+- graceful no-op capture protection where the platform cannot provide it
 
-When a hymn provides remote sheet music URLs and they are not cached, the app asks in Amharic before downloading. Downloaded files are stored in app support storage and can be opened offline later.
+The viewer reads downloaded local files only. The content backend must resolve
+storage keys to explicit HTTP(S) URLs before returning hymn metadata.

@@ -136,7 +136,7 @@ Responsibilities:
 - Local search within the selected book
 - Local favorites/history cache
 - Sheet music viewing with cache
-- Audio playback with cache/streaming
+- Audio playback from downloaded cache files
 - Settings
 - Report submission queue when offline
 
@@ -144,7 +144,7 @@ Local app storage:
 
 - Drift/SQLite for content cache and search index
 - SharedPreferences or Drift for small user state
-- Secure storage for auth/device token
+- OS-backed secure storage for auth/device tokens when authentication is added
 - App documents/cache directory for sheet music and audio cache
 
 ## Current JSON Import Strategy
@@ -166,9 +166,9 @@ The seeds create:
 - 325 SDA new hymnal entries in the SDA database
 - 294 SDA old hymnal entries in the SDA database
 - 121 Hagerigna entries in the Hagerigna database
-- 398 SDA sheet-music media assets linked to 325 SDA works
+- 398 legacy SDA sheet-music metadata records linked to 325 SDA works
 
-Sheet music is imported from `assets/sheet_music` as `media_assets`, then connected to reusable SDA works through `media_links`. The importer preserves the original app asset path in metadata and stores normalized backend keys such as `sda-hymnal/sheet-music/8/left.webp`. Audio is not created from the JSON because the JSON does not contain reliable audio metadata.
+The existing seed preserves legacy sheet-music metadata and normalized storage keys such as `sda-hymnal/sheet-music/8/left.webp`. The local source files are no longer bundled in this repository. Before production media is exposed, those storage keys must be uploaded to the selected object store and resolved to public or signed HTTP(S) URLs. Audio is not created from the JSON because the JSON does not contain reliable audio metadata.
 
 Old and new SDA hymnal numbers stay in `book_entries` because numbering belongs to an edition, not to the reusable song itself. The old and new editions live together in the SDA content database so similar songs can reuse one `works` row. For backend API convenience, PostgreSQL exposes `sda_hymnal_number_map`, `sda_hymnal_songs`, and `sda_hymnal_sheet_music`, which return old/new numbers, match status, and linked sheet-music metadata per reusable work.
 

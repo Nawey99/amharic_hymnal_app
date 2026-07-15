@@ -1,40 +1,35 @@
 # Downloadable Media
 
-## Architecture
+## Contract
 
-The app now has repository/cache abstractions for media:
+The Flutter app does not derive media URLs from hymn numbers. The content
+backend must return an explicit absolute HTTP(S) URL for each audio or
+sheet-music file in hymn metadata. Relative paths and Flutter asset paths are
+rejected because hymn media is no longer bundled with the application.
 
-- `SheetMusicRepository`
-- `AudioRepository`
-- `DownloadRepository`
-- `LocalMediaCacheService`
-- `RemoteSheetMusicDataSource`
-- `RemoteAudioDataSource`
+The media layer consists of:
 
-Sheet music lookup order:
+- `MediaReference`, which validates remote URLs and downloaded local paths
+- `AudioRepository` and `SheetMusicRepository`, which resolve hymn metadata
+- `DownloadRepository`, which exposes download, delete, and clear operations
+- `LocalMediaCacheService`, which stores downloaded media in app-support storage
 
-1. Use paths supplied by hymn data if present.
-2. Use bundled asset discovery only if a build intentionally bundles sheet music.
-3. Fall back to content API remote candidates such as `/sheet_music/{number}.webp`, `/sheet_music/{number}_L.webp`, and `/sheet_music/{number}_R.webp`.
-4. If remote files are not cached, show an Amharic download confirmation dialog.
-5. Download into app support storage and open cached files offline later.
+Backend storage keys are not public download URLs. A future media backend or CDN
+must resolve those keys before returning content to the app. Until that contract
+is implemented, the media controls show an unavailable state.
 
-## User Flow
+## Download Flow
 
-When remote sheet music is not cached, the lyrics page asks before downloading. Cancel does not download. Download failure shows an Amharic message.
+1. The selected hymn supplies one or more explicit media URLs.
+2. The repository checks for a previously downloaded copy.
+3. The app asks the user before downloading uncached media.
+4. The response streams to a temporary file.
+5. A complete non-empty response is atomically renamed into the media cache.
+6. Audio plays from the downloaded file and sheet music opens from local paths.
 
-## Maintainer Action
+Interrupted or incomplete downloads are deleted. Cache filenames include a
+stable URL hash to prevent collisions between different backend objects with the
+same filename.
 
-The content backend should expose sheet music/audio files at stable URLs or return exact media URLs in the hymn API. The Flutter app is ready to consume those URLs through the repository layer.
-# Final QA Update
-
-Media repository abstractions remain in place:
-
-- `SheetMusicRepository`
-- `AudioRepository`
-- `DownloadRepository`
-- `LocalMediaCacheService`
-- `RemoteSheetMusicDataSource`
-- `RemoteAudioDataSource`
-
-Sheet music and category source images are not bundled in the base app asset list. Future production media should be served from backend/CDN URLs with file-size metadata so the app can show Amharic download prompts before caching media offline.
+Web offline media storage is intentionally not implemented yet. The web UI
+handles this as unavailable instead of guessing a storage or endpoint contract.
