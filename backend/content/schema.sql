@@ -32,7 +32,12 @@ create table if not exists book_editions (
   id uuid primary key default gen_random_uuid(),
   book_id uuid not null references books(id) on delete cascade,
   slug text not null unique,
+  version_key text not null unique,
   title text not null,
+  native_title text,
+  publication_year integer,
+  status text not null default 'draft'
+    check (status in ('draft', 'published', 'archived')),
   edition_type text not null default 'primary',
   sort_order integer not null default 0,
   source_note text,
@@ -59,6 +64,7 @@ create table if not exists works (
   primary_language_code text not null references languages(code),
   default_title text not null,
   default_english_title text,
+  canonical_lyrics text not null default '',
   normalized_title text,
   notes text,
   created_at timestamptz not null default now(),
@@ -70,9 +76,9 @@ create table if not exists book_entries (
   edition_id uuid not null references book_editions(id) on delete cascade,
   work_id uuid not null references works(id) on delete restrict,
   entry_number integer not null,
-  title text not null,
+  title text,
   english_title text,
-  lyrics text not null default '',
+  lyrics text,
   category_id uuid references categories(id) on delete set null,
   source_key text not null,
   source_index integer not null,
@@ -153,6 +159,31 @@ create table if not exists content_import_issues (
   unique (source_name, issue_key)
 );
 
+create table if not exists content_audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  catalog text not null check (catalog in ('sda', 'hagerigna')),
+  action text not null check (
+    action in (
+      'create',
+      'update',
+      'merge',
+      'edition_create',
+      'edition_update',
+      'membership_remove',
+      'media_add',
+      'media_update',
+      'media_remove'
+    )
+  ),
+  entity_type text not null,
+  entity_id uuid,
+  work_id uuid,
+  actor text not null,
+  before jsonb,
+  after jsonb,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists idx_books_language on books(language_code);
 create index if not exists idx_book_editions_book on book_editions(book_id);
 create index if not exists idx_book_entries_edition_number on book_entries(edition_id, entry_number);
@@ -167,6 +198,10 @@ create unique index if not exists idx_media_links_unique_target
   nulls not distinct;
 create index if not exists idx_content_import_issues_status
   on content_import_issues(severity, issue_type, resolved_at);
+create index if not exists idx_content_audit_logs_catalog_created
+  on content_audit_logs(catalog, created_at desc);
+create index if not exists idx_content_audit_logs_work_created
+  on content_audit_logs(work_id, created_at desc);
 
 create or replace view catalog_entries as
 select
@@ -174,12 +209,13 @@ select
   b.slug as book_slug,
   b.title as book_title,
   be.slug as edition_slug,
+  be.version_key,
   be.title as edition_title,
   e.id as entry_id,
   e.entry_number,
-  e.title,
-  e.english_title,
-  e.lyrics,
+  coalesce(e.title, w.default_title) as title,
+  coalesce(e.english_title, w.default_english_title) as english_title,
+  coalesce(e.lyrics, w.canonical_lyrics) as lyrics,
   w.id as work_id,
   w.canonical_key,
   c.slug as category_slug,
@@ -226,10 +262,16 @@ select
   ) as english_title,
   (max(e.id::text) filter (where be.slug = 'am-sda-hymnal-new'))::uuid as new_entry_id,
   max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-new') as new_hymnal_number,
-  max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-new') as new_lyrics,
+  coalesce(
+    max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-new'),
+    w.canonical_lyrics
+  ) as new_lyrics,
   (max(e.id::text) filter (where be.slug = 'am-sda-hymnal-old'))::uuid as old_entry_id,
   max(e.entry_number) filter (where be.slug = 'am-sda-hymnal-old') as old_hymnal_number,
-  max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-old') as old_lyrics,
+  coalesce(
+    max(e.lyrics) filter (where be.slug = 'am-sda-hymnal-old'),
+    w.canonical_lyrics
+  ) as old_lyrics,
   case
     when max(e.id::text) filter (where be.slug = 'am-sda-hymnal-new') is null then 'missing_new'
     when max(e.id::text) filter (where be.slug = 'am-sda-hymnal-old') is null then 'missing_old'
@@ -239,7 +281,12 @@ from works w
 join book_entries e on e.work_id = w.id
 join book_editions be on be.id = e.edition_id
 where be.slug in ('am-sda-hymnal-new', 'am-sda-hymnal-old')
-group by w.id, w.canonical_key, w.default_title, w.default_english_title;
+group by
+  w.id,
+  w.canonical_key,
+  w.default_title,
+  w.default_english_title,
+  w.canonical_lyrics;
 
 create or replace view sda_hymnal_sheet_music as
 select

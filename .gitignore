@@ -36,6 +36,22 @@ migrate_working_dir/
 /android/build/
 node_modules/
 backend/*/node_modules/
+backend/content/.artifacts/
+.artifacts/
+
+# Local secrets and signing material. Commit only the documented examples.
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+android/key.properties
+ios/Runner/AuthKey_*.p8
 .tmp_*/
 .tmp_*.log
 .tmp_*.txt

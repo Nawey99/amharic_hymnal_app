@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: wudase-content
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./backend/content/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CONTENT_PUBLIC_MODE
+        value: release
+      - key: CONTENT_FORCE_HTTPS
+        value: "true"
+      - key: CONTENT_TRUST_PROXY
+        value: "true"
+      - key: ALLOW_LEGACY_CONTENT_ADMIN
+        value: "false"
+      - key: SDA_HYMNAL_DATABASE_URL
+        sync: false
+      - key: HAGERIGNA_DATABASE_URL
+        sync: false
+      - key: CONTENT_ALLOWED_ORIGINS
+        sync: false

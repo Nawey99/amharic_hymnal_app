@@ -4,15 +4,31 @@
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
+    "dev:env": "node --env-file=.env src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test",
+    "test:integration": "node scripts/integration-smoke.js",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "check": "node --check src/server.js && node --check src/admin/domain.js && node --check src/admin/service.js && node --check src/admin/collaboration.js && node --check src/admin/release-files.js && node --check src/admin/release-service.js && node --check src/admin/content-studio.js && node --check src/admin/review-console.js && node --check scripts/migrate.mjs && node --check scripts/bootstrap-owner.mjs && node --check scripts/integration-smoke.js && node --check scripts/browser-smoke.mjs && node --test",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:deploy": "node scripts/migrate.mjs",
+    "db:deploy:env": "node --env-file=.env scripts/migrate.mjs",
+    "bootstrap:owner": "node scripts/bootstrap-owner.mjs",
+    "bootstrap:owner:env": "node --env-file=.env scripts/bootstrap-owner.mjs",
+    "release:download": "node scripts/download-release.mjs"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
+    "playwright": "^1.62.1",
     "prisma": "^5.22.0"
   }
 }

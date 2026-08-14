@@ -19,26 +19,145 @@ on conflict (slug) do update set
   book_type = excluded.book_type,
   source_note = excluded.source_note,
   updated_at = now();
-insert into book_editions (book_id, slug, title, edition_type, sort_order, source_note)
-select id, 'am-sda-hymnal-new', 'Amharic SDA Hymnal', 'new', 10, 'new_title_forbookmark and new_song arrays'
+insert into book_editions (
+  book_id,
+  slug,
+  version_key,
+  title,
+  native_title,
+  publication_year,
+  status,
+  edition_type,
+  sort_order,
+  source_note
+)
+select
+  id,
+  'am-sda-hymnal-new',
+  'sda_new',
+  'Amharic SDA Hymnal',
+  'የ2004 ውዳሴ መዝሙር',
+  2004,
+  'published',
+  'new',
+  10,
+  'new_title_forbookmark and new_song arrays'
 from books
 where slug = 'am-sda-hymnal'
 on conflict (slug) do update set
+  version_key = excluded.version_key,
   title = excluded.title,
+  native_title = excluded.native_title,
+  publication_year = excluded.publication_year,
+  status = excluded.status,
   edition_type = excluded.edition_type,
   sort_order = excluded.sort_order,
   source_note = excluded.source_note,
   updated_at = now();
-insert into book_editions (book_id, slug, title, edition_type, sort_order, source_note)
-select id, 'am-sda-hymnal-old', 'Amharic SDA Hymnal Old Edition', 'old', 20, 'old_title_forbookmark and old_song arrays'
+insert into book_editions (
+  book_id,
+  slug,
+  version_key,
+  title,
+  native_title,
+  publication_year,
+  status,
+  edition_type,
+  sort_order,
+  source_note
+)
+select
+  id,
+  'am-sda-hymnal-old',
+  'sda_old',
+  'Amharic SDA Hymnal 1974 Edition',
+  'የ1974 ውዳሴ መዝሙር',
+  1974,
+  'published',
+  'old',
+  20,
+  'old_title_forbookmark and old_song arrays'
 from books
 where slug = 'am-sda-hymnal'
 on conflict (slug) do update set
+  version_key = excluded.version_key,
   title = excluded.title,
+  native_title = excluded.native_title,
+  publication_year = excluded.publication_year,
+  status = excluded.status,
   edition_type = excluded.edition_type,
   sort_order = excluded.sort_order,
   source_note = excluded.source_note,
   updated_at = now();
+insert into book_editions (
+  book_id,
+  slug,
+  version_key,
+  title,
+  native_title,
+  publication_year,
+  status,
+  edition_type,
+  sort_order,
+  source_note
+)
+select
+  id,
+  'am-sda-hymnal-1960',
+  'sda_1960',
+  'Amharic SDA Hymnal 1960 Edition',
+  'የ1960 ውዳሴ መዝሙር',
+  1960,
+  'published',
+  'edition',
+  30,
+  'Managed through Wudase Content Studio.'
+from books
+where slug = 'am-sda-hymnal'
+on conflict (slug) do update set
+  version_key = excluded.version_key,
+  title = excluded.title,
+  native_title = excluded.native_title,
+  publication_year = excluded.publication_year,
+  status = excluded.status,
+  edition_type = excluded.edition_type,
+  sort_order = excluded.sort_order,
+  source_note = excluded.source_note,
+  updated_at = now();
+-- Keep the 1960 edition empty until real songs are entered in Content Studio.
+delete from content_audit_logs
+where work_id in (
+    select id from works
+    where canonical_key = 'am-sda-1960-temporary-song-1'
+  )
+  or entity_id in (
+    select id from works
+    where canonical_key = 'am-sda-1960-temporary-song-1'
+  )
+  or entity_id in (
+    select entry.id
+    from book_entries as entry
+    join works as work on work.id = entry.work_id
+    where work.canonical_key = 'am-sda-1960-temporary-song-1'
+  );
+delete from media_links
+where work_id in (
+    select id from works
+    where canonical_key = 'am-sda-1960-temporary-song-1'
+  )
+  or book_entry_id in (
+    select entry.id
+    from book_entries as entry
+    join works as work on work.id = entry.work_id
+    where work.canonical_key = 'am-sda-1960-temporary-song-1'
+  );
+delete from book_entries
+where work_id in (
+  select id from works
+  where canonical_key = 'am-sda-1960-temporary-song-1'
+);
+delete from works
+where canonical_key = 'am-sda-1960-temporary-song-1';
 delete from content_import_issues
 where source_name = 'sda_hymnal_json';
 insert into works (
