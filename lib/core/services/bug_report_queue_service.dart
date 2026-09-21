@@ -2,9 +2,16 @@
 import 'dart:convert';
 import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kDebugMode, kIsWeb, debugPrint;
+    show
+        TargetPlatform,
+        debugPrint,
+        defaultTargetPlatform,
+        kDebugMode,
+        kIsWeb,
+        visibleForTesting;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -244,39 +251,31 @@ class BugReportQueueService {
   }) async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
-      final message = [title.trim(), description.trim()]
-          .where((part) => part.isNotEmpty)
-          .join('\n\n');
-      final contact = contactEmail?.trim() ?? '';
-      final selectedVersion = diagnostics['selectedVersion'];
-      final version = HymnalVersions.apiCode(
-        selectedVersion is String && selectedVersion.isNotEmpty
-            ? selectedVersion
-            : HymnalVersions.sdaNew,
+      var request = buildRequest(
+        baseUrl: ContentApiConfig.baseUrl,
+        title: title,
+        description: description,
+        contactEmail: contactEmail,
+        diagnostics: diagnostics,
+        appVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
+        platform: _platformName,
       );
-      final language = diagnostics['language'];
-      final payload = {
-        'category': 'APP_BUG',
-        'message': message.length > 4000 ? message.substring(0, 4000) : message,
-        if (contact.length >= 3) 'contact': contact,
-        'context': {
-          'appVersion': '${packageInfo.version}+${packageInfo.buildNumber}',
-          'platform': _platformName,
-          'screen': 'report-bug',
-          if (language is String && language.isNotEmpty) 'locale': language,
-        },
-      };
+      var response = await _post(request);
 
-      final uri = Uri.parse('${ContentApiConfig.baseUrl}/reports').replace(
-        queryParameters: {'language': 'am', 'version': version},
-      );
-      final response = await http
-          .post(
-            uri,
-            headers: {'content-type': 'application/json; charset=utf-8'},
-            body: jsonEncode(payload),
-          )
-          .timeout(const Duration(seconds: 8));
+      // SONG_NOT_FOUND: the hymn is not in that edition (it may have been
+      // renumbered since). The report still matters; send it without one.
+      if (response.statusCode == 404 && request.body.containsKey('songId')) {
+        request = buildRequest(
+          baseUrl: ContentApiConfig.baseUrl,
+          title: title,
+          description: description,
+          contactEmail: contactEmail,
+          diagnostics: {...diagnostics}..remove('songId'),
+          appVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
+          platform: _platformName,
+        );
+        response = await _post(request);
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return _SendOutcome.sent;
@@ -296,6 +295,83 @@ class BugReportQueueService {
       }
       return _SendOutcome.retryLater;
     }
+  }
+
+  Future<http.Response> _post(({Uri uri, Map<String, Object?> body}) request) {
+    return http
+        .post(
+          request.uri,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+          body: jsonEncode(request.body),
+        )
+        .timeout(const Duration(seconds: 8));
+  }
+
+  static const _reportCategories = {
+    'LYRICS',
+    'SHEET_MUSIC',
+    'AUDIO',
+    'APP_BUG',
+    'SUGGESTION',
+    'OTHER',
+  };
+
+  /// The `POST /reports` request for one report. A report about a hymn is
+  /// filed under that hymn's edition, taken from its ID; otherwise under the
+  /// edition the user has selected.
+  @visibleForTesting
+  static ({Uri uri, Map<String, Object?> body}) buildRequest({
+    required String baseUrl,
+    required String title,
+    required String description,
+    String? contactEmail,
+    required Map<String, dynamic> diagnostics,
+    required String appVersion,
+    required String platform,
+  }) {
+    final message = [title.trim(), description.trim()]
+        .where((part) => part.isNotEmpty)
+        .join('\n\n');
+    final contact = contactEmail?.trim() ?? '';
+
+    final songIdValue = diagnostics['songId'];
+    final songId =
+        songIdValue is String && songIdValue.isNotEmpty ? songIdValue : null;
+    final selectedVersion = diagnostics['selectedVersion'];
+    final version =
+        (songId == null ? null : SongEditionsService.versionCodeOf(songId)) ??
+            HymnalVersions.apiCode(
+              selectedVersion is String && selectedVersion.isNotEmpty
+                  ? selectedVersion
+                  : HymnalVersions.sdaNew,
+            );
+
+    final categoryValue = diagnostics['reportCategory'];
+    final category = _reportCategories.contains(categoryValue)
+        ? categoryValue as String
+        : 'APP_BUG';
+    final screenValue = diagnostics['screen'];
+    final language = diagnostics['language'];
+
+    return (
+      uri: Uri.parse('$baseUrl/reports').replace(
+        queryParameters: {'language': 'am', 'version': version},
+      ),
+      body: {
+        'category': category,
+        'message': message.length > 4000 ? message.substring(0, 4000) : message,
+        if (songId != null) 'songId': songId,
+        if (contact.length >= 3) 'contact': contact,
+        'context': {
+          'appVersion': appVersion,
+          'platform': platform,
+          'screen': screenValue is String && screenValue.isNotEmpty
+              ? screenValue
+              : 'settings',
+          if (language is String && language.isNotEmpty) 'locale': language,
+        },
+      },
+    );
   }
 
   /// One of the values the report inbox accepts.

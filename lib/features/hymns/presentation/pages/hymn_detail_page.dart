@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
@@ -480,6 +481,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return [
       _buildFavoriteButton(hymn, isFavorite),
       _buildShareButton(hymn),
+      _buildReportButton(hymn),
     ];
   }
 
@@ -492,6 +494,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         switch (action) {
           case _HymnAction.share:
             _shareHymn(hymn);
+          case _HymnAction.report:
+            _reportProblem(hymn);
         }
       },
       itemBuilder: (context) => [
@@ -501,6 +505,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             leading: Icon(Icons.share, color: AppColors.primaryText),
             title: Text(
               'አጋራ',
+              style: TextStyle(color: AppColors.primaryText),
+            ),
+          ),
+        ),
+        const PopupMenuItem(
+          value: _HymnAction.report,
+          child: ListTile(
+            leading: Icon(Icons.flag_outlined, color: AppColors.primaryText),
+            title: Text(
+              'ስህተት ሪፖርት',
               style: TextStyle(color: AppColors.primaryText),
             ),
           ),
@@ -692,6 +706,26 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
+  Widget _buildReportButton(Hymn hymn) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: IconButton(
+        icon: const Icon(Icons.flag_outlined, color: AppColors.primaryText),
+        tooltip: 'ስህተት ሪፖርት',
+        onPressed: () => _reportProblem(hymn),
+      ),
+    );
+  }
+
+  /// Opens the report screen with this hymn attached, so a wrong word or
+  /// page reaches the admin with the hymn already identified.
+  void _reportProblem(Hymn hymn) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ReportBugPage(hymn: hymn)),
+    );
+  }
+
   void _shareHymn(Hymn hymn) async {
     final text = '${hymn.displayTitle}\n\n${hymn.displayLyrics}';
     try {
@@ -709,7 +743,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 }
 
-enum _HymnAction { share }
+enum _HymnAction { share, report }
 
 class _LyricsNavItem {
   final String id;

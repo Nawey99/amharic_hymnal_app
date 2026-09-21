@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
+import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/settings/data/repositories/bug_report_repository_impl.dart';
 import 'package:amharic_hymnal_app/features/settings/domain/repositories/bug_report_repository.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class ReportBugPage extends StatefulWidget {
-  const ReportBugPage({super.key});
+  /// The hymn the report is about, when opened from a hymn's page. It is
+  /// attached to the report so the admin can open it directly.
+  final Hymn? hymn;
+
+  const ReportBugPage({super.key, this.hymn});
 
   @override
   State<ReportBugPage> createState() => _ReportBugPageState();
@@ -24,6 +30,26 @@ class _ReportBugPageState extends State<ReportBugPage> {
   final TextEditingController _contactController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
+
+  /// From a hymn, a report is most often about its words; from Settings,
+  /// about the app.
+  late ReportType _type =
+      widget.hymn != null ? ReportType.lyrics : ReportType.appBug;
+
+  /// The hymn's API ID, or null for a bundled hymn the server does not know.
+  String? get _songId {
+    final id = widget.hymn?.id;
+    return id != null && SongEditionsService.versionCodeOf(id) != null
+        ? id
+        : null;
+  }
+
+  /// A bundled hymn has no ID the server knows, so name it in the message.
+  String _withHymnReference(String description) {
+    final hymn = widget.hymn;
+    if (hymn == null || _songId != null) return description;
+    return 'መዝሙር ${hymn.displayNumber} (${hymn.displayTitle})\n\n$description';
+  }
 
   @override
   void dispose() {
@@ -52,8 +78,11 @@ class _ReportBugPageState extends State<ReportBugPage> {
       final result = await BugReportRepositoryImpl().submit(
         BugReportPayload(
           title: title,
-          description: description,
+          description: _withHymnReference(description),
           contactEmail: contactEmail.isEmpty ? null : contactEmail,
+          type: _type,
+          songId: _songId,
+          screen: widget.hymn != null ? 'hymn' : 'settings',
           diagnostics: {
             'selectedVersion': settingsRepository.getSelectedVersion(),
             'language': settingsRepository.getSelectedLanguage(),
@@ -77,6 +106,8 @@ class _ReportBugPageState extends State<ReportBugPage> {
         _titleController.clear();
         _descriptionController.clear();
         _contactController.clear();
+        // Back to the hymn the report was about.
+        if (widget.hymn != null && mounted) Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
@@ -127,6 +158,12 @@ class _ReportBugPageState extends State<ReportBugPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                if (widget.hymn != null) ...[
+                  _buildHymnHeader(widget.hymn!, settingsRepository),
+                  const SizedBox(height: 16),
+                ],
+                _buildTypePicker(settingsRepository),
+                const SizedBox(height: 16),
                 GlassContainer(
                   borderRadius: 16,
                   blurSigma: 12,
@@ -386,6 +423,80 @@ class _ReportBugPageState extends State<ReportBugPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHymnHeader(Hymn hymn, SettingsRepository settings) {
+    return GlassContainer(
+      borderRadius: 16,
+      blurSigma: 12,
+      opacity: 0.12,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          const Icon(Icons.music_note, color: AppColors.accentGreen),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'ስለ መዝሙር ${hymn.displayNumber} · ${hymn.displayTitle}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: AppColors.primaryText,
+                fontSize: settings.getFontSize() * 0.95,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypePicker(SettingsRepository settings) {
+    return GlassContainer(
+      borderRadius: 16,
+      blurSigma: 12,
+      opacity: 0.12,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'የችግሩ ዓይነት',
+            style: TextStyle(
+              fontSize: settings.getFontSize() * 0.9,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryText,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final type in ReportType.values)
+                ChoiceChip(
+                  key: ValueKey('report_type_${type.name}'),
+                  label: Text(
+                    type.label,
+                    style: TextStyle(
+                      fontFamily: 'NotoSansEthiopic',
+                      color:
+                          _type == type ? Colors.white : AppColors.primaryText,
+                    ),
+                  ),
+                  selected: _type == type,
+                  selectedColor: AppColors.accentGreen,
+                  backgroundColor: AppColors.surface.withValues(alpha: 0.3),
+                  showCheckmark: false,
+                  onSelected: (_) => setState(() => _type = type),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
