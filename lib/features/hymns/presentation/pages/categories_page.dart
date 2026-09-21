@@ -7,13 +7,12 @@ import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
-import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
-import 'package:amharic_hymnal_app/core/models/hymn_category.dart';
+import 'package:amharic_hymnal_app/core/services/analytics_service.dart';
+import 'package:amharic_hymnal_app/core/services/edition_categories_service.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/category_icon_mapper.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
-import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/category_hymns_page.dart';
 
@@ -28,6 +27,19 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
   final ScrollController _scrollController = ScrollController();
+  final EditionCategoriesService _categories =
+      EditionCategoriesService.instance;
+  String? _categoriesRequestedFor;
+
+  /// Fetches the edition's category order once per edition shown; the
+  /// screen already works from the hymns and reorders when it arrives.
+  void _ensureCategories(String version) {
+    if (_categoriesRequestedFor == version) return;
+    _categoriesRequestedFor = version;
+    _categories.load(version).then((_) {
+      if (mounted && _categoriesRequestedFor == version) setState(() {});
+    });
+  }
 
   @override
   void dispose() {
@@ -99,8 +111,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
                     if (state is HymnsLoaded) {
                       if (HymnalVersions.hasCategories(state.version)) {
-                        // Use exact category ranges for hymnal
-                        final categories = _categoriesWithSongs(state.hymns);
+                        // The edition's own categories: each book groups
+                        // its hymns differently.
+                        _ensureCategories(state.version);
+                        final categories = EditionCategoriesService.group(
+                          state.hymns,
+                          _categories.cached(state.version),
+                        );
 
                         if (categories.isEmpty) {
                           return const EmptyStateWidget(
@@ -129,9 +146,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             final category = categories[index];
                             return _buildCategoryListItem(
                               context,
-                              category.nameAmharic,
-                              category.startNumber,
-                              category.endNumber,
+                              category,
                               state.languageCode,
                               state.version,
                               bgService.isEnabled,
@@ -208,27 +223,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
     return authors.toList();
   }
 
-  List<HymnCategory> _categoriesWithSongs(List<Hymn> hymns) {
-    final availableNumbers = hymns
-        .map((hymn) => hymn.displayNumber)
-        .where((number) => number > 0)
-        .toSet();
-
-    return HymnCategories.all.where((category) {
-      for (var number = category.startNumber;
-          number <= category.endNumber;
-          number++) {
-        if (availableNumbers.contains(number)) return true;
-      }
-      return false;
-    }).toList(growable: false);
-  }
-
   Widget _buildCategoryListItem(
     BuildContext context,
-    String category,
-    int startNumber,
-    int endNumber,
+    CategoryGroup group,
     String languageCode,
     String version,
     bool backgroundImageEnabled,
@@ -238,13 +235,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
+          AnalyticsService.instance.categoryOpened(
+            version,
+            group.slug ?? _categories.slugFor(version, group.name),
+          );
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => CategoryHymnsPage(
-                category: category,
-                fromNumber: startNumber,
-                toNumber: endNumber,
+                category: group.name,
                 languageCode: languageCode,
                 version: version,
                 onOpenHymn: widget.onOpenHymn,
@@ -270,7 +269,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
           child: Row(
             children: [
-              _buildCategoryThumbnail(category, compactLandscape),
+              _buildCategoryThumbnail(group.name, compactLandscape),
               SizedBox(width: compactLandscape ? 10 : 12),
               Expanded(
                 child: Column(
@@ -278,7 +277,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      category,
+                      group.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -341,8 +340,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
             MaterialPageRoute(
               builder: (_) => CategoryHymnsPage(
                 category: author,
-                fromNumber: 0,
-                toNumber: 0,
                 languageCode: languageCode,
                 version: version,
                 author: author,

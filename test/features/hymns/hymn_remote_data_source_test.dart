@@ -139,6 +139,21 @@ void main() {
     expect(hymn.sheetMusic, ['$_base/p/1']);
   });
 
+  test('gives only 2004 hymns the 2004 number ranges as a fallback', () {
+    final uncategorised2004 = HymnRemoteDataSource.mapSong(
+      {'id': 'am-sda-2004-0001', 'number': 1},
+      'am-sda-2004',
+    );
+    final uncategorised1975 = HymnRemoteDataSource.mapSong(
+      {'id': 'am-sda-1975-0001', 'number': 1},
+      'am-sda-1975',
+    );
+
+    expect(uncategorised2004.category, 'ምስጋና');
+    // 1975 groups its hymns differently; no category beats a wrong one.
+    expect(uncategorised1975.category, isNull);
+  });
+
   test('treats a track without a source as a recording', () {
     final hymn = HymnRemoteDataSource.mapSong({
       'id': 'am-sda-2004-0001',

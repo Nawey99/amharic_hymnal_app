@@ -416,8 +416,12 @@ class HymnRemoteDataSource {
       number: number,
       title: song['title'] as String?,
       lyrics: song['lyrics'] as String?,
+      // The number ranges are the 2004 book's; other editions group their
+      // hymns differently, so they get no category rather than a wrong one.
       category: (category is Map ? category['name'] as String? : null) ??
-          HymnCategories.getCategoryByNumber(number ?? 0)?.nameAmharic,
+          (code == HymnalVersions.apiCode(HymnalVersions.sdaNew)
+              ? HymnCategories.getCategoryByNumber(number ?? 0)?.nameAmharic
+              : null),
       audioUrl: audioInfo?.file.url,
       audioInfo: audioInfo,
       sheetMusic: sheetPages.isEmpty

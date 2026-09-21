@@ -107,6 +107,12 @@ class LocalDataSource implements HymnLocalDataSource {
   /// - For SDA hymnal: new_hymnal_title > old_hymnal_title
   /// - For Hagerigna: title field
   /// - Ensures title field always has a value for displayTitle getter
+  /// The 2004 book's number ranges; other editions have no fallback.
+  static String? _rangeCategory(String version, int? number) =>
+      version == HymnalVersions.sdaNew
+          ? HymnCategories.getCategoryByNumber(number ?? 0)?.nameAmharic
+          : null;
+
   HymnModel _mapJsonToHymnModel(Map<String, dynamic> jsonData, String version) {
     // Parse sheet_music if it's a JSON string
     List<String>? sheetMusic;
@@ -177,7 +183,7 @@ class LocalDataSource implements HymnLocalDataSource {
       title: title,
       lyrics: lyrics,
       category: (jsonData['category'] as String?) ??
-          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
+          _rangeCategory(version, hymnNumber),
       audioUrl: jsonData['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields
@@ -267,8 +273,8 @@ class LocalDataSource implements HymnLocalDataSource {
       number: hymnNumber,
       title: title,
       lyrics: lyrics,
-      category: (row['category'] as String?) ??
-          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
+      category:
+          (row['category'] as String?) ?? _rangeCategory(version, hymnNumber),
       audioUrl: row['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields

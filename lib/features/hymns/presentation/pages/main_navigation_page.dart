@@ -14,6 +14,7 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
+import 'package:amharic_hymnal_app/core/services/analytics_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/favorites_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/index_page.dart';
@@ -224,6 +225,14 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     if (_isHymnDetailOpen) return;
     FocusManager.instance.primaryFocus?.unfocus();
     final version = _currentVersion();
+    AnalyticsService.instance.hymnOpened(
+        hymn,
+        version,
+        switch (source) {
+          _NavDestination.favorites => HymnOpenSource.favorites,
+          _NavDestination.number => HymnOpenSource.search,
+          _ => HymnOpenSource.catalog,
+        });
     setState(() {
       _selectedDestination = source;
       _hymnSession.open(

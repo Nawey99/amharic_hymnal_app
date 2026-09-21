@@ -17,7 +17,8 @@ The Amharic Hymnal app follows Clean Architecture principles with clear separati
 - Audio and sheet music download only after the user agrees, through the API's file routes (which redirect to short-lived storage URLs that are never stored). Each file is checked against the API's SHA-256 and size, then stored as `<sha256>.<ext>` under `media_cache/`, so a page or recording shared by several hymns or editions downloads once. Borrowed sheet pages (`borrowedFromVersionCode`) get a caption naming the source book, and synthesized audio (`source: synthesized`) gets a badge and its attribution.
 - Bug reports go to the hymnal API's report inbox (`POST /reports?version=<edition>`, category `APP_BUG`) and appear in its admin console's Reports tab. The old in-repo servers (`backend/content`, `backend/user_app`) have been removed.
 - SDA old/new songs reuse merged backend works while exposing version-specific display number, title, and lyrics.
-- SDA categories are defined once in `HymnCategories` and reused by UI and fallback mapping.
+- Each edition has its own categories (1961, 1975 and 2004 group hymns differently). Hymns carry their category from `/sync`; `EditionCategoriesService` reads `/categories` for the book order and slugs, kept on the device for offline use. `HymnCategories` number ranges are only a fallback for 2004 hymns without one.
+- Anonymous analytics (`AnalyticsService`): `SONG_VIEW` when a hymn is opened and `CATEGORY_VIEW` when a category is, fire and forget. Debug builds send nothing unless built with `--dart-define=WUDASE_ANALYTICS=true`.
 - Sheet music is protected by Android `FLAG_SECURE` while visible; unsupported platforms no-op gracefully.
 - Bug reports queue locally (secure storage) when the API is unreachable or rate-limited, and are retried at startup; a report the API refuses outright is dropped so it cannot block the queue.
 

@@ -12,9 +12,9 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 
 class CategoryHymnsPage extends StatefulWidget {
+  /// The category's name as the edition's hymns carry it, or the author's
+  /// name when [author] is set.
   final String category;
-  final int fromNumber;
-  final int toNumber;
   final String languageCode;
   final String version;
   final String? author; // For Hagerigna mode: filter by author
@@ -23,8 +23,6 @@ class CategoryHymnsPage extends StatefulWidget {
   const CategoryHymnsPage({
     super.key,
     required this.category,
-    required this.fromNumber,
-    required this.toNumber,
     required this.languageCode,
     required this.version,
     this.author,
@@ -41,7 +39,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
   @override
   void initState() {
     super.initState();
-    // Load all hymns - we'll filter by number range or author
+    // Load all hymns - we'll filter by category or author
     context.read<HymnsBloc>().add(
           LoadHymns(
             widget.languageCode,
@@ -187,16 +185,15 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
               }
 
               if (state is HymnsLoaded) {
-                // Filter hymns by number range (hymnal) or author (hagerigna)
+                // Filter hymns by category (hymnal) or author (hagerigna)
                 final categoryHymns = state.hymns.where((hymn) {
                   if (widget.author != null) {
                     // Hagerigna mode: filter by author
                     return hymn.artist != null && hymn.artist == widget.author;
                   } else {
-                    // Hymnal mode: filter by number range
-                    final hymnNumber = hymn.displayNumber;
-                    return hymnNumber >= widget.fromNumber &&
-                        hymnNumber <= widget.toNumber;
+                    // Hymnal mode: the edition's own category, not a
+                    // number range -- each book groups its hymns differently.
+                    return hymn.category?.trim() == widget.category;
                   }
                 }).toList();
 
