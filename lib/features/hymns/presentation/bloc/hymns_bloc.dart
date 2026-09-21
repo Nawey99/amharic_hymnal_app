@@ -96,6 +96,10 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       return HymnsError(
           'No cached data available. Please ensure data migration completed.');
     }
+    if (failure is NetworkFailure) {
+      return HymnsError(
+          'This hymnal needs an internet connection to load. Please connect and try again.');
+    }
     return HymnsError('An error occurred. Please try again.');
   }
 
@@ -110,7 +114,8 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   Future<void> _onLoadHymns(LoadHymns event, Emitter<HymnsState> emit) async {
     final loadKey = '${event.languageCode}|${event.version}|${event.sortType}';
     final currentState = state;
-    if (currentState is HymnsLoaded &&
+    if (!event.forceRefresh &&
+        currentState is HymnsLoaded &&
         currentState.languageCode == event.languageCode &&
         currentState.version == event.version &&
         currentState.sortType == event.sortType) {
@@ -121,13 +126,21 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
     }
 
     _activeLoadKey = loadKey;
-    emit(HymnsLoading());
+    if (!event.forceRefresh || currentState is! HymnsLoaded) {
+      emit(HymnsLoading());
+    }
     final result = await getHymns(GetHymnsParams(
       languageCode: event.languageCode,
       version: event.version,
     ));
     result.fold(
       (failure) {
+        if (event.forceRefresh && currentState is HymnsLoaded) {
+          if (kDebugMode) {
+            debugPrint('Content refresh failed; keeping loaded hymns.');
+          }
+          return;
+        }
         // If database is not ready and we got CacheFailure, store as pending query
         if (failure is CacheFailure && !_dbHelper.isReady) {
           _storePendingQuery(event);
@@ -313,6 +326,8 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
               category: hymn.category,
               audioUrl: hymn.audioUrl,
               sheetMusic: hymn.sheetMusic,
+              audioInfo: hymn.audioInfo,
+              sheetPages: hymn.sheetPages,
               artist: hymn.artist,
               song: hymn.song,
               newHymnalTitle: hymn.newHymnalTitle,

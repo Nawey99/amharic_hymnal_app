@@ -1,6 +1,12 @@
 import 'package:flutter/foundation.dart';
 
 class ContentApiConfig {
+  /// The production hymnal API. Override with
+  /// `--dart-define=WUDASE_CONTENT_API_URL=<root>`, where the root includes
+  /// the version prefix, e.g. `http://localhost:8787/api/v1`.
+  static const productionBaseUrl =
+      'https://amharichymnalbackend.vercel.app/api/v1';
+
   static const _configuredBaseUrl = String.fromEnvironment(
     'WUDASE_CONTENT_API_URL',
     defaultValue: '',
@@ -11,17 +17,19 @@ class ContentApiConfig {
   );
 
   static String get baseUrl {
-    if (_configuredBaseUrl.trim().isNotEmpty) {
-      return _configuredBaseUrl.trim();
-    }
+    final value = _configuredBaseUrl.trim();
+    if (value.isEmpty) return productionBaseUrl;
 
-    if (kIsWeb) {
-      return 'http://localhost:8787';
+    final uri = Uri.tryParse(value);
+    if (uri == null ||
+        !uri.hasAuthority ||
+        !['http', 'https'].contains(uri.scheme)) {
+      throw StateError('WUDASE_CONTENT_API_URL must be an HTTP(S) URL.');
     }
-
-    return switch (defaultTargetPlatform) {
-      TargetPlatform.android => 'http://10.0.2.2:8787',
-      _ => 'http://localhost:8787',
-    };
+    if (kReleaseMode && uri.scheme != 'https') {
+      throw StateError(
+          'WUDASE_CONTENT_API_URL must use HTTPS in release builds.');
+    }
+    return value.replaceFirst(RegExp(r'/$'), '');
   }
 }

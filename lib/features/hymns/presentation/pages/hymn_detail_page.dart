@@ -20,6 +20,7 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_media_controls.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/other_editions_line.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HymnDetailPage extends StatefulWidget {
@@ -117,20 +118,20 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       return BlocListener<HymnsBloc, HymnsState>(
         listener: (context, state) {
           if (state is HymnsLoaded) {
-            if (mounted) {
-              setState(() {});
+            final updatedHymn = _updatedHymn(state, widget.hymn!);
+            if (updatedHymn != null && updatedHymn != widget.hymn) {
+              widget.onHymnChanged?.call(updatedHymn);
             }
           }
         },
         child: BlocBuilder<HymnsBloc, HymnsState>(
           builder: (context, state) {
-            // If hymn was reloaded and we have updated data, use it
-            if (state is HymnsLoaded &&
-                state.hymns.isNotEmpty &&
-                state.hymns.first.displayNumber == widget.hymn!.displayNumber) {
-              return _buildDetailView(context, state.hymns.first);
+            if (state is HymnsLoaded) {
+              final updatedHymn = _updatedHymn(state, widget.hymn!);
+              if (updatedHymn != null) {
+                return _buildDetailView(context, updatedHymn);
+              }
             }
-            // Otherwise use the passed hymn
             return _buildDetailView(context, widget.hymn!);
           },
         ),
@@ -145,6 +146,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         ),
       ),
     );
+  }
+
+  Hymn? _updatedHymn(HymnsLoaded state, Hymn current) {
+    for (final hymn in state.hymns) {
+      if (current.id != null && hymn.id == current.id) return hymn;
+    }
+    for (final hymn in state.hymns) {
+      if (hymn.displayNumber == current.displayNumber) return hymn;
+    }
+    return null;
   }
 
   Widget _buildNumberLookupView(int hymnNumber) {
@@ -547,6 +558,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               condensed: _isMediaCondensed,
             ),
           ),
+        OtherEditionsLine(hymn: hymn),
         Expanded(
           child: _buildLyricsViewport(hymn, fontSize),
         ),

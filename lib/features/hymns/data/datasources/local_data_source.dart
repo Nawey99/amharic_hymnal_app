@@ -19,25 +19,28 @@ class LocalDataSource implements HymnLocalDataSource {
 
   @override
   Future<List<HymnModel>> getHymns(String languageCode, String version) async {
-    // Verify database config exists
     final normalizedVersion = HymnalVersions.normalizeId(version);
-    final dbConfig =
-        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
-    if (dbConfig == null) {
-      throw DatabaseNotFoundException(
-          'Database not found for language: $languageCode, version: $version');
-    }
 
     try {
-      final remoteHymns =
-          await _remoteDataSource.getHymns(languageCode, normalizedVersion);
-      if (remoteHymns.isNotEmpty) {
-        return remoteHymns;
-      }
+      // A successful empty response is authoritative. This lets newly created
+      // editions remain empty until their first real song is added.
+      return await _remoteDataSource.getHymns(
+        languageCode,
+        normalizedVersion,
+      );
     } catch (e) {
       if (kDebugMode) {
         debugPrint('⚠️ Content API unavailable, using local data: $e');
       }
+    }
+
+    // Dynamically published hymnals are API-only until a matching offline
+    // database is bundled. Never substitute a different hymnal as fallback.
+    final dbConfig =
+        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
+    if (dbConfig == null) {
+      throw DatabaseNotFoundException(
+          'No offline database for $languageCode/$normalizedVersion');
     }
 
     // Fast path: If database is not ready, load from JSON assets (very fast, no migration needed)

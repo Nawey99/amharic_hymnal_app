@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/music_player_widget.dart';
 
 /// Displays the player only when the content backend supplied valid audio.
@@ -11,6 +12,7 @@ class AudioSectionWidget extends StatefulWidget {
   final String hymnTitle;
   final String? englishTitle;
   final String? audioSource;
+  final HymnAudioInfo? audioInfo;
   final String version;
   final bool condensed;
   final AudioMediaRepository? audioRepository;
@@ -21,6 +23,7 @@ class AudioSectionWidget extends StatefulWidget {
     required this.hymnTitle,
     this.englishTitle,
     this.audioSource,
+    this.audioInfo,
     required this.version,
     this.condensed = false,
     this.audioRepository,
@@ -70,6 +73,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
         hymnTitle: widget.hymnTitle,
         englishTitle: widget.englishTitle,
         audioSource: track.url,
+        audioInfo: widget.audioInfo,
         version: widget.version,
         condensed: widget.condensed,
         audioRepository: _audioRepository,

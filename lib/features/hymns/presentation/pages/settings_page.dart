@@ -1,5 +1,8 @@
 // lib/features/hymns/presentation/pages/settings_page.dart
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +11,7 @@ import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
+import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
@@ -17,6 +21,7 @@ import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/donate_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_bulk_download_flow.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -36,11 +41,25 @@ class _SettingsPageState extends State<SettingsPage> {
   double _fontSize = 20.0;
   bool _backgroundImageEnabled = true;
   bool _keepScreenOn = false;
+  late final HymnalVersionService _versionService;
 
   @override
   void initState() {
     super.initState();
+    _versionService = sl<HymnalVersionService>();
+    _versionService.addListener(_handleVersionCatalogChanged);
+    unawaited(_versionService.refresh());
     _loadSettings();
+  }
+
+  @override
+  void dispose() {
+    _versionService.removeListener(_handleVersionCatalogChanged);
+    super.dispose();
+  }
+
+  void _handleVersionCatalogChanged() {
+    if (mounted) setState(() {});
   }
 
   void _loadSettings() async {
@@ -122,6 +141,10 @@ class _SettingsPageState extends State<SettingsPage> {
     final itemGap = compactLandscape ? 8.0 : 12.0;
     final sectionGap = compactLandscape ? 14.0 : 24.0;
     final bottomPadding = NavBarConstants.getBottomPadding(context);
+    final availableVersions = [..._versionService.versions];
+    if (!availableVersions.any((version) => version.id == _selectedVersion)) {
+      availableVersions.add(HymnalVersions.byId(_selectedVersion));
+    }
 
     return Container(
       decoration: _buildBackgroundDecoration(bgService),
@@ -193,26 +216,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           AppLocalizations.of(context)?.versionDescription ??
                               'Select hymnal version',
                       value: _selectedVersion,
-                      items: [
-                        DropdownMenuItem(
-                          value: HymnalVersions.sdaNew,
-                          child: Text(
-                            HymnalVersions.newHymnal.label,
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: HymnalVersions.sdaOld,
-                          child: Text(
-                            HymnalVersions.oldHymnal.label,
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: HymnalVersions.hagerigna,
-                          child: Text(
-                            HymnalVersions.hagerignaSongs.label,
-                          ),
-                        ),
-                      ],
+                      items: availableVersions
+                          .map(
+                            (version) => DropdownMenuItem(
+                              value: version.id,
+                              child: Text(version.label),
+                            ),
+                          )
+                          .toList(growable: false),
                       onChanged: (value) async {
                         if (value != null && value != _selectedVersion) {
                           final repo = sl<SettingsRepository>();
@@ -300,6 +311,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() => _keepScreenOn = value);
                       },
                     ),
+                    if (!kIsWeb) ...[
+                      SizedBox(height: itemGap),
+                      SettingsTile(
+                        icon: Icons.download_for_offline,
+                        title: 'ኖታዎችን በሙሉ አውርድ',
+                        description: 'የተመረጠውን መጽሐፍ ኖታዎች ያለ ኢንተርኔት ለመክፈት',
+                        onTap: () => runSheetMusicBulkDownload(
+                          context,
+                          _selectedVersion,
+                        ),
+                      ),
+                    ],
                     SizedBox(height: sectionGap),
                     _buildSectionTitle('ስለ መተግበሪያው'),
                     SettingsTile(

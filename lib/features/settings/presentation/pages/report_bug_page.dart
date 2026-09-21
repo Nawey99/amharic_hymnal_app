@@ -1,13 +1,14 @@
 // lib/features/settings/presentation/pages/report_bug_page.dart
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/features/settings/data/repositories/bug_report_repository_impl.dart';
+import 'package:amharic_hymnal_app/features/settings/domain/repositories/bug_report_repository.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class ReportBugPage extends StatefulWidget {
@@ -48,42 +49,31 @@ class _ReportBugPageState extends State<ReportBugPage> {
 
     try {
       final packageInfo = await PackageInfo.fromPlatform();
-      final body = [
-        'ርዕስ: $title',
-        '',
-        'መግለጫ:',
-        description,
-        '',
-        if (contactEmail.isNotEmpty) 'የተጠቃሚ ኢሜይል: $contactEmail',
-        'የመተግበሪያ ስሪት: ${packageInfo.version}+${packageInfo.buildNumber}',
-        'የመዝሙር ስብስብ: ${settingsRepository.getSelectedVersion()}',
-        'ቋንቋ: ${settingsRepository.getSelectedLanguage()}',
-        'የፊደል መጠን: ${settingsRepository.getFontSize()}',
-        'የተላከበት ጊዜ: ${DateTime.now().toIso8601String()}',
-      ].join('\n');
-
-      final uri = Uri(
-        scheme: 'mailto',
-        path: 'nawey99@gmail.com',
-        queryParameters: {
-          'subject': 'የውዳሴ መተግበሪያ ስህተት ሪፖርት: $title',
-          'body': body,
-        },
+      final result = await BugReportRepositoryImpl().submit(
+        BugReportPayload(
+          title: title,
+          description: description,
+          contactEmail: contactEmail.isEmpty ? null : contactEmail,
+          diagnostics: {
+            'selectedVersion': settingsRepository.getSelectedVersion(),
+            'language': settingsRepository.getSelectedLanguage(),
+            'fontSize': settingsRepository.getFontSize(),
+            'submittedAt': DateTime.now().toUtc().toIso8601String(),
+            'appVersion': '${packageInfo.version}+${packageInfo.buildNumber}',
+          },
+        ),
       );
-
-      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              opened ? 'የኢሜይል መተግበሪያዎ ተከፍቷል።' : 'የኢሜይል መተግበሪያ ማግኘት አልተቻለም።',
-            ),
-            backgroundColor: opened ? AppColors.accentGreen : Colors.red,
+            content: Text(result.message),
+            backgroundColor:
+                result.isSuccess ? AppColors.accentGreen : Colors.red,
             duration: const Duration(seconds: 3),
           ),
         );
       }
-      if (opened) {
+      if (result.isSuccess) {
         _titleController.clear();
         _descriptionController.clear();
         _contactController.clear();
@@ -160,6 +150,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         hint: 'ርዕስ ያስገቡ',
                         child: TextFormField(
                           controller: _titleController,
+                          maxLength: 160,
                           style: TextStyle(
                             color: AppColors.primaryText,
                             fontSize: settingsRepository.getFontSize(),
@@ -229,6 +220,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: _contactController,
+                        maxLength: 254,
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(
                           color: AppColors.primaryText,
@@ -301,6 +293,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         child: TextFormField(
                           controller: _descriptionController,
                           maxLines: 8,
+                          maxLength: 8000,
                           style: TextStyle(
                             color: AppColors.primaryText,
                             fontSize: settingsRepository.getFontSize(),

@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
+import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/error/failures.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/repositories/hymn_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -20,13 +21,6 @@ class HymnRepositoryImpl implements HymnRepository {
       String languageCode, String version) async {
     try {
       final hymnModels = await localDataSource.getHymns(languageCode, version);
-      // Verify we have cached data
-      if (hymnModels.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No hymns found for $languageCode/$version');
-        }
-        return const Left(CacheFailure());
-      }
       // Convert data models to domain entities
       final hymns = HymnMapper.toDomainList(hymnModels);
       if (kDebugMode) {
@@ -37,6 +31,11 @@ class HymnRepositoryImpl implements HymnRepository {
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error getting hymns for $languageCode/$version: $e');
+      }
+      // An edition with no bundled copy can only be loaded online. This is
+      // final for now, not a database that is still starting up.
+      if (e is DatabaseNotFoundException) {
+        return const Left(NetworkFailure());
       }
       // Check if it's a database not ready error
       if (e.toString().contains('not ready') ||
@@ -57,7 +56,7 @@ class HymnRepositoryImpl implements HymnRepository {
         if (kDebugMode) {
           debugPrint('⚠️ No hymns available to search for hymn #$number');
         }
-        return const Left(CacheFailure());
+        return Left(ServerFailure('Hymn #$number not found'));
       }
       final hymns = HymnMapper.toDomainList(hymnModels);
       try {
@@ -88,12 +87,6 @@ class HymnRepositoryImpl implements HymnRepository {
       String languageCode, String version, String query) async {
     try {
       final hymnModels = await localDataSource.getHymns(languageCode, version);
-      if (hymnModels.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No hymns available for search');
-        }
-        return const Left(CacheFailure());
-      }
       final hymns = HymnMapper.toDomainList(hymnModels);
 
       // Use SearchEngine for pure, testable search logic with ranking
@@ -126,12 +119,6 @@ class HymnRepositoryImpl implements HymnRepository {
       String languageCode, String version, String category) async {
     try {
       final hymnModels = await localDataSource.getHymns(languageCode, version);
-      if (hymnModels.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No hymns available for category filter');
-        }
-        return const Left(CacheFailure());
-      }
       final hymns = HymnMapper.toDomainList(hymnModels);
       final filtered = hymns.where((hymn) {
         return hymn.category != null &&

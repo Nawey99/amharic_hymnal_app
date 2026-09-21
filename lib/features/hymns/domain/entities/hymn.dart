@@ -2,6 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:amharic_hymnal_app/core/utils/title_cleaner.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 
 /// Domain entity representing a Hymn
 /// This is the core business entity used throughout the domain layer
@@ -15,6 +16,11 @@ class Hymn extends Equatable {
   final String? category;
   final String? audioUrl; // Audio file path/URL
   final List<String>? sheetMusic; // Array of sheet music image paths
+
+  // File details from the hymnal API for [audioUrl] and [sheetMusic]; null
+  // for bundled content, which has none.
+  final HymnAudioInfo? audioInfo;
+  final List<HymnSheetPage>? sheetPages;
 
   // Hagerigna-specific fields
   final String? artist; // Song author
@@ -38,6 +44,8 @@ class Hymn extends Equatable {
     this.category,
     this.audioUrl,
     this.sheetMusic,
+    this.audioInfo,
+    this.sheetPages,
     // Hagerigna fields
     this.artist,
     this.song,
@@ -116,7 +124,9 @@ class Hymn extends Equatable {
 
   /// Check if this hymn is from the hagerigna hymnal
   bool get isHagerigna {
-    return id != null && id!.startsWith('hagerigna-');
+    // Bundled data uses `hagerigna-N`; the hymnal API uses `am-hagerigna-NNNN`.
+    return id != null &&
+        (id!.startsWith('hagerigna-') || id!.startsWith('am-hagerigna-'));
   }
 
   @override
@@ -128,6 +138,8 @@ class Hymn extends Equatable {
         category,
         audioUrl,
         sheetMusic,
+        audioInfo,
+        sheetPages,
         artist,
         song,
         newHymnalTitle,

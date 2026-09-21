@@ -48,8 +48,8 @@ class AppBottomNavigationBar extends StatelessWidget {
     final raisedExtent = compactLandscape
         ? NavBarConstants.compactRaisedExtent
         : NavBarConstants.raisedExtent;
-    final primaryDiameter = compactLandscape ? 46.0 : (compact ? 54.0 : 58.0);
-    final primarySlotWidth = compactLandscape ? 58.0 : (compact ? 68.0 : 74.0);
+    final primaryDiameter = compactLandscape ? 50.0 : (compact ? 58.0 : 62.0);
+    final primarySlotWidth = compactLandscape ? 62.0 : (compact ? 72.0 : 78.0);
     final horizontalInset = compactLandscape ? 8.0 : 12.0;
     final bottomMargin =
         compactLandscape ? 4.0 : NavBarConstants.navBarBottomMargin;
@@ -69,39 +69,8 @@ class AppBottomNavigationBar extends StatelessWidget {
         alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
-            child: ShaderMask(
-              key: const ValueKey('navigation-outer-fade'),
-              blendMode: BlendMode.dstIn,
-              shaderCallback: (bounds) => LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.82),
-                  Colors.black,
-                ],
-                stops: const [0, 0.32, 0.62],
-              ).createShader(bounds),
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(outerRadius),
-                ),
-                child: BackdropFilter(
-                  key: const ValueKey('navigation-outer-glass'),
-                  filter: ImageFilter.blur(
-                    sigmaX: 8,
-                    sigmaY: 8,
-                    tileMode: TileMode.clamp,
-                  ),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryBackground.withValues(
-                        alpha: 0.06,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            child: _ProgressiveNavigationBackdrop(
+              topRadius: outerRadius,
             ),
           ),
           Positioned(
@@ -234,6 +203,64 @@ class AppBottomNavigationBar extends StatelessWidget {
   }
 }
 
+class _ProgressiveNavigationBackdrop extends StatelessWidget {
+  final double topRadius;
+
+  const _ProgressiveNavigationBackdrop({required this.topRadius});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(topRadius)),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          ShaderMask(
+            key: const ValueKey('navigation-outer-fade'),
+            blendMode: BlendMode.dstIn,
+            shaderCallback: (bounds) => LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.16),
+                Colors.black.withValues(alpha: 0.62),
+                Colors.black,
+              ],
+              stops: const [0, 0.5, 1],
+            ).createShader(bounds),
+            child: BackdropFilter(
+              key: const ValueKey('navigation-outer-glass'),
+              filter: ImageFilter.blur(
+                sigmaX: 13,
+                sigmaY: 13,
+                tileMode: TileMode.clamp,
+              ),
+              child: ColoredBox(
+                color: AppColors.primaryBackground.withValues(alpha: 0.04),
+              ),
+            ),
+          ),
+          DecoratedBox(
+            key: const ValueKey('navigation-outer-scrim'),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primaryBackground.withValues(alpha: 0.02),
+                  AppColors.primaryBackground.withValues(alpha: 0.18),
+                  AppColors.primaryBackground.withValues(alpha: 0.38),
+                ],
+                stops: const [0, 0.52, 1],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _NavigationDestinationButton extends StatelessWidget {
   final AppNavigationDestination destination;
   final bool selected;
@@ -342,65 +369,54 @@ class _PrimaryNavigationAction extends StatelessWidget {
       selected: selected,
       label: destination.label,
       excludeSemantics: true,
-      child: Tooltip(
-        message: destination.label,
-        excludeFromSemantics: true,
-        child: Material(
-          color: Colors.transparent,
-          child: InkResponse(
-            key: ValueKey('bottom-nav-${destination.id}'),
-            onTap: onTap,
-            radius: (diameter / 2) + 8,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedScale(
-                  scale: selected ? 1 : 0.96,
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  child: Material(
+      child: Material(
+        color: Colors.transparent,
+        child: InkResponse(
+          key: ValueKey('bottom-nav-${destination.id}'),
+          onTap: onTap,
+          radius: (diameter / 2) + 8,
+          overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedScale(
+                scale: selected ? 1 : 0.96,
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                child: Material(
+                  color: AppColors.accentGreenDark,
+                  elevation: selected ? 10 : 7,
+                  shadowColor:
+                      AppColors.accentGreenDark.withValues(alpha: 0.34),
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: SizedBox.square(
+                    dimension: diameter,
+                    child: Icon(
+                      selected ? destination.selectedIcon : destination.icon,
+                      color: Colors.white,
+                      size: compact ? 28 : 31,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 1),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  destination.label,
+                  maxLines: 1,
+                  style: TextStyle(
                     color: selected
-                        ? AppColors.accentGreenLight
-                        : AppColors.accentGreen,
-                    elevation: selected ? 10 : 7,
-                    shadowColor: AppColors.accentGreen.withValues(alpha: 0.5),
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: selected
-                            ? Colors.white.withValues(alpha: 0.72)
-                            : AppColors.accentGreenLight.withValues(alpha: 0.7),
-                        width: selected ? 1.5 : 1,
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: SizedBox.square(
-                      dimension: diameter,
-                      child: Icon(
-                        selected ? destination.selectedIcon : destination.icon,
-                        color: Colors.white,
-                        size: compact ? 28 : 31,
-                      ),
-                    ),
+                        ? AppColors.accentGreen
+                        : AppColors.primaryText,
+                    fontSize: compact ? 10 : 11,
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'NotoSansEthiopic',
                   ),
                 ),
-                const SizedBox(height: 1),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    destination.label,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: selected
-                          ? AppColors.accentGreenLight
-                          : AppColors.primaryText,
-                      fontSize: compact ? 10 : 11,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'NotoSansEthiopic',
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

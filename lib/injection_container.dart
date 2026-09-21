@@ -11,6 +11,7 @@ import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 import 'package:amharic_hymnal_app/core/services/cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
+import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/data/repositories/settings_repository_impl.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/local_data_source.dart';
@@ -71,6 +72,9 @@ Future<void> initDependencies({bool startDatabase = true}) async {
   // Register data source by its abstract contract so it can be mocked in tests
   if (!sl.isRegistered<HymnLocalDataSource>()) {
     sl.registerLazySingleton<HymnLocalDataSource>(() => LocalDataSource());
+  }
+  if (!sl.isRegistered<HymnalVersionService>()) {
+    sl.registerLazySingleton<HymnalVersionService>(HymnalVersionService.new);
   }
 
   // Repositories

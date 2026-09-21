@@ -13,6 +13,7 @@ class AppColors {
   static const Color tertiaryText = Color(0xFF808080);
 
   static const Color accentGreen = Color(0xFF4CAF50);
+  static const Color accentGreenDark = Color(0xFF388E3C);
   static const Color accentGreenLight = Color(0xFF66BB6A);
 
   static const Color divider = Color(0xFF404040);

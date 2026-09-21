@@ -1,4 +1,6 @@
 // lib/main.dart
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
+import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
@@ -36,8 +39,10 @@ void main() async {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarContrastEnforced: false,
       ),
     );
   }
@@ -70,6 +75,8 @@ class _AppInitializerState extends State<AppInitializer> {
       // Initialize dependencies (includes Drift database initialization)
       // Drift works on all platforms including web (uses IndexedDB on web)
       await initDependencies();
+
+      unawaited(BugReportQueueService.instance.flushPendingReports());
 
       // Initialize screen service (keep screen on)
       await ScreenService.initialize();

@@ -25,7 +25,7 @@ void main() {
     ]);
   });
 
-  test('legacy number-only history is read as new SDA hymnal', () async {
+  test('legacy number-only history is read as the 2004 SDA hymnal', () async {
     HistoryService.resetForTesting();
     SharedPreferences.setMockInitialValues({
       'hymn_history': ['7'],
