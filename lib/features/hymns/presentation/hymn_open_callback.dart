@@ -34,6 +34,32 @@ class HymnTabSession {
     _hymn = hymn;
   }
 
+  bool reconcileWith(Iterable<Hymn> hymns, String version) {
+    final activeHymn = _hymn;
+    if (activeHymn == null || _version != version) return false;
+
+    Hymn? refreshedHymn;
+    for (final hymn in hymns) {
+      final matchesId = activeHymn.id != null && hymn.id == activeHymn.id;
+      final matchesNumber = activeHymn.id == null &&
+          hymn.id == null &&
+          hymn.number == activeHymn.number;
+      if (matchesId || matchesNumber) {
+        refreshedHymn = hymn;
+        break;
+      }
+    }
+
+    if (refreshedHymn == null) {
+      clear();
+      return true;
+    }
+    if (refreshedHymn == activeHymn) return false;
+
+    _hymn = refreshedHymn;
+    return true;
+  }
+
   void clear() {
     _hymn = null;
     _sourceDestination = null;

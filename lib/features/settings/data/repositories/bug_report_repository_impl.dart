@@ -54,7 +54,7 @@ class BugReportRepositoryImpl implements BugReportRepository {
       payload.description,
       contactEmail: payload.contactEmail,
       severity: payload.severity,
-      diagnostics: payload.diagnostics,
+      diagnostics: payload.queuedDiagnostics,
     );
   }
 
@@ -66,7 +66,7 @@ class BugReportRepositoryImpl implements BugReportRepository {
       payload.description,
       contactEmail: payload.contactEmail,
       severity: payload.severity,
-      diagnostics: payload.diagnostics,
+      diagnostics: payload.queuedDiagnostics,
     );
   }
 }

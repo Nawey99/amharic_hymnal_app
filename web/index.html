@@ -18,7 +18,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="ውዳሴ - Amharic SDA hymns and worship songs.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -32,37 +32,9 @@
   <title>ውዳሴ</title>
   <link rel="manifest" href="manifest.json">
   
-  <!-- sql.js for Drift web support - Must load synchronously before Flutter initializes -->
-  <!-- Using local files to avoid CDN/CORS issues -->
-  <script>
-    // Configure sql.js to use local WASM file
-    window.SQL = window.SQL || {};
-    window.SQL.config = {
-      locateFile: function(filename) {
-        // Use local files (must be in web/ directory)
-        if (filename.endsWith('.wasm')) {
-          return 'sql-wasm.wasm';
-        }
-        return filename;
-      }
-    };
-  </script>
+  <!-- Keep web resources local so the production CSP can remain restrictive. -->
+  <script src="app_bootstrap_config.js"></script>
   <script src="sql-wasm.js"></script>
-  
-  <!-- Service Worker Registration for sqflite -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sqflite_sw.js')
-          .then(function(registration) {
-            console.log('ServiceWorker registration successful');
-          })
-          .catch(function(err) {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-      });
-    }
-  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

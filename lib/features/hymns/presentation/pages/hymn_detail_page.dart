@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
@@ -20,6 +21,7 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_media_controls.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/other_editions_line.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class HymnDetailPage extends StatefulWidget {
@@ -117,20 +119,20 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       return BlocListener<HymnsBloc, HymnsState>(
         listener: (context, state) {
           if (state is HymnsLoaded) {
-            if (mounted) {
-              setState(() {});
+            final updatedHymn = _updatedHymn(state, widget.hymn!);
+            if (updatedHymn != null && updatedHymn != widget.hymn) {
+              widget.onHymnChanged?.call(updatedHymn);
             }
           }
         },
         child: BlocBuilder<HymnsBloc, HymnsState>(
           builder: (context, state) {
-            // If hymn was reloaded and we have updated data, use it
-            if (state is HymnsLoaded &&
-                state.hymns.isNotEmpty &&
-                state.hymns.first.displayNumber == widget.hymn!.displayNumber) {
-              return _buildDetailView(context, state.hymns.first);
+            if (state is HymnsLoaded) {
+              final updatedHymn = _updatedHymn(state, widget.hymn!);
+              if (updatedHymn != null) {
+                return _buildDetailView(context, updatedHymn);
+              }
             }
-            // Otherwise use the passed hymn
             return _buildDetailView(context, widget.hymn!);
           },
         ),
@@ -145,6 +147,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         ),
       ),
     );
+  }
+
+  Hymn? _updatedHymn(HymnsLoaded state, Hymn current) {
+    for (final hymn in state.hymns) {
+      if (current.id != null && hymn.id == current.id) return hymn;
+    }
+    for (final hymn in state.hymns) {
+      if (hymn.displayNumber == current.displayNumber) return hymn;
+    }
+    return null;
   }
 
   Widget _buildNumberLookupView(int hymnNumber) {
@@ -469,6 +481,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return [
       _buildFavoriteButton(hymn, isFavorite),
       _buildShareButton(hymn),
+      _buildReportButton(hymn),
     ];
   }
 
@@ -481,6 +494,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         switch (action) {
           case _HymnAction.share:
             _shareHymn(hymn);
+          case _HymnAction.report:
+            _reportProblem(hymn);
         }
       },
       itemBuilder: (context) => [
@@ -490,6 +505,16 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             leading: Icon(Icons.share, color: AppColors.primaryText),
             title: Text(
               'አጋራ',
+              style: TextStyle(color: AppColors.primaryText),
+            ),
+          ),
+        ),
+        const PopupMenuItem(
+          value: _HymnAction.report,
+          child: ListTile(
+            leading: Icon(Icons.flag_outlined, color: AppColors.primaryText),
+            title: Text(
+              'ስህተት ሪፖርት',
               style: TextStyle(color: AppColors.primaryText),
             ),
           ),
@@ -547,6 +572,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
               condensed: _isMediaCondensed,
             ),
           ),
+        OtherEditionsLine(hymn: hymn),
         Expanded(
           child: _buildLyricsViewport(hymn, fontSize),
         ),
@@ -680,6 +706,26 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     );
   }
 
+  Widget _buildReportButton(Hymn hymn) {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: IconButton(
+        icon: const Icon(Icons.flag_outlined, color: AppColors.primaryText),
+        tooltip: 'ስህተት ሪፖርት',
+        onPressed: () => _reportProblem(hymn),
+      ),
+    );
+  }
+
+  /// Opens the report screen with this hymn attached, so a wrong word or
+  /// page reaches the admin with the hymn already identified.
+  void _reportProblem(Hymn hymn) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ReportBugPage(hymn: hymn)),
+    );
+  }
+
   void _shareHymn(Hymn hymn) async {
     final text = '${hymn.displayTitle}\n\n${hymn.displayLyrics}';
     try {
@@ -697,7 +743,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   }
 }
 
-enum _HymnAction { share }
+enum _HymnAction { share, report }
 
 class _LyricsNavItem {
   final String id;

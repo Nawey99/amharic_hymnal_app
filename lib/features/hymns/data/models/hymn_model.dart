@@ -2,6 +2,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 
 part 'hymn_model.g.dart';
 
@@ -21,6 +22,18 @@ class HymnModel extends Hymn {
   // ignore: overridden_fields
   final List<String>? sheetMusic;
 
+  // API file details are mapped by the hymnal API data source, never read
+  // from or written to legacy JSON.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  // ignore: overridden_fields
+  final HymnAudioInfo? audioInfo;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  // ignore: overridden_fields
+  final List<HymnSheetPage>? sheetPages;
+
   @JsonKey(name: 'new_hymnal_number')
   @override
   // ignore: overridden_fields
@@ -39,6 +52,8 @@ class HymnModel extends Hymn {
     super.category,
     this.audioUrl,
     this.sheetMusic,
+    this.audioInfo,
+    this.sheetPages,
     // Hagerigna fields
     super.artist,
     super.song,
@@ -54,12 +69,23 @@ class HymnModel extends Hymn {
   }) : super(
           audioUrl: audioUrl,
           sheetMusic: sheetMusic,
+          audioInfo: audioInfo,
+          sheetPages: sheetPages,
           newHymnalNumber: newHymnalNumber,
           oldHymnalNumber: oldHymnalNumber,
         );
 
-  factory HymnModel.fromJson(Map<String, dynamic> json) =>
-      _$HymnModelFromJson(json);
+  factory HymnModel.fromJson(Map<String, dynamic> json) {
+    final normalized = Map<String, dynamic>.from(json);
+    normalized['audio'] ??= normalized['audio_url'];
+    normalized['newHymnalTitle'] ??= normalized['new_hymnal_title'];
+    normalized['oldHymnalTitle'] ??= normalized['old_hymnal_title'];
+    normalized['newHymnalLyrics'] ??= normalized['new_hymnal_lyrics'];
+    normalized['oldHymnalLyrics'] ??= normalized['old_hymnal_lyrics'];
+    normalized['englishTitleOld'] ??= normalized['english_title_old'];
+    normalized['isFavorite'] ??= normalized['is_favorite'];
+    return _$HymnModelFromJson(normalized);
+  }
 
   Map<String, dynamic> toJson() => _$HymnModelToJson(this);
 }

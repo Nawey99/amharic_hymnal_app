@@ -2,9 +2,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
+import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 
 /// Music player widget for hymn audio playback
 ///
@@ -16,6 +18,9 @@ class MusicPlayerWidget extends StatefulWidget {
   final String hymnTitle;
   final String? englishTitle;
   final String audioSource;
+
+  /// Checksum, size and recording/synthesized details from the content API.
+  final HymnAudioInfo? audioInfo;
   final String version;
   final bool condensed;
   final AudioMediaRepository? audioRepository;
@@ -27,6 +32,7 @@ class MusicPlayerWidget extends StatefulWidget {
     required this.hymnTitle,
     this.englishTitle,
     required this.audioSource,
+    this.audioInfo,
     required this.version,
     this.condensed = false,
     this.audioRepository,
@@ -191,7 +197,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         return;
       }
 
-      await _playCachedOrDownloadRemoteAudio(track.source.uri);
+      await _playCachedOrDownloadRemoteAudio(
+        mediaSourceForUri(track.source.uri, widget.audioInfo?.file),
+      );
+    } on MediaIntegrityException {
+      _showLoadError('የወረደው ድምፅ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -211,7 +221,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     }
   }
 
-  Future<void> _playCachedOrDownloadRemoteAudio(Uri source) async {
+  void _showLoadError(String message) {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      _isError = true;
+      _errorMessage = message;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  Future<void> _playCachedOrDownloadRemoteAudio(MediaSource source) async {
     final cachedPath = await _audioRepository.cachedPathFor(source);
     if (cachedPath != null) {
       await _audioService.playLocalFile(
@@ -242,9 +264,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           'ድምፅ ይውረድ?',
           style: TextStyle(color: AppColors.primaryText),
         ),
-        content: const Text(
-          'ይህ ድምፅ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም ማጫወት ይችላሉ።',
-          style: TextStyle(color: AppColors.secondaryText),
+        content: Text(
+          'ይህ ድምፅ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም ማጫወት ይችላሉ።'
+          '${source.sizeBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(source.sizeBytes!)}'}',
+          style: const TextStyle(color: AppColors.secondaryText),
         ),
         actions: [
           TextButton(
@@ -348,15 +371,25 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
-                            Text(
-                              subtitle,
-                              style: const TextStyle(
-                                color: AppColors.secondaryText,
-                                fontSize: 12,
-                                height: 1.0,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    subtitle,
+                                    style: const TextStyle(
+                                      color: AppColors.secondaryText,
+                                      fontSize: 12,
+                                      height: 1.0,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (_isSynthesized) ...[
+                                  const SizedBox(width: 6),
+                                  _buildInstrumentalBadge(),
+                                ],
+                              ],
                             ),
                           ],
                         ),
@@ -470,6 +503,42 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
+  bool get _isSynthesized => widget.audioInfo?.isSynthesized ?? false;
+
+  String? get _attribution {
+    final text = widget.audioInfo?.attribution?.trim();
+    return text == null || text.isEmpty ? null : text;
+  }
+
+  /// Marks a tune rendered from MIDI, which sounds like an organ rather than
+  /// singers, so nobody mistakes it for a recording.
+  Widget _buildInstrumentalBadge({bool compact = false}) {
+    const label = 'መሣሪያ ብቻ';
+    final badge = Container(
+      padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.accentGreen),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: compact
+          ? const Icon(Icons.piano, size: 14, color: AppColors.accentGreen)
+          : const Text(
+              label,
+              style: TextStyle(
+                color: AppColors.accentGreen,
+                fontSize: 10,
+                height: 1.1,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'NotoSansEthiopic',
+              ),
+            ),
+    );
+    return Tooltip(
+      message: _attribution ?? label,
+      child: Semantics(label: label, child: badge),
+    );
+  }
+
   Widget _buildExpandableScrubber(bool isThisHymnActive) {
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: _isExpanded ? 1 : 0),
@@ -481,6 +550,18 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           children: [
             _buildProgressSlider(isThisHymnActive),
             _buildTimeLabels(),
+            if (_attribution != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  _attribution!,
+                  style: const TextStyle(
+                    color: AppColors.secondaryText,
+                    fontSize: 11,
+                    height: 1.3,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -506,6 +587,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             size: 32,
             iconSize: 21,
           ),
+          if (_isSynthesized) ...[
+            const SizedBox(width: 6),
+            _buildInstrumentalBadge(compact: true),
+          ],
           const SizedBox(width: 8),
           Expanded(
             child: Column(

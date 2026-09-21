@@ -41,13 +41,13 @@ class DatabaseRegistry {
       languageCode: 'am',
       version: HymnalVersions.sdaNew,
       filePath: 'assets/data/database/SDA_Hymnal.json',
-      displayName: 'New SDA Hymnal',
+      displayName: '2004 SDA Hymnal',
     ),
     'am_sda_old': const DatabaseConfig(
       languageCode: 'am',
       version: HymnalVersions.sdaOld,
       filePath: 'assets/data/database/SDA_Hymnal.json',
-      displayName: 'Old SDA Hymnal',
+      displayName: '1975 SDA Hymnal',
     ),
     'am_hagerigna': const DatabaseConfig(
       languageCode: 'am',

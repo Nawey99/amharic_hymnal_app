@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+import 'package:amharic_hymnal_app/core/services/app_update_service.dart';
+import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
@@ -10,6 +14,7 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
+import 'package:amharic_hymnal_app/core/services/analytics_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/favorites_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/index_page.dart';
@@ -46,7 +51,8 @@ class MainNavigationPage extends StatefulWidget {
   State<MainNavigationPage> createState() => _MainNavigationPageState();
 }
 
-class _MainNavigationPageState extends State<MainNavigationPage> {
+class _MainNavigationPageState extends State<MainNavigationPage>
+    with WidgetsBindingObserver {
   _NavDestination _selectedDestination = _NavDestination.number;
   final HymnTabSession _hymnSession = HymnTabSession();
   final Map<_NavDestination, GlobalKey<NavigatorState>> _tabNavigatorKeys = {
@@ -58,6 +64,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _selectedDestination = _NavDestination.fromId(widget.initialDestination);
     final initialActiveHymn = widget.initialActiveHymn;
     if (initialActiveHymn != null) {
@@ -75,6 +82,45 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     }
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshContent();
+    }
+  }
+
+  void _refreshContent() {
+    if (!mounted || !widget.loadInitialData) return;
+
+    unawaited(sl<HymnalVersionService>().refresh());
+    final settingsRepository = sl<SettingsRepository>();
+    final currentState = context.read<HymnsBloc>().state;
+    final languageCode = currentState is HymnsLoaded
+        ? currentState.languageCode
+        : settingsRepository.getSelectedLanguage();
+    final version = currentState is HymnsLoaded
+        ? currentState.version
+        : settingsRepository.getSelectedVersion();
+    final sortType = currentState is HymnsLoaded
+        ? currentState.sortType
+        : settingsRepository.getSortType();
+
+    context.read<HymnsBloc>().add(
+          LoadHymns(
+            languageCode,
+            version,
+            sortType,
+            forceRefresh: true,
+          ),
+        );
+  }
+
   Future<void> _loadInitialData() async {
     if (!mounted) return;
     try {
@@ -87,9 +133,50 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
               LoadHymns(languageCode, version, sortType),
             );
       }
+      unawaited(_promptIfUpdateRequired(version));
     } catch (e) {
       debugPrint('Error loading initial data: $e');
     }
+  }
+
+  /// Asked once per app run; content published for a newer app may not
+  /// display correctly in this one.
+  static bool _updateCheckDone = false;
+
+  Future<void> _promptIfUpdateRequired(String version) async {
+    if (_updateCheckDone) return;
+    _updateCheckDone = true;
+
+    final String? required;
+    try {
+      required = await AppUpdateService()
+          .requiredVersion(HymnalVersions.apiCode(version));
+    } catch (_) {
+      return; // Offline or unknown: never block the hymnal on this.
+    }
+    if (required == null || !mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text(
+          'አዲስ ስሪት ያስፈልጋል',
+          style: TextStyle(color: AppColors.primaryText),
+        ),
+        content: Text(
+          'እባክዎ መተግበሪያውን ወደ ስሪት $required ወይም ከዚያ በላይ ያዘምኑ። '
+          'ያለዚያ አንዳንድ አዳዲስ ይዘቶች በትክክል ላይታዩ ይችላሉ።',
+          style: const TextStyle(color: AppColors.secondaryText),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('እሺ'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onItemTapped(int index) {
@@ -138,6 +225,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     if (_isHymnDetailOpen) return;
     FocusManager.instance.primaryFocus?.unfocus();
     final version = _currentVersion();
+    AnalyticsService.instance.hymnOpened(
+        hymn,
+        version,
+        switch (source) {
+          _NavDestination.favorites => HymnOpenSource.favorites,
+          _NavDestination.number => HymnOpenSource.search,
+          _ => HymnOpenSource.catalog,
+        });
     setState(() {
       _selectedDestination = source;
       _hymnSession.open(
@@ -205,8 +300,15 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   }
 
   void _handleActiveHymnChanged(Hymn hymn) {
-    if (!mounted || _hymnSession.hymn?.id == hymn.id) return;
+    if (!mounted || _hymnSession.hymn == hymn) return;
     setState(() => _hymnSession.updateHymn(hymn));
+  }
+
+  void _reconcileActiveHymn(HymnsState state) {
+    if (state is! HymnsLoaded || !mounted) return;
+    if (_hymnSession.reconcileWith(state.hymns, state.version)) {
+      setState(() {});
+    }
   }
 
   void _clearActiveHymnState() {
@@ -239,82 +341,88 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HymnsBloc, HymnsState>(
-      buildWhen: (previous, current) {
-        if (previous is HymnsLoaded && current is HymnsLoaded) {
-          return previous.version != current.version;
-        }
-        return previous.runtimeType != current.runtimeType;
-      },
-      builder: (context, state) {
-        final items = _navItemsForState(state);
-        final selectedIndex = items.indexWhere(
-          (item) => item.destination == _selectedDestination,
-        );
-        final effectiveSelectedIndex = selectedIndex < 0
-            ? items.indexWhere(
-                (item) => item.destination == _NavDestination.number,
-              )
-            : selectedIndex;
-        if (selectedIndex < 0 && items.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              setState(() {
-                _selectedDestination = items[
-                        effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex]
-                    .destination;
-              });
-            }
-          });
-        }
-
-        final activePage = IndexedStack(
-          index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
-          children: items.map((item) {
-            final isActive = item.destination == _selectedDestination;
-            return TickerMode(
-              enabled: isActive,
-              child: FocusScope(
-                canRequestFocus: isActive,
-                child: _buildTabNavigator(item, isActive),
-              ),
-            );
-          }).toList(growable: false),
-        );
-        final useSideNavigation = ResponsiveLayout.useSideNavigation(context);
-
-        final selectedNavIndex =
-            effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex;
-
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: useSideNavigation
-              ? Row(
-                  children: [
-                    _buildLandscapeNavigationRail(
-                      items,
-                      selectedNavIndex,
-                    ),
-                    Expanded(child: activePage),
-                  ],
+    return BlocListener<HymnsBloc, HymnsState>(
+      listenWhen: (previous, current) =>
+          current is HymnsLoaded && previous != current,
+      listener: (context, state) => _reconcileActiveHymn(state),
+      child: BlocBuilder<HymnsBloc, HymnsState>(
+        buildWhen: (previous, current) {
+          if (previous is HymnsLoaded && current is HymnsLoaded) {
+            return previous.version != current.version;
+          }
+          return previous.runtimeType != current.runtimeType;
+        },
+        builder: (context, state) {
+          final items = _navItemsForState(state);
+          final selectedIndex = items.indexWhere(
+            (item) => item.destination == _selectedDestination,
+          );
+          final effectiveSelectedIndex = selectedIndex < 0
+              ? items.indexWhere(
+                  (item) => item.destination == _NavDestination.number,
                 )
-              : Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    activePage,
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildBottomNavigationBar(
+              : selectedIndex;
+          if (selectedIndex < 0 && items.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _selectedDestination = items[effectiveSelectedIndex < 0
+                          ? 0
+                          : effectiveSelectedIndex]
+                      .destination;
+                });
+              }
+            });
+          }
+
+          final activePage = IndexedStack(
+            index: effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex,
+            children: items.map((item) {
+              final isActive = item.destination == _selectedDestination;
+              return TickerMode(
+                enabled: isActive,
+                child: FocusScope(
+                  canRequestFocus: isActive,
+                  child: _buildTabNavigator(item, isActive),
+                ),
+              );
+            }).toList(growable: false),
+          );
+          final useSideNavigation = ResponsiveLayout.useSideNavigation(context);
+
+          final selectedNavIndex =
+              effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex;
+
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: useSideNavigation
+                ? Row(
+                    children: [
+                      _buildLandscapeNavigationRail(
                         items,
                         selectedNavIndex,
                       ),
-                    ),
-                  ],
-                ),
-        );
-      },
+                      Expanded(child: activePage),
+                    ],
+                  )
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      activePage,
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _buildBottomNavigationBar(
+                          items,
+                          selectedNavIndex,
+                        ),
+                      ),
+                    ],
+                  ),
+          );
+        },
+      ),
     );
   }
 

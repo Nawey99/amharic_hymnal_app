@@ -59,4 +59,47 @@ void main() {
     expect(session.sourceDestination, 'favorites');
     expect(session.version, 'sda_old');
   });
+
+  test('content refresh replaces the remembered hymn without losing its tab',
+      () {
+    const original = Hymn(
+      id: 'shared-work',
+      number: 1,
+      title: 'Original title',
+      lyrics: 'Original lyrics',
+    );
+    const edited = Hymn(
+      id: 'shared-work',
+      number: 1,
+      title: 'Edited title',
+      lyrics: 'Edited lyrics',
+    );
+    final session = HymnTabSession()
+      ..open(
+        hymn: original,
+        sourceDestination: 'index',
+        version: 'sda_new',
+      );
+
+    expect(session.reconcileWith(const [edited], 'sda_new'), isTrue);
+    expect(session.hymn, edited);
+    expect(session.sourceDestination, 'index');
+    expect(session.version, 'sda_new');
+    expect(session.reconcileWith(const [edited], 'sda_new'), isFalse);
+  });
+
+  test('content refresh forgets a song removed from the selected hymnal', () {
+    const removed = Hymn(id: 'removed-work', number: 8);
+    final session = HymnTabSession()
+      ..open(
+        hymn: removed,
+        sourceDestination: 'category',
+        version: 'sda_old',
+      );
+
+    expect(session.reconcileWith(const [], 'sda_old'), isTrue);
+    expect(session.hymn, isNull);
+    expect(session.sourceDestination, isNull);
+    expect(session.version, isNull);
+  });
 }

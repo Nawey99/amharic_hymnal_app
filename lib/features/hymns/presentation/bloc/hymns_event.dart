@@ -10,11 +10,17 @@ class LoadHymns extends HymnsEvent {
   final String languageCode;
   final String version;
   final String sortType;
+  final bool forceRefresh;
 
-  LoadHymns(this.languageCode, this.version, this.sortType);
+  LoadHymns(
+    this.languageCode,
+    this.version,
+    this.sortType, {
+    this.forceRefresh = false,
+  });
 
   @override
-  List<Object> get props => [languageCode, version, sortType];
+  List<Object> get props => [languageCode, version, sortType, forceRefresh];
 }
 
 class SearchHymnsEvent extends HymnsEvent {

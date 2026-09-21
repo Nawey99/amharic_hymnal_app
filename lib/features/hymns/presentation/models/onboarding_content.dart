@@ -54,7 +54,8 @@ abstract final class OnboardingContent {
       title: 'ቅንብርን ይቆጣጠሩ',
       description:
           'ከቅንብር ገጽ የመዝሙር ስብስብን፣ የፊደል መጠንን፣ የጀርባ ምስልን፣ ስክሪን እንዳይጠፋ ማድረግን፣ ድጋፍን እና ስህተት ሪፖርትን ያገኛሉ።',
-      access: 'ከታች “ቅንብር” ይንኩ። አዲስ/ቀድሞ መዝሙር ወይም ሀገርኛ ለመቀየር የስብስብ ምርጫውን ይጠቀሙ።',
+      access:
+          'ከታች “ቅንብር” ይንኩ። የ2004፣ የ1975 ወይም የ1961 ውዳሴ መዝሙር ወይም ሀገርኛ ለመቀየር የስብስብ ምርጫውን ይጠቀሙ።',
       preview: OnboardingPreview.settings,
       icon: Icons.settings_rounded,
       bullets: ['የመዝሙር ስብስብ', 'የፊደል መጠን', 'ስህተት ሪፖርት'],

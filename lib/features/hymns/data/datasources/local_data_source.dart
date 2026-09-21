@@ -19,25 +19,28 @@ class LocalDataSource implements HymnLocalDataSource {
 
   @override
   Future<List<HymnModel>> getHymns(String languageCode, String version) async {
-    // Verify database config exists
     final normalizedVersion = HymnalVersions.normalizeId(version);
-    final dbConfig =
-        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
-    if (dbConfig == null) {
-      throw DatabaseNotFoundException(
-          'Database not found for language: $languageCode, version: $version');
-    }
 
     try {
-      final remoteHymns =
-          await _remoteDataSource.getHymns(languageCode, normalizedVersion);
-      if (remoteHymns.isNotEmpty) {
-        return remoteHymns;
-      }
+      // A successful empty response is authoritative. This lets newly created
+      // editions remain empty until their first real song is added.
+      return await _remoteDataSource.getHymns(
+        languageCode,
+        normalizedVersion,
+      );
     } catch (e) {
       if (kDebugMode) {
         debugPrint('⚠️ Content API unavailable, using local data: $e');
       }
+    }
+
+    // Dynamically published hymnals are API-only until a matching offline
+    // database is bundled. Never substitute a different hymnal as fallback.
+    final dbConfig =
+        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
+    if (dbConfig == null) {
+      throw DatabaseNotFoundException(
+          'No offline database for $languageCode/$normalizedVersion');
     }
 
     // Fast path: If database is not ready, load from JSON assets (very fast, no migration needed)
@@ -104,6 +107,12 @@ class LocalDataSource implements HymnLocalDataSource {
   /// - For SDA hymnal: new_hymnal_title > old_hymnal_title
   /// - For Hagerigna: title field
   /// - Ensures title field always has a value for displayTitle getter
+  /// The 2004 book's number ranges; other editions have no fallback.
+  static String? _rangeCategory(String version, int? number) =>
+      version == HymnalVersions.sdaNew
+          ? HymnCategories.getCategoryByNumber(number ?? 0)?.nameAmharic
+          : null;
+
   HymnModel _mapJsonToHymnModel(Map<String, dynamic> jsonData, String version) {
     // Parse sheet_music if it's a JSON string
     List<String>? sheetMusic;
@@ -174,7 +183,7 @@ class LocalDataSource implements HymnLocalDataSource {
       title: title,
       lyrics: lyrics,
       category: (jsonData['category'] as String?) ??
-          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
+          _rangeCategory(version, hymnNumber),
       audioUrl: jsonData['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields
@@ -264,8 +273,8 @@ class LocalDataSource implements HymnLocalDataSource {
       number: hymnNumber,
       title: title,
       lyrics: lyrics,
-      category: (row['category'] as String?) ??
-          HymnCategories.getCategoryByNumber(hymnNumber ?? 0)?.nameAmharic,
+      category:
+          (row['category'] as String?) ?? _rangeCategory(version, hymnNumber),
       audioUrl: row['audio_url'] as String?,
       sheetMusic: finalSheetMusic,
       // Hagerigna fields

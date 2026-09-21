@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -20,25 +21,98 @@ class CachedMediaFile {
   });
 }
 
+/// A remote media file, with whatever the content API says about it.
+class MediaSource {
+  static final RegExp _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
+  static final RegExp _extensionPattern = RegExp(r'^\.[a-z0-9]{1,5}$');
+
+  static const Map<String, String> _extensionsByContentType = {
+    'audio/mp4': '.m4a',
+    'audio/x-m4a': '.m4a',
+    'audio/aac': '.aac',
+    'audio/mpeg': '.mp3',
+    'image/webp': '.webp',
+    'image/png': '.png',
+    'image/jpeg': '.jpg',
+  };
+
+  final Uri uri;
+
+  /// Lower-case hex SHA-256 of the file, when known. Files with a checksum
+  /// are verified after download and stored under it, so one file shared by
+  /// several hymns or editions is downloaded once.
+  final String? checksumSha256;
+  final int? sizeBytes;
+
+  /// Extension for the stored file, including the dot. Some players pick a
+  /// decoder from it, and API download routes end in `/file`.
+  final String? fileExtension;
+
+  MediaSource(
+    this.uri, {
+    String? checksumSha256,
+    this.sizeBytes,
+    String? fileName,
+    String? contentType,
+  })  : checksumSha256 = _validChecksum(checksumSha256),
+        fileExtension = _extensionFor(fileName, contentType, uri);
+
+  bool get isVerifiable => checksumSha256 != null;
+
+  static String? _validChecksum(String? value) {
+    final checksum = value?.trim().toLowerCase();
+    return checksum != null && _sha256Pattern.hasMatch(checksum)
+        ? checksum
+        : null;
+  }
+
+  static String? _extensionFor(String? fileName, String? contentType, Uri uri) {
+    for (final name in [fileName, uri.path]) {
+      if (name == null) continue;
+      final extension = path.extension(name).toLowerCase();
+      if (_extensionPattern.hasMatch(extension)) return extension;
+    }
+    final type = contentType?.split(';').first.trim().toLowerCase();
+    return _extensionsByContentType[type];
+  }
+}
+
+/// A download whose bytes did not match the checksum or size the content API
+/// promised. The file is discarded, never cached.
+class MediaIntegrityException implements Exception {
+  final Uri source;
+  final String message;
+
+  const MediaIntegrityException(this.source, this.message);
+
+  @override
+  String toString() => 'MediaIntegrityException($source): $message';
+}
+
 /// Storage contract for downloaded audio and sheet-music files.
 abstract interface class MediaCache {
-  Future<String?> cachedPath(Uri source, String mediaType);
+  Future<String?> cachedPath(MediaSource source, String mediaType);
 
   Future<CachedMediaFile> download(
-    Uri source,
+    MediaSource source,
     String mediaType, {
     void Function(int received, int? total)? onProgress,
   });
 
-  Future<bool> delete(Uri source, String mediaType);
+  Future<bool> delete(MediaSource source, String mediaType);
 
   Future<void> clearMediaType(String mediaType);
+
+  /// Deletes downloaded files stored under a checksum that is not in
+  /// [checksums]. Files keyed by URL are left alone.
+  Future<void> retainOnly(Set<String> checksums, List<String> mediaTypes);
 }
 
 /// Stores explicitly supplied HTTP(S) media URLs for offline use.
 ///
 /// Downloads are written to a temporary file and atomically renamed only after
-/// the response completes. Interrupted downloads therefore never appear as
+/// the response completes and, when the source has a checksum, only after the
+/// bytes match it. Interrupted or corrupt downloads therefore never appear as
 /// valid cached media.
 class LocalMediaCacheService implements MediaCache {
   static final LocalMediaCacheService instance = LocalMediaCacheService._();
@@ -58,12 +132,16 @@ class LocalMediaCacheService implements MediaCache {
         _directoryProvider = getApplicationSupportDirectory;
 
   @override
-  Future<String?> cachedPath(Uri source, String mediaType) async {
-    if (kIsWeb || !MediaReference.isDownloadableUri(source)) return null;
+  Future<String?> cachedPath(MediaSource source, String mediaType) async {
+    if (kIsWeb || !MediaReference.isDownloadableUri(source.uri)) return null;
 
     final file = await _fileFor(source, mediaType);
     if (!await file.exists()) return null;
-    if (await file.length() > 0) return file.path;
+    final length = await file.length();
+    if (length > 0 &&
+        (source.sizeBytes == null || length == source.sizeBytes)) {
+      return file.path;
+    }
 
     await file.delete();
     return null;
@@ -71,15 +149,16 @@ class LocalMediaCacheService implements MediaCache {
 
   @override
   Future<CachedMediaFile> download(
-    Uri source,
+    MediaSource source,
     String mediaType, {
     void Function(int received, int? total)? onProgress,
   }) async {
     if (kIsWeb) {
       throw UnsupportedError('Offline media downloads are unavailable on web.');
     }
-    if (!MediaReference.isDownloadableUri(source)) {
-      throw ArgumentError.value(source, 'source', 'Expected an HTTP(S) URL.');
+    final uri = source.uri;
+    if (!MediaReference.isDownloadableUri(uri)) {
+      throw ArgumentError.value(uri, 'source', 'Expected an HTTP(S) URL.');
     }
 
     final existingPath = await cachedPath(source, mediaType);
@@ -97,20 +176,27 @@ class LocalMediaCacheService implements MediaCache {
 
     IOSink? sink;
     try {
-      final request = http.Request('GET', source);
+      // API download routes answer 302 to short-lived storage; the client
+      // follows it. The redirect target is never stored.
+      final request = http.Request('GET', uri);
       final response =
           await _client.send(request).timeout(const Duration(seconds: 45));
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw HttpException('HTTP ${response.statusCode}', uri: source);
+        throw HttpException('HTTP ${response.statusCode}', uri: uri);
       }
 
+      final total = response.contentLength ?? source.sizeBytes;
+      final digestSink = _DigestSink();
+      final hasher = sha256.startChunkedConversion(digestSink);
       sink = temporary.openWrite();
       var received = 0;
       await for (final chunk in response.stream) {
         received += chunk.length;
         sink.add(chunk);
-        onProgress?.call(received, response.contentLength);
+        hasher.add(chunk);
+        onProgress?.call(received, total);
       }
+      hasher.close();
       await sink.flush();
       await sink.close();
       sink = null;
@@ -119,6 +205,16 @@ class LocalMediaCacheService implements MediaCache {
           (response.contentLength != null &&
               received != response.contentLength)) {
         throw const FileSystemException('Downloaded media is incomplete.');
+      }
+      if (source.sizeBytes != null && received != source.sizeBytes) {
+        throw MediaIntegrityException(
+          uri,
+          'Expected ${source.sizeBytes} bytes, received $received.',
+        );
+      }
+      final checksum = source.checksumSha256;
+      if (checksum != null && digestSink.value.toString() != checksum) {
+        throw MediaIntegrityException(uri, 'SHA-256 does not match.');
       }
 
       if (await target.exists()) {
@@ -139,8 +235,8 @@ class LocalMediaCacheService implements MediaCache {
   }
 
   @override
-  Future<bool> delete(Uri source, String mediaType) async {
-    if (kIsWeb || !MediaReference.isDownloadableUri(source)) return false;
+  Future<bool> delete(MediaSource source, String mediaType) async {
+    if (kIsWeb || !MediaReference.isDownloadableUri(source.uri)) return false;
     final file = await _fileFor(source, mediaType);
     if (!await file.exists()) return false;
     await file.delete();
@@ -154,14 +250,43 @@ class LocalMediaCacheService implements MediaCache {
     if (await directory.exists()) await directory.delete(recursive: true);
   }
 
-  Future<File> _fileFor(Uri source, String mediaType) async {
+  static final RegExp _checksumFileName =
+      RegExp(r'^([0-9a-f]{64})(\.[a-z0-9]{1,5})?$');
+
+  @override
+  Future<void> retainOnly(
+      Set<String> checksums, List<String> mediaTypes) async {
+    if (kIsWeb) return;
+    for (final mediaType in mediaTypes) {
+      final directory = await _directoryFor(mediaType);
+      if (!await directory.exists()) continue;
+      await for (final entity in directory.list()) {
+        if (entity is! File) continue;
+        final match = _checksumFileName.firstMatch(path.basename(entity.path));
+        if (match != null && !checksums.contains(match.group(1))) {
+          await entity.delete();
+        }
+      }
+    }
+  }
+
+  Future<File> _fileFor(MediaSource source, String mediaType) async {
     final directory = await _directoryFor(mediaType);
-    final sourceName = path.basename(source.path).replaceAll(
+    final checksum = source.checksumSha256;
+    if (checksum != null) {
+      return File(
+        path.join(directory.path, '$checksum${source.fileExtension ?? ''}'),
+      );
+    }
+
+    // Sources without a checksum are keyed by their URL.
+    final uri = source.uri;
+    final sourceName = path.basename(uri.path).replaceAll(
           RegExp(r'[^a-zA-Z0-9._-]'),
           '_',
         );
     final readableName = sourceName.isEmpty ? 'media' : sourceName;
-    final fileName = '${_stableHash(source.toString())}-$readableName';
+    final fileName = '${_stableHash(uri.toString())}-$readableName';
     return File(path.join(directory.path, fileName));
   }
 
@@ -179,4 +304,16 @@ class LocalMediaCacheService implements MediaCache {
     }
     return hash.toRadixString(16).padLeft(8, '0');
   }
+}
+
+class _DigestSink implements Sink<Digest> {
+  Digest? _value;
+
+  Digest get value => _value!;
+
+  @override
+  void add(Digest data) => _value = data;
+
+  @override
+  void close() {}
 }

@@ -33,7 +33,6 @@ class IndexPage extends StatefulWidget {
 class _IndexPageState extends State<IndexPage> {
   static const double _estimatedHymnItemExtent = 96.0;
   static const double _listVerticalPadding = 8.0;
-  static const double _alphabetRailBottomPadding = 8.0;
   static const int _maxSectionJumpRefinements = 4;
 
   final SearchStateController _searchController = SearchStateController();
@@ -485,23 +484,19 @@ class _IndexPageState extends State<IndexPage> {
     return Expanded(
       child: BlocBuilder<HymnsBloc, HymnsState>(
         buildWhen: (previous, current) {
-          if (previous.runtimeType != current.runtimeType) return true;
-          if (previous is HymnsLoaded && current is HymnsLoaded) {
-            return previous.hymns.length != current.hymns.length ||
-                previous.sortType != current.sortType ||
-                previous.version != current.version;
-          }
-          return true;
+          return previous != current;
         },
         builder: (context, state) {
           return LayoutBuilder(
             builder: (context, constraints) {
               final labels = _alphabetLabelsForState(state);
+              final alphabetRailBottomPadding =
+                  NavBarConstants.getBottomPadding(context);
               final useHorizontalAlphabetRail = labels.isNotEmpty &&
                   IndexedFastScroller.shouldUseHorizontalLayout(
                     labelCount: labels.length,
                     availableHeight: constraints.maxHeight,
-                    bottomPadding: _alphabetRailBottomPadding,
+                    bottomPadding: alphabetRailBottomPadding,
                   );
 
               return Stack(
@@ -519,7 +514,7 @@ class _IndexPageState extends State<IndexPage> {
                           ? _currentSectionLetter
                           : labels.first,
                       onLetterSelected: _scrollToLetter,
-                      bottomPadding: _alphabetRailBottomPadding,
+                      bottomPadding: alphabetRailBottomPadding,
                       useHorizontalLayout: useHorizontalAlphabetRail,
                     ),
                 ],

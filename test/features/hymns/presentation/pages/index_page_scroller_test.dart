@@ -1,6 +1,7 @@
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/error/failures.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/repositories/hymn_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymn_by_number.dart';
@@ -107,6 +108,15 @@ void main() {
     await tester.pumpAndSettle();
 
     final rail = find.byKey(const ValueKey('alphabet-vertical-rail'));
+    final railContext = tester.element(rail);
+    final indexRect = tester.getRect(find.byType(IndexPage));
+    final railRect = tester.getRect(rail);
+    expect(
+      railRect.bottom,
+      lessThanOrEqualTo(
+        indexRect.bottom - NavBarConstants.getBottomPadding(railContext),
+      ),
+    );
     final targetLetter = find.descendant(
       of: rail,
       matching: find.text('ተ'),
@@ -146,6 +156,60 @@ void main() {
           .data,
       'ጸ',
     );
+  });
+
+  testWidgets('same-length content refresh repaints edited song titles',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 780);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    SharedPreferences.setMockInitialValues({
+      'selected_language': 'am',
+      'selected_version': 'sda_new',
+      'sort_type': 'number',
+    });
+    await di.initDependencies(startDatabase: false);
+
+    final repository = _FakeHymnRepository(const [
+      Hymn(id: 'shared-work', number: 1, title: 'Before editor save'),
+    ]);
+    final bloc = HymnsBloc(
+      getHymns: GetHymns(repository),
+      searchHymns: SearchHymns(repository),
+      getHymnByNumber: GetHymnByNumber(repository),
+      settingsRepository: di.sl<SettingsRepository>(),
+    );
+    addTearDown(bloc.close);
+
+    await tester.pumpWidget(
+      BlocProvider<HymnsBloc>.value(
+        value: bloc,
+        child: const MaterialApp(
+          home: Scaffold(body: IndexPage()),
+        ),
+      ),
+    );
+    bloc.add(LoadHymns('am', 'sda_new', 'number'));
+    await tester.pumpAndSettle();
+    expect(find.text('Before editor save'), findsOneWidget);
+
+    repository.hymns = const [
+      Hymn(id: 'shared-work', number: 1, title: 'After editor save'),
+    ];
+    bloc.add(
+      LoadHymns(
+        'am',
+        'sda_new',
+        'number',
+        forceRefresh: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Before editor save'), findsNothing);
+    expect(find.text('After editor save'), findsOneWidget);
   });
 }
 
@@ -191,9 +255,9 @@ List<Hymn> _buildGroupedHymns() {
 }
 
 class _FakeHymnRepository implements HymnRepository {
-  final List<Hymn> hymns;
+  List<Hymn> hymns;
 
-  const _FakeHymnRepository(this.hymns);
+  _FakeHymnRepository(this.hymns);
 
   @override
   Future<Either<Failure, List<Hymn>>> getHymns(

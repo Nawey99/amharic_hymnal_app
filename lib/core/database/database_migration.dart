@@ -66,7 +66,7 @@ class DatabaseMigration {
         await CacheService.markCacheUpdated('am', HymnalVersions.sdaNew);
         if (kDebugMode) {
           debugPrint(
-              '✅ New SDA Hymnal migration completed: $newHymnalCount hymns');
+              '✅ 2004 SDA Hymnal migration completed: $newHymnalCount hymns');
         }
       }
       final oldHymnalCount =
@@ -75,7 +75,7 @@ class DatabaseMigration {
         await CacheService.markCacheUpdated('am', HymnalVersions.sdaOld);
         if (kDebugMode) {
           debugPrint(
-              '✅ Old SDA Hymnal migration completed: $oldHymnalCount hymns');
+              '✅ 1975 SDA Hymnal migration completed: $oldHymnalCount hymns');
         }
       }
 

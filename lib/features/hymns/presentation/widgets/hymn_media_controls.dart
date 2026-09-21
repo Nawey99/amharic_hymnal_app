@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -101,24 +102,26 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
           : 'መዝሙር ${hymn.displayNumber}',
       englishTitle: hymn.displayEnglishTitle,
       audioSource: hymn.audioUrl,
+      audioInfo: hymn.audioInfo,
       version: widget.version,
       condensed: condensed,
     );
   }
 
   Future<void> _openSheetMusic() async {
-    var files = await _sheetMusicRepository.getFilesForHymn(widget.hymn);
+    final resolved =
+        await _sheetMusicRepository.resolveFilesForHymn(widget.hymn);
     if (!mounted) return;
 
-    final remoteSources = files
-        .map(Uri.tryParse)
-        .whereType<Uri>()
-        .where((source) => source.scheme == 'http' || source.scheme == 'https')
-        .toList(growable: false);
-    if (remoteSources.isNotEmpty) {
+    final missing = [
+      for (final file in resolved)
+        if (!file.isLocal) file.remote!,
+    ];
+    var downloaded = const <String>[];
+    if (missing.isNotEmpty) {
       final canDownload = await _downloadRepository.isDownloadAvailable(
         MediaType.sheetMusic,
-        remoteSources.first,
+        missing.first,
       );
       if (!mounted) return;
       if (!canDownload) {
@@ -126,18 +129,15 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
         return;
       }
 
-      final downloaded = await _confirmAndDownloadSheetMusic(remoteSources);
-      if (!mounted || downloaded.length != remoteSources.length) return;
-
-      var downloadedIndex = 0;
-      files = files.map((file) {
-        final uri = Uri.tryParse(file);
-        if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
-          return file;
-        }
-        return downloaded[downloadedIndex++];
-      }).toList(growable: false);
+      downloaded = await _confirmAndDownloadSheetMusic(missing);
+      if (!mounted || downloaded.length != missing.length) return;
     }
+
+    var downloadedIndex = 0;
+    final files = [
+      for (final file in resolved)
+        file.isLocal ? file.localPath! : downloaded[downloadedIndex++],
+    ];
 
     if (files.isEmpty) {
       _showMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
@@ -156,8 +156,12 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
   }
 
   Future<List<String>> _confirmAndDownloadSheetMusic(
-    List<Uri> sources,
+    List<MediaSource> sources,
   ) async {
+    final sizes = sources.map((source) => source.sizeBytes).toList();
+    final totalBytes = sizes.contains(null)
+        ? null
+        : sizes.fold<int>(0, (sum, size) => sum + size!);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -166,9 +170,10 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
           'ኖታ ይውረድ?',
           style: TextStyle(color: AppColors.primaryText),
         ),
-        content: const Text(
-          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።',
-          style: TextStyle(color: AppColors.secondaryText),
+        content: Text(
+          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።'
+          '${totalBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(totalBytes)}'}',
+          style: const TextStyle(color: AppColors.secondaryText),
         ),
         actions: [
           TextButton(
@@ -229,6 +234,11 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
           },
         );
         downloaded.add(file.path);
+      }
+    } on MediaIntegrityException {
+      downloaded.clear();
+      if (mounted) {
+        _showMessage('የወረደው ኖታ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
       }
     } catch (_) {
       downloaded.clear();

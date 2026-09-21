@@ -136,21 +136,7 @@ class _FavoritesPageState extends State<FavoritesPage>
                 Expanded(
                   child: BlocBuilder<HymnsBloc, HymnsState>(
                     buildWhen: (previous, current) {
-                      // Only rebuild when:
-                      // 1. State type changes (e.g., Loading -> Loaded)
-                      // 2. Hymns list changes (favorites added/removed)
-                      // 3. Error occurs
-                      if (previous.runtimeType != current.runtimeType) {
-                        return true;
-                      }
-                      if (previous is HymnsLoaded && current is HymnsLoaded) {
-                        // Rebuild if hymns list changed (favorite toggle)
-                        return previous.hymns.length != current.hymns.length ||
-                            previous.hymns.any((h) => !current.hymns.any((ch) =>
-                                ch.id == h.id &&
-                                ch.isFavorite == h.isFavorite));
-                      }
-                      return true;
+                      return previous != current;
                     },
                     builder: (context, state) {
                       final settingsRepository = sl<SettingsRepository>();
