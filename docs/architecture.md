@@ -7,11 +7,19 @@ The Amharic Hymnal app follows Clean Architecture principles with clear separati
 ## 2026 Stabilization Notes
 
 - Public content versions are `sda_new`, `sda_old`, and `hagerigna`; `hymnal` is a compatibility alias for `sda_new`.
-- Flutter talks to two separate deployable backends: content on port 8787 and user/app state on port 8790.
+- Hymn content comes from the hymnal API (`amharic_hymnal_backend`, `/api/v1`): the edition list from `/hymn-versions` and each edition's catalogue from `/sync` (`HymnRemoteDataSource`).
+  - The first load reads the whole edition (`/sync` from the epoch) and stores it as `content_cache/<language>_<code>.json` under application support (`FileEditionStore`; not on web).
+  - Each later load asks `/hymn-versions/<code>` for `contentUpdatedAt`. Unchanged: the stored copy is used. Changed: a delta `/sync` from the stored `serverTime` is applied — songs by revision, retired songs removed, `changes.audio` and `changes.categories` applied, and songs named in `changes.sheetMusicPages` re-read from `/songs/<id>` — then stored with the new `serverTime`. A rejected delta (`INVALID_SYNC_*`) falls back to a full sync.
+  - Once a week (`fullRefreshInterval`) an opened edition is downloaded whole instead, which catches songs deleted outright and re-scans of pages an edition borrows; neither reaches a delta. After each update, downloaded media no stored edition refers to is deleted.
+  - Requests go through `HymnalApiClient`: metadata routes send `If-None-Match` and reuse the stored body on `304`, and after `429`/`503` no request is sent until the `RateLimit`/`Retry-After` reset.
+  - Once per run the app reads `/manifest` for `release.minimumAppVersion` and asks the user to update if this build is older. An edition with `capabilities.songs: false` is listed as "(በዝግጅት ላይ)".
+  - Offline, or if an update fails part-way, the stored copy is served. A retired edition (`hymnVersion.isActive: false` or `HYMN_VERSION_NOT_FOUND`) is deleted. Bundled JSON is used only when nothing has been stored yet.
+- Audio and sheet music download only after the user agrees, through the API's file routes (which redirect to short-lived storage URLs that are never stored). Each file is checked against the API's SHA-256 and size, then stored as `<sha256>.<ext>` under `media_cache/`, so a page or recording shared by several hymns or editions downloads once. Borrowed sheet pages (`borrowedFromVersionCode`) get a caption naming the source book, and synthesized audio (`source: synthesized`) gets a badge and its attribution.
+- Bug reports go to the hymnal API's report inbox (`POST /reports?version=<edition>`, category `APP_BUG`) and appear in its admin console's Reports tab. The old in-repo servers (`backend/content`, `backend/user_app`) have been removed.
 - SDA old/new songs reuse merged backend works while exposing version-specific display number, title, and lyrics.
 - SDA categories are defined once in `HymnCategories` and reused by UI and fallback mapping.
 - Sheet music is protected by Android `FLAG_SECURE` while visible; unsupported platforms no-op gracefully.
-- Bug reports post to the user/app backend and queue locally when the backend is unavailable.
+- Bug reports queue locally (secure storage) when the API is unreachable or rate-limited, and are retried at startup; a report the API refuses outright is dropped so it cannot block the queue.
 
 ## Architecture Layers
 

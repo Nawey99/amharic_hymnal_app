@@ -35,8 +35,6 @@ migrate_working_dir/
 /android/app/build/
 /android/build/
 node_modules/
-backend/*/node_modules/
-backend/content/.artifacts/
 .artifacts/
 
 # Local secrets and signing material. Commit only the documented examples.

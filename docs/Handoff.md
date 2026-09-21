@@ -4,6 +4,11 @@
 
 This document provides a quick reference for developers joining the project. It covers top entry points, common tasks, and essential information.
 
+> Hymn content, audio and sheet music now come from the hymnal API
+> (`amharic_hymnal_backend`); see `docs/architecture.md`
+> and `docs/downloadable-media.md`. Notes below about bundled sheet music under
+> `assets/sheet_music/` describe the retired approach.
+
 ## Top Entry Points
 
 ### 1. App Entry Point
@@ -29,7 +34,7 @@ void main() async {
 **File**: `lib/features/hymns/presentation/pages/main_navigation_page.dart`
 
 **What it does**:
-- Bottom navigation bar with 4 tabs
+- Bottom navigation bar with 5 tabs: Categories, Index, Number search (home), Favorites, Settings
 - Manages page state with `IndexedStack`
 - Loads initial hymn data
 

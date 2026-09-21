@@ -1,23 +1,70 @@
 # .github/workflows/test.yml
 name: Tests and Linting
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, flutter-app ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, flutter-app ]
 
 jobs:
+  dependency-vulnerabilities:
+    name: Scan Dependency Advisories
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      scan-args: |-
+        --recursive
+        ./
+      fail-on-vuln: true
+      upload-sarif: false
+
+  repository-security:
+    name: Scan Repository Secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+
+      - name: Scan tracked files and Git history
+        run: node tool/security_scan.mjs
+
+      - name: Scan full history with TruffleHog
+        run: >-
+          docker run --rm
+          -v "$GITHUB_WORKSPACE:/repo"
+          ghcr.io/trufflesecurity/trufflehog@sha256:aa821cf4ace8861c7d096d83818cdf7bb9719028a52d37a52eaad44086a52577
+          git file:///repo
+          --fail
+          --no-update
+          --no-verification
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 40
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: '3.27.2'
           channel: 'stable'
@@ -35,6 +82,15 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      - name: Build Android debug APK
+        run: flutter build apk --debug
+
+      - name: Build Android release bundle
+        run: flutter build appbundle --release
+
+      - name: Build self-hosted web release
+        run: flutter build web --release --no-web-resources-cdn
+
       - name: Install Linux integration dependencies
         run: |
           sudo apt-get update
@@ -48,19 +104,24 @@ jobs:
             pkg-config \
             xvfb
 
+      # Point content at an unreachable host so the run never depends on the
+      # live hymnal API; the app falls back to its bundled hymns.
       - name: Run integration tests
-        run: xvfb-run --auto-servernum flutter test integration_test/app_test.dart -d linux
+        run: >-
+          xvfb-run --auto-servernum flutter test integration_test/app_test.dart -d linux
+          --dart-define=WUDASE_CONTENT_API_URL=https://content.example.invalid
 
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: '3.27.2'
           channel: 'stable'

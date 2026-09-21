@@ -19,4 +19,4 @@ Sheet music is resolved through `SheetMusicRepository`, first from API/model dat
 
 ## User Reports
 
-Bug reports are stored in the user/app PostgreSQL database through `backend/user_app`. Mobile reports include title, description, optional contact email inside diagnostics, app version, platform, selected version, and settings diagnostics.
+Bug reports are sent to the hymnal API (`POST /api/v1/reports`) as category `APP_BUG`: the title and description as the message, the optional contact the user typed, and the app version, platform and language as context. The selected edition is sent as `version`.

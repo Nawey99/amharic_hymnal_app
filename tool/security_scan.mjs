@@ -7,10 +7,7 @@ const git = (...args) =>
     maxBuffer: 128 * 1024 * 1024,
   });
 
-const ignoredTextFiles = new Set([
-  'backend/content/package-lock.json',
-  'backend/user_app/package-lock.json',
-]);
+const ignoredTextFiles = new Set([]);
 const placeholderPasswords = new Set([
   'change-me',
   'replace-me',

@@ -22,7 +22,8 @@
 
 ## Backend
 
-- `node --check backend/content/src/server.js`
-- `node --check backend/user_app/src/server.js`
-- `Invoke-RestMethod http://localhost:8787/health`
-- `Invoke-RestMethod http://localhost:8790/health`
+The app has no backend of its own; everything is the hymnal API
+(`amharic_hymnal_backend`).
+
+- `Invoke-RestMethod https://amharichymnalbackend.vercel.app/api/v1/health`
+- Send a report from Settings and confirm it appears in the admin console's Reports tab.

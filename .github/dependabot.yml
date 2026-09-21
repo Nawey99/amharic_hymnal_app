@@ -5,22 +5,6 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "npm"
-    directory: "/backend/content"
-    schedule:
-      interval: "weekly"
-    groups:
-      content-backend:
-        patterns: ["*"]
-
-  - package-ecosystem: "npm"
-    directory: "/backend/user_app"
-    schedule:
-      interval: "weekly"
-    groups:
-      user-backend:
-        patterns: ["*"]
-
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
@@ -28,13 +12,3 @@ updates:
     groups:
       flutter:
         patterns: ["*"]
-
-  - package-ecosystem: "docker"
-    directory: "/backend/content"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "docker"
-    directory: "/backend/user_app"
-    schedule:
-      interval: "weekly"
