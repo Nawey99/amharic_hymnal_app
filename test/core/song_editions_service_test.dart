@@ -69,4 +69,51 @@ void main() {
         SongEditionsService.versionCodeOf('am-hagerigna-0001'), 'am-hagerigna');
     expect(SongEditionsService.versionCodeOf('plain'), isNull);
   });
+
+  test('reads similar hymns separately from the same hymn', () async {
+    final service = SongEditionsService(
+      baseUrl: 'https://api.example.test/api/v1',
+      client: MockClient((_) async => http.Response.bytes(
+            utf8.encode(jsonEncode({
+              'success': true,
+              'data': {
+                'otherEditions': [
+                  {
+                    'songId': 'am-sda-2004-0132',
+                    'number': 132,
+                    'versionCode': 'am-sda-2004',
+                  },
+                ],
+                'similarEditions': [
+                  {
+                    'songId': 'am-sda-2004-0112',
+                    'number': 112,
+                    'versionCode': 'am-sda-2004',
+                  },
+                ],
+              },
+            })),
+            200,
+          )),
+    );
+
+    final links = await service.links('am-sda-1975-0130');
+
+    expect(links.same.single.number, 132);
+    expect(links.similar.single.number, 112);
+    expect((await service.similarEditions('am-sda-1975-0130')).single.songId,
+        'am-sda-2004-0112');
+  });
+
+  test('a missing similarEditions list reads as empty', () async {
+    final service = SongEditionsService(
+      baseUrl: 'https://api.example.test/api/v1',
+      client: MockClient((_) async => http.Response(
+            '{"success":true,"data":{"otherEditions":[]}}',
+            200,
+          )),
+    );
+
+    expect(await service.similarEditions('am-sda-1975-0130'), isEmpty);
+  });
 }

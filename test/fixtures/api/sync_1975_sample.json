@@ -2,7 +2,7 @@
  "success": true,
  "data": {
   "since": "1970-01-01T00:00:00.000Z",
-  "serverTime": "2026-09-21T19:25:50.639Z",
+  "serverTime": "2026-09-22T07:09:47.525Z",
   "hasMore": false,
   "nextCursor": null,
   "hymnVersion": {
@@ -32,14 +32,14 @@
       "songId": "am-sda-1975-0001",
       "available": true,
       "version": "2026.3",
-      "sizeBytes": 378986,
-      "checksumSha256": "737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3",
-      "etag": "\"sha256-737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3\"",
-      "lastModified": "2026-09-21T19:07:13.607Z",
-      "fileName": "001-praise-god-from-whom-all-blessings-flow.m4a",
+      "sizeBytes": 449519,
+      "checksumSha256": "d74a05addf24722eccee90eaafb4ac907b99110ad7dd5c67ae702a5087b599df",
+      "etag": "\"sha256-d74a05addf24722eccee90eaafb4ac907b99110ad7dd5c67ae702a5087b599df\"",
+      "lastModified": "2026-09-22T04:01:38.876Z",
+      "fileName": "001-praise-god-from-whom-all-blessings-flow-accompaniment.m4a",
       "contentType": "audio/mp4",
       "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/audio/file?language=am&version=am-sda-1975",
-      "updatedAt": "2026-09-21T19:07:13.607Z",
+      "updatedAt": "2026-09-22T04:01:38.876Z",
       "durationSeconds": null,
       "source": "recording",
       "attribution": null
@@ -67,6 +67,7 @@
       "note": null
      },
      "otherEditions": [],
+     "similarEditions": [],
      "isActive": true,
      "deletedAt": null,
      "createdAt": "2026-09-18T16:34:56.518Z",
@@ -114,6 +115,7 @@
       "note": null
      },
      "otherEditions": [],
+     "similarEditions": [],
      "isActive": true,
      "deletedAt": null,
      "createdAt": "2026-09-18T16:34:56.518Z",
@@ -149,6 +151,7 @@
       "note": null
      },
      "otherEditions": [],
+     "similarEditions": [],
      "isActive": true,
      "deletedAt": null,
      "createdAt": "2026-09-18T16:34:56.518Z",
@@ -208,6 +211,7 @@
       "note": null
      },
      "otherEditions": [],
+     "similarEditions": [],
      "isActive": true,
      "deletedAt": null,
      "createdAt": "2026-09-18T16:34:56.518Z",
@@ -255,6 +259,7 @@
       "note": null
      },
      "otherEditions": [],
+     "similarEditions": [],
      "isActive": true,
      "deletedAt": null,
      "createdAt": "2026-09-18T16:34:56.518Z",
@@ -553,22 +558,6 @@
    ],
    "audio": [
     {
-     "songId": "am-sda-1975-0001",
-     "available": true,
-     "version": "2026.3",
-     "sizeBytes": 378986,
-     "checksumSha256": "737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3",
-     "etag": "\"sha256-737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3\"",
-     "lastModified": "2026-09-21T19:07:13.607Z",
-     "fileName": "001-praise-god-from-whom-all-blessings-flow.m4a",
-     "contentType": "audio/mp4",
-     "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/audio/file?language=am&version=am-sda-1975",
-     "updatedAt": "2026-09-21T19:07:13.607Z",
-     "durationSeconds": null,
-     "source": "recording",
-     "attribution": null
-    },
-    {
      "songId": "am-sda-1975-0064",
      "available": true,
      "version": "2026.3",
@@ -583,6 +572,22 @@
      "durationSeconds": null,
      "source": "synthesized",
      "attribution": "Synthesized from the edition's MIDI with FluidSynth and the FluidR3 GM soundfont. This is a rendering of the tune, not a recorded performance."
+    },
+    {
+     "songId": "am-sda-1975-0001",
+     "available": true,
+     "version": "2026.3",
+     "sizeBytes": 449519,
+     "checksumSha256": "d74a05addf24722eccee90eaafb4ac907b99110ad7dd5c67ae702a5087b599df",
+     "etag": "\"sha256-d74a05addf24722eccee90eaafb4ac907b99110ad7dd5c67ae702a5087b599df\"",
+     "lastModified": "2026-09-22T04:01:38.876Z",
+     "fileName": "001-praise-god-from-whom-all-blessings-flow-accompaniment.m4a",
+     "contentType": "audio/mp4",
+     "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/audio/file?language=am&version=am-sda-1975",
+     "updatedAt": "2026-09-22T04:01:38.876Z",
+     "durationSeconds": null,
+     "source": "recording",
+     "attribution": null
     }
    ],
    "sheetMusicPages": [],

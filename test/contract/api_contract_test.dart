@@ -94,6 +94,9 @@ void main() {
       'otherEditions.songId',
       'otherEditions.number',
       'otherEditions.versionCode',
+      'similarEditions.songId',
+      'similarEditions.number',
+      'similarEditions.versionCode',
     ];
     for (final field in songFields) {
       test('Song.$field',

@@ -217,4 +217,77 @@ void main() {
 
     expect(find.byKey(const ValueKey('other-editions-line')), findsNothing);
   });
+
+  SongEditionsService serviceAnswering(Map<String, Object> data) =>
+      SongEditionsService(
+        baseUrl: 'https://api.example.test/api/v1',
+        client: MockClient((_) async => http.Response.bytes(
+              utf8.encode(jsonEncode({'success': true, 'data': data})),
+              200,
+            )),
+      );
+
+  Future<void> pumpLine(
+      WidgetTester tester, SongEditionsService service) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: OtherEditionsLine(
+          hymn: const Hymn(id: 'am-sda-1975-0130', number: 130),
+          service: service,
+        ),
+      ),
+    ));
+    await tester.pump();
+  }
+
+  const same = {
+    'songId': 'am-sda-2004-0132',
+    'number': 132,
+    'versionCode': 'am-sda-2004',
+  };
+  const similar = {
+    'songId': 'am-sda-2004-0112',
+    'number': 112,
+    'versionCode': 'am-sda-2004',
+  };
+
+  testWidgets('similar hymns get their own line under the same hymn',
+      (tester) async {
+    await pumpLine(
+      tester,
+      serviceAnswering({
+        'otherEditions': [same],
+        'similarEditions': [similar],
+      }),
+    );
+
+    expect(find.text('በሌሎች መጻሕፍት፦ 2004 ውዳሴ ቁ. 132'), findsOneWidget);
+    expect(find.text('ተመሳሳይ መዝሙሮች፦ 2004 ውዳሴ ቁ. 112'), findsOneWidget);
+  });
+
+  testWidgets('a hymn with only similar hymns shows only that line',
+      (tester) async {
+    await pumpLine(
+      tester,
+      serviceAnswering({
+        'otherEditions': <Object>[],
+        'similarEditions': [similar],
+      }),
+    );
+
+    expect(find.byKey(const ValueKey('other-editions-line')), findsNothing);
+    expect(find.byKey(const ValueKey('similar-editions-line')), findsOneWidget);
+  });
+
+  testWidgets('no similar hymns, or no field at all, shows no similar line',
+      (tester) async {
+    await pumpLine(
+        tester,
+        serviceAnswering({
+          'otherEditions': [same]
+        }));
+
+    expect(find.byKey(const ValueKey('other-editions-line')), findsOneWidget);
+    expect(find.byKey(const ValueKey('similar-editions-line')), findsNothing);
+  });
 }
