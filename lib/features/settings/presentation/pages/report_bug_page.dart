@@ -18,7 +18,10 @@ class ReportBugPage extends StatefulWidget {
   /// attached to the report so the admin can open it directly.
   final Hymn? hymn;
 
-  const ReportBugPage({super.key, this.hymn});
+  /// Where reports go; the hymnal API (with the offline queue) by default.
+  final BugReportRepository? repository;
+
+  const ReportBugPage({super.key, this.hymn, this.repository});
 
   @override
   State<ReportBugPage> createState() => _ReportBugPageState();
@@ -75,7 +78,8 @@ class _ReportBugPageState extends State<ReportBugPage> {
 
     try {
       final packageInfo = await PackageInfo.fromPlatform();
-      final result = await BugReportRepositoryImpl().submit(
+      final result =
+          await (widget.repository ?? BugReportRepositoryImpl()).submit(
         BugReportPayload(
           title: title,
           description: _withHymnReference(description),

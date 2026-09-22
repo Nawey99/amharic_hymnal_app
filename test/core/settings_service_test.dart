@@ -41,4 +41,28 @@ void main() {
     expect(SettingsService.getFavoriteHymns(), [7]);
     expect(SettingsService.getFavoriteHymnKeys(), contains('sda_new:7'));
   });
+
+  test('a favourite in one book never appears in a book with none', () async {
+    SharedPreferences.setMockInitialValues({});
+    await SettingsService.init();
+    await SettingsService.setSelectedVersion(HymnalVersions.sdaNew);
+    await SettingsService.toggleFavorite(1);
+
+    await SettingsService.setSelectedVersion(HymnalVersions.sdaOld);
+
+    expect(SettingsService.getFavoriteHymns(), isEmpty);
+    expect(SettingsService.isFavorite(1), isFalse);
+  });
+
+  test('old-format favourites survive a toggle before they are read', () async {
+    SharedPreferences.setMockInitialValues({
+      'favorite_hymns': ['7'],
+      'selected_version': HymnalVersions.sdaNew,
+    });
+    await SettingsService.init();
+
+    await SettingsService.toggleFavorite(9);
+
+    expect(SettingsService.getFavoriteHymns(), unorderedEquals([7, 9]));
+  });
 }

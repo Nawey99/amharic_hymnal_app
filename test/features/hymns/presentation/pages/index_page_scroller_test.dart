@@ -30,7 +30,7 @@ void main() {
       'selected_version': 'sda_new',
       'sort_type': 'number',
     });
-    await di.initDependencies(startDatabase: false);
+    await di.initDependencies();
 
     final repository = _FakeHymnRepository(_buildGroupedHymns());
     final bloc = HymnsBloc(
@@ -83,7 +83,7 @@ void main() {
       'selected_version': 'sda_new',
       'sort_type': 'name',
     });
-    await di.initDependencies(startDatabase: false);
+    await di.initDependencies();
 
     final repository = _FakeHymnRepository(_buildGroupedHymns());
     final bloc = HymnsBloc(
@@ -170,7 +170,7 @@ void main() {
       'selected_version': 'sda_new',
       'sort_type': 'number',
     });
-    await di.initDependencies(startDatabase: false);
+    await di.initDependencies();
 
     final repository = _FakeHymnRepository(const [
       Hymn(id: 'shared-work', number: 1, title: 'Before editor save'),

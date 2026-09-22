@@ -51,47 +51,41 @@ class SdaParser {
     final List<Map<String, dynamic>> hymns = [];
     final now = DateTime.now().millisecondsSinceEpoch;
 
+    // The bundled file lists both books by position, but position i in one
+    // book is not the same hymn as position i in the other (1975 #130 is
+    // 2004 #132). So each hymn carries only its own book's fields; mixing them
+    // put the other book's title and lyrics into search and categories.
+    final isOld = normalizedVersion == HymnalVersions.sdaOld;
+    String at(List<String> items, int i) => items.length > i ? items[i] : '';
+
     for (int i = 0; i < maxLength; i++) {
-      final newNumber = i + 1;
-      final oldNumber =
-          oldTitleArray.length > i || oldLyricsArray.length > i ? i + 1 : null;
-      final category =
-          HymnCategories.getCategoryByNumber(newNumber)?.nameAmharic;
-      final isOld = normalizedVersion == HymnalVersions.sdaOld;
-      final displayNumber = isOld ? oldNumber : newNumber;
-      if (displayNumber == null) {
-        continue;
-      }
+      final number = i + 1;
+      final exists =
+          isOld ? oldTitleArray.length > i || oldLyricsArray.length > i : true;
+      if (!exists) continue;
+
+      final title = isOld ? at(oldTitleArray, i) : at(newTitleArray, i);
+      final lyrics = isOld ? at(oldLyricsArray, i) : at(newLyricsArray, i);
 
       hymns.add({
         'id': '$normalizedVersion-sda-$i',
         'language_code': 'am',
         'version': normalizedVersion,
-        'number': displayNumber,
-        'new_hymnal_number': newNumber,
-        'old_hymnal_number': oldNumber,
-        'title': isOld
-            ? (oldTitleArray.length > i ? oldTitleArray[i] : '')
-            : (newTitleArray.length > i ? newTitleArray[i] : ''),
-        'lyrics': isOld
-            ? (oldLyricsArray.length > i ? oldLyricsArray[i] : '')
-            : (newLyricsArray.length > i ? newLyricsArray[i] : ''),
-        'category': category,
-        'new_hymnal_title': newTitleArray.length > i
-            ? (newTitleArray[i].isEmpty ? '' : newTitleArray[i])
-            : '',
-        'old_hymnal_title': oldTitleArray.length > i
-            ? (oldTitleArray[i].isEmpty ? '' : oldTitleArray[i])
-            : '',
-        'new_hymnal_lyrics': newLyricsArray.length > i
-            ? (newLyricsArray[i].isEmpty ? '' : newLyricsArray[i])
-            : '',
-        'english_title_old': englishTitleArray.length > i
-            ? (englishTitleArray[i].isEmpty ? '' : englishTitleArray[i])
-            : '',
-        'old_hymnal_lyrics': oldLyricsArray.length > i
-            ? (oldLyricsArray[i].isEmpty ? '' : oldLyricsArray[i])
-            : '',
+        'number': number,
+        'new_hymnal_number': isOld ? null : number,
+        'old_hymnal_number': isOld ? number : null,
+        'title': title,
+        'lyrics': lyrics,
+        // The number ranges describe the 2004 book only.
+        'category': isOld
+            ? null
+            : HymnCategories.getCategoryByNumber(number)?.nameAmharic,
+        'new_hymnal_title': isOld ? '' : title,
+        'old_hymnal_title': isOld ? title : '',
+        'new_hymnal_lyrics': isOld ? '' : lyrics,
+        'old_hymnal_lyrics': isOld ? lyrics : '',
+        // `new_title_en` holds the 2004 book's English titles.
+        'english_title_old': isOld ? '' : at(englishTitleArray, i),
         'created_at': now,
         'updated_at': now,
       });

@@ -16,11 +16,17 @@ class HymnsLoaded extends HymnsState {
   final String languageCode;
   final String version;
 
+  /// Changes on every favourite toggle. Favourites are kept in settings, not
+  /// on the hymns, so without it removing one could emit a state equal to the
+  /// last and pages listing favourites would not rebuild.
+  final int favoritesRevision;
+
   HymnsLoaded(
     List<Hymn> hymns,
     this.sortType, {
     this.languageCode = 'am',
     this.version = 'sda_new',
+    this.favoritesRevision = 0,
   }) : hymns = _sortHymns(List.from(hymns), sortType);
 
   static List<Hymn> _sortHymns(List<Hymn> hymns, String sortType) {
@@ -75,7 +81,8 @@ class HymnsLoaded extends HymnsState {
   }
 
   @override
-  List<Object> get props => [hymns, sortType, languageCode, version];
+  List<Object> get props =>
+      [hymns, sortType, languageCode, version, favoritesRevision];
 }
 
 class HymnsError extends HymnsState {

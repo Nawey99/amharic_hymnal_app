@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
+import 'package:amharic_hymnal_app/core/services/crash_reporting.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
@@ -27,10 +28,11 @@ void main() async {
   try {
     final audioHandler = await GlobalAudioService().initialize();
     if (audioHandler != null) registerAudioHandler(audioHandler);
-  } catch (error) {
+  } catch (error, stackTrace) {
     if (kDebugMode) {
       debugPrint('Background audio initialization failed: $error');
     }
+    unawaited(CrashReporting.recordError(error, stackTrace));
   }
 
   // Set system UI overlay style first (only for mobile)
@@ -47,8 +49,8 @@ void main() async {
     );
   }
 
-  // Run app with error handling
-  runApp(const AppInitializer());
+  // Beta builds with a Sentry DSN report crashes; other builds run as-is.
+  await CrashReporting.run(() => runApp(const AppInitializer()));
 }
 
 /// Widget to handle app initialization with error handling
@@ -72,8 +74,6 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _initializeApp() async {
     try {
-      // Initialize dependencies (includes Drift database initialization)
-      // Drift works on all platforms including web (uses IndexedDB on web)
       await initDependencies();
 
       unawaited(BugReportQueueService.instance.flushPendingReports());
@@ -91,8 +91,9 @@ class _AppInitializerState extends State<AppInitializer> {
         debugPrint('Error initializing app: $e');
         debugPrint('Stack trace: $stackTrace');
       }
+      unawaited(CrashReporting.recordError(e, stackTrace));
 
-      // Try to initialize at least SettingsRepository if database fails
+      // Continue with limited functionality if a non-critical step failed
       try {
         // SettingsRepository is initialized in initDependencies, but if that failed,
         // we can't continue - the error is already set

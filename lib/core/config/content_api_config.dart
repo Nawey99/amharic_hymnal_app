@@ -11,10 +11,6 @@ class ContentApiConfig {
     'WUDASE_CONTENT_API_URL',
     defaultValue: '',
   );
-  static const enableLocalContentDatabase = bool.fromEnvironment(
-    'WUDASE_ENABLE_LOCAL_CONTENT_DB',
-    defaultValue: false,
-  );
 
   static String get baseUrl {
     final value = _configuredBaseUrl.trim();

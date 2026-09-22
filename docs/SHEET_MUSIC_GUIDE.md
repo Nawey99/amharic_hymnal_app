@@ -206,7 +206,7 @@ assets/
 
 ### Step 2: Register Files in Database
 
-Once the Sheet Music system is implemented (see `DATABASE_EXPANSION.md`), you'll register files like this:
+This describes the retired bundled approach; sheet music now comes from the hymnal API (see `downloadable-media.md`). The old registration looked like this:
 
 **Example Migration Script**:
 ```dart

@@ -204,6 +204,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       leading: _buildHistoryButton(context),
       actions: [
         IconButton(
+          // Also the TalkBack/VoiceOver label.
+          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: AppColors.primaryText,
@@ -220,7 +222,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       child: InkWell(
         onTap: () => _openHistory(context),
         borderRadius: BorderRadius.circular(999),
+        // 48 dp is the smallest comfortable touch target.
         child: Container(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+          alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             color: AppColors.accentGreen.withValues(alpha: 0.18),
