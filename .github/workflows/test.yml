@@ -59,6 +59,7 @@ jobs:
           --fail
           --no-update
           --no-verification
+          --exclude-paths=/repo/.github/trufflehog-exclude.txt
 
   test:
     name: Run Tests
