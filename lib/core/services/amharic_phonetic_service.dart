@@ -98,7 +98,9 @@ class AmharicPhoneticService {
     final normalized1 = _normalizationMap[char1] ?? char1;
     final normalized2 = _normalizationMap[char2] ?? char2;
 
-    return normalized1 == normalized2 && normalized1 != char1;
+    // Equivalent when both letters reduce to the same base letter, in either
+    // order ('ሀ'/'ሐ' and 'ሐ'/'ሀ').
+    return normalized1 == normalized2;
   }
 
   /// Get all characters that are phonetically equivalent to the given character

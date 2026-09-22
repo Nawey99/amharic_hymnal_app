@@ -361,6 +361,8 @@ class _IndexPageState extends State<IndexPage> {
       title: 'መዝሙር ማውጫ',
       actions: [
         IconButton(
+          // Also the TalkBack/VoiceOver label.
+          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: AppColors.primaryText,
@@ -368,6 +370,7 @@ class _IndexPageState extends State<IndexPage> {
           onPressed: () => _toggleSearch(context),
         ),
         IconButton(
+          tooltip: 'ቅደም ተከተል',
           icon: const Icon(Icons.sort, color: AppColors.primaryText),
           onPressed: () => _showSortDialog(context),
         ),

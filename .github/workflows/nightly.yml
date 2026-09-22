@@ -1,0 +1,105 @@
+# .github/workflows/nightly.yml
+#
+# Tests that need the outside world, run nightly and on demand, never on
+# every push:
+#   - live-api:       test_live/ against the production hymnal API (read-only)
+#   - firebase-devices: integration_test/native/ (Patrol) on Firebase Test Lab
+#                       devices, against the production API
+# See docs/test-plan.md → "Where each test runs".
+name: Nightly Device and Live Checks
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    - cron: '30 1 * * *' # 01:30 UTC = 04:30 in Ethiopia
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  live-api:
+    name: Live Hymnal API Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.27.2'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Check production content and contract
+        run: flutter test test_live
+
+  firebase-devices:
+    name: Native Tests on Firebase Test Lab
+    # Runs only after the repository has these settings (Settings → Secrets
+    # and variables → Actions):
+    #   variable FIREBASE_PROJECT_ID     e.g. wudase-testing
+    #   secret   FIREBASE_TEST_LAB_KEY   service-account JSON with the
+    #                                    "Firebase Test Lab Admin" role
+    #   variable FTL_DEVICES (optional)  space-separated --device specs
+    if: ${{ vars.FIREBASE_PROJECT_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.27.2'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Install Patrol CLI
+        run: dart pub global activate patrol_cli 3.6.0
+
+      # Produces the app APK and the instrumentation (test) APK.
+      - name: Build app and test APKs
+        run: patrol build android --target integration_test/native/native_flows_test.dart
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_TEST_LAB_KEY }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      # Default matrix: a low-end-like and a current virtual phone. Replace
+      # with physical models from `gcloud firebase test android models list`
+      # through the FTL_DEVICES variable.
+      - name: Run on Firebase Test Lab
+        env:
+          DEVICES: ${{ vars.FTL_DEVICES || 'model=MediumPhone.arm,version=30 model=MediumPhone.arm,version=34' }}
+        run: |
+          device_args=()
+          for device in $DEVICES; do device_args+=(--device "$device"); done
+          gcloud firebase test android run \
+            --project "${{ vars.FIREBASE_PROJECT_ID }}" \
+            --type instrumentation \
+            --app build/app/outputs/apk/debug/app-debug.apk \
+            --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+            --use-orchestrator \
+            --environment-variables clearPackageData=true \
+            --timeout 20m \
+            --results-history-name wudase-native \
+            "${device_args[@]}"

@@ -250,7 +250,6 @@ The app will:
 
 - [Android Device Troubleshooting](./ANDROID_DEVICE_TROUBLESHOOTING.md)
 - [Sheet Music Guide](./SHEET_MUSIC_GUIDE.md)
-- [Database Expansion](./DATABASE_EXPANSION.md)
 
 ---
 

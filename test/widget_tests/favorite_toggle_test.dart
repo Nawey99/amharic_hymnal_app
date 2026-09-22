@@ -19,7 +19,7 @@ void main() {
         'selected_version': 'hymnal',
         'sort_type': 'number',
       });
-      await di.initDependencies(startDatabase: false);
+      await di.initDependencies();
     });
 
     setUp(() async {

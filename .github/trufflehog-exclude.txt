@@ -1,0 +1,6 @@
+# Paths TruffleHog skips. Only files that hold public, generated values belong
+# here; never add a path to silence a real finding.
+#
+# pubspec.lock lists each package's published sha256 checksum; the SentryToken
+# detector mistakes the checksums of the sentry packages for tokens.
+^pubspec\.lock$

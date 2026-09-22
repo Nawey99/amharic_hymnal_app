@@ -84,10 +84,10 @@ User Sees ← State ← BLoC ← UseCase ← Repository ← DataSource
 - **Mappers**: `hymn_mapper.dart`
 
 **Data Sources**:
-1. **JSON Assets**: Fast fallback when database not ready
-2. **SQLite (Drift)**: Primary data source when ready
-3. **SharedPreferences**: User settings, favorites
-4. **Offline Cache**: `offline_cache_service.dart` - Caches data for offline access
+1. **Hymnal API** (`hymn_remote_data_source.dart`): each edition, kept on the device by `edition_store.dart` (`content_cache/<language>_<code>.json`) and updated by delta sync
+2. **Bundled JSON** (`json_data_source.dart`): used only before an edition has ever been downloaded
+3. **SharedPreferences**: user settings, favorites, history
+4. **Media cache** (`local_media_cache_service.dart`): downloaded audio and sheet pages, stored by SHA-256
 5. **Bug Report Queue**: `bug_report_queue_service.dart` - Queues bug reports for offline submission
 
 ## Dependency Flow
@@ -117,10 +117,13 @@ Presentation → Domain ← Data
 - **FontSizeService**: Reactive font size management
 - **BackgroundImageService**: Background image toggle
 - **HistoryService**: Hymn view history tracking
-- **SheetMusicDiscoveryService**: Automatic sheet music file discovery
-- **OfflineCacheService**: Offline data caching (NEW)
-- **SyncService**: Background sync operations (NEW)
-- **BugReportQueueService**: Offline bug report queue (NEW)
+- **HymnalVersionService**: Edition list from the hymnal API
+- **HymnalApiClient**: Conditional requests and rate-limit back-off for API calls
+- **LocalMediaCacheService**: Verified audio and sheet-music downloads
+- **SheetMusicBulkDownloadService**: Whole-edition sheet-music install
+- **SongEditionsService**: The same hymn's number in other editions
+- **AppUpdateService**: Minimum app version from the manifest
+- **BugReportQueueService**: Offline bug report queue
 
 ### Dependency Injection
 
@@ -131,12 +134,12 @@ Presentation → Domain ← Data
 **Setup**:
 ```dart
 Future<void> initDependencies() async {
-  // Services
-  sl.registerLazySingleton(() => SettingsService());
-  sl.registerLazySingleton(() => OfflineCacheService.instance);
-  sl.registerLazySingleton(() => SyncService.instance);
-  sl.registerLazySingleton(() => BugReportQueueService.instance);
-  
+  await SettingsService.init();
+
+  // Data sources
+  sl.registerLazySingleton<HymnLocalDataSource>(() => LocalDataSource());
+  sl.registerLazySingleton<HymnalVersionService>(HymnalVersionService.new);
+
   // Repositories
   sl.registerLazySingleton<SettingsRepository>(
     () => SettingsRepositoryImpl(sl()),
@@ -150,26 +153,12 @@ Future<void> initDependencies() async {
 }
 ```
 
-### Database Layer
+### Content Storage
 
-**Technology**: Drift (SQLite)
-
-**Files**:
-- `lib/core/database/app_database.dart`: Database definition
-- `lib/core/database/database_helper.dart`: Database operations
-- `lib/core/database/database_migration.dart`: Migration logic
-
-**Schema**:
-```dart
-@DataClassName('HymnTable')
-class Hymns extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get number => integer()();
-  TextColumn get title => text()();
-  TextColumn get lyrics => text()();
-  // ...
-}
-```
+There is no local database. Each edition's API song objects are stored as one
+JSON file by `FileEditionStore` and patched by `/sync` deltas; see "2026
+Stabilization Notes" above. Hymns bundled in `assets/data/database/*.json`
+are parsed by `JsonDataSource` only when no stored copy exists.
 
 ### State Management
 
@@ -210,9 +199,8 @@ State ← BLoC ← UseCase ← Repository ← DataSource
 5. HymnRepository.getHymns()
    ↓
 6. LocalDataSource.getHymns()
-   ├─ Check: Database ready?
-   │  ├─ Yes → DatabaseHelper.getHymns()
-   │  └─ No → JsonDataSource.getHymns()
+   ├─ HymnRemoteDataSource.getHymns()  (stored copy, updated from the API)
+   └─ on failure with no stored copy → JsonDataSource.getHymns() (bundled)
    ↓
 7. HymnMapper.toDomainList()
    ↓
@@ -255,9 +243,8 @@ State ← BLoC ← UseCase ← Repository ← DataSource
 3. HymnsBloc.add(ToggleFavorite(hymnNumber))
    ↓
 4. _onToggleFavorite()
-   ├─ Update SharedPreferences (optimistic)
-   ├─ Emit HymnsLoaded (instant UI update)
-   └─ Update Database (background, non-blocking)
+   ├─ Update SharedPreferences (per edition)
+   └─ Emit HymnsLoaded (instant UI update)
    ↓
 5. UI updates instantly
 ```
@@ -357,61 +344,6 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
     // Handle result
   }
 }
-```
-
-## Database Schema & Migrations
-
-### Current Schema
-
-**File**: `lib/core/database/app_database.dart`
-
-```dart
-@DataClassName('HymnTable')
-class Hymns extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get number => integer()();
-  TextColumn get title => text().nullable()();
-  TextColumn get lyrics => text().nullable()();
-  TextColumn get category => text().nullable()();
-  TextColumn get newHymnalTitle => text().nullable()();
-  TextColumn get oldHymnalTitle => text().nullable()();
-  TextColumn get englishTitleOld => text().nullable()();
-  // ...
-}
-```
-
-### Adding a Migration
-
-**File**: `lib/core/database/database_migration.dart`
-
-```dart
-@DriftDatabase(tables: [Hymns], daos: [HymnDao])
-class AppDatabase extends _$AppDatabase {
-  @override
-  int get schemaVersion => 2; // Increment for new migration
-  
-  @override
-  MigrationStrategy get migration {
-    return MigrationStrategy(
-      onUpgrade: (migrator, from, to) async {
-        if (from < 2) {
-          // Migration logic
-          await migrator.addColumn(hymns, hymns.newColumn);
-        }
-      },
-    );
-  }
-}
-```
-
-### Running Migrations
-
-```bash
-# Generate migration code
-flutter pub run build_runner build --delete-conflicting-outputs
-
-# Test migration
-flutter test
 ```
 
 ## Error Handling
@@ -518,11 +450,11 @@ testWidgets('Complete user flow', (tester) async {
 - `RepaintBoundary` around expensive widgets
 - `const` constructors where possible
 
-### 3. Database
+### 3. Content loading
 
-- Fast JSON fallback when database not ready
-- Background database initialization
-- Cached queries
+- A stored edition opens without waiting for the network beyond one small change check
+- Unchanged editions cost one ~1 KB request; changes arrive as deltas
+- Each edition is held in memory for the session after its first load
 
 ### 4. Blur Performance
 
@@ -535,14 +467,14 @@ testWidgets('Complete user flow', (tester) async {
 ### Data Storage
 
 - **SharedPreferences**: User settings, favorites (local only)
-- **SQLite**: Hymn data (local only)
+- **Application support files**: stored editions and downloaded media (local only)
 - **No Secrets**: No API keys or tokens in source code
 
-### Network (Future)
+### Network
 
-- All remote calls use HTTPS
-- Proper error handling and timeouts
-- Secure token storage (when implemented)
+- All remote calls use HTTPS (enforced for release builds)
+- Timeouts on every request; rate-limit and `Retry-After` back-off
+- Downloads verified by SHA-256; short-lived storage URLs are never stored
 
 ## Internationalization
 
@@ -675,10 +607,9 @@ If migrating from a different architecture:
 1. **Circular Dependencies**: Ensure Domain has no dependencies
 2. **State Not Updating**: Check `buildWhen` predicates
 3. **Performance Issues**: Add `RepaintBoundary`, optimize rebuilds
-4. **Database Errors**: Check migration version, verify schema
+4. **Stale content**: Delete `content_cache/` under application support to force a full re-download
 
 ## References
 
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [BLoC Pattern](https://bloclibrary.dev/)
-- [Drift Documentation](https://drift.simonbinder.eu/)

@@ -75,8 +75,10 @@ class HymnRemoteDataSource {
     var cached = _cache[key];
     final now = _clock();
     final checkedAt = cached?.checkedAt;
+    // A check time in the future means the clock moved back: check again.
     if (cached != null &&
         checkedAt != null &&
+        !now.isBefore(checkedAt) &&
         now.difference(checkedAt) < freshnessWindow) {
       return cached.hymns;
     }
@@ -97,8 +99,11 @@ class HymnRemoteDataSource {
     }
 
     final fullSyncAt = cached?.fullSyncAt;
+    // A full sync dated in the future was stamped by a wrong clock; waiting
+    // for that date would stop full refreshes, so treat it as due.
     final fullRefreshDue = cached != null &&
         (fullSyncAt == null ||
+            now.isBefore(fullSyncAt) ||
             now.difference(fullSyncAt) >= fullRefreshInterval);
     if (cached != null &&
         !fullRefreshDue &&

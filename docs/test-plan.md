@@ -1,6 +1,6 @@
 # Test Plan — ውዳሴ (Draft for approval)
 
-Status: **proposal**, nothing below is implemented yet.
+Status: **approved and being implemented** (decisions in §6 answered 2026-09-21; see §7 for where each test runs).
 Written 2026-09-21 against branch `flutter-app` (149 automated tests, all passing).
 
 ## 1. Where we are
@@ -211,3 +211,80 @@ Rough size: 250–350 new automated tests, plus one manual device pass per relea
 4. **Which physical devices do you have?** This decides what is tested by hand versus in the cloud.
 5. **iOS:** is there a Mac available for simulator and device runs, or should iOS wait?
 6. **Crash reporting** (e.g. Sentry or Firebase Crashlytics) for beta testers: add it or not? It is a privacy decision.
+
+**Answers (2026-09-21):** 1 yes (Patrol 3.15, the newest for Flutter 3.27);
+2 dead code deleted, including the disabled Drift database; 3 cloud testing on
+Firebase Test Lab plus the Play internal track; 4 a Samsung S20 Ultra
+(Android 13); 5 iOS later; 6 crash reporting for beta builds (Sentry, off
+unless a DSN is supplied).
+
+## 7. Where each test runs
+
+| Suite | Folder | What it uses | Where it runs | When |
+|---|---|---|---|---|
+| Unit, widget, contract, failure, accessibility | `test/` | fakes and recorded fixtures only; **never the network** | your PC (`flutter test`) and GitHub CI (Linux) | every push and PR |
+| Coverage gate | `coverage/lcov.info` | output of the run above | GitHub CI | every push and PR (`vars.COVERAGE_MINIMUM`, default 80 %; measured 82.2 % on 2026-09-21) |
+| Full-app flows | `integration_test/app_test.dart` | scripted in-process API; everything else pointed at `content.example.invalid` | GitHub CI: Linux desktop, Android emulators API 24 and API 36; your PC or S20 Ultra by hand | every push and PR |
+| Live API checks | `test_live/` | **production** hymnal API, read-only | GitHub Actions `nightly.yml` → `live-api`; your PC by hand | nightly 01:30 UTC and on demand |
+| Native flows (Patrol) | `integration_test/native/` | **production** API, real Android (back gesture, share sheet, media notification, airplane mode) | Firebase Test Lab (`nightly.yml` → `firebase-devices`, once the Firebase settings exist); your S20 Ultra with `patrol test` | nightly and before each release |
+| Performance | `integration_test/perf/` + `test_driver/perf_driver.dart` | production API, profile build | **your S20 Ultra only** (`flutter drive --profile ...`); results in `build/perf/` | before each release |
+| Manual pass | `docs/mobile-qa-checklist.md` | the release build | S20 Ultra + one low-end Android + (later) an iPhone | before each release |
+
+Nothing in `test/` or `integration_test/app_test.dart` may call the live API;
+debug builds send no analytics, so device runs never add usage events.
+
+### Running them yourself
+
+```powershell
+flutter test                                   # everything in test/
+flutter test test_live                         # live API checks
+flutter test integration_test/app_test.dart -d <device> `
+  --dart-define=WUDASE_CONTENT_API_URL=https://content.example.invalid
+patrol test --target integration_test/native/native_flows_test.dart   # S20 Ultra over USB
+flutter drive --profile --driver=test_driver/perf_driver.dart `
+  --target=integration_test/perf/performance_test.dart
+```
+
+### Setting up Firebase Test Lab (one time)
+
+1. Create a Firebase project (e.g. `wudase-testing`) and enable Test Lab.
+2. In Google Cloud IAM, create a service account with the **Firebase Test Lab
+   Admin** role (plus **Service Usage Consumer**) and download a JSON key.
+3. In GitHub → Settings → Secrets and variables → Actions add the secret
+   `FIREBASE_TEST_LAB_KEY` (the JSON) and the variable `FIREBASE_PROJECT_ID`.
+4. Optionally set `FTL_DEVICES`, e.g.
+   `model=MediumPhone.arm,version=30 model=x1q,version=29`; list the models
+   with `gcloud firebase test android models list`.
+5. Run **Nightly Device and Live Checks** once from the Actions tab.
+
+## 8. Results on a real phone (2026-09-22)
+
+Samsung Galaxy S22 Ultra (SM-S9080), Android 16 / API 36, One UI 8, 12 GB.
+
+| Check | Result |
+|---|---|
+| Full-app flows (`integration_test/app_test.dart`) | 5 / 5 pass |
+| Native flows (Patrol): system back, share sheet, flight mode, background audio + notification | 4 / 4 pass |
+| Fresh install to first hymn list (profile) | 3.5 s |
+| Search engine over 325 hymns (profile) | 22 ms average |
+| Typing to settled results (includes 350 ms debounce) | 616 ms |
+| Index scrolling | 6.0 ms 90th-percentile frame build, 0 missed frames |
+| Release build (R8 shrinking) | starts in 0.47 s, no errors in the log |
+| Sheet music screenshot blocking (`FLAG_SECURE`) | screenshot is black |
+| Edge-to-edge (Android 16) | nothing hidden under the status or navigation bars |
+
+**Open issue: GPU memory.** `dumpsys meminfo` Graphics: 409 MB on the first
+screen, 575 MB on Index, 711 MB after leaving and reopening (the phone's own
+Settings app uses 29 MB). It is the same with Impeller and Skia, and removing
+the glass blur only saves 40-70 MB, so the cause is how the app layers its
+screens (every tab kept alive, a full-screen filtered background per page,
+many repaint layers). A 2 GB emulator killed the app for memory. Needs a
+DevTools GPU-memory profiling session before the first release.
+
+**Test notes.** Samsung names the Quick Settings tile "Flight mode" in its
+accessibility description, so the Patrol test toggles it by text or
+description. Keep the screen awake during device runs
+(`adb shell settings put global stay_on_while_plugged_in 2`, set back to 0
+afterwards); a screen that turns off mid-run fails tests with "Matrix4 entries
+must be finite".
+

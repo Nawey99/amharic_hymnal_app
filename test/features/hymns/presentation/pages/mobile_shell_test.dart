@@ -34,7 +34,7 @@ Future<HymnsBloc> _pumpShell(
     'selected_version': version,
     'sort_type': 'number',
   });
-  await di.initDependencies(startDatabase: false);
+  await di.initDependencies();
   final bloc = di.sl<HymnsBloc>();
 
   await tester.pumpWidget(

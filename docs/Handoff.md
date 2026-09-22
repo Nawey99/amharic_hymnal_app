@@ -90,60 +90,16 @@ BlocProvider<HymnsBloc>(
 final repository = sl<SettingsRepository>();
 ```
 
-## How to Add a Hymn
+## How Content Is Added
 
-### Current Process
+Hymns, books, categories, audio and sheet music are managed in the hymnal
+API's admin console (`amharic_hymnal_backend`), not in this repository. The
+app shows changes after its next sync. See `docs/DEVELOPER_GUIDE.md` →
+"Content: Books, Languages, Audio and Sheet Music".
 
-Hymns are loaded from JSON assets or SQLite database. To add a new hymn:
-
-1. **Edit JSON File**: `assets/data/database/SDA_Hymnal.json` or `HagerignaData.json`
-2. **Add Hymn Object**:
-   ```json
-   {
-     "id": "sda-999",
-     "number": 999,
-     "title": "New Hymn Title",
-     "lyrics": "Hymn lyrics...",
-     "category": "Praise",
-     "new_hymnal_title": "New Title",
-     "english_title_old": "English Title"
-   }
-   ```
-3. **Run App**: Hymn will be loaded automatically
-4. **Database**: Will be synced to database on next migration
-
-### For Database-Only Hymns
-
-```dart
-// In database migration or seed script
-await db.insertHymn(HymnTable(
-  number: 999,
-  title: 'New Hymn',
-  lyrics: 'Lyrics...',
-));
-```
-
-## How to Add a Book
-
-See `docs/lyrics-feature.md` section "How to Add a New Hymnal Book" for detailed steps.
-
-**Quick Summary**:
-1. Create JSON data file in `assets/data/database/`
-2. Register in `lib/core/models/database_config.dart`
-3. Update settings dropdown
-4. Test loading
-
-## How to Add a Language
-
-See `docs/lyrics-feature.md` section "How to Add a Language" for detailed steps.
-
-**Quick Summary**:
-1. Add language config in `lib/core/models/language_config.dart`
-2. Create JSON data file
-3. Update `pubspec.yaml` assets
-4. Register database config
-5. Add localization support
-6. Test
+The bundled `assets/data/database/SDA_Hymnal.json` and `HagerignaData.json`
+are only the offline copy used before an edition's first download; refresh
+them from the API before a release if they have drifted.
 
 ## Common Tasks
 
@@ -195,14 +151,8 @@ dart fix --apply
 ### Generating Code
 
 ```bash
-# Generate JSON serialization
-flutter pub run build_runner build --delete-conflicting-outputs
-
-# Generate Drift database code
-flutter pub run build_runner build
-
-# Watch mode (auto-regenerate on changes)
-flutter pub run build_runner watch
+# JSON model (hymn_model.g.dart)
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Key Files Reference
@@ -213,8 +163,8 @@ flutter pub run build_runner watch
 - `lib/core/services/sheet_music_discovery_service.dart`: Sheet music discovery
 - `lib/core/services/background_image_service.dart`: Background image toggle
 - `lib/core/services/settings_service.dart`: Settings persistence
-- `lib/core/services/offline_cache_service.dart`: Offline data caching
-- `lib/core/services/sync_service.dart`: Background sync operations
+- `lib/features/hymns/data/datasources/hymn_remote_data_source.dart`: API loading and delta sync
+- `lib/features/hymns/data/datasources/edition_store.dart`: Editions stored on the device
 - `lib/core/services/secure_storage_service.dart`: Secure storage for sensitive data
 - `lib/core/services/bug_report_queue_service.dart`: Offline bug report queue
 
@@ -222,7 +172,6 @@ flutter pub run build_runner watch
 
 - `lib/features/hymns/data/datasources/local_data_source.dart`: Primary data source
 - `lib/core/database/json_data_source.dart`: JSON fallback
-- `lib/core/database/database_helper.dart`: SQLite operations
 
 ### Widgets
 
@@ -274,12 +223,11 @@ BlocBuilder<HymnsBloc, HymnsState>(
 )
 ```
 
-### 2. Check Database
+### 2. Check Stored Content
 
-```dart
-final db = DatabaseHelper.instance;
-print('Database ready: ${db.isReady}');
-```
+Stored editions are JSON files in `content_cache/` under the application
+support directory; downloaded media is in `media_cache/`. Deleting either
+forces a fresh download.
 
 ### 3. Check Sheet Music Discovery
 
@@ -362,7 +310,7 @@ Before committing:
 ## Important Notes
 
 - **Sheet Music Path**: Uses `assets/sheet_music/` (with underscore), not `assets/sheetmusic/`
-- **Database**: Uses Drift (SQLite) with JSON fallback
+- **Content**: Hymnal API, stored per edition on the device, with bundled JSON as the first-run fallback
 - **State Management**: BLoC pattern throughout
 - **Architecture**: Clean Architecture with 3 layers
 - **Performance**: Optimized for low-tier devices

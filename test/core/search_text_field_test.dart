@@ -14,7 +14,7 @@ void main() {
       'selected_version': 'sda_new',
       'sort_type': 'number',
     });
-    await di.initDependencies(startDatabase: false);
+    await di.initDependencies();
 
     final controller = SearchStateController();
     final focusNode = FocusNode();

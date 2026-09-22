@@ -41,7 +41,7 @@ The lyrics feature is the core functionality of the Amharic Hymnal app, allowing
 #### Data Layer
 
 - **`lib/features/hymns/data/datasources/local_data_source.dart`**
-  - **Responsibility**: Data source for hymns (JSON + SQLite)
+  - **Responsibility**: Data source for hymns (hymnal API with stored copy, bundled JSON fallback)
   - **Key Methods**:
     - `getHymns()`: Loads hymns from database or JSON fallback
     - `_mapJsonToHymnModel()`: Maps JSON to HymnModel
@@ -94,9 +94,8 @@ HymnRepository.getHymns()
     ↓
 LocalDataSource.getHymns()
     ↓
-[Database Ready?]
-    ├─ Yes → DatabaseHelper.getHymns()
-    └─ No → JsonDataSource.getHymns()
+HymnRemoteDataSource.getHymns()   (stored copy, updated from the hymnal API)
+    └─ no stored copy and offline → JsonDataSource.getHymns() (bundled)
     ↓
 HymnMapper.toDomainList()
     ↓
@@ -551,11 +550,8 @@ dart analyze
 ### Generate Code
 
 ```bash
-# Generate JSON serialization
-flutter pub run build_runner build --delete-conflicting-outputs
-
-# Generate Drift database code
-flutter pub run build_runner build
+# Generate JSON serialization (hymn_model.g.dart)
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Troubleshooting
@@ -586,7 +582,7 @@ flutter pub run build_runner build
 
 ### Offline Functionality
 
-1. App works fully offline with local data (JSON + SQLite)
+1. App works fully offline with the stored copy of each downloaded book, or bundled JSON before the first download
 2. Bug reports are queued when offline and submitted when online
 3. Sync service is prepared for future API integration
 4. Offline cache service manages data expiration

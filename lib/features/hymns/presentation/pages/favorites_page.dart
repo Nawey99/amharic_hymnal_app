@@ -199,6 +199,8 @@ class _FavoritesPageState extends State<FavoritesPage>
       title: 'ተወዳጆች',
       actions: [
         IconButton(
+          // Also the TalkBack/VoiceOver label.
+          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: AppColors.primaryText,

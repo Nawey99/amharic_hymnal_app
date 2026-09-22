@@ -1,0 +1,593 @@
+{
+ "success": true,
+ "data": {
+  "since": "1970-01-01T00:00:00.000Z",
+  "serverTime": "2026-09-21T19:25:50.639Z",
+  "hasMore": false,
+  "nextCursor": null,
+  "hymnVersion": {
+   "id": "575bffe5-d9de-4677-a988-b0dca4dcbf82",
+   "code": "am-sda-1975",
+   "languageCode": "am",
+   "isActive": true
+  },
+  "changes": {
+   "songs": [
+    {
+     "id": "am-sda-1975-0001",
+     "number": 1,
+     "title": "አምላካችን",
+     "englishTitle": "Praise God, From Whom All Blessings Flow",
+     "lyrics": "አምላካችን አመስግኑ\n\nበምድር ያላችሁ ሁሉ\n\nየሰማይ ሰራዊት ደግሞም\n\nሥላሴንም አወድሱ አሜን!!\n",
+     "languageCode": "am",
+     "versionCode": "am-sda-1975",
+     "revision": 1,
+     "category": {
+      "id": "5fd67841-1f04-432f-8aec-a7fbb07ff1d1",
+      "slug": "praise",
+      "name": "ምስጋና",
+      "englishName": "Praise"
+     },
+     "audio": {
+      "songId": "am-sda-1975-0001",
+      "available": true,
+      "version": "2026.3",
+      "sizeBytes": 378986,
+      "checksumSha256": "737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3",
+      "etag": "\"sha256-737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3\"",
+      "lastModified": "2026-09-21T19:07:13.607Z",
+      "fileName": "001-praise-god-from-whom-all-blessings-flow.m4a",
+      "contentType": "audio/mp4",
+      "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/audio/file?language=am&version=am-sda-1975",
+      "updatedAt": "2026-09-21T19:07:13.607Z",
+      "durationSeconds": null,
+      "source": "recording",
+      "attribution": null
+     },
+     "sheetMusic": {
+      "available": true,
+      "pageCount": 1,
+      "pages": [
+       {
+        "pageNumber": 1,
+        "pageSide": "SINGLE",
+        "fileName": "01.webp",
+        "contentType": "image/webp",
+        "sizeBytes": 237630,
+        "checksumSha256": "acf1f81e384bc5b1e9dd046a2720e77d43ea06f762660c4a7989481ba2bfff9f",
+        "isShared": false,
+        "borrowedFromVersionCode": "am-sda-2004",
+        "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/sheet-music/pages/1/file?language=am&version=am-sda-1975"
+       }
+      ]
+     },
+     "rights": {
+      "status": "UNKNOWN",
+      "holder": null,
+      "note": null
+     },
+     "otherEditions": [],
+     "isActive": true,
+     "deletedAt": null,
+     "createdAt": "2026-09-18T16:34:56.518Z",
+     "updatedAt": "2026-09-21T16:40:55.010Z"
+    },
+    {
+     "id": "am-sda-1975-0004",
+     "number": 4,
+     "title": "በየሆዋ ዙፋን",
+     "englishTitle": "Before Jehovah's Awful Throne",
+     "lyrics": "በየሆዋ ዙፋን ዙሪያ \nእንቅረብ በደስታ እነዚያ \nከሱ ሌላ አምላክ የለም \nለመፍጠር ለማጥፋትም\n\nበስልጣኑ ሣንረዳው \nሰውን ከሸክላ የሰራው \nእንደ በጐችም ጠፍተን ሣል \nበደሙ መልሶ ገዛን \n\nቤቱን በምስጋና ሞልተን \nሲያስተጋባ መዝሙራችን \nየምድር ነገድ ሁሉ \nእርሱን ያመሰግናሉ\n\nትዕዛዙ ለሁሉ ነው \nፍቅሩም ዘላለማዊ ነው \nዕውነቱም እንደ ህንፃ ነው \nዘመን ከቶ የማይሽረው\n",
+     "languageCode": "am",
+     "versionCode": "am-sda-1975",
+     "revision": 1,
+     "category": {
+      "id": "5fd67841-1f04-432f-8aec-a7fbb07ff1d1",
+      "slug": "praise",
+      "name": "ምስጋና",
+      "englishName": "Praise"
+     },
+     "audio": {
+      "songId": "am-sda-1975-0004",
+      "available": false
+     },
+     "sheetMusic": {
+      "available": true,
+      "pageCount": 1,
+      "pages": [
+       {
+        "pageNumber": 1,
+        "pageSide": "SINGLE",
+        "fileName": "003.webp",
+        "contentType": "image/webp",
+        "sizeBytes": 230806,
+        "checksumSha256": "4eeb46ee1484c78063457f96a83af5b68aeb1c15a98193851d79967190b6329d",
+        "isShared": false,
+        "borrowedFromVersionCode": "am-sda-1961",
+        "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0004/sheet-music/pages/1/file?language=am&version=am-sda-1975"
+       }
+      ]
+     },
+     "rights": {
+      "status": "UNKNOWN",
+      "holder": null,
+      "note": null
+     },
+     "otherEditions": [],
+     "isActive": true,
+     "deletedAt": null,
+     "createdAt": "2026-09-18T16:34:56.518Z",
+     "updatedAt": "2026-09-21T16:40:55.010Z"
+    },
+    {
+     "id": "am-sda-1975-0056",
+     "number": 56,
+     "title": "ክርስቶስ ይክበር",
+     "englishTitle": "Not I, But Christ",
+     "lyrics": "ክርስቶስ ይክበር እኔ አልከብርም\nክርስቶስ ይታይ ይታወቅ ይወደስ\nክርስቶስ ይክበር በማንኛውም ጊዜ\nክርስቶስ ይክበር በድርጊቴ ሁሉ\n\nክርስቶስ ብቻ ይንገስ በዚህ ዓለም ላይ\nክርስቶስ ብቻ አስፈላጊ ይሁን \nእኔ ልቅር እርሱ ግን ከፍ ከፍ ይበል\nእኔ ልቅር እርሱ ከፍ ከፍ ብሎ \n\nክርስቶስ ይክበር የኔ መሪ እንዲሆን\nበዚህ ዓለም ላይ በጉዞ ላይ ሳለሁ\nክርስቶስ ይክበር አሁንም ወደ ፊትም \nክርስቶስ ይክበር ደግሞም ለዘላለም\n",
+     "languageCode": "am",
+     "versionCode": "am-sda-1975",
+     "revision": 1,
+     "category": {
+      "id": "39d63f4d-bdb0-4783-a1ac-7e3199cb4f4d",
+      "slug": "consecration",
+      "name": "ራስን ቀድሶ መስጠት",
+      "englishName": "Consecration"
+     },
+     "audio": {
+      "songId": "am-sda-1975-0056",
+      "available": false
+     },
+     "sheetMusic": {
+      "available": false,
+      "pageCount": 0,
+      "pages": []
+     },
+     "rights": {
+      "status": "UNKNOWN",
+      "holder": null,
+      "note": null
+     },
+     "otherEditions": [],
+     "isActive": true,
+     "deletedAt": null,
+     "createdAt": "2026-09-18T16:34:56.518Z",
+     "updatedAt": "2026-09-21T16:40:55.010Z"
+    },
+    {
+     "id": "am-sda-1975-0064",
+     "number": 64,
+     "title": "በኤደን አንድ ቀን",
+     "englishTitle": "In Eden Our Troubles Will End",
+     "lyrics": "ስንሰባሰብ በኤደን አንድ ቀን በሰማያዊው አገር\nበላይ መከራና ኃዘን ይጨረሳል በሰማይ ዳርቻ ስንቆም\n\nበኤደን አንድ ቀን በኤደን አንድ ቀን\nመከራና ኃዘን ይጨረሳል በሰማይ ዳርቻ አንድ ቀን\n\nስንሰባሰብ በኤደን አንድ ቀን ልንኖር ከጌታችን ጋራ \nፃድቃን ሁሉ በሰማይ ሲደርሱ በዚያ ልናገኛቸው\n\n-- በኤደን አንድ ቀን --\n\nስንሰባሰብ በኤደን አንድ ቀን ከነቢያት እና ቅዱሳን\nታናሽ ልጆች የሞቱ በሃይማኖት ይቆማሉ በዙፋኑ ፊት\n\n-- በኤደን አንድ ቀን--\n",
+     "languageCode": "am",
+     "versionCode": "am-sda-1975",
+     "revision": 1,
+     "category": {
+      "id": "0f568685-0397-46d0-9797-2a9e48fd99f2",
+      "slug": "prayer",
+      "name": "ጸሎት",
+      "englishName": "Prayer"
+     },
+     "audio": {
+      "songId": "am-sda-1975-0064",
+      "available": true,
+      "version": "2026.3",
+      "sizeBytes": 482882,
+      "checksumSha256": "036616109959d67b9857a2d9865436cc96ed443543150df1b9e7db524cd6cac0",
+      "etag": "\"sha256-036616109959d67b9857a2d9865436cc96ed443543150df1b9e7db524cd6cac0\"",
+      "lastModified": "2026-09-21T11:39:03.981Z",
+      "fileName": "321-the-eden-above.m4a",
+      "contentType": "audio/mp4",
+      "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0064/audio/file?language=am&version=am-sda-1975",
+      "updatedAt": "2026-09-21T11:39:03.981Z",
+      "durationSeconds": null,
+      "source": "synthesized",
+      "attribution": "Synthesized from the edition's MIDI with FluidSynth and the FluidR3 GM soundfont. This is a rendering of the tune, not a recorded performance."
+     },
+     "sheetMusic": {
+      "available": true,
+      "pageCount": 1,
+      "pages": [
+       {
+        "pageNumber": 1,
+        "pageSide": "RIGHT",
+        "fileName": "321R.webp",
+        "contentType": "image/webp",
+        "sizeBytes": 419564,
+        "checksumSha256": "151882d89d5883917addd032eb9d35bae2e344517e0fc959da8fae192ffd8ff3",
+        "isShared": false,
+        "borrowedFromVersionCode": "am-sda-2004",
+        "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0064/sheet-music/pages/1/file?language=am&version=am-sda-1975"
+       }
+      ]
+     },
+     "rights": {
+      "status": "UNKNOWN",
+      "holder": null,
+      "note": null
+     },
+     "otherEditions": [],
+     "isActive": true,
+     "deletedAt": null,
+     "createdAt": "2026-09-18T16:34:56.518Z",
+     "updatedAt": "2026-09-21T16:40:55.010Z"
+    },
+    {
+     "id": "am-sda-1975-0130",
+     "number": 130,
+     "title": "ወዳንተ የሱስ ሆይ",
+     "englishTitle": "Longing to be With Jesus",
+     "lyrics": "ወዳንተ የሱስ ሆይ ልቤ ይናፍቃል\nየአምላክ በግ ሁነህ ስለኔ ሞተሀል\n\nሰላም ለኔ ሰጠህ ተሸክመህ ቅጣት\nጠባቂዬ ሆነህ አወጣኸኝ ከሞት\n\nሥፍራን አዘጋጀህ ለኔ ባባቴ ቤት \nአይናችን ያላየው ብርሃኑም የሱስ ነው\n\nከዓለም መሄዴ በደረሰ ጊዜ \nምራኝ በብርሃንህ ልገባ አገሬ\n",
+     "languageCode": "am",
+     "versionCode": "am-sda-1975",
+     "revision": 1,
+     "category": {
+      "id": "22bb078b-958b-49b1-856b-54d77b04352c",
+      "slug": "hope",
+      "name": "ተስፋ",
+      "englishName": "Hope"
+     },
+     "audio": {
+      "songId": "am-sda-1975-0130",
+      "available": false
+     },
+     "sheetMusic": {
+      "available": true,
+      "pageCount": 1,
+      "pages": [
+       {
+        "pageNumber": 1,
+        "pageSide": "RIGHT",
+        "fileName": "132R.webp",
+        "contentType": "image/webp",
+        "sizeBytes": 269036,
+        "checksumSha256": "1f5f69b06de9dce77e208fc1a250df39c2bdb4ad4d305573f4c7df382c9ed7bb",
+        "isShared": false,
+        "borrowedFromVersionCode": "am-sda-2004",
+        "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0130/sheet-music/pages/1/file?language=am&version=am-sda-1975"
+       }
+      ]
+     },
+     "rights": {
+      "status": "UNKNOWN",
+      "holder": null,
+      "note": null
+     },
+     "otherEditions": [],
+     "isActive": true,
+     "deletedAt": null,
+     "createdAt": "2026-09-18T16:34:56.518Z",
+     "updatedAt": "2026-09-21T16:40:55.010Z"
+    }
+   ],
+   "categories": [
+    {
+     "id": "5fd67841-1f04-432f-8aec-a7fbb07ff1d1",
+     "slug": "praise",
+     "name": "ምስጋና",
+     "englishName": "Praise",
+     "sortOrder": 0,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:46.686Z"
+    },
+    {
+     "id": "0f568685-0397-46d0-9797-2a9e48fd99f2",
+     "slug": "prayer",
+     "name": "ጸሎት",
+     "englishName": "Prayer",
+     "sortOrder": 1,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:47.248Z"
+    },
+    {
+     "id": "9f1f6924-ed30-4c4c-bb49-746b94462235",
+     "slug": "worship",
+     "name": "ስግደት",
+     "englishName": "Worship",
+     "sortOrder": 2,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:47.486Z"
+    },
+    {
+     "id": "358c6f1c-082c-42a7-86d8-4eef3098b55b",
+     "slug": "revival",
+     "name": "መነቃቃት",
+     "englishName": "Revival",
+     "sortOrder": 3,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:47.723Z"
+    },
+    {
+     "id": "c33defd1-0ef6-4a79-b09b-05c70bab0d53",
+     "slug": "repentance",
+     "name": "ንሥሓ",
+     "englishName": "Repentance",
+     "sortOrder": 4,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:47.956Z"
+    },
+    {
+     "id": "39d63f4d-bdb0-4783-a1ac-7e3199cb4f4d",
+     "slug": "consecration",
+     "name": "ራስን ቀድሶ መስጠት",
+     "englishName": "Consecration",
+     "sortOrder": 5,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:48.189Z"
+    },
+    {
+     "id": "d3acb10b-6f15-4bf3-b25f-0be287150038",
+     "slug": "christian-living",
+     "name": "የክርስቲያን ኑሮ",
+     "englishName": "Christian Living",
+     "sortOrder": 6,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:48.430Z"
+    },
+    {
+     "id": "a92dc4d3-0792-4f0f-9923-5aa87a4c1d3c",
+     "slug": "trust",
+     "name": "መታመን",
+     "englishName": "Trust",
+     "sortOrder": 7,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:48.676Z"
+    },
+    {
+     "id": "06d1d822-edcc-41c1-9f2e-cf90b2b3886c",
+     "slug": "loyalty",
+     "name": "ታማኝነት",
+     "englishName": "Loyalty",
+     "sortOrder": 8,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:48.932Z"
+    },
+    {
+     "id": "22bb078b-958b-49b1-856b-54d77b04352c",
+     "slug": "hope",
+     "name": "ተስፋ",
+     "englishName": "Hope",
+     "sortOrder": 9,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:49.274Z"
+    },
+    {
+     "id": "7cda8c60-25d0-4772-930d-ef0c88175a46",
+     "slug": "happiness",
+     "name": "ደስታ",
+     "englishName": "Happiness",
+     "sortOrder": 10,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:49.507Z"
+    },
+    {
+     "id": "341c98a9-6a82-46d7-a6ad-9e4c0e5a067f",
+     "slug": "peace",
+     "name": "ሰላም",
+     "englishName": "Peace",
+     "sortOrder": 11,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:49.814Z"
+    },
+    {
+     "id": "640b95f1-81f1-4e96-98fa-bf12bc722cee",
+     "slug": "love",
+     "name": "ፍቅር",
+     "englishName": "Love",
+     "sortOrder": 12,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:50.049Z"
+    },
+    {
+     "id": "0a7ce8b9-b148-4900-ae4a-e83bca6427c6",
+     "slug": "work",
+     "name": "ሥራ",
+     "englishName": "Work",
+     "sortOrder": 13,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:50.284Z"
+    },
+    {
+     "id": "7600c67d-88e7-4038-9f8c-f6a8f657939b",
+     "slug": "salvation",
+     "name": "መድህን",
+     "englishName": "Salvation",
+     "sortOrder": 14,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:50.521Z"
+    },
+    {
+     "id": "312f7a17-4404-40ac-aac4-d89eaafa9af9",
+     "slug": "farewell",
+     "name": "መሰናበቻ",
+     "englishName": "Farewell",
+     "sortOrder": 15,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:50.775Z"
+    },
+    {
+     "id": "23f6b518-53f1-4543-9c0d-5d8c956798c6",
+     "slug": "cross",
+     "name": "መስቀል",
+     "englishName": "Cross",
+     "sortOrder": 16,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:51.006Z"
+    },
+    {
+     "id": "ba63500f-344b-4441-a238-d526104c1ea7",
+     "slug": "baptism",
+     "name": "ጥምቀት",
+     "englishName": "Baptism",
+     "sortOrder": 17,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:51.246Z"
+    },
+    {
+     "id": "acb28bb1-e295-46c1-84a1-a230c6b7e932",
+     "slug": "ordinances",
+     "name": "ቁርባን",
+     "englishName": "Ordinances",
+     "sortOrder": 18,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:51.489Z"
+    },
+    {
+     "id": "52652645-a9ba-4aae-989d-a3433d222ed3",
+     "slug": "resurrection",
+     "name": "ትንሣኤ",
+     "englishName": "Resurrection",
+     "sortOrder": 19,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:51.760Z"
+    },
+    {
+     "id": "8b338756-6a20-47de-91f2-b1117a97d6b4",
+     "slug": "sabbath",
+     "name": "ሰንበት",
+     "englishName": "Sabbath",
+     "sortOrder": 20,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:52.050Z"
+    },
+    {
+     "id": "f948f9c2-ca7f-4562-8c87-57885e77207a",
+     "slug": "gods-word",
+     "name": "የእግዚአብሔር ቃል",
+     "englishName": "God’s Word",
+     "sortOrder": 21,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:52.291Z"
+    },
+    {
+     "id": "9dd592ff-4412-4680-b8d7-12f064df42f0",
+     "slug": "christian-warfare",
+     "name": "የክርስቲያን ተጋድሎ",
+     "englishName": "Christian Warfare",
+     "sortOrder": 22,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:52.513Z"
+    },
+    {
+     "id": "317714aa-b3d8-4e39-88c6-75d88136c310",
+     "slug": "people",
+     "name": "ሕዝብ",
+     "englishName": "People",
+     "sortOrder": 23,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:52.747Z"
+    },
+    {
+     "id": "bb8eaa7a-64e6-43d3-b5ce-e4b2a5751643",
+     "slug": "judgment",
+     "name": "ፍርድ",
+     "englishName": "Judgment",
+     "sortOrder": 24,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:53.021Z"
+    },
+    {
+     "id": "7c2eebfd-dc7b-4a99-a080-2a58586ba3fa",
+     "slug": "second-coming",
+     "name": "ዳግም ምፅአት",
+     "englishName": "Second Coming",
+     "sortOrder": 25,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:53.270Z"
+    },
+    {
+     "id": "65e69841-383a-4eee-be5f-e67101d04dbd",
+     "slug": "heavenly-home",
+     "name": "የሰማይ ቤት",
+     "englishName": "Heavenly Home",
+     "sortOrder": 26,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:53.513Z"
+    },
+    {
+     "id": "4b3509ae-2b6a-4553-a2db-803d54bf7764",
+     "slug": "young-people",
+     "name": "ወጣቶች",
+     "englishName": "Young People",
+     "sortOrder": 27,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:53.753Z"
+    },
+    {
+     "id": "aa0189ed-298c-4667-b6b5-57ccd43c6e68",
+     "slug": "wedding",
+     "name": "ጋብቻ",
+     "englishName": "Wedding",
+     "sortOrder": 28,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:54.003Z"
+    },
+    {
+     "id": "61380d9f-fb9f-4949-8c06-bc715efa4bf2",
+     "slug": "childrens-songs",
+     "name": "የልጆች መዝሙር",
+     "englishName": "Children’s Songs",
+     "sortOrder": 29,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:54.241Z"
+    },
+    {
+     "id": "533f9c55-bba9-4992-939a-ccf126ab5cfe",
+     "slug": "nature",
+     "name": "ተፈጥሮ",
+     "englishName": "Nature",
+     "sortOrder": 30,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:54.506Z"
+    },
+    {
+     "id": "2a935e33-4d1b-4dad-b6cc-b0ad5a37f37f",
+     "slug": "christmas",
+     "name": "ልደት",
+     "englishName": "Christmas",
+     "sortOrder": 31,
+     "isActive": true,
+     "updatedAt": "2026-09-21T16:40:54.762Z"
+    }
+   ],
+   "audio": [
+    {
+     "songId": "am-sda-1975-0001",
+     "available": true,
+     "version": "2026.3",
+     "sizeBytes": 378986,
+     "checksumSha256": "737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3",
+     "etag": "\"sha256-737fb9457a50d7cc8deefc9747ddb4d8432dc6f9d8834f6bf4962e95051ba8b3\"",
+     "lastModified": "2026-09-21T19:07:13.607Z",
+     "fileName": "001-praise-god-from-whom-all-blessings-flow.m4a",
+     "contentType": "audio/mp4",
+     "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0001/audio/file?language=am&version=am-sda-1975",
+     "updatedAt": "2026-09-21T19:07:13.607Z",
+     "durationSeconds": null,
+     "source": "recording",
+     "attribution": null
+    },
+    {
+     "songId": "am-sda-1975-0064",
+     "available": true,
+     "version": "2026.3",
+     "sizeBytes": 482882,
+     "checksumSha256": "036616109959d67b9857a2d9865436cc96ed443543150df1b9e7db524cd6cac0",
+     "etag": "\"sha256-036616109959d67b9857a2d9865436cc96ed443543150df1b9e7db524cd6cac0\"",
+     "lastModified": "2026-09-21T11:39:03.981Z",
+     "fileName": "321-the-eden-above.m4a",
+     "contentType": "audio/mp4",
+     "downloadUrl": "https://amharichymnalbackend.vercel.app/api/v1/songs/am-sda-1975-0064/audio/file?language=am&version=am-sda-1975",
+     "updatedAt": "2026-09-21T11:39:03.981Z",
+     "durationSeconds": null,
+     "source": "synthesized",
+     "attribution": "Synthesized from the edition's MIDI with FluidSynth and the FluidR3 GM soundfont. This is a rendering of the tune, not a recorded performance."
+    }
+   ],
+   "sheetMusicPages": [],
+   "sheetMusic": [],
+   "audioPackages": []
+  }
+ }
+}

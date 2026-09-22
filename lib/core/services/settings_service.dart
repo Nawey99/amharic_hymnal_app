@@ -114,22 +114,26 @@ class SettingsService {
 
   static List<int> getFavoriteHymns() {
     final version = getSelectedVersion();
-    final versioned = getFavoriteHymnKeys()
+    // Favourites saved before they were kept per book are moved into the
+    // selected book once, the first time; after that the old list is gone, so
+    // it can never leak into another book that has no favourites yet.
+    if (_prefs?.getStringList(AppConstants.keyFavoriteHymnsVersioned) == null) {
+      final legacy = _legacyFavoriteHymns();
+      if (legacy.isNotEmpty) {
+        _prefs?.setStringList(
+          AppConstants.keyFavoriteHymnsVersioned,
+          legacy.map((number) => _favoriteKey(version, number)).toSet().toList()
+            ..sort(),
+        );
+        _prefs?.remove(AppConstants.keyFavoriteHymns);
+        return legacy;
+      }
+    }
+    return getFavoriteHymnKeys()
         .where((key) => key.startsWith('$version:'))
         .map((key) => int.tryParse(key.split(':').last) ?? 0)
         .where((e) => e > 0)
         .toList();
-    if (versioned.isNotEmpty) return versioned;
-
-    final legacy = _legacyFavoriteHymns();
-    if (legacy.isNotEmpty) {
-      final migrated = legacy.map((number) => _favoriteKey(version, number));
-      _prefs?.setStringList(
-        AppConstants.keyFavoriteHymnsVersioned,
-        migrated.toSet().toList()..sort(),
-      );
-    }
-    return legacy;
   }
 
   static List<int> _legacyFavoriteHymns() {
@@ -155,10 +159,7 @@ class SettingsService {
     }.toList()
       ..sort();
 
-    await _prefs?.setStringList(
-      AppConstants.keyFavoriteHymns,
-      hymnNumbers.map((e) => e.toString()).toList(),
-    );
+    await _prefs?.remove(AppConstants.keyFavoriteHymns);
     return await _prefs?.setStringList(
             AppConstants.keyFavoriteHymnsVersioned, merged) ??
         false;
@@ -169,6 +170,7 @@ class SettingsService {
       version ?? getSelectedVersion(),
     );
     final key = _favoriteKey(selectedVersion, hymnNumber);
+    getFavoriteHymns(); // Move any old-format favourites first.
     final favorites = getFavoriteHymnKeys().toSet();
     if (favorites.contains(key)) {
       favorites.remove(key);
@@ -176,13 +178,9 @@ class SettingsService {
       favorites.add(key);
     }
     final sorted = favorites.toList()..sort();
-    await _prefs?.setStringList(
-      AppConstants.keyFavoriteHymns,
-      sorted
-          .where((item) => item.startsWith('${getSelectedVersion()}:'))
-          .map((item) => item.split(':').last)
-          .toList(),
-    );
+    // The old number-only list is not kept up to date; it would otherwise be
+    // mistaken for favourites of a book that has none yet.
+    await _prefs?.remove(AppConstants.keyFavoriteHymns);
     return await _prefs?.setStringList(
             AppConstants.keyFavoriteHymnsVersioned, sorted) ??
         false;

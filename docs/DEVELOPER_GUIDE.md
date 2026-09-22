@@ -27,10 +27,9 @@ lib/
 │   ├── data/                       # Data layer infrastructure
 │   │   └── repositories/          # Repository implementations
 │   │       └── settings_repository_impl.dart
-│   ├── database/                   # Database layer
-│   │   ├── app_database.dart      # Drift database definition
-│   │   ├── database_helper.dart   # Database operations wrapper
-│   │   ├── database_migration.dart # Migration logic
+│   ├── database/                   # Bundled offline content
+│   │   ├── json_data_source.dart  # Reads bundled JSON
+│   │   ├── parsers/               # SDA and Hagerigna JSON parsers
 │   │   ├── json_data_source.dart  # JSON asset loader
 │   │   └── parsers/               # Data parsers
 │   │       ├── hagerigna_parser.dart
@@ -48,9 +47,8 @@ lib/
 │   │   └── app_localizations.dart
 │   ├── models/                     # Shared models
 │   │   ├── database_config.dart   # Database configuration
-│   │   └── language_config.dart   # Language configuration
 │   ├── services/                   # Shared services
-│   │   ├── amharic_transliteration_service.dart
+│   │   ├── amharic_phonetic_service.dart
 │   │   ├── background_image_service.dart
 │   │   ├── font_size_service.dart
 │   │   ├── history_service.dart
@@ -123,412 +121,50 @@ lib/
 
 ---
 
-## Adding a New Language
-
-### Step 1: Add Language Configuration
-
-**File**: `lib/core/models/language_config.dart`
-
-Add your language code and configuration:
-
-```dart
-class LanguageConfig {
-  static const Map<String, LanguageInfo> languages = {
-    'am': LanguageInfo(
-      code: 'am',
-      name: 'Amharic',
-      displayName: 'አማርኛ',
-    ),
-    'en': LanguageInfo(  // New language example
-      code: 'en',
-      name: 'English',
-      displayName: 'English',
-    ),
-  };
-}
-```
-
-### Step 2: Create JSON Data File
-
-**Location**: `assets/data/database/{language_code}_Data.json`
-
-Create a JSON file following the existing structure:
-
-```json
-{
-  "hymnals": {
-    "hymnal": {
-      "hymns": [
-        {
-          "id": "sda-1",
-          "number": 1,
-          "title": "Hymn Title",
-          "lyrics": "Hymn lyrics...",
-          ...
-        }
-      ]
-    }
-  }
-}
-```
-
-### Step 3: Register in Database Helper
-
-**File**: `lib/core/database/database_helper.dart`
-
-Add language registration:
-
-```dart
-DatabaseRegistry.registerDatabase(
-  languageCode: 'en',
-  version: 'hymnal',
-  config: DatabaseConfig(...),
-);
-```
-
-### Step 4: Add Localization Strings
-
-**File**: `lib/core/l10n/app_localizations.dart`
-
-Add localization strings for your language:
-
-```dart
-class AppLocalizations {
-  String get languageName {
-    switch (_locale.languageCode) {
-      case 'en':
-        return 'English';
-      case 'am':
-        return 'አማርኛ';
-      default:
-        return 'English';
-    }
-  }
-}
-```
-
-### Step 5: Update Settings Dropdown
-
-**File**: `lib/features/hymns/presentation/pages/settings_page.dart`
-
-Add dropdown item:
-
-```dart
-DropdownMenuItem(
-  value: 'en',
-  child: Text('English'),
-),
-```
-
-### Step 6: Test Language Switching
-
-1. Run the app
-2. Go to Settings
-3. Select your new language
-4. Verify hymns load correctly
-5. Verify UI text displays in new language
-
----
-
-## Adding a New Hymnal Book
-
-### Step 1: Create Version Config
-
-**File**: `lib/core/models/database_config.dart`
-
-Add version configuration:
-
-```dart
-class DatabaseConfig {
-  static DatabaseConfig getHymnalConfig(String languageCode) {
-    return DatabaseConfig(
-      databaseName: '${languageCode}_hymnal.db',
-      version: 1,
-      jsonAssetPath: 'assets/data/database/${languageCode}_Hymnal.json',
-    );
-  }
-}
-```
-
-### Step 2: Create JSON Data File
-
-**Location**: `assets/data/database/{version}_Hymnal.json`
-
-Structure your JSON data according to the hymnal format.
-
-### Step 3: Update Database Schema (If Needed)
-
-**File**: `lib/core/database/app_database.dart`
-
-If new fields are needed, update the Drift table definition:
-
-```dart
-@DataClassName('HymnTable')
-class Hymns extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get number => integer()();
-  TextColumn get title => text()();
-  TextColumn get lyrics => text()();
-  // Add new columns here
-}
-```
-
-### Step 4: Create Parser
-
-**File**: `lib/core/database/parsers/{version}_parser.dart`
-
-Create a parser for your hymnal format:
-
-```dart
-class VersionParser {
-  static List<Map<String, dynamic>> parseHymns(String jsonString) {
-    final jsonData = json.decode(jsonString);
-    // Parse and return list of hymn maps
-  }
-}
-```
-
-### Step 5: Register in Database Registry
-
-**File**: `lib/core/database/database_helper.dart`
-
-```dart
-DatabaseRegistry.registerDatabase(
-  languageCode: 'am',
-  version: 'new_version',
-  config: DatabaseConfig(...),
-);
-```
-
-### Step 6: Update Version Dropdown
-
-**File**: `lib/features/hymns/presentation/pages/settings_page.dart`
-
-Add version to dropdown:
-
-```dart
-DropdownMenuItem(
-  value: 'new_version',
-  child: Text('New Version'),
-),
-```
-
-### Step 7: Generate Database Code
-
-Run code generation:
-
-```bash
-flutter pub run build_runner build --delete-conflicting-outputs
-```
-
----
-
-## API Integration
-
-### Step 1: Create Remote Data Source
-
-**File**: `lib/features/hymns/data/datasources/hymn_remote_data_source.dart`
-
-```dart
-abstract class HymnRemoteDataSource {
-  Future<List<HymnModel>> getHymnsFromApi();
-  Future<HymnModel> getHymnByNumber(int number);
-}
-
-class HymnRemoteDataSourceImpl implements HymnRemoteDataSource {
-  final Dio httpClient;
-  
-  HymnRemoteDataSourceImpl({required this.httpClient});
-  
-  @override
-  Future<List<HymnModel>> getHymnsFromApi() async {
-    final response = await httpClient.get('/api/hymns');
-    return (response.data as List)
-        .map((json) => HymnModel.fromJson(json))
-        .toList();
-  }
-}
-```
-
-### Step 2: Create API Service
-
-**File**: `lib/core/services/api_service.dart`
-
-```dart
-class ApiService {
-  late final Dio _dio;
-  
-  ApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: 'https://api.example.com',
-      connectTimeout: Duration(seconds: 30),
-    ));
-  }
-  
-  Future<Response> get(String endpoint) => _dio.get(endpoint);
-  Future<Response> post(String endpoint, {dynamic data}) => _dio.post(endpoint, data: data);
-}
-```
-
-### Step 3: Add Sync Use Case
-
-**File**: `lib/features/hymns/domain/usecases/sync_hymns_from_api.dart`
-
-```dart
-class SyncHymnsFromApi {
-  final HymnRepository repository;
-  
-  SyncHymnsFromApi(this.repository);
-  
-  Future<Either<Failure, List<Hymn>>> call() async {
-    // Fetch from API
-    // Save to local database
-    // Return updated hymns
-  }
-}
-```
-
-### Step 4: Implement Sync Strategy
-
-**Options**:
-
-- **Full Sync**: Replace all local data
-- **Incremental Sync**: Update only changed items
-- **Background Sync**: Sync periodically in background
-
-**File**: `lib/core/services/sync_service.dart`
-
-```dart
-class SyncService {
-  Timer? _syncTimer;
-  
-  void startPeriodicSync() {
-    _syncTimer = Timer.periodic(Duration(hours: 24), (_) {
-      _syncHymns();
-    });
-  }
-  
-  Future<void> _syncHymns() async {
-    // Implement sync logic
-  }
-}
-```
-
-### Step 5: Handle Offline Caching
-
-**Strategy**: Always prefer local cache, sync in background
-
-```dart
-Future<List<Hymn>> getHymns() async {
-  // Return cached data immediately
-  final cached = await localDataSource.getHymns();
-  
-  // Sync in background
-  syncInBackground();
-  
-  return cached;
-}
-```
-
-### Step 6: Add Retry Logic
-
-```dart
-Future<List<Hymn>> getHymnsWithRetry() async {
-  int attempts = 0;
-  while (attempts < 3) {
-    try {
-      return await remoteDataSource.getHymns();
-    } catch (e) {
-      attempts++;
-      await Future.delayed(Duration(seconds: 2 * attempts));
-    }
-  }
-  throw NetworkException('Failed after 3 attempts');
-}
-```
-
----
-
-## Sheet Music Integration
-
-### Step 1: Save Files to Assets
-
-**Location**: `assets/sheet_music/{version}/`
-
-**Naming Convention**:
-- Single page: `{hymn_number}.jpg` or `{hymn_number}.png`
-- Two pages: `{hymn_number}_2L.jpg` and `{hymn_number}_2R.jpg`
-
-**Example**:
-```
-assets/sheet_music/sda/
-  1.jpg              # Hymn 1, single page
-  5_2L.jpg           # Hymn 5, left page
-  5_2R.jpg           # Hymn 5, right page
-  10.png             # Hymn 10, PNG format
-```
-
-### Step 2: Update pubspec.yaml
-
-```yaml
-flutter:
-  assets:
-    - assets/sheet_music/
-    - assets/sheet_music/sda/
-```
-
-### Step 3: Update JSON Data
-
-Add sheet music paths to your hymn data:
-
-```json
-{
-  "id": "sda-5",
-  "number": 5,
-  "sheet_music": ["5_2L.jpg", "5_2R.jpg"]
-}
-```
-
-### Step 4: Verify Model Mapping
-
-**File**: `lib/features/hymns/data/models/hymn_model.dart`
-
-Ensure `sheetMusic` field is mapped:
-
-```dart
-@JsonKey(name: 'sheet_music')
-final List<String>? sheetMusic;
-```
-
-### Step 5: UI Implementation
-
-**File**: `lib/features/hymns/presentation/widgets/sheet_music_viewer.dart`
-
-The `SheetMusicViewer` widget handles:
-- Displaying single or multiple pages
-- Zoom functionality with `InteractiveViewer`
-- Page navigation with `PageView`
-- Labels: "2L"/"2R" for two pages, numbers for single page
-
-**Usage**:
-
-```dart
-SheetMusicViewer(
-  sheetMusicFiles: hymn.sheetMusic ?? [],
-  hymnNumber: hymn.displayNumber,
-)
-```
-
-### Step 6: Show Only for SDA Hymnal
-
-**File**: `lib/features/hymns/presentation/pages/hymn_detail_page.dart`
-
-```dart
-if (!hymn.isHagerigna && hymn.sheetMusic != null && hymn.sheetMusic!.isNotEmpty)
-  SheetMusicViewer(...)
-```
-
----
+## Content: Books, Languages, Audio and Sheet Music
+
+Hymn content is not edited in this repository. The hymnal API
+(`amharic_hymnal_backend`) owns every book (edition), its songs, categories,
+audio and sheet-music pages; editors change them in that backend's `/admin`
+console, and the app picks the changes up through `/sync`
+(see `docs/architecture.md` and `docs/backend-plan.md`).
+
+### Adding a book (edition)
+
+1. Create and publish the edition in the backend
+   (its `docs/multiple-hymn-versions.md`).
+2. Nothing is needed in the app for it to appear: `HymnalVersionService`
+   lists every edition from `/hymn-versions`, and `HymnalVersions.fromApiCode`
+   turns a code such as `am-sda-2019` into the local ID `sda_2019`.
+3. Only if the book should work offline before its first download, bundle a
+   JSON copy under `assets/data/database/`, add a parser in
+   `lib/core/database/parsers/`, and register it in `DatabaseRegistry`
+   (`lib/core/models/database_config.dart`).
+4. Give it a fixed label and order only if needed, in `HymnalVersions`
+   (`lib/core/models/hymnal_version.dart`).
+
+### Adding a language
+
+1. The backend must serve the language (`language=<code>`); today it serves
+   only `am`.
+2. Add UI strings to `lib/core/l10n/app_localizations.dart` and the locale to
+   `supportedLocales` in `lib/main.dart`.
+3. `HymnalVersions.apiCode` prefixes codes with the language (`am-...`); check
+   the new language's codes follow the same pattern.
+
+### Audio and sheet music
+
+Media is never bundled. Each song from the API names its files with a
+checksum; the app downloads them on request, verifies them and caches them by
+checksum (`docs/downloadable-media.md`). To add or replace media, publish it in
+the backend.
+
+### Categories
+
+Categories belong to each edition in the backend and arrive on each song
+(`EditionCategoriesService` reads their order). `HymnCategories`
+(`lib/core/constants/hymn_categories.dart`) is only a fallback for 2004 hymns
+without one.
 
 ## How Lyrics Search Works
 
@@ -548,9 +184,9 @@ if (!hymn.isHagerigna && hymn.sheetMusic != null && hymn.sheetMusic!.isNotEmpty)
                   hymn.lyrics.toLowerCase().contains(query);
    ```
 
-3. **Amharic Transliteration**:
-   - Uses `AmharicTransliterationService` to handle Amharic/Fidel input
-   - Converts between script variants for better matching
+3. **Amharic Sound-Alike Matching**:
+   - Uses `AmharicPhoneticService` so letters that sound the same (ስ/ሥ, ሀ/ሐ/ኀ, ጸ/ፀ) match
+   - `ScriptDetector` tells Fidel input from Latin input
 
 4. **Sorting**:
    - **By Name**: Groups by first letter, sorts alphabetically
@@ -570,7 +206,6 @@ if (!hymn.isHagerigna && hymn.sheetMusic != null && hymn.sheetMusic!.isNotEmpty)
 
 For large datasets, consider:
 - Pre-built search index
-- Full-text search with SQLite FTS
 - Trie data structure for prefix matching
 
 ---
@@ -602,7 +237,7 @@ State Update → UI Rebuild
 3. **BLoC**: `HymnsBloc` handles `LoadHymns` event
 4. **Use Case**: Calls `GetHymns` use case
 5. **Repository**: `HymnRepositoryImpl` implements `GetHymns`
-6. **Data Source**: `LocalDataSource` queries database/JSON
+6. **Data Source**: `LocalDataSource` asks `HymnRemoteDataSource` (stored copy + API), then bundled JSON
 7. **Model**: Returns `List<HymnModel>`
 8. **Mapper**: Converts to `List<Hymn>` (domain entity)
 9. **Repository**: Returns `Either<Failure, List<Hymn>>`
@@ -623,221 +258,22 @@ State Update → UI Rebuild
 
 ---
 
-## Generating Models, DB Schema, Migrations
+## Code Generation
 
-### Drift Code Generation
-
-**Database Definition**: `lib/core/database/app_database.dart`
-
-**Run Code Generation**:
+Only the JSON model uses generated code (`hymn_model.g.dart`, from
+`json_serializable`). After changing `HymnModel`:
 
 ```bash
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
-This generates:
-- `app_database.g.dart`: Database implementation
-- Model classes with type-safe queries
-
-### Schema Changes
-
-**Step 1**: Update Table Definition
-
-```dart
-class Hymns extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  // Add new column
-  TextColumn get newField => text().nullable()();
-}
-```
-
-**Step 2**: Update Database Version
-
-```dart
-@DriftDatabase(tables: [Hymns])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase(QueryExecutor e) : super(e);
-  
-  @override
-  int get schemaVersion => 2; // Increment version
-}
-```
-
-**Step 3**: Create Migration
-
-**File**: `lib/core/database/database_migration.dart`
-
-```dart
-Future<void> migrate(Database database, int from, int to) async {
-  if (from < 2 && to >= 2) {
-    await database.customStatement('ALTER TABLE hymns ADD COLUMN new_field TEXT');
-  }
-}
-```
-
-**Step 4**: Run Code Generation
-
-```bash
-flutter pub run build_runner build --delete-conflicting-outputs
-```
-
-### Migration Best Practices
-
-1. Always test migrations on sample data
-2. Support rollback if possible
-3. Migrate data when needed (not just schema)
-4. Use transactions for atomic migrations
-
----
-
-## Adding Categories (Many-to-Many)
-
-### Step 1: Create Category Table
-
-**File**: `lib/core/database/app_database.dart`
-
-```dart
-@DataClassName('CategoryTable')
-class Categories extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-  TextColumn get displayName => text()();
-}
-
-@DataClassName('HymnCategoryTable')
-class HymnCategories extends Table {
-  IntColumn get hymnId => integer()();
-  IntColumn get categoryId => integer()();
-  
-  @override
-  Set<Column> get primaryKey => {hymnId, categoryId};
-}
-```
-
-### Step 2: Update Domain Entity
-
-**File**: `lib/features/hymns/domain/entities/category.dart`
-
-```dart
-class Category extends Equatable {
-  final int id;
-  final String name;
-  final String displayName;
-  
-  const Category({
-    required this.id,
-    required this.name,
-    required this.displayName,
-  });
-  
-  @override
-  List<Object> get props => [id, name, displayName];
-}
-```
-
-### Step 3: Update Hymn Entity
-
-**File**: `lib/features/hymns/domain/entities/hymn.dart`
-
-```dart
-class Hymn extends Equatable {
-  // ... existing fields
-  final List<Category> categories;
-  
-  const Hymn({
-    // ... existing parameters
-    this.categories = const [],
-  });
-}
-```
-
-### Step 4: Create Repository Methods
-
-**File**: `lib/features/hymns/domain/repositories/hymn_repository.dart`
-
-```dart
-abstract class HymnRepository {
-  Future<Either<Failure, List<Category>>> getCategories();
-  Future<Either<Failure, List<Hymn>>> getHymnsByCategory(int categoryId);
-}
-```
-
-### Step 5: Implement Repository
-
-**File**: `lib/features/hymns/data/repositories/hymn_repository_impl.dart`
-
-```dart
-@override
-Future<Either<Failure, List<Hymn>>> getHymnsByCategory(int categoryId) async {
-  try {
-    final hymnModels = await localDataSource.getHymnsByCategory(categoryId);
-    final hymns = HymnMapper.toDomainList(hymnModels);
-    return Right(hymns);
-  } catch (e) {
-    return Left(ServerFailure(e.toString()));
-  }
-}
-```
-
-### Step 6: UI Integration
-
-**File**: `lib/features/hymns/presentation/pages/index_page.dart`
-
-```dart
-// Add category filter dropdown
-DropdownButton<int>(
-  items: categories.map((cat) => DropdownMenuItem(
-    value: cat.id,
-    child: Text(cat.displayName),
-  )).toList(),
-  onChanged: (categoryId) {
-    if (categoryId != null) {
-      context.read<HymnsBloc>().add(LoadHymnsByCategory(categoryId));
-    }
-  },
-)
-```
-
-### Step 7: Add Use Case
-
-**File**: `lib/features/hymns/domain/usecases/get_hymns_by_category.dart`
-
-```dart
-class GetHymnsByCategory {
-  final HymnRepository repository;
-  
-  GetHymnsByCategory(this.repository);
-  
-  Future<Either<Failure, List<Hymn>>> call(int categoryId) async {
-    return await repository.getHymnsByCategory(categoryId);
-  }
-}
-```
-
----
+There is no local database, so there are no schema migrations. Stored
+editions are versioned by `StoredEdition.schemaVersion`; a copy with another
+version is ignored and downloaded again.
 
 ## Adding Assets
 
-### Audio Files
 
-**Location**: `assets/audio/{version}/`
-
-**Naming**: `{hymn_number}.mp3`
-
-**pubspec.yaml**:
-
-```yaml
-flutter:
-  assets:
-    - assets/audio/
-    - assets/audio/hymnal/
-```
-
-**Code Usage**:
-
-```dart
-AudioPlayer().play(AssetSource('audio/hymnal/${hymn.number}.mp3'));
-```
 
 ### Images
 
@@ -864,28 +300,7 @@ flutter:
 Image.asset('assets/images/background.jpg')
 ```
 
-### Sheet Music
 
-**Location**: `assets/sheet_music/{version}/`
-
-**Naming**:
-- Single: `{number}.jpg`
-- Double: `{number}_2L.jpg`, `{number}_2R.jpg`
-
-**pubspec.yaml**:
-
-```yaml
-flutter:
-  assets:
-    - assets/sheet_music/
-    - assets/sheet_music/sda/
-```
-
-**Code Usage**:
-
-```dart
-Image.asset('assets/sheet_music/sda/${hymn.number}_2L.jpg')
-```
 
 ### Font Files
 
@@ -924,7 +339,7 @@ flutter:
 ### Code Generation
 
 ```bash
-# Generate code for models, database, etc.
+# Generate code for the JSON model
 flutter pub run build_runner build --delete-conflicting-outputs
 
 # Watch mode for continuous generation
@@ -954,11 +369,10 @@ flutter build ios --release
 
 ## Troubleshooting
 
-### Database Issues
+### Content Issues
 
-- **Migration errors**: Check version numbers, verify migration logic
-- **Database locked**: Ensure proper transaction handling
-- **Missing data**: Verify JSON data structure matches models
+- **Old content after an edit**: the app refetches when the edition's `contentUpdatedAt` changes; edge caches can delay that by a minute
+- **Start clean**: delete `content_cache/` (and `media_cache/`) under application support
 
 ### Performance Issues
 
