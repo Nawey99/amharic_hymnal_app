@@ -111,12 +111,14 @@ jobs:
       - name: Build self-hosted web release
         run: flutter build web --release --no-web-resources-cdn
 
+      # libcurl: sentry_flutter's native Linux client sends reports with curl.
       - name: Install Linux integration dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --yes \
             clang \
             cmake \
+            libcurl4-openssl-dev \
             libgtk-3-dev \
             libsecret-1-dev \
             libstdc++-12-dev \
