@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- Published privacy policy. Source text: docs/privacy-policy.md; keep in step. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ውዳሴ Privacy Policy</title>
+  <meta name="description" content="How the ውዳሴ (Wudase) hymnal app handles your data.">
+  <style>
+    :root {
+      --bg: #faf9f6; --text: #1d1d1b; --muted: #5b5b57; --rule: #deddd6;
+      --accent: #2e7d32; --code: #efeee8;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #141413; --text: #ecebe6; --muted: #a8a79f; --rule: #33332f;
+        --accent: #7bc47f; --code: #22221f;
+        color-scheme: dark;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #141413; --text: #ecebe6; --muted: #a8a79f; --rule: #33332f;
+      --accent: #7bc47f; --code: #22221f;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans Ethiopic",
+        "Nyala", "Abyssinica SIL", sans-serif;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 4px; }
+    h2 { font-size: 1.25rem; margin: 36px 0 8px; padding-top: 12px; border-top: 1px solid var(--rule); }
+    h3 { font-size: 1.05rem; margin: 24px 0 6px; }
+    p, li { max-width: 68ch; }
+    ul { padding-left: 22px; }
+    .meta { color: var(--muted); margin: 0 0 24px; }
+    .summary { background: var(--code); border-radius: 8px; padding: 12px 16px 12px 36px; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    a { color: var(--accent); }
+    .am { font-family: "Noto Sans Ethiopic", "Nyala", "Abyssinica SIL", system-ui, sans-serif; }
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Privacy Policy — ውዳሴ</h1>
+  <p class="meta">
+    Effective date: [[date of publication]]<br>
+    Publisher: [[name of the person, church or organisation responsible]]<br>
+    Contact: [[email address for privacy questions]]
+  </p>
+
+  <ul class="summary">
+    <li>No account, no sign-in, no advertising, no tracking across apps.</li>
+    <li>Your settings, favourites, history and searches stay on your phone.</li>
+    <li>The app sends anonymous counts of which hymns are opened (kept 90 days), and reports only when you choose to send one.</li>
+    <li>Test (beta) versions may send crash reports. Public versions do not.</li>
+  </ul>
+
+  <h2>What stays on your phone</h2>
+  <p>These never leave your device:</p>
+  <ul>
+    <li>your chosen hymnal, language, font size and other settings;</li>
+    <li>your favourite hymns and the hymns you have recently opened;</li>
+    <li>the hymns, audio and sheet music the app has downloaded, so they work offline;</li>
+    <li>anything you type into the app's search. Search runs on your phone and is not sent anywhere.</li>
+  </ul>
+  <p>Uninstalling the app, or clearing its storage, deletes all of this.</p>
+
+  <h2>What the app sends, and why</h2>
+  <h3>1. Downloading hymns, audio and sheet music</h3>
+  <p>The app downloads hymn content from our server (the hymnal API) and audio and sheet-music files from our file storage. As with any internet request, these services see your IP address while answering. It is not stored with any hymn data. A short-lived counter per IP address is kept only to stop abuse (rate limiting).</p>
+
+  <h3>2. Anonymous usage counts</h3>
+  <p>When you open a hymn or a category, the app sends which hymn or category it was, in which hymnal, and whether it was opened from the list, search or favourites. This shows us which hymns people use. The count contains <strong>no</strong> name, account, device ID, IP address or location, and is deleted after <strong>90 days</strong>.</p>
+
+  <h3>3. Reports you choose to send</h3>
+  <p>If you send a report (a wrong lyric, a problem with the app, a suggestion) we receive:</p>
+  <ul>
+    <li>what you wrote and the type of report you chose;</li>
+    <li>the hymnal and hymn it is about, if any;</li>
+    <li>the app version, platform, operating-system version, phone model, the screen you were on and the app language, to help us fix the problem;</li>
+    <li>a contact email or phone number <strong>only if you type one</strong>, so we can reply.</li>
+  </ul>
+  <p>We do not store your IP address with a report. If you are offline, the report waits on your phone (encrypted) and is sent the next time the app can reach the server. Reports are read only by the people who maintain the hymnal and kept for [[how long, e.g. until resolved, and at most 12 months]].</p>
+
+  <h3>4. Crash reports (test versions only)</h3>
+  <p>Test (beta) versions may send a crash report when the app fails: the error, where in the app it happened, the app version, and the phone model and operating system. Crash reports contain no name, account, IP-derived data or screenshots. <strong>Public versions of the app never send crash reports.</strong> Crash reports are processed by Sentry (sentry.io) and kept for [[Sentry retention]].</p>
+
+  <h2>Who processes the data</h2>
+  <p>We do not sell or share your data, and we do not use it for advertising. These providers run the service for us and process data only for that purpose:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Provider</th><th>What it does for us</th></tr></thead>
+      <tbody>
+        <tr><td>Vercel</td><td>runs the hymnal API</td></tr>
+        <tr><td>Supabase</td><td>stores hymn content, reports, anonymous usage counts, and audio and sheet-music files</td></tr>
+        <tr><td>Upstash</td><td>short-lived rate-limit counters</td></tr>
+        <tr><td>Sentry</td><td>crash reports from test versions only</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>These providers may process data outside Ethiopia.</p>
+
+  <h2>Security</h2>
+  <p>All connections use encrypted HTTPS. Reports and usage counts can only be read by signed-in maintainers of the hymnal. Downloaded files are checked against a checksum before the app uses them.</p>
+
+  <h2>Permissions the app uses (Android)</h2>
+  <ul>
+    <li><strong>Internet</strong>: to download hymns, audio and sheet music, and to send reports.</li>
+    <li><strong>Foreground service (media playback)</strong> and <strong>wake lock</strong>: to keep playing a hymn when the screen is off, and to keep the screen on while you read if you turn that setting on.</li>
+  </ul>
+  <p>The app blocks screenshots of sheet music to respect the rights of its publishers.</p>
+
+  <h2>Children</h2>
+  <p>The app is suitable for all ages. It does not knowingly collect personal information from children, and a report only contains contact details if someone types them in.</p>
+
+  <h2>Your choices and rights</h2>
+  <ul>
+    <li>You can use the whole app without sending a report.</li>
+    <li>Uninstall the app, or clear its storage, to delete everything on your phone.</li>
+    <li>To see, correct or delete a report you sent, email [[email address]] with roughly when you sent it and what it said. We will reply within [[e.g. 30 days]].</li>
+  </ul>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, we will update the effective date above and, for important changes, tell you in the app.</p>
+
+  <h2 lang="am" class="am">በአጭሩ</h2>
+  <ul lang="am" class="am">
+    <li>ውዳሴ መለያ ወይም መግቢያ አይፈልግም፤ ማስታወቂያም የለውም።</li>
+    <li>ቅንብሮችዎ፣ ተወዳጆችዎ፣ ታሪክዎ እና ፍለጋዎ በስልክዎ ላይ ብቻ ይቀመጣሉ።</li>
+    <li>መተግበሪያው የትኞቹ መዝሙሮች እንደተከፈቱ ስም-አልባ ቁጥር ይልካል (ለ90 ቀናት ይቀመጣል)።</li>
+    <li>ሪፖርት የሚላከው እርስዎ ሲልኩ ብቻ ነው፤ የመገናኛ አድራሻ የሚካተተው እርስዎ ከጻፉት ብቻ ነው።</li>
+    <li>የሙከራ (ቤታ) ስሪቶች የብልሽት ሪፖርት ሊልኩ ይችላሉ፤ ለሕዝብ የሚለቀቁ ስሪቶች አይልኩም።</li>
+    <li>ጥያቄ ካለዎት፦ [[email address]]</li>
+  </ul>
+</main>
+</body>
+</html>
