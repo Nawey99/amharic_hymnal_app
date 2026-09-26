@@ -1,4 +1,6 @@
 // lib/core/services/settings_service.dart
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
@@ -7,18 +9,35 @@ import 'package:amharic_hymnal_app/core/utils/constants.dart';
 class SettingsService {
   static SharedPreferences? _prefs;
 
-  static Future<void> init() async {
+  static Future<void> init({double? systemTextScale}) async {
     _prefs = await SharedPreferences.getInstance();
 
     // Fix any existing out-of-range font size values in SharedPreferences
     final fontSize = _prefs?.getDouble(AppConstants.keyFontSize);
-    if (fontSize != null) {
-      final clampedFontSize = fontSize.clamp(12.0, 30.0);
-      if ((fontSize - clampedFontSize).abs() > 0.01) {
-        // Value was out of range, fix it immediately
-        await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize);
-      }
+    if (fontSize == null) {
+      await _seedFontSizeFromSystem(
+        systemTextScale ??
+            PlatformDispatcher.instance.textScaleFactor.toDouble(),
+      );
+      return;
     }
+    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    if ((fontSize - clampedFontSize).abs() > 0.01) {
+      // Value was out of range, fix it immediately
+      await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize);
+    }
+  }
+
+  /// On a fresh install the hymn text starts at the size the phone's own
+  /// text-size setting implies, rather than at one fixed size. Afterwards
+  /// the reader's own choice is what counts.
+  static Future<void> _seedFontSizeFromSystem(double systemTextScale) async {
+    final scale =
+        systemTextScale.isFinite && systemTextScale > 0 ? systemTextScale : 1.0;
+    await _prefs?.setDouble(
+      AppConstants.keyFontSize,
+      (AppConstants.defaultFontSize * scale).clamp(12.0, 30.0),
+    );
   }
 
   // Language
@@ -203,6 +222,57 @@ class SettingsService {
 
   static Future<bool> setOnboardingCompleted(bool value) async {
     return await _prefs?.setBool(AppConstants.keyOnboardingCompleted, value) ??
+        false;
+  }
+
+  /// Whether the development and contribution section is shown in Settings.
+  /// Hidden until the app version is tapped several times.
+  static bool isContributionUnlocked() {
+    return _prefs?.getBool(AppConstants.keyContributionUnlocked) ?? false;
+  }
+
+  static Future<bool> setContributionUnlocked(bool value) async {
+    return await _prefs?.setBool(AppConstants.keyContributionUnlocked, value) ??
+        false;
+  }
+
+  /// Whether the person chose to keep all of [mediaType] for [version] on
+  /// the phone, so files added or replaced later are fetched too.
+  static bool isMediaKeptOffline(String version, String mediaType) {
+    final kept = _prefs?.getStringList(AppConstants.keyMediaKeptOffline);
+    return kept?.contains('$version|$mediaType') ?? false;
+  }
+
+  static Future<bool> setMediaKeptOffline(
+    String version,
+    String mediaType,
+    bool value,
+  ) async {
+    final kept = {
+      ...?_prefs?.getStringList(AppConstants.keyMediaKeptOffline),
+    };
+    value
+        ? kept.add('$version|$mediaType')
+        : kept.remove('$version|$mediaType');
+    return await _prefs?.setStringList(
+          AppConstants.keyMediaKeptOffline,
+          kept.toList()..sort(),
+        ) ??
+        false;
+  }
+
+  /// Whether the offer to download sheet music and audio for offline use is
+  /// still to be made. Set when onboarding finishes, cleared once answered.
+  static bool isOfflineDownloadOfferPending() {
+    return _prefs?.getBool(AppConstants.keyOfflineDownloadOfferPending) ??
+        false;
+  }
+
+  static Future<bool> setOfflineDownloadOfferPending(bool value) async {
+    return await _prefs?.setBool(
+          AppConstants.keyOfflineDownloadOfferPending,
+          value,
+        ) ??
         false;
   }
 

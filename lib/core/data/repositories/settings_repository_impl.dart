@@ -110,4 +110,38 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<bool> setOnboardingCompleted(bool value) async {
     return await SettingsService.setOnboardingCompleted(value);
   }
+
+  @override
+  bool isOfflineDownloadOfferPending() {
+    return SettingsService.isOfflineDownloadOfferPending();
+  }
+
+  @override
+  Future<bool> setOfflineDownloadOfferPending(bool value) async {
+    return await SettingsService.setOfflineDownloadOfferPending(value);
+  }
+
+  @override
+  bool isContributionUnlocked() {
+    return SettingsService.isContributionUnlocked();
+  }
+
+  @override
+  Future<bool> setContributionUnlocked(bool value) async {
+    return await SettingsService.setContributionUnlocked(value);
+  }
+
+  @override
+  bool isMediaKeptOffline(String version, String mediaType) {
+    return SettingsService.isMediaKeptOffline(version, mediaType);
+  }
+
+  @override
+  Future<bool> setMediaKeptOffline(
+    String version,
+    String mediaType,
+    bool value,
+  ) async {
+    return await SettingsService.setMediaKeptOffline(version, mediaType, value);
+  }
 }

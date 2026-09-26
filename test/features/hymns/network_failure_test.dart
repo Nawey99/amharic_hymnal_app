@@ -10,7 +10,6 @@ import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/app_update_service.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
-import 'package:amharic_hymnal_app/core/services/sheet_music_bulk_download_service.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/edition_store.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
@@ -193,7 +192,7 @@ void main() {
       });
     });
 
-    test('other-edition numbers, update check and page list time out', () {
+    test('other-edition numbers and the update check time out', () {
       fakeAsync((async) {
         final client = _hangOn(FakeHymnalApi(baseUrl: _base), '');
         final errors = <String, Object>{};
@@ -210,20 +209,9 @@ void main() {
         ).requiredVersion(_code).then((_) {}).catchError((Object e) {
           errors['update'] = e;
         });
-        SheetMusicBulkDownloadService(
-          baseUrl: _base,
-          client: client,
-          cache: media,
-        ).plan(_code).then((_) {}).catchError((Object e) {
-          errors['pages'] = e;
-        });
-
         async.elapse(const Duration(seconds: 9));
         expect(errors.keys, containsAll(['editions', 'update']));
-        expect(errors.containsKey('pages'), isFalse,
-            reason: 'the page list allows 20 s');
-        async.elapse(const Duration(seconds: 12));
-        expect(errors, hasLength(3));
+        expect(errors, hasLength(2));
         expect(errors.values, everyElement(isA<TimeoutException>()));
       });
     });

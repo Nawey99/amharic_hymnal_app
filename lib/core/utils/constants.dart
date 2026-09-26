@@ -12,6 +12,10 @@ class AppConstants {
   static const String keyFavoriteHymnsVersioned = 'favorite_hymns_by_version';
   static const String keyHistory = 'hymn_history';
   static const String keyOnboardingCompleted = 'onboarding_completed';
+  static const String keyMediaKeptOffline = 'media_kept_offline';
+  static const String keyContributionUnlocked = 'contribution_unlocked';
+  static const String keyOfflineDownloadOfferPending =
+      'offline_download_offer_pending';
   static const String keyDataCollectionEnabled = 'data_collection_enabled';
   static const String keyCacheUpdated = 'cache_updated';
   static const String keyZoomScale = 'zoom_scale';
