@@ -24,12 +24,29 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_medi
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/other_editions_line.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
+/// A drag counts as a swipe between hymns only when it runs at least
+/// [swipeMinDistance] sideways and at least twice as far sideways as up or
+/// down. Scrolling the lyrics drifts sideways well under this.
+const double swipeMinDistance = 48;
+const double swipeAxisRatio = 2;
+
+/// Whether a drag of [moved] is a swipe between hymns rather than a scroll
+/// of the lyrics.
+bool isHymnSwipe(Offset moved) =>
+    moved.dx.abs() >= swipeMinDistance &&
+    moved.dx.abs() >= moved.dy.abs() * swipeAxisRatio;
+
 class HymnDetailPage extends StatefulWidget {
   final Hymn? hymn;
   final int? hymnNumber;
   final String sourceDestination;
   final ValueChanged<String>? onDestinationSelected;
   final ValueChanged<Hymn>? onHymnChanged;
+
+  /// Called when this page is closed by the back arrow or the system back
+  /// gesture. Moving to the next or previous hymn replaces the page instead,
+  /// and does not call it.
+  final VoidCallback? onClosed;
 
   const HymnDetailPage({
     super.key,
@@ -38,6 +55,7 @@ class HymnDetailPage extends StatefulWidget {
     this.sourceDestination = 'number',
     this.onDestinationSelected,
     this.onHymnChanged,
+    this.onClosed,
   });
 
   @override
@@ -47,8 +65,12 @@ class HymnDetailPage extends StatefulWidget {
 class _HymnDetailPageState extends State<HymnDetailPage> {
   static const double _mediaCondenseOffset = 24;
 
-  double _horizontalDragStart = 0.0;
+  Offset _dragStart = Offset.zero;
   bool _isHorizontalDrag = false;
+
+  /// The flick a swipe between hymns must be released with; the sideways
+  /// drift at the end of a scroll is far slower.
+  static const double _swipeMinVelocity = 300;
   Future<Hymn?>? _numberLookupFuture;
   bool _isLoadingAdjacentHymn = false;
   int? _displayedHymnNumber;
@@ -111,6 +133,15 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) widget.onClosed?.call();
+      },
+      child: _buildPage(context),
+    );
+  }
+
+  Widget _buildPage(BuildContext context) {
     if (widget.hymnNumber != null && widget.hymn == null) {
       return _buildNumberLookupView(widget.hymnNumber!);
     }
@@ -236,7 +267,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return GestureDetector(
       onHorizontalDragStart: (details) {
         if (_isLyricsPinching) return;
-        _horizontalDragStart = details.globalPosition.dx;
+        _dragStart = details.globalPosition;
         _isHorizontalDrag = false;
       },
       onHorizontalDragUpdate: (details) {
@@ -244,19 +275,17 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           _isHorizontalDrag = false;
           return;
         }
-        // Check if this is a primarily horizontal drag (not diagonal)
-        final deltaX = details.globalPosition.dx - _horizontalDragStart;
-        final deltaY = details.delta.dy.abs();
-
-        // If horizontal movement is much greater than vertical, it's a swipe
-        if (deltaX.abs() > 20 && deltaX.abs() > deltaY * 2) {
-          _isHorizontalDrag = true;
-        }
+        // Both measured over the whole drag: a slow scroll drifts sideways
+        // a little on every frame, which used to read as a swipe.
+        final moved = details.globalPosition - _dragStart;
+        _isHorizontalDrag = isHymnSwipe(moved);
       },
       onHorizontalDragEnd: (details) {
+        final velocity = details.primaryVelocity;
         if (!_isLyricsPinching &&
             _isHorizontalDrag &&
-            details.primaryVelocity != null) {
+            velocity != null &&
+            velocity.abs() >= _swipeMinVelocity) {
           _handleSwipe(details, hymn.displayNumber);
         }
         _isHorizontalDrag = false;
@@ -325,7 +354,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         id: 'settings',
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'ቅንብር',
+        label: 'ቅንብሮች',
       ),
     ];
     final selectedIndex = items.indexWhere(
@@ -396,7 +425,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return _loadHymnByNumber(nextNumber).then((hymn) {
       if (!mounted) return;
       if (hymn == null) {
-        _showComingSoonMessage('መዝሙር #$nextNumber አልተገኘም');
+        _showComingSoonMessage('መዝሙር ቁጥር $nextNumber አልተገኘም');
         return;
       }
       widget.onHymnChanged?.call(hymn);
@@ -408,6 +437,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             sourceDestination: widget.sourceDestination,
             onDestinationSelected: widget.onDestinationSelected,
             onHymnChanged: widget.onHymnChanged,
+            onClosed: widget.onClosed,
           ),
         ),
       );
@@ -514,7 +544,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           child: ListTile(
             leading: Icon(Icons.flag_outlined, color: AppColors.primaryText),
             title: Text(
-              'ስህተት ሪፖርት',
+              'የስህተት ጥቆማ',
               style: TextStyle(color: AppColors.primaryText),
             ),
           ),
@@ -587,12 +617,27 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       onPointerMove: _handleLyricsPointerMove,
       onPointerUp: _handleLyricsPointerEnd,
       onPointerCancel: _handleLyricsPointerEnd,
-      child: SingleChildScrollView(
-        controller: _lyricsScrollController,
-        physics:
-            _isLyricsPinching ? const NeverScrollableScrollPhysics() : null,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        child: _buildLyricsSection(hymn, fontSize),
+      // The builder's context is inside the Scaffold's body, which is where
+      // the floating bar's height is reported; the page's own context is
+      // above it and would report nothing.
+      child: Builder(
+        builder: (bodyContext) => SingleChildScrollView(
+          controller: _lyricsScrollController,
+          // Always scrollable, so a short hymn's lyrics still take an upward
+          // drag instead of leaving it to the swipe between hymns.
+          physics: _isLyricsPinching
+              ? const NeverScrollableScrollPhysics()
+              : const AlwaysScrollableScrollPhysics(),
+          // The lyrics scroll behind the bar, so the last line needs the
+          // bar's height to clear it at any text size.
+          padding: EdgeInsets.fromLTRB(
+            16,
+            8,
+            16,
+            24 + MediaQuery.paddingOf(bodyContext).bottom,
+          ),
+          child: _buildLyricsSection(hymn, fontSize),
+        ),
       ),
     );
   }
@@ -684,8 +729,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       blurSigma: 12.0,
       opacity: 0.25,
       padding: padding,
+      // The size below is already the reader's own choice, seeded from the
+      // system's text size on a fresh install, so the system scale is not
+      // applied to it a second time.
       child: SelectableText(
         hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
+        textScaler: TextScaler.noScaling,
         style: TextStyle(
           color: AppColors.primaryText,
           fontSize: effectiveFontSize,
@@ -712,7 +761,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: const Icon(Icons.flag_outlined, color: AppColors.primaryText),
-        tooltip: 'ስህተት ሪፖርት',
+        tooltip: 'የስህተት ጥቆማ',
         onPressed: () => _reportProblem(hymn),
       ),
     );
@@ -721,7 +770,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   /// Opens the report screen with this hymn attached, so a wrong word or
   /// page reaches the admin with the hymn already identified.
   void _reportProblem(Hymn hymn) {
-    Navigator.of(context).push(
+    // Over the whole app: the floating navigation bar would otherwise cover
+    // the form's send button.
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(builder: (_) => ReportBugPage(hymn: hymn)),
     );
   }
@@ -734,7 +785,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('በማጋራት ላይ ስህተት ተፈጥሯል: $e'),
+            content: Text('በማጋራት ላይ ስህተት ተከስቷል: $e'),
             duration: const Duration(seconds: 2),
           ),
         );

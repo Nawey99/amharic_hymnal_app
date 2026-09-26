@@ -85,13 +85,14 @@ void main() {
 
     final zoomedText = tester.widget<SelectableText>(lyricsFinder);
     expect(zoomedText.style!.fontSize, greaterThan(initialFontSize));
+    // Scrolling is handed back once the pinch ends.
     expect(
       tester
           .widget<SingleChildScrollView>(
             find.byType(SingleChildScrollView),
           )
           .physics,
-      isNull,
+      isA<AlwaysScrollableScrollPhysics>(),
     );
     expect(
       FontSizeService().getFontSize(),

@@ -3,14 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/app_update_service.dart';
+import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/offline_download_flow.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_page.dart';
@@ -27,6 +30,7 @@ typedef HymnDetailBuilder = Widget Function(
   String sourceDestination,
   ValueChanged<String> onDestinationSelected,
   ValueChanged<Hymn> onHymnChanged,
+  VoidCallback onClosed,
 );
 
 class MainNavigationPage extends StatefulWidget {
@@ -60,6 +64,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
       destination: GlobalKey<NavigatorState>(),
   };
   bool _isHymnDetailOpen = false;
+  bool _isOfferingOfflineDownloads = false;
 
   @override
   void initState() {
@@ -119,6 +124,37 @@ class _MainNavigationPageState extends State<MainNavigationPage>
             forceRefresh: true,
           ),
         );
+  }
+
+  /// After an edition loads or syncs (not a search's results): rechecks
+  /// what of its sheet music and audio is on the phone, fetches what a sync
+  /// added to media kept offline, and makes the after-onboarding offer.
+  Future<void> _offerOfflineDownloads(HymnsState state) async {
+    if (!widget.loadInitialData ||
+        state is! HymnsLoaded ||
+        state.sortType == 'search') {
+      return;
+    }
+    final downloads = OfflineDownloadController.instance;
+    if (hymnsAreFromServer(state.hymns, state.version)) {
+      await downloads.updateStatus(state.version, state.hymns);
+      if (!mounted) return;
+      downloadKeptMediaChanges(ScaffoldMessenger.of(context));
+    } else {
+      downloads.clearStatus();
+    }
+
+    if (!mounted || _isOfferingOfflineDownloads) return;
+    _isOfferingOfflineDownloads = true;
+    try {
+      await maybeOfferOfflineDownloads(
+        context,
+        version: state.version,
+        hymns: state.hymns,
+      );
+    } finally {
+      _isOfferingOfflineDownloads = false;
+    }
   }
 
   Future<void> _loadInitialData() async {
@@ -260,12 +296,14 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                 source.id,
                 _handleDetailDestinationSelected,
                 _handleActiveHymnChanged,
+                () => _handleDetailClosed(source),
               ) ??
               HymnDetailPage(
                 hymn: hymn,
                 sourceDestination: source.id,
                 onDestinationSelected: _handleDetailDestinationSelected,
                 onHymnChanged: _handleActiveHymnChanged,
+                onClosed: () => _handleDetailClosed(source),
               ),
         ),
       );
@@ -297,6 +335,19 @@ class _MainNavigationPageState extends State<MainNavigationPage>
       return;
     }
     navigator.popUntil((route) => identical(route, shellRoute));
+  }
+
+  /// Closing a hymn with back ends it: its tab shows its list again rather
+  /// than reopening the hymn. Leaving the hymn open for another tab, from
+  /// the bar on the hymn itself, still returns to it (that changes the
+  /// destination before this runs).
+  void _handleDetailClosed(_NavDestination source) {
+    if (!mounted ||
+        _selectedDestination != source ||
+        !_hymnSession.owns(source.id)) {
+      return;
+    }
+    setState(_clearActiveHymnState);
   }
 
   void _handleActiveHymnChanged(Hymn hymn) {
@@ -344,7 +395,10 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     return BlocListener<HymnsBloc, HymnsState>(
       listenWhen: (previous, current) =>
           current is HymnsLoaded && previous != current,
-      listener: (context, state) => _reconcileActiveHymn(state),
+      listener: (context, state) {
+        _reconcileActiveHymn(state);
+        _offerOfflineDownloads(state);
+      },
       child: BlocBuilder<HymnsBloc, HymnsState>(
         buildWhen: (previous, current) {
           if (previous is HymnsLoaded && current is HymnsLoaded) {
@@ -393,7 +447,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
           final selectedNavIndex =
               effectiveSelectedIndex < 0 ? 0 : effectiveSelectedIndex;
 
-          return Scaffold(
+          final scaffold = Scaffold(
             resizeToAvoidBottomInset: false,
             body: useSideNavigation
                 ? Row(
@@ -420,6 +474,25 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                       ),
                     ],
                   ),
+          );
+          if (useSideNavigation) return scaffold;
+
+          // Messages from any tab float just above the bottom bar, instead
+          // of covering it and taking its taps.
+          final theme = Theme.of(context);
+          return Theme(
+            data: theme.copyWith(
+              snackBarTheme: theme.snackBarTheme.copyWith(
+                behavior: SnackBarBehavior.floating,
+                insetPadding: const EdgeInsets.fromLTRB(
+                  16,
+                  0,
+                  16,
+                  NavBarConstants.navBarTotalSpace,
+                ),
+              ),
+            ),
+            child: scaffold,
           );
         },
       ),
@@ -486,7 +559,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         page: _pageFor(const SettingsPage()),
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'ቅንብር',
+        label: 'ቅንብሮች',
       ),
     ];
   }

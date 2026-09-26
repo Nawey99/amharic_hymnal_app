@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
@@ -52,6 +54,25 @@ void main() {
     changedTo.clear();
   }
 
+  /// A drag of [offset] in many small steps, as a finger reading down a
+  /// page moves: each frame travels a little, and it ends without a flick.
+  Future<void> dragSlowly(WidgetTester tester, Offset offset) async {
+    const steps = 40;
+    // Over the player card above the lyrics: no scroll view takes the drag
+    // there, so the page's own swipe gesture is all that is listening.
+    final page = tester.getRect(find.byType(HymnDetailPage).first);
+    final gesture = await tester.startGesture(
+      Offset(page.center.dx, page.top + page.height * 0.16),
+    );
+    for (var step = 0; step < steps; step++) {
+      await gesture.moveBy(offset / steps.toDouble());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump(const Duration(milliseconds: 120));
+    await gesture.up();
+    await _settle(tester);
+  }
+
   Future<void> swipe(WidgetTester tester, double dx) async {
     await tester.fling(
       find.byType(HymnDetailPage).first,
@@ -60,6 +81,21 @@ void main() {
     );
     await _settle(tester);
   }
+
+  group('what counts as a swipe between hymns', () {
+    test('a sideways run, at least twice as far as any up or down', () {
+      expect(isHymnSwipe(const Offset(-60, 10)), isTrue);
+      expect(isHymnSwipe(const Offset(60, -10)), isTrue);
+    });
+
+    test('scrolling the lyrics is not, however far it drifts sideways', () {
+      expect(isHymnSwipe(const Offset(30, -300)), isFalse);
+      expect(isHymnSwipe(const Offset(-40, 120)), isFalse,
+          reason: 'a diagonal drag belongs to the lyrics');
+      expect(isHymnSwipe(const Offset(20, 0)), isFalse,
+          reason: 'too short to mean anything');
+    });
+  });
 
   group('swiping', () {
     testWidgets('left opens the next hymn', (tester) async {
@@ -81,6 +117,53 @@ void main() {
       expect(find.text('- 2 -'), findsOneWidget);
     });
 
+    testWidgets('scrolling a short hymn up and down stays on it',
+        (tester) async {
+      await openHymn(tester, 2);
+
+      await dragSlowly(tester, const Offset(0, -260)); // up
+      await dragSlowly(tester, const Offset(0, 240)); // back down
+      await dragSlowly(tester, const Offset(-30, -260)); // up, drifting
+
+      expect(find.text('- 2 -'), findsOneWidget);
+      expect(changedTo, isEmpty);
+    });
+
+    testWidgets('a scroll that starts with a thumb arc stays on the hymn',
+        (tester) async {
+      await openHymn(tester, 2);
+      final page = tester.getRect(find.byType(HymnDetailPage).first);
+
+      // A thumb pivots sideways before it travels up the page. That first
+      // sideways move used to mark the whole drag as a swipe.
+      final gesture = await tester.startGesture(
+        Offset(page.center.dx, page.top + page.height * 0.7),
+      );
+      for (final step in const [Offset(20, -1), Offset(18, -2)]) {
+        await gesture.moveBy(step);
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      for (var up = 0; up < 8; up++) {
+        await gesture.moveBy(const Offset(-1, -50));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await gesture.up();
+      await _settle(tester);
+
+      expect(find.text('- 2 -'), findsOneWidget);
+      expect(changedTo, isEmpty);
+    });
+
+    testWidgets('a sideways drag released without a flick stays put',
+        (tester) async {
+      await openHymn(tester, 2);
+
+      await dragSlowly(tester, const Offset(-200, 0));
+
+      expect(find.text('- 2 -'), findsOneWidget);
+      expect(changedTo, isEmpty);
+    });
+
     testWidgets('right on the first hymn stays put', (tester) async {
       await openHymn(tester, 1);
 
@@ -98,7 +181,109 @@ void main() {
       await swipe(tester, -300);
 
       expect(find.text('- 5 -'), findsOneWidget);
-      expect(find.text('መዝሙር #6 አልተገኘም'), findsOneWidget);
+      expect(find.text('መዝሙር ቁጥር 6 አልተገኘም'), findsOneWidget);
+    });
+  });
+
+  testWidgets('swiping to another hymn is not closing the page',
+      (tester) async {
+    await setUpTestApp(content: {'sda_new': _book()});
+    var closed = 0;
+    bloc = await pumpInApp(
+      tester,
+      Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => HymnDetailPage(
+                  hymn: _book()[1],
+                  onClosed: () => closed++,
+                ),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    bloc.add(LoadHymns('am', 'sda_new', 'number'));
+    await _settle(tester);
+    await tester.tap(find.text('open'));
+    await _settle(tester);
+
+    await swipe(tester, -300);
+    expect(find.text('- 3 -'), findsOneWidget);
+    expect(closed, 0, reason: 'the next hymn replaces the page');
+
+    await tester.binding.handlePopRoute();
+    await _settle(tester);
+
+    expect(find.byType(HymnDetailPage), findsNothing);
+    expect(closed, 1, reason: 'back closes it');
+  });
+
+  group('the end of the lyrics clears the bottom bar', () {
+    final longHymn = Hymn(
+      id: 'sda_new-sda-99',
+      number: 99,
+      title: 'ረጅም መዝሙር',
+      lyrics: [for (var line = 1; line <= 40; line++) 'መስመር $line']
+          .join(String.fromCharCode(10)),
+    );
+
+    /// Scrolls to the end and returns the gap between the last line and the
+    /// top of the floating bar.
+    Future<double> gapBelowLastLine(WidgetTester tester) async {
+      final scrollable = find
+          .descendant(
+            of: find.byType(SingleChildScrollView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final position = tester.state<ScrollableState>(scrollable).position;
+      while (position.pixels < position.maxScrollExtent) {
+        position.jumpTo(position.maxScrollExtent);
+        await _settle(tester);
+      }
+
+      final lyrics = tester.getRect(find.byType(SelectableText));
+      final bar = tester.getRect(find.byType(AppBottomNavigationBar));
+      return bar.top - lyrics.bottom;
+    }
+
+    for (final fontSize in [12.0, 30.0]) {
+      testWidgets('at size ${fontSize.toInt()} on a small screen',
+          (tester) async {
+        await setUpTestApp(content: {'sda_new': _book()});
+        FontSizeService().initialize(fontSize);
+        changedTo = [];
+        bloc = await pumpInApp(
+          tester,
+          HymnDetailPage(hymn: longHymn, onHymnChanged: changedTo.add),
+          size: const Size(360, 640),
+        );
+        bloc.add(LoadHymns('am', 'sda_new', 'number'));
+        await _settle(tester);
+
+        expect(await gapBelowLastLine(tester), greaterThanOrEqualTo(0));
+      });
+    }
+
+    testWidgets('and with the phone text size raised too', (tester) async {
+      await setUpTestApp(content: {'sda_new': _book()});
+      FontSizeService().initialize(30);
+      changedTo = [];
+      bloc = await pumpInApp(
+        tester,
+        HymnDetailPage(hymn: longHymn, onHymnChanged: changedTo.add),
+        size: const Size(360, 640),
+        textScale: 1.6,
+      );
+      bloc.add(LoadHymns('am', 'sda_new', 'number'));
+      await _settle(tester);
+
+      expect(await gapBelowLastLine(tester), greaterThanOrEqualTo(0));
     });
   });
 
@@ -116,7 +301,7 @@ void main() {
         (tester) async {
       await openHymn(tester, 2);
 
-      await tester.tap(find.byTooltip('ስህተት ሪፖርት'));
+      await tester.tap(find.byTooltip('የስህተት ጥቆማ'));
       await _settle(tester);
 
       final page = tester.widget<ReportBugPage>(find.byType(ReportBugPage));
@@ -125,11 +310,11 @@ void main() {
 
     testWidgets('on a narrow phone it is in the overflow menu', (tester) async {
       await openHymn(tester, 2, size: const Size(360, 740));
-      expect(find.byTooltip('ስህተት ሪፖርት'), findsNothing);
+      expect(find.byTooltip('የስህተት ጥቆማ'), findsNothing);
 
       await tester.tap(find.byTooltip('ተጨማሪ'));
       await _settle(tester);
-      await tester.tap(find.text('ስህተት ሪፖርት'));
+      await tester.tap(find.text('የስህተት ጥቆማ'));
       await _settle(tester);
 
       expect(find.byType(ReportBugPage), findsOneWidget);

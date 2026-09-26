@@ -5,6 +5,11 @@ class HymnalVersion {
   final String id;
   final String label;
   final String shortLabel;
+
+  /// The shortest form that still identifies the book, for tight places
+  /// such as "1961: 165" on a hymn page.
+  final String briefLabel;
+
   final bool isSda;
   final bool hasCategories;
   final String fallbackDatabaseVersion;
@@ -13,6 +18,7 @@ class HymnalVersion {
     required this.id,
     required this.label,
     required this.shortLabel,
+    required this.briefLabel,
     required this.isSda,
     required this.hasCategories,
     required this.fallbackDatabaseVersion,
@@ -25,6 +31,7 @@ class HymnalVersion {
           id == other.id &&
           label == other.label &&
           shortLabel == other.shortLabel &&
+          briefLabel == other.briefLabel &&
           isSda == other.isSda &&
           hasCategories == other.hasCategories &&
           fallbackDatabaseVersion == other.fallbackDatabaseVersion;
@@ -34,6 +41,7 @@ class HymnalVersion {
         id,
         label,
         shortLabel,
+        briefLabel,
         isSda,
         hasCategories,
         fallbackDatabaseVersion,
@@ -55,6 +63,7 @@ class HymnalVersions {
     id: sdaNew,
     label: 'የ2004 ውዳሴ መዝሙር',
     shortLabel: '2004 ውዳሴ',
+    briefLabel: '2004',
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
@@ -64,6 +73,7 @@ class HymnalVersions {
     id: sdaOld,
     label: 'የ1975 ውዳሴ መዝሙር',
     shortLabel: '1975 ውዳሴ',
+    briefLabel: '1975',
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
@@ -73,6 +83,7 @@ class HymnalVersions {
     id: sda1961,
     label: 'የ1961 ውዳሴ መዝሙር',
     shortLabel: '1961 ውዳሴ',
+    briefLabel: '1961',
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: sda1961,
@@ -82,6 +93,7 @@ class HymnalVersions {
     id: hagerigna,
     label: 'የሀገርኛ መዝሙር',
     shortLabel: 'ሀገርኛ',
+    briefLabel: 'ሀገርኛ',
     isSda: false,
     hasCategories: false,
     fallbackDatabaseVersion: hagerigna,
@@ -118,6 +130,7 @@ class HymnalVersions {
       id: normalized,
       label: normalized,
       shortLabel: normalized,
+      briefLabel: normalized,
       isSda: isSdaEdition,
       hasCategories: isSdaEdition,
       fallbackDatabaseVersion: normalized,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
@@ -19,7 +19,6 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callbac
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/history_page.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class NumberSearchPage extends StatefulWidget {
   final HymnOpenCallback? onOpenHymn;
@@ -112,7 +111,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       final exists = numbers.contains(number);
       if (number < min || number > max || !exists) {
         _showInvalidNumberMessage(
-          'ይህ ቁጥር በአሁኑ መዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
+          'ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
         );
         return;
       }
@@ -336,7 +335,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           if (state.hymns.isEmpty) {
             return _buildEmptyMessage('No hymns found');
           }
-          return _buildSearchResultsList(state.hymns);
+          return _buildSearchResultsList(context, state.hymns);
         }
         return const SizedBox.shrink();
       },
@@ -344,7 +343,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildErrorMessage(String message) {
-    final settingsRepository = sl<SettingsRepository>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -366,7 +364,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 message,
                 style: TextStyle(
                   color: AppColors.primaryText,
-                  fontSize: settingsRepository.getFontSize(),
+                  fontSize: FontSizeScope.of(context),
                   fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
@@ -379,7 +377,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildEmptyMessage(String message) {
-    final settingsRepository = sl<SettingsRepository>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -392,7 +389,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
             message,
             style: TextStyle(
               color: AppColors.primaryText,
-              fontSize: settingsRepository.getFontSize(),
+              fontSize: FontSizeScope.of(context),
               fontFamily: 'NotoSansEthiopic',
             ),
             textAlign: TextAlign.center,
@@ -402,9 +399,13 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     );
   }
 
-  Widget _buildSearchResultsList(List<dynamic> hymns) {
-    // Add bottom padding to prevent content from going under navigation bar
-    final bottomPadding = NavBarConstants.getBottomPadding(context);
+  /// [context] must be inside the page's SafeArea, which has already taken
+  /// the system navigation inset.
+  Widget _buildSearchResultsList(BuildContext context, List<dynamic> hymns) {
+    // Add bottom padding to prevent content from going under navigation bar.
+    // The last item's own gap already counts towards it.
+    final bottomPadding = NavBarConstants.getBottomPadding(context) -
+        HymnListItem.bottomGap(context);
 
     return ListView.builder(
       controller: _scrollController,
@@ -470,7 +471,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildNumberInputField() {
-    final settingsRepository = sl<SettingsRepository>();
     return GlassContainer(
       borderRadius: 16.0,
       blurSigma: 12.0,
@@ -492,14 +492,14 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         onTapOutside: (_) => _dismissInputFocus(),
         style: TextStyle(
           color: AppColors.primaryText,
-          fontSize: settingsRepository.getFontSize() * 1.08,
+          fontSize: FontSizeScope.of(context) * 1.08,
           fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
           hintStyle: TextStyle(
             color: AppColors.tertiaryText,
-            fontSize: settingsRepository.getFontSize() * 1.08,
+            fontSize: FontSizeScope.of(context) * 1.08,
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.all(14.0),
@@ -507,7 +507,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               '#',
               style: TextStyle(
                 color: AppColors.primaryText,
-                fontSize: settingsRepository.getFontSize() * 1.08,
+                fontSize: FontSizeScope.of(context) * 1.08,
                 fontFamily: 'NotoSansEthiopic',
               ),
             ),
