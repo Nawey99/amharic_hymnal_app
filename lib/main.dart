@@ -12,6 +12,7 @@ import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
 import 'package:amharic_hymnal_app/core/services/crash_reporting.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -216,18 +217,7 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         home: _getInitialPage(settingsRepository),
-        builder: (context, child) {
-          // Support system font scaling (1.0x to 2.0x) for accessibility
-          // Clamp to reasonable range to prevent UI overflow
-          final textScaler = MediaQuery.of(context).textScaler;
-          final clampedScaler = TextScaler.linear(
-            textScaler.scale(1.0).clamp(1.0, 2.0),
-          );
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: clampedScaler),
-            child: child!,
-          );
-        },
+        builder: (context, child) => AppTextScope(child: child!),
       ),
     );
   }

@@ -1,10 +1,9 @@
 // lib/core/widgets/empty_state_widget.dart
 import 'package:flutter/material.dart';
 
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 /// Reusable empty state widget with icon, title, and message
 class EmptyStateWidget extends StatelessWidget {
@@ -25,8 +24,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-    final fontSize = settingsRepository.getFontSize();
+    final fontSize = FontSizeScope.of(context);
 
     return Center(
       child: Padding(
@@ -88,8 +86,7 @@ class ErrorStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-    final fontSize = settingsRepository.getFontSize();
+    final fontSize = FontSizeScope.of(context);
 
     return Center(
       child: Padding(
@@ -125,7 +122,7 @@ class ErrorStateWidget extends StatelessWidget {
                     backgroundColor: AppColors.accentGreen,
                     foregroundColor: AppColors.primaryText,
                   ),
-                  child: const Text('Retry'),
+                  child: const Text('እንደገና ይሞክሩ'),
                 ),
               ],
             ],

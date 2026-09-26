@@ -16,6 +16,39 @@ void main() {
     expect(SettingsService.getKeepScreenOn(), isFalse);
   });
 
+  group('the hymn text size on a fresh install', () {
+    test('starts from the text size set on the phone', () async {
+      SharedPreferences.setMockInitialValues({});
+      await SettingsService.init(systemTextScale: 1.3);
+
+      expect(SettingsService.getFontSize(), closeTo(26, 0.01));
+    });
+
+    test('follows a smaller phone text size too', () async {
+      SharedPreferences.setMockInitialValues({});
+      await SettingsService.init(systemTextScale: 0.85);
+
+      expect(SettingsService.getFontSize(), closeTo(17, 0.01));
+    });
+
+    test('stays within the range the slider offers', () async {
+      SharedPreferences.setMockInitialValues({});
+      await SettingsService.init(systemTextScale: 2.5);
+      expect(SettingsService.getFontSize(), 30);
+
+      SharedPreferences.setMockInitialValues({});
+      await SettingsService.init(systemTextScale: 0.1);
+      expect(SettingsService.getFontSize(), 12);
+    });
+
+    test('a reader who has chosen a size keeps it', () async {
+      SharedPreferences.setMockInitialValues({'font_size': 15.0});
+      await SettingsService.init(systemTextScale: 1.6);
+
+      expect(SettingsService.getFontSize(), 15);
+    });
+  });
+
   test('favorites are stored per hymnal version', () async {
     SharedPreferences.setMockInitialValues({});
     await SettingsService.init();
