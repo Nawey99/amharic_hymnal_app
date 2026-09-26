@@ -172,6 +172,23 @@ class AppTheme {
           fontSize: 12,
         ),
       ),
+      // Messages float as a card, so they never become a strip across the
+      // floating navigation bar. The shell lifts them above the bar.
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.surface,
+        contentTextStyle: const TextStyle(
+          color: AppColors.primaryText,
+          fontSize: 14,
+          fontFamily: 'NotoSansEthiopic',
+        ),
+        actionTextColor: AppColors.accentGreen,
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+        ),
+      ),
     );
   }
 
