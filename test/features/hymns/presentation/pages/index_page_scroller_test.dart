@@ -142,11 +142,21 @@ void main() {
     await tester.tap(endLetter);
     await tester.pumpAndSettle();
 
+    // The last section cannot reach the top without empty filler below the
+    // list, so the list goes to its end and the letter stays selected.
+    final position = tester
+        .state<ScrollableState>(
+          find.descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          ),
+        )
+        .position;
+    expect(position.pixels, position.maxScrollExtent);
     visibleItems = _visibleHymns(tester);
-    expect(visibleItems, isNotEmpty);
     expect(
-      amharicSectionForText(visibleItems.first.hymn.displayTitle),
-      'ጸ',
+      visibleItems.map((item) => item.hymn.displayTitle),
+      containsAll(['ጸ መዝሙር 00', 'ጸ መዝሙር 01']),
     );
     expect(
       tester
@@ -156,6 +166,118 @@ void main() {
           .data,
       'ጸ',
     );
+  });
+
+  for (final sort in ['number', 'name']) {
+    testWidgets('sorted by $sort, the list ends just above the nav bar',
+        (tester) async {
+      await _pumpIndexAtEnd(tester, sort);
+
+      final last = tester.getRect(find.byType(HymnListItem).last);
+      final lastCardBottom = last.bottom -
+          HymnListItem.bottomGap(tester.element(find
+              .byType(
+                HymnListItem,
+              )
+              .last));
+      // As on the category list: the nav bar's space plus the content inset
+      // above the system navigation area, counted once.
+      const screenBottom = 780.0;
+      const systemInset = 48.0;
+      expect(
+        lastCardBottom,
+        closeTo(
+          screenBottom -
+              systemInset -
+              NavBarConstants.navBarTotalSpace -
+              NavBarConstants.contentPadding,
+          0.5,
+        ),
+      );
+      if (sort == 'name') {
+        // The letter heading follows the top card, not the gap left by one
+        // that has scrolled away.
+        final topCard = _visibleHymns(tester).first;
+        expect(
+          tester
+              .widget<Text>(
+                find.byKey(const ValueKey('index-section-indicator')),
+              )
+              .data,
+          amharicSectionForText(topCard.hymn.displayTitle),
+        );
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  group('letter rail and search', () {
+    final vertical = find.byKey(const ValueKey('alphabet-vertical-rail'));
+    final horizontal = find.byKey(const ValueKey('alphabet-horizontal-rail'));
+    double listRightPadding(WidgetTester tester) =>
+        (tester.widget<ListView>(find.byType(ListView)).padding! as EdgeInsets)
+            .right;
+
+    testWidgets('opening search hides the rail; closing it brings it back',
+        (tester) async {
+      await _pumpIndex(tester, const Size(360, 780));
+      expect(vertical, findsOneWidget);
+      expect(listRightPadding(tester), 54);
+
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
+      expect(vertical, findsNothing);
+      expect(horizontal, findsNothing);
+      expect(listRightPadding(tester), 16, reason: 'the list uses the width');
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      expect(vertical, findsNothing);
+      expect(horizontal, findsNothing);
+
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
+      expect(vertical, findsOneWidget);
+      expect(horizontal, findsNothing);
+      expect(listRightPadding(tester), 54);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('closing a search brings back the sorted list and its rail',
+        (tester) async {
+      await _pumpIndex(tester, const Size(360, 780));
+
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'ተ');
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      expect(find.text('ሀ መዝሙር 00'), findsNothing, reason: 'filtered');
+
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
+      expect(find.text('ሀ መዝሙር 00'), findsOneWidget);
+      expect(vertical, findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+        reason: 'a reopened search starts empty',
+      );
+    });
+
+    testWidgets('a screen too short for the rail still gets the strip',
+        (tester) async {
+      await _pumpIndex(tester, const Size(360, 520));
+      expect(horizontal, findsOneWidget);
+      expect(listRightPadding(tester), 16);
+
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
+      expect(horizontal, findsNothing);
+    });
   });
 
   testWidgets('same-length content refresh repaints edited song titles',
@@ -213,6 +335,86 @@ void main() {
   });
 }
 
+/// Pumps the index page sorted by name at [size].
+Future<void> _pumpIndex(WidgetTester tester, Size size) async {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+
+  SharedPreferences.setMockInitialValues({
+    'selected_language': 'am',
+    'selected_version': 'sda_new',
+    'sort_type': 'name',
+  });
+  await di.initDependencies();
+
+  final repository = _FakeHymnRepository(_buildGroupedHymns());
+  final bloc = HymnsBloc(
+    getHymns: GetHymns(repository),
+    searchHymns: SearchHymns(repository),
+    getHymnByNumber: GetHymnByNumber(repository),
+    settingsRepository: di.sl<SettingsRepository>(),
+  );
+  addTearDown(bloc.close);
+
+  await tester.pumpWidget(
+    BlocProvider<HymnsBloc>.value(
+      value: bloc,
+      child: const MaterialApp(home: Scaffold(body: IndexPage())),
+    ),
+  );
+  bloc.add(LoadHymns('am', 'sda_new', 'name'));
+  await tester.pumpAndSettle();
+}
+
+/// Pumps the index page on a phone with a 48 dp system navigation area and
+/// scrolls to the end of the list sorted by [sort].
+Future<void> _pumpIndexAtEnd(WidgetTester tester, String sort) async {
+  tester.view.physicalSize = const Size(360, 780);
+  tester.view.devicePixelRatio = 1;
+  tester.view.padding = const FakeViewPadding(bottom: 48);
+  addTearDown(tester.view.reset);
+
+  SharedPreferences.setMockInitialValues({
+    'selected_language': 'am',
+    'selected_version': 'sda_new',
+    'sort_type': sort,
+  });
+  await di.initDependencies();
+
+  final repository = _FakeHymnRepository(_buildGroupedHymns());
+  final bloc = HymnsBloc(
+    getHymns: GetHymns(repository),
+    searchHymns: SearchHymns(repository),
+    getHymnByNumber: GetHymnByNumber(repository),
+    settingsRepository: di.sl<SettingsRepository>(),
+  );
+  addTearDown(bloc.close);
+
+  await tester.pumpWidget(
+    BlocProvider<HymnsBloc>.value(
+      value: bloc,
+      child: const MaterialApp(home: Scaffold(body: IndexPage())),
+    ),
+  );
+  bloc.add(LoadHymns('am', 'sda_new', sort));
+  await tester.pumpAndSettle();
+
+  final position = tester
+      .state<ScrollableState>(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.byType(Scrollable),
+        ),
+      )
+      .position;
+  // The extent is an estimate until the end has been laid out.
+  while (position.pixels < position.maxScrollExtent) {
+    position.jumpTo(position.maxScrollExtent);
+    await tester.pumpAndSettle();
+  }
+}
+
 List<({double top, Hymn hymn})> _visibleHymns(WidgetTester tester) {
   final listRect = tester.getRect(find.byType(ListView));
   final visibleItems = <({double top, Hymn hymn})>[];
@@ -220,7 +422,10 @@ List<({double top, Hymn hymn})> _visibleHymns(WidgetTester tester) {
   for (var index = 0; index < itemFinder.evaluate().length; index++) {
     final finder = itemFinder.at(index);
     final rect = tester.getRect(finder);
-    if (rect.bottom > listRect.top && rect.top < listRect.bottom) {
+    // The card, without the gap below it.
+    final cardBottom =
+        rect.bottom - HymnListItem.bottomGap(tester.element(finder));
+    if (cardBottom > listRect.top && rect.top < listRect.bottom) {
       visibleItems.add((
         top: rect.top,
         hymn: tester.widget<HymnListItem>(finder).hymn,

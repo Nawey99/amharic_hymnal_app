@@ -79,7 +79,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            widget.author != null ? 'ደራሲ፦ ${widget.author}' : widget.category,
+            widget.author ?? widget.category,
             style: const TextStyle(
               color: AppColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
@@ -218,13 +218,16 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
                     title: widget.author != null
-                        ? 'ለዚህ ደራሲ መዝሙር አልተገኘም'
+                        ? 'ለዚህ ዘማሪ መዝሙር አልተገኘም'
                         : 'በዚህ ምድብ መዝሙር አልተገኘም',
                   );
                 }
 
                 // Add bottom padding to prevent content from going under navigation bar
-                final bottomPadding = NavBarConstants.getBottomPadding(context);
+                // The last item's own gap already counts towards it.
+                final bottomPadding =
+                    NavBarConstants.getBottomPadding(context) -
+                        HymnListItem.bottomGap(context);
 
                 return ListView.builder(
                   padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),

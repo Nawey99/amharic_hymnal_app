@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -32,7 +33,12 @@ class DonatePage extends StatelessWidget {
         ),
         body: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              NavBarConstants.getBottomPadding(context),
+            ),
             children: [
               const GlassContainer(
                 borderRadius: 16.0,
@@ -57,7 +63,7 @@ class DonatePage extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      'ድጋፍዎ ይህን መተግበሪያ ለማሻሻል እና ለማስቀጠል ይረዳናል። ለቸርነትዎ እናመሰግናለን።',
+                      'ድጋፍዎ ይህን መተግበሪያ ለማሻሻል እና ለማስቀጠል ይረዳናል። ለድጋፍዎ እናመሰግናለን።',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -71,14 +77,14 @@ class DonatePage extends StatelessWidget {
               _buildDonateOption(
                 context,
                 'PayPal',
-                'በቅርቡ ይዘጋጃል',
+                'በቅርቡ ይጀምራል',
                 Icons.payment,
                 _DonationAction.paypal,
               ),
               const SizedBox(height: 12),
               _buildDonateOption(
                 context,
-                'በባንክ ለማስተላለፍ',
+                'በባንክ ማስተላለፊያ',
                 'የባንክ ማስተላለፊያ መረጃ',
                 Icons.account_balance,
                 _DonationAction.bank,
@@ -129,7 +135,7 @@ class DonatePage extends StatelessWidget {
               context: context,
               builder: (context) => AlertDialog(
                 title: const Text('PayPal'),
-                content: const Text('የPayPal ድጋፍ በቅርቡ ይዘጋጃል።'),
+                content: const Text('የPayPal ድጋፍ በቅርቡ ይጀምራል።'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -196,8 +202,8 @@ class NationalBankDonationPage extends StatelessWidget {
 
   static const _fields = [
     ('ባንክ', 'የኢትዮጵያ ንግድ ባንክ'),
-    ('የባንክ አካውንት ስም', 'Filowha Seventh Day Adventist Church'),
-    ('የመለያ ቁጥር', 'በኋላ ይጨመራል'),
+    ('የባንክ ሒሳብ ስም', 'Filowha Seventh Day Adventist Church'),
+    ('የሒሳብ ቁጥር', 'በኋላ ይጨመራል'),
   ];
 
   @override
@@ -223,14 +229,19 @@ class NationalBankDonationPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              title: const Text('በባንክ ለማስተላለፍ'),
+              title: const Text('በባንክ ማስተላለፊያ'),
               centerTitle: true,
               backgroundColor: Colors.transparent,
               elevation: 0,
             ),
             body: SafeArea(
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  16,
+                  16,
+                  NavBarConstants.getBottomPadding(context),
+                ),
                 children: [
                   const GlassContainer(
                     borderRadius: 16,
@@ -238,7 +249,7 @@ class NationalBankDonationPage extends StatelessWidget {
                     opacity: 0.12,
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      'ይህ ገጽ የባንክ ድጋፍ መረጃ ለማሳየት ተዘጋጅቷል። ኦፊሴላዊ መለያው ሲዘጋጅ መረጃው ይሞላል።',
+                      'ይህ ገጽ የባንክ ድጋፍ መረጃ ለማሳየት ተዘጋጅቷል። ትክክለኛው የባንክ ሒሳብ ቁጥር ሲዘጋጅ መረጃው ይሞላል።',
                       style: TextStyle(
                         color: AppColors.secondaryText,
                         fontSize: 15,
@@ -271,7 +282,7 @@ class _BankField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canCopy = label == 'የመለያ ቁጥር';
+    final canCopy = label == 'የሒሳብ ቁጥር';
     return GlassContainer(
       borderRadius: 14,
       blurSigma: 12,
@@ -310,7 +321,7 @@ class _BankField extends StatelessWidget {
                 await Clipboard.setData(ClipboardData(text: value));
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('የመለያ ቁጥር ተቀድቷል')),
+                    const SnackBar(content: Text('የሒሳብ ቁጥሩ ተቀድቷል')),
                   );
                 }
               },

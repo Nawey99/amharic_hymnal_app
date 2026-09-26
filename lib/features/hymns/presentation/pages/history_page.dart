@@ -108,7 +108,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     return const EmptyStateWidget(
                       icon: Icons.history,
                       title: 'እስካሁን ታሪክ የለም',
-                      message: 'መዝሙር ሲከፍቱ እዚህ ይታያል',
+                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -130,8 +130,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   if (historyHymns.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'በዚህ መዝሙር ስብስብ ታሪክ የለም',
-                      message: 'መዝሙር ከከፈቱ በኋላ እዚህ ይታያል',
+                      title: 'በዚህ የመዝሙር ስብስብ ውስጥ ታሪክ የለም',
+                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -140,7 +140,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       16,
                       16,
                       16,
-                      NavBarConstants.getBottomPadding(context),
+                      NavBarConstants.getBottomPadding(context) -
+                          HymnListItem.bottomGap(context),
                     ),
                     itemCount: historyHymns.length,
                     itemBuilder: (context, index) {
@@ -208,7 +209,7 @@ class _HistoryPageState extends State<HistoryPage> {
           style: TextStyle(color: AppColors.primaryText),
         ),
         content: const Text(
-          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጠፋ?',
+          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጥፋ?',
           style: TextStyle(color: AppColors.primaryText),
         ),
         actions: [

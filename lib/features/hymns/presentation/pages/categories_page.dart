@@ -160,7 +160,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         if (authors.isEmpty) {
                           return const EmptyStateWidget(
                             icon: Icons.person_outline,
-                            title: 'ደራሲዎች አልተገኙም',
+                            title: 'ዘማሪዎች አልተገኙም',
                           );
                         }
 

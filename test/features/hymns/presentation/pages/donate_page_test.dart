@@ -2,16 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/donate_page.dart';
 
 void main() {
+  testWidgets('the page and its bank page end clear of the navigation bar',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: DonatePage()));
+    await tester.pumpAndSettle();
+
+    double listBottomPadding(WidgetTester tester) =>
+        (tester.widget<ListView>(find.byType(ListView)).padding! as EdgeInsets)
+            .bottom;
+    final expected = NavBarConstants.getBottomPadding(
+      tester.element(find.byType(ListView)),
+    );
+    expect(listBottomPadding(tester), expected);
+
+    await tester.tap(find.text('በባንክ ማስተላለፊያ'));
+    await tester.pumpAndSettle();
+    expect(listBottomPadding(tester), expected);
+  });
+
   testWidgets('PayPal donation shows coming soon dialog', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: DonatePage()));
 
     await tester.tap(find.text('PayPal'));
     await tester.pumpAndSettle();
 
-    expect(find.text('የPayPal ድጋፍ በቅርቡ ይዘጋጃል።'), findsOneWidget);
+    expect(find.text('የPayPal ድጋፍ በቅርቡ ይጀምራል።'), findsOneWidget);
   });
 
   testWidgets('National Bank page exposes copyable fields', (tester) async {
@@ -30,10 +49,10 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: DonatePage()));
 
-    await tester.tap(find.text('በባንክ ለማስተላለፍ'));
+    await tester.tap(find.text('በባንክ ማስተላለፊያ'));
     await tester.pumpAndSettle();
 
-    expect(find.text('በባንክ ለማስተላለፍ'), findsWidgets);
+    expect(find.text('በባንክ ማስተላለፊያ'), findsWidgets);
     expect(
       find.textContaining('የባንክ ድጋፍ መረጃ'),
       findsOneWidget,
@@ -44,6 +63,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(copiedText, 'በኋላ ይጨመራል');
-    expect(find.text('የመለያ ቁጥር ተቀድቷል'), findsOneWidget);
+    expect(find.text('የሒሳብ ቁጥሩ ተቀድቷል'), findsOneWidget);
   });
 }

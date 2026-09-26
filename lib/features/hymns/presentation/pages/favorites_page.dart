@@ -222,7 +222,7 @@ class _FavoritesPageState extends State<FavoritesPage>
     return AppSearchBar(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'ተወዳጆችን ይፈልጉ...',
+      hintText: 'ተወዳጅ መዝሙሮችን ይፈልጉ...',
       autofocus: false,
       onChanged: (value) {
         _handleSearchChange();
@@ -289,7 +289,9 @@ class _FavoritesPageState extends State<FavoritesPage>
     }
 
     // Add bottom padding to prevent content from going under navigation bar
-    final bottomPadding = NavBarConstants.getBottomPadding(context);
+    // The last item's own gap already counts towards it.
+    final bottomPadding = NavBarConstants.getBottomPadding(context) -
+        HymnListItem.bottomGap(context);
 
     return ListView.builder(
       controller: _scrollController,
