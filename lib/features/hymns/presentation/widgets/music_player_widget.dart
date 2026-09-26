@@ -261,11 +261,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surface,
         title: const Text(
-          'ድምፅ ይውረድ?',
+          'የመዝሙሩ ድምፅ ይውረድ?',
           style: TextStyle(color: AppColors.primaryText),
         ),
         content: Text(
-          'ይህ ድምፅ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም ማጫወት ይችላሉ።'
+          'ይህ የድምፅ መዝሙር በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ያለ ኢንተርኔት ማጫወት ይችላሉ።'
           '${source.sizeBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(source.sizeBytes!)}'}',
           style: const TextStyle(color: AppColors.secondaryText),
         ),
@@ -308,11 +308,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     super.dispose();
   }
 
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-  }
+  AudioTrackerDisplay _tracker(bool isThisHymnActive) => AudioTrackerDisplay.of(
+        isThisHymnActive: isThisHymnActive,
+        position: _currentPosition,
+        duration: _totalDuration,
+      );
 
   bool get _isPlaying {
     return _playbackState == AudioPlayerState.playing &&
@@ -513,7 +513,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   /// Marks a tune rendered from MIDI, which sounds like an organ rather than
   /// singers, so nobody mistakes it for a recording.
   Widget _buildInstrumentalBadge({bool compact = false}) {
-    const label = 'መሣሪያ ብቻ';
+    const label = 'የሙዚቃ መሣሪያ ብቻ';
     final badge = Container(
       padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 2),
       decoration: BoxDecoration(
@@ -549,7 +549,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         child: Column(
           children: [
             _buildProgressSlider(isThisHymnActive),
-            _buildTimeLabels(),
+            _buildTimeLabels(isThisHymnActive),
             if (_attribution != null)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
@@ -603,7 +603,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                     compact: true,
                   ),
                 ),
-                _buildTimeLabels(compact: true),
+                _buildTimeLabels(isThisHymnActive, compact: true),
               ],
             ),
           ),
@@ -628,15 +628,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         ),
       ),
       child: Slider(
-        value: _totalDuration != null && _totalDuration!.inMilliseconds > 0
-            ? _currentPosition.inMilliseconds.toDouble().clamp(
-                  0.0,
-                  _totalDuration!.inMilliseconds.toDouble(),
-                )
-            : 0.0,
-        max: _totalDuration != null && _totalDuration!.inMilliseconds > 0
-            ? _totalDuration!.inMilliseconds.toDouble()
-            : 100.0,
+        value: _tracker(isThisHymnActive).value,
+        max: _tracker(isThisHymnActive).max,
         onChanged: (_isLoading || !isThisHymnActive)
             ? null
             : (value) {
@@ -650,7 +643,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
-  Widget _buildTimeLabels({bool compact = false}) {
+  Widget _buildTimeLabels(bool isThisHymnActive, {bool compact = false}) {
     final textStyle = TextStyle(
       color: AppColors.secondaryText,
       fontSize: compact ? 10 : 11,
@@ -660,11 +653,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(_formatDuration(_currentPosition), style: textStyle),
-        Text(
-          _totalDuration != null ? _formatDuration(_totalDuration!) : '--:--',
-          style: textStyle,
-        ),
+        Text(_tracker(isThisHymnActive).elapsed, style: textStyle),
+        Text(_tracker(isThisHymnActive).total, style: textStyle),
       ],
     );
   }
@@ -684,4 +674,53 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       }
     }
   }
+}
+
+/// What the progress bar and the times show. Position and duration belong to
+/// whatever is playing, so a hymn that is not the one playing shows an empty
+/// bar and no time rather than following it.
+@immutable
+class AudioTrackerDisplay {
+  final double value;
+  final double max;
+  final String elapsed;
+  final String total;
+
+  const AudioTrackerDisplay({
+    required this.value,
+    required this.max,
+    required this.elapsed,
+    required this.total,
+  });
+
+  factory AudioTrackerDisplay.of({
+    required bool isThisHymnActive,
+    required Duration position,
+    required Duration? duration,
+  }) {
+    final length = duration?.inMilliseconds ?? 0;
+    if (!isThisHymnActive || length <= 0) {
+      return AudioTrackerDisplay(
+        value: 0,
+        max: 100,
+        elapsed: formatTrackTime(isThisHymnActive ? position : Duration.zero),
+        total: isThisHymnActive && length > 0
+            ? formatTrackTime(duration!)
+            : '--:--',
+      );
+    }
+    return AudioTrackerDisplay(
+      value: position.inMilliseconds.toDouble().clamp(0, length.toDouble()),
+      max: length.toDouble(),
+      elapsed: formatTrackTime(position),
+      total: formatTrackTime(duration!),
+    );
+  }
+}
+
+String formatTrackTime(Duration duration) {
+  final minutes = duration.inMinutes;
+  final seconds = duration.inSeconds % 60;
+  return '${minutes.toString().padLeft(2, '0')}'
+      ':${seconds.toString().padLeft(2, '0')}';
 }
