@@ -56,7 +56,7 @@ void main() {
     await _enterAndOpen(tester, '6');
 
     expect(
-      find.text('ይህ ቁጥር በአሁኑ መዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ1 እስከ 5 ያለ ቁጥር ያስገቡ።'),
+      find.text('ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ1 እስከ 5 ያለ ቁጥር ያስገቡ።'),
       findsOneWidget,
     );
     expect(opened, isEmpty);

@@ -213,7 +213,7 @@ void main() {
       await tester.tap(find.byTooltip('አጫውት'));
       await _settle(tester);
 
-      expect(find.text('ድምፅ ይውረድ?'), findsOneWidget);
+      expect(find.text('የመዝሙሩ ድምፅ ይውረድ?'), findsOneWidget);
       expect(find.textContaining('መጠን፦ 1.6 MB'), findsOneWidget);
 
       await tester.tap(find.text('ይቅር'));
@@ -244,7 +244,7 @@ void main() {
       await tester.tap(find.byTooltip('አጫውት'));
       await _settle(tester);
 
-      expect(find.text('ድምፅ ይውረድ?'), findsNothing);
+      expect(find.text('የመዝሙሩ ድምፅ ይውረድ?'), findsNothing);
       expect(cache.downloads, isEmpty);
     });
 
