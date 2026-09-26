@@ -231,7 +231,7 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
       ..showSnackBar(
         const SnackBar(
           content: Text(
-            'Screenshots of sheet music are not permitted.',
+            'የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።',
             style: TextStyle(color: AppColors.primaryText),
           ),
           backgroundColor: Color(0xFFB3261E),

@@ -117,7 +117,7 @@ class AppSearchBar extends StatelessWidget {
               controller.clear();
               onClear?.call();
             },
-            tooltip: 'Clear search',
+            tooltip: 'ፍለጋውን አጽዳ',
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(
               minWidth: 48,

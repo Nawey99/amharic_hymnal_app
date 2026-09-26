@@ -60,7 +60,7 @@ class AppErrorWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'Oops! Something went wrong',
+                        'ይቅርታ! የሆነ ችግር ተከስቷል',
                         style: TextStyle(
                           color: AppColors.primaryText,
                           fontSize: 20,
@@ -92,7 +92,7 @@ class AppErrorWidget extends StatelessWidget {
                             ),
                           ),
                           child: const Text(
-                            'Retry',
+                            'እንደገና ይሞክሩ',
                             style: TextStyle(
                               fontFamily: 'NotoSansEthiopic',
                               fontWeight: FontWeight.bold,
