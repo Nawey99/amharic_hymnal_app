@@ -9,17 +9,40 @@ class MainPageTitleBar extends StatelessWidget {
   final List<Widget> actions;
   final double sideWidth;
 
+  /// Shows a hairline under the bar, for when content has scrolled beneath
+  /// it, so cut-off content has an edge to sit against.
+  final bool showDivider;
+
   const MainPageTitleBar({
     super.key,
     required this.title,
     this.leading,
     this.actions = const [],
     this.sideWidth = 96,
+    this.showDivider = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
+    return AnimatedContainer(
+      key: const ValueKey('title-bar-divider'),
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: showDivider
+                ? Colors.white.withValues(alpha: 0.14)
+                : Colors.transparent,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: _buildBar(compactLandscape),
+    );
+  }
+
+  Widget _buildBar(bool compactLandscape) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         16,

@@ -7,19 +7,38 @@ import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 /// Reusable settings tile widget with icon, title, and description
 class SettingsTile extends StatelessWidget {
-  final IconData icon;
+  /// Shown before the title. Leave it out to line the title up with switch
+  /// tiles in the same section.
+  final IconData? icon;
   final String title;
   final String description;
   final VoidCallback? onTap;
   final bool showTrailingIcon;
 
+  /// Replaces the chevron, for a tile that acts in place (such as a
+  /// download) instead of opening a page.
+  final IconData? trailingIcon;
+
+  /// From 0 to 1 while work the tile started is under way: shown as a bar
+  /// under the description, with [onStop] in place of the trailing icon.
+  final double? progress;
+
+  /// Replaces the percentage under the bar, e.g. while waiting to start.
+  final String? progressLabel;
+
+  final VoidCallback? onStop;
+
   const SettingsTile({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     required this.description,
     this.onTap,
     this.showTrailingIcon = true,
+    this.trailingIcon,
+    this.progress,
+    this.progressLabel,
+    this.onStop,
   });
 
   @override
@@ -33,15 +52,17 @@ class SettingsTile extends StatelessWidget {
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
       ),
-      onTap: onTap ?? () {},
+      onTap: progress == null ? (onTap ?? () {}) : null,
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: AppColors.accentGreen,
-            size: compactLandscape ? 22 : 24,
-          ),
-          SizedBox(width: compactLandscape ? 12 : 16),
+          if (icon != null) ...[
+            Icon(
+              icon,
+              color: AppColors.accentGreen,
+              size: compactLandscape ? 22 : 24,
+            ),
+            SizedBox(width: compactLandscape ? 12 : 16),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,10 +83,47 @@ class SettingsTile extends StatelessWidget {
                     color: AppColors.secondaryText,
                   ),
                 ),
+                if (progress != null) ...[
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 4,
+                      color: AppColors.accentGreen,
+                      backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    progressLabel ?? '${(progress! * 100).round()}%',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.accentGreen,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-          if (showTrailingIcon)
+          if (progress != null && onStop != null)
+            IconButton(
+              tooltip: 'አቁም',
+              onPressed: onStop,
+              icon: const Icon(
+                Icons.stop_circle_outlined,
+                color: AppColors.primaryText,
+              ),
+            )
+          else if (trailingIcon != null) ...[
+            const SizedBox(width: 12),
+            Icon(
+              trailingIcon,
+              color: AppColors.accentGreen,
+              size: compactLandscape ? 24 : 28,
+            ),
+          ] else if (showTrailingIcon)
             const Icon(Icons.chevron_right, color: AppColors.secondaryText),
         ],
       ),
@@ -125,12 +183,41 @@ class SettingsSwitchTile extends StatelessWidget {
               ],
             ),
           ),
-          Switch(
-            value: value,
-            activeColor: AppColors.accentGreen,
-            onChanged: onChanged,
-          ),
+          const SizedBox(width: 12),
+          AppSwitch(value: value, onChanged: onChanged),
         ],
+      ),
+    );
+  }
+}
+
+/// The app's switch. Off is a choice, not a disabled control, so the thumb
+/// stays bright and the track visible.
+class AppSwitch extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  const AppSwitch({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: value,
+      onChanged: onChanged,
+      thumbColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? Colors.white
+            : AppColors.primaryText.withValues(alpha: 0.9),
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? AppColors.accentGreen
+            : Colors.white.withValues(alpha: 0.16),
+      ),
+      trackOutlineColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? Colors.transparent
+            : Colors.white.withValues(alpha: 0.42),
       ),
     );
   }

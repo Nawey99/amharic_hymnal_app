@@ -75,6 +75,50 @@ void main() {
     await _settle(tester);
   }
 
+  testWidgets('the send button is reachable on a small screen at large text',
+      (tester) async {
+    await setUpTestApp();
+    await pumpInApp(
+      tester,
+      const Scaffold(body: ReportBugPage()),
+      size: const Size(360, 640),
+      textScale: 1.3,
+    );
+    await _settle(tester);
+
+    final send = find.text('ሪፖርት ላክ');
+    await tester.scrollUntilVisible(
+      send,
+      200,
+      // The form's own list; its text fields each scroll too.
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await _settle(tester);
+
+    final button = tester.getRect(find.ancestor(
+      of: send,
+      matching: find.byType(ElevatedButton),
+    ));
+    expect(button.bottom, lessThanOrEqualTo(640));
+    expect(button.height, greaterThanOrEqualTo(48));
+    expect(
+      tester
+          .widget<ElevatedButton>(
+            find.ancestor(of: send, matching: find.byType(ElevatedButton)),
+          )
+          .onPressed,
+      isNotNull,
+    );
+    // The message that the report was sent floats over the space below.
+    final list = tester.getRect(find.byType(ListView));
+    expect(list.bottom - button.bottom, greaterThanOrEqualTo(72));
+  });
+
   group('validation', () {
     testWidgets('an empty form names each missing field', (tester) async {
       await pumpPage(tester);

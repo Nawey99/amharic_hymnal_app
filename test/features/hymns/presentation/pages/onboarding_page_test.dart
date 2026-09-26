@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
+import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/models/onboarding_content.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
 import 'package:amharic_hymnal_app/main.dart';
 
+import '../../../../helpers/fakes.dart';
 import '../../../../helpers/test_app.dart';
 
 Future<void> _settle(WidgetTester tester) async {
@@ -20,7 +23,29 @@ bool get _completed => di.sl<SettingsRepository>().isOnboardingCompleted();
 
 void main() {
   Future<void> pumpOnboarding(WidgetTester tester) async {
-    await setUpTestApp(prefs: {'onboarding_completed': false});
+    await setUpTestApp(
+      prefs: {'onboarding_completed': false},
+      // A recording, so there is something to offer for offline use.
+      content: {
+        'sda_new': [
+          ...sampleHymns(count: 4),
+          const HymnModel(
+            id: 'am-sda-2004-0005',
+            number: 5,
+            title: 'መዝሙር 5',
+            newHymnalNumber: 5,
+            audioInfo: HymnAudioInfo(
+              file: HymnMediaFile(
+                url: 'https://api.example.test/songs/5/audio/file',
+                checksumSha256:
+                    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                sizeBytes: 1024,
+              ),
+            ),
+          ),
+        ],
+      },
+    );
     await pumpInApp(tester, const OnboardingPage());
     await _settle(tester);
   }
@@ -44,6 +69,11 @@ void main() {
     expect(_completed, isTrue);
     expect(find.byType(OnboardingPage), findsNothing);
     expect(find.byType(MainNavigationPage), findsOneWidget);
+    // The offer stays open until it is answered.
+    expect(
+      di.sl<SettingsRepository>().isOfflineDownloadOfferPending(),
+      isTrue,
+    );
   });
 
   testWidgets('"skip" finishes straight away', (tester) async {

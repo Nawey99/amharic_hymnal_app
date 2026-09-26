@@ -12,16 +12,18 @@ import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
+import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_version_footer.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/donate_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_bulk_download_flow.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/offline_download_flow.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
@@ -41,6 +43,9 @@ class _SettingsPageState extends State<SettingsPage> {
   double _fontSize = 20.0;
   bool _backgroundImageEnabled = true;
   bool _keepScreenOn = false;
+  bool _scrolledUnderTitle = false;
+  bool _contributionUnlocked =
+      sl<SettingsRepository>().isContributionUnlocked();
   late final HymnalVersionService _versionService;
 
   @override
@@ -140,7 +145,10 @@ class _SettingsPageState extends State<SettingsPage> {
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     final itemGap = compactLandscape ? 8.0 : 12.0;
     final sectionGap = compactLandscape ? 14.0 : 24.0;
-    final bottomPadding = NavBarConstants.getBottomPadding(context);
+    // The SafeArea below takes the system navigation inset, so it is left
+    // out here to count it once.
+    final bottomPadding = NavBarConstants.getBottomPadding(context) -
+        MediaQuery.paddingOf(context).bottom;
     final availableVersions = [..._versionService.versions];
     if (!availableVersions.any((version) => version.id == _selectedVersion)) {
       availableVersions.add(HymnalVersions.byId(_selectedVersion));
@@ -153,218 +161,242 @@ class _SettingsPageState extends State<SettingsPage> {
         body: SafeArea(
           child: Column(
             children: [
-              const MainPageTitleBar(title: 'ቅንብር'),
+              MainPageTitleBar(
+                title: 'ቅንብሮች',
+                showDivider: _scrolledUnderTitle,
+              ),
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.fromLTRB(
-                    16,
-                    compactLandscape ? 6 : 16,
-                    16,
-                    bottomPadding,
-                  ),
-                  children: [
-                    _buildSectionTitle(
-                        AppLocalizations.of(context)?.contentSection ??
-                            'Content'),
-                    SettingsDropdownTile(
-                      title: AppLocalizations.of(context)?.languageLabel ??
-                          'Language',
-                      description:
-                          AppLocalizations.of(context)?.languageDescription ??
-                              'Select the language for hymns',
-                      value: _selectedLanguage,
-                      items: [
-                        DropdownMenuItem(
-                          value: 'am',
-                          child: Text(
-                              AppLocalizations.of(context)?.amharicLanguage ??
-                                  'Amharic'),
+                child: NotificationListener<ScrollUpdateNotification>(
+                  onNotification: _handleScroll,
+                  child: ListView(
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      compactLandscape ? 6 : 16,
+                      16,
+                      bottomPadding,
+                    ),
+                    children: [
+                      _buildSectionTitle(
+                          AppLocalizations.of(context)?.contentSection ??
+                              'Content'),
+                      SettingsDropdownTile(
+                        title: AppLocalizations.of(context)?.languageLabel ??
+                            'Language',
+                        description:
+                            AppLocalizations.of(context)?.languageDescription ??
+                                'Select the language for hymns',
+                        value: _selectedLanguage,
+                        items: [
+                          DropdownMenuItem(
+                            value: 'am',
+                            child: Text(
+                                AppLocalizations.of(context)?.amharicLanguage ??
+                                    'Amharic'),
+                          ),
+                          // Future languages can be added here
+                          // DropdownMenuItem(
+                          //   value: 'en',
+                          //   child: Text(AppLocalizations.of(context)?.englishLanguage ??
+                          //       'English'),
+                          // ),
+                        ],
+                        onChanged: (value) async {
+                          if (value != null && value != _selectedLanguage) {
+                            final repo = sl<SettingsRepository>();
+                            final bloc = context.read<HymnsBloc>();
+                            await repo.setSelectedLanguage(value);
+
+                            if (!mounted) return;
+                            setState(() => _selectedLanguage = value);
+
+                            if (mounted) {
+                              bloc.add(
+                                ChangeLanguage(
+                                  _selectedLanguage,
+                                  _selectedVersion,
+                                  repo.getSortType(),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      SizedBox(height: itemGap),
+                      SettingsDropdownTile(
+                        title: AppLocalizations.of(context)?.versionLabel ??
+                            'Version',
+                        description:
+                            AppLocalizations.of(context)?.versionDescription ??
+                                'Select hymnal version',
+                        value: _selectedVersion,
+                        items: availableVersions
+                            .map(
+                              (version) => DropdownMenuItem(
+                                value: version.id,
+                                child: Text(version.label),
+                              ),
+                            )
+                            .toList(growable: false),
+                        onChanged: (value) async {
+                          if (value != null && value != _selectedVersion) {
+                            final repo = sl<SettingsRepository>();
+                            final bloc = context.read<HymnsBloc>();
+                            await repo.setSelectedVersion(value);
+
+                            if (!mounted) return;
+                            setState(() => _selectedVersion = value);
+
+                            if (mounted) {
+                              bloc.add(
+                                ChangeVersion(
+                                  _selectedLanguage,
+                                  _selectedVersion,
+                                  repo.getSortType(),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      SizedBox(height: sectionGap),
+                      _buildSectionTitle(
+                          AppLocalizations.of(context)?.displaySection ??
+                              'Display'),
+                      SettingsSliderTile(
+                        title: AppLocalizations.of(context)?.fontSizeLabel ??
+                            'Font Size',
+                        // Ensure value is clamped before passing - SettingsSliderTile also clamps as extra safety
+                        value: _fontSize.clamp(12.0, 30.0),
+                        min: 12,
+                        max: 30,
+                        highlight:
+                            _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
+                        onChanged: (value) async {
+                          // Clamp value to valid range before any operations
+                          final clampedValue = value.clamp(12.0, 30.0);
+                          // Update repository first (it also clamps internally)
+                          final repo = sl<SettingsRepository>();
+                          await repo.setFontSize(clampedValue);
+                          // Notify FontSizeService for real-time updates (it also clamps internally)
+                          await FontSizeService().setFontSize(clampedValue);
+                          // Update state with clamped value
+                          if (mounted) {
+                            setState(() {
+                              _fontSize = clampedValue.clamp(12.0, 30.0);
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: itemGap),
+                      SettingsSwitchTile(
+                        title: AppLocalizations.of(context)
+                                ?.backgroundImageLabel ??
+                            'Background Image',
+                        description: AppLocalizations.of(context)
+                                ?.backgroundImageDescription ??
+                            'Show background image in hymn view',
+                        value: _backgroundImageEnabled,
+                        onChanged: (value) async {
+                          final repo = sl<SettingsRepository>();
+                          await repo.setBackgroundImageEnabled(value);
+
+                          await BackgroundImageService().setEnabled(value);
+
+                          setState(() => _backgroundImageEnabled = value);
+                        },
+                      ),
+                      SizedBox(height: sectionGap),
+                      _buildSectionTitle(
+                          AppLocalizations.of(context)?.generalSection ??
+                              'General'),
+                      SettingsSwitchTile(
+                        title:
+                            AppLocalizations.of(context)?.keepScreenOnLabel ??
+                                'Keep Screen On',
+                        description: AppLocalizations.of(context)
+                                ?.keepScreenOnDescription ??
+                            'Prevent screen from turning off',
+                        value: _keepScreenOn,
+                        onChanged: (value) async {
+                          final repo = sl<SettingsRepository>();
+                          await repo.setKeepScreenOn(value);
+
+                          await ScreenService.updateKeepScreenOn(value);
+
+                          setState(() => _keepScreenOn = value);
+                        },
+                      ),
+                      if (!kIsWeb) ...[
+                        SizedBox(height: itemGap),
+                        OfflineDownloadTile(
+                          mediaType: MediaType.sheetMusic,
+                          version: _selectedVersion,
                         ),
-                        // Future languages can be added here
-                        // DropdownMenuItem(
-                        //   value: 'en',
-                        //   child: Text(AppLocalizations.of(context)?.englishLanguage ??
-                        //       'English'),
-                        // ),
+                        SizedBox(height: itemGap),
+                        OfflineDownloadTile(
+                          mediaType: MediaType.audio,
+                          version: _selectedVersion,
+                        ),
                       ],
-                      onChanged: (value) async {
-                        if (value != null && value != _selectedLanguage) {
-                          final repo = sl<SettingsRepository>();
-                          final bloc = context.read<HymnsBloc>();
-                          await repo.setSelectedLanguage(value);
-
-                          if (!mounted) return;
-                          setState(() => _selectedLanguage = value);
-
-                          if (mounted) {
-                            bloc.add(
-                              ChangeLanguage(
-                                _selectedLanguage,
-                                _selectedVersion,
-                                repo.getSortType(),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    ),
-                    SizedBox(height: itemGap),
-                    SettingsDropdownTile(
-                      title: AppLocalizations.of(context)?.versionLabel ??
-                          'Version',
-                      description:
-                          AppLocalizations.of(context)?.versionDescription ??
-                              'Select hymnal version',
-                      value: _selectedVersion,
-                      items: availableVersions
-                          .map(
-                            (version) => DropdownMenuItem(
-                              value: version.id,
-                              child: Text(version.label),
-                            ),
-                          )
-                          .toList(growable: false),
-                      onChanged: (value) async {
-                        if (value != null && value != _selectedVersion) {
-                          final repo = sl<SettingsRepository>();
-                          final bloc = context.read<HymnsBloc>();
-                          await repo.setSelectedVersion(value);
-
-                          if (!mounted) return;
-                          setState(() => _selectedVersion = value);
-
-                          if (mounted) {
-                            bloc.add(
-                              ChangeVersion(
-                                _selectedLanguage,
-                                _selectedVersion,
-                                repo.getSortType(),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    ),
-                    SizedBox(height: sectionGap),
-                    _buildSectionTitle(
-                        AppLocalizations.of(context)?.displaySection ??
-                            'Display'),
-                    SettingsSliderTile(
-                      title: AppLocalizations.of(context)?.fontSizeLabel ??
-                          'Font Size',
-                      // Ensure value is clamped before passing - SettingsSliderTile also clamps as extra safety
-                      value: _fontSize.clamp(12.0, 30.0),
-                      min: 12,
-                      max: 30,
-                      highlight: _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
-                      onChanged: (value) async {
-                        // Clamp value to valid range before any operations
-                        final clampedValue = value.clamp(12.0, 30.0);
-                        // Update repository first (it also clamps internally)
-                        final repo = sl<SettingsRepository>();
-                        await repo.setFontSize(clampedValue);
-                        // Notify FontSizeService for real-time updates (it also clamps internally)
-                        await FontSizeService().setFontSize(clampedValue);
-                        // Update state with clamped value
-                        if (mounted) {
-                          setState(() {
-                            _fontSize = clampedValue.clamp(12.0, 30.0);
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: itemGap),
-                    SettingsSwitchTile(
-                      title:
-                          AppLocalizations.of(context)?.backgroundImageLabel ??
-                              'Background Image',
-                      description: AppLocalizations.of(context)
-                              ?.backgroundImageDescription ??
-                          'Show background image in hymn view',
-                      value: _backgroundImageEnabled,
-                      onChanged: (value) async {
-                        final repo = sl<SettingsRepository>();
-                        await repo.setBackgroundImageEnabled(value);
-
-                        await BackgroundImageService().setEnabled(value);
-
-                        setState(() => _backgroundImageEnabled = value);
-                      },
-                    ),
-                    SizedBox(height: sectionGap),
-                    _buildSectionTitle(
-                        AppLocalizations.of(context)?.generalSection ??
-                            'General'),
-                    SettingsSwitchTile(
-                      title: AppLocalizations.of(context)?.keepScreenOnLabel ??
-                          'Keep Screen On',
-                      description: AppLocalizations.of(context)
-                              ?.keepScreenOnDescription ??
-                          'Prevent screen from turning off',
-                      value: _keepScreenOn,
-                      onChanged: (value) async {
-                        final repo = sl<SettingsRepository>();
-                        await repo.setKeepScreenOn(value);
-
-                        await ScreenService.updateKeepScreenOn(value);
-
-                        setState(() => _keepScreenOn = value);
-                      },
-                    ),
-                    if (!kIsWeb) ...[
+                      SizedBox(height: sectionGap),
+                      _buildSectionTitle('ስለ መተግበሪያው'),
+                      // For contributors only: shown after tapping the
+                      // version at the foot of the page, so nobody leaves
+                      // for GitHub by accident.
+                      if (_contributionUnlocked) ...[
+                        SettingsTile(
+                          key: const ValueKey('contribution-tile'),
+                          icon: Icons.code,
+                          title: AppLocalizations.of(context)
+                                  ?.developmentContributionLabel ??
+                              'ልማት እና አስተዋፅዖ',
+                          description: AppLocalizations.of(context)
+                                  ?.developmentContributionDescription ??
+                              'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
+                          onTap: _openContributionLink,
+                        ),
+                        SizedBox(height: itemGap),
+                      ],
+                      SettingsTile(
+                        icon: Icons.favorite,
+                        title:
+                            AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
+                        description:
+                            AppLocalizations.of(context)?.donateDescription ??
+                                'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const DonatePage()),
+                          );
+                        },
+                      ),
                       SizedBox(height: itemGap),
                       SettingsTile(
-                        icon: Icons.download_for_offline,
-                        title: 'ኖታዎችን በሙሉ አውርድ',
-                        description: 'የተመረጠውን መጽሐፍ ኖታዎች ያለ ኢንተርኔት ለመክፈት',
-                        onTap: () => runSheetMusicBulkDownload(
-                          context,
-                          _selectedVersion,
-                        ),
+                        key: const ValueKey('report-bug-tile'),
+                        icon: Icons.bug_report,
+                        title: AppLocalizations.of(context)?.reportBug ??
+                            'የስህተት ጥቆማ',
+                        description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
+                        onTap: () {
+                          // Over the whole app: the floating navigation bar
+                          // would otherwise cover the form's send button.
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (_) => const ReportBugPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: sectionGap),
+                      AppVersionFooter(
+                        unlocked: _contributionUnlocked,
+                        onUnlock: () => _setContributionUnlocked(true),
+                        onHide: () => _setContributionUnlocked(false),
                       ),
                     ],
-                    SizedBox(height: sectionGap),
-                    _buildSectionTitle('ስለ መተግበሪያው'),
-                    SettingsTile(
-                      icon: Icons.code,
-                      title: AppLocalizations.of(context)
-                              ?.developmentContributionLabel ??
-                          'ልማት እና አስተዋፅዖ',
-                      description: AppLocalizations.of(context)
-                              ?.developmentContributionDescription ??
-                          'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
-                      onTap: _openContributionLink,
-                    ),
-                    SizedBox(height: itemGap),
-                    SettingsTile(
-                      icon: Icons.favorite,
-                      title:
-                          AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
-                      description:
-                          AppLocalizations.of(context)?.donateDescription ??
-                              'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const DonatePage()),
-                        );
-                      },
-                    ),
-                    SizedBox(height: itemGap),
-                    SettingsTile(
-                      icon: Icons.bug_report,
-                      title:
-                          AppLocalizations.of(context)?.reportBug ?? 'ስህተት ላክ',
-                      description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ReportBugPage()),
-                        );
-                      },
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -372,6 +404,15 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
+  }
+
+  bool _handleScroll(ScrollUpdateNotification notification) {
+    if (notification.depth != 0) return false;
+    final scrolled = notification.metrics.pixels > 0;
+    if (scrolled != _scrolledUnderTitle) {
+      setState(() => _scrolledUnderTitle = scrolled);
+    }
+    return false;
   }
 
   BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
@@ -390,7 +431,38 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<void> _setContributionUnlocked(bool value) async {
+    setState(() => _contributionUnlocked = value);
+    await sl<SettingsRepository>().setContributionUnlocked(value);
+  }
+
   Future<void> _openContributionLink() async {
+    final leave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Text(
+          'GitHub ይከፈት?',
+          style: TextStyle(color: AppColors.primaryText),
+        ),
+        content: const Text(
+          'የመተግበሪያው ምንጭ ኮድ ከመተግበሪያው ውጭ በአሳሽ ይከፈታል።',
+          style: TextStyle(color: AppColors.secondaryText),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('ይቅር'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('ክፈት'),
+          ),
+        ],
+      ),
+    );
+    if (leave != true || !mounted) return;
+
     final opened = await launchUrl(
       _contributionUri,
       mode: LaunchMode.externalApplication,

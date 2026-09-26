@@ -19,6 +19,11 @@ flutter analyze --no-pub lib test integration_test
 flutter test --no-pub
 ```
 
+The app's own link to this repository is hidden, so that nobody reaches it by
+accident: in Settings, tap the app version at the foot of the page seven times
+to show the development and contribution section. A long press on the version
+hides it again.
+
 ## Key Docs
 
 - [Product decisions](docs/PRODUCT_DECISIONS.md)

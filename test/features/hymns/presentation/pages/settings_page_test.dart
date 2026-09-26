@@ -5,14 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_version_footer.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
-import 'package:amharic_hymnal_app/core/services/sheet_music_bulk_download_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_bulk_download_flow.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
 
-import '../../../../helpers/fake_hymnal_api.dart';
 import '../../../../helpers/fakes.dart';
 import '../../../../helpers/test_app.dart';
 
@@ -56,6 +54,23 @@ void main() {
           .setMockMessageHandler(_wakelockToggle, null);
     });
 
+    Future<void> scrollToFooter(WidgetTester tester) async {
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('app-version-footer')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await _settle(tester);
+    }
+
+    Future<void> tapVersion(WidgetTester tester, int times) async {
+      for (var tap = 0; tap < times; tap++) {
+        await tester.tap(find.byKey(const ValueKey('app-version-footer')));
+        await tester.pump(const Duration(milliseconds: 120));
+      }
+      await _settle(tester);
+    }
+
     Future<HymnsBloc> pumpSettings(WidgetTester tester) async {
       await setUpTestApp(content: {
         'sda_new': sampleHymns(),
@@ -97,122 +112,145 @@ void main() {
       expect(wakelockCalls, isNotEmpty, reason: 'the wake lock was toggled');
     });
 
-    testWidgets('offers the whole-book sheet music download', (tester) async {
+    testWidgets('offers whole-book sheet music and audio downloads',
+        (tester) async {
       await pumpSettings(tester);
 
       expect(find.text('ኖታዎችን በሙሉ አውርድ'), findsOneWidget);
-    });
-  });
-
-  group('download all sheet music', () {
-    late FakeHymnalApi api;
-    late MemoryMediaCache cache;
-
-    Map<String, dynamic> page(String checksum, {int size = 512 * 1024}) => {
-          'downloadUrl': '${api.baseUrl}/p/$checksum',
-          'checksumSha256': checksum,
-          'sizeBytes': size,
-          'contentType': 'image/webp',
-        };
-
-    void servePages(List<Map<String, dynamic>> pages) => api.ok(
-          '/downloads/sheet-music/pages',
-          {'pageCount': pages.length, 'pages': pages},
-        );
-
-    Future<void> start(WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => TextButton(
-              onPressed: () => runSheetMusicBulkDownload(
-                context,
-                'sda_1960',
-                service: SheetMusicBulkDownloadService(
-                  baseUrl: api.baseUrl,
-                  client: api.client,
-                  cache: cache,
-                ),
-              ),
-              child: const Text('go'),
-            ),
-          ),
-        ),
-      ));
-      await tester.tap(find.text('go'));
-      await _settle(tester);
-    }
-
-    setUp(() {
-      api = FakeHymnalApi();
-      cache = MemoryMediaCache();
-    });
-
-    testWidgets('states the size, then downloads every missing page',
-        (tester) async {
-      servePages([page('a' * 64), page('b' * 64)]);
-      await start(tester);
-
-      expect(api.requests.single.url.queryParameters['version'], 'am-sda-1961');
-      expect(find.text('ኖታዎችን በሙሉ ይውረዱ?'), findsOneWidget);
-      expect(find.textContaining('2 ገጾች፣ 1.0 MB'), findsOneWidget);
-
-      await tester.tap(find.text('አውርድ'));
-      await _settle(tester);
-
-      expect(cache.stored.keys, containsAll(['a' * 64, 'b' * 64]));
-      expect(find.text('ሁሉም ኖታዎች ወርደዋል።'), findsOneWidget);
-    });
-
-    testWidgets('cancelling at the size prompt downloads nothing',
-        (tester) async {
-      servePages([page('a' * 64)]);
-      await start(tester);
-
-      await tester.tap(find.text('ይቅር'));
-      await _settle(tester);
-
-      expect(cache.downloads, isEmpty);
-    });
-
-    testWidgets('reports pages that failed and that a retry fetches the rest',
-        (tester) async {
-      servePages([page('a' * 64), page('b' * 64)]);
-      cache.failing.add('b' * 64);
-      await start(tester);
-
-      await tester.tap(find.text('አውርድ'));
-      await _settle(tester);
-
+      expect(find.text('ድምፆችን በሙሉ አውርድ'), findsOneWidget);
       expect(
-        find.text('1 ገጾችን ማውረድ አልተቻለም። እንደገና ሲሞክሩ የቀሩት ብቻ ይወርዳሉ።'),
-        findsOneWidget,
+        tester.getTopLeft(find.text('ድምፆችን በሙሉ አውርድ')).dx,
+        tester.getTopLeft(find.text('ኖታዎችን በሙሉ አውርድ')).dx,
       );
     });
 
-    testWidgets('says so when everything is already on the phone',
+    testWidgets('the download title lines up with the switch above it',
         (tester) async {
-      servePages([page('a' * 64)]);
-      cache.stored['a' * 64] = 1;
-      await start(tester);
-
-      expect(find.text('ሁሉም ኖታዎች በመሣሪያዎ ላይ አሉ።'), findsOneWidget);
-      expect(find.text('ኖታዎችን በሙሉ ይውረዱ?'), findsNothing);
-    });
-
-    testWidgets('says so when the book has no sheet music', (tester) async {
-      servePages([]);
-      await start(tester);
-
-      expect(find.text('ይህ መዝሙር መጽሐፍ ኖታ የለውም።'), findsOneWidget);
-    });
-
-    testWidgets('explains a failed listing', (tester) async {
-      api.online = false;
-      await start(tester);
+      await pumpSettings(tester);
 
       expect(
-          find.text('የኖታ ዝርዝሩን ማግኘት አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።'), findsOneWidget);
+        tester.getTopLeft(find.text('ኖታዎችን በሙሉ አውርድ')).dx,
+        tester.getTopLeft(find.text('ማያ እንዳይጠፋ')).dx,
+      );
+    });
+
+    testWidgets('a switch that is off still looks enabled', (tester) async {
+      await pumpSettings(tester);
+
+      final off = tester.widget<Switch>(find.byType(Switch).last);
+      expect(off.value, isFalse);
+      final thumb = off.thumbColor!.resolve(<WidgetState>{})!;
+      final outline = off.trackOutlineColor!.resolve(<WidgetState>{})!;
+      expect(thumb.a, greaterThan(0.8), reason: 'a bright thumb');
+      expect(outline.a, greaterThan(0.3), reason: 'a visible track');
+    });
+
+    testWidgets('a divider appears under the title once the list scrolls',
+        (tester) async {
+      await setUpTestApp(content: {'sda_new': sampleHymns()});
+      _offlineVersionCatalog();
+      await pumpInApp(
+        tester,
+        const Scaffold(body: SettingsPage()),
+        size: const Size(412, 700),
+      );
+      await _settle(tester);
+
+      Color dividerColor() => ((tester
+                  .widget<AnimatedContainer>(
+                    find.byKey(const ValueKey('title-bar-divider')),
+                  )
+                  .decoration as BoxDecoration)
+              .border as Border)
+          .bottom
+          .color;
+
+      expect(dividerColor().a, 0);
+      await tester.drag(find.byType(ListView), const Offset(0, -200));
+      await _settle(tester);
+      expect(dividerColor().a, greaterThan(0));
+
+      await tester.drag(find.byType(ListView), const Offset(0, 400));
+      await _settle(tester);
+      expect(dividerColor().a, 0);
+    });
+
+    testWidgets('the development section is hidden, with the version shown',
+        (tester) async {
+      await pumpSettings(tester);
+      await scrollToFooter(tester);
+
+      expect(find.byKey(const ValueKey('contribution-tile')), findsNothing);
+      expect(find.text('ልማት እና አስተዋፅዖ'), findsNothing);
+      expect(find.textContaining('ውዳሴ · ስሪት'), findsOneWidget);
+    });
+
+    testWidgets('tapping the version enough times reveals it, and remembers',
+        (tester) async {
+      await pumpSettings(tester);
+      await scrollToFooter(tester);
+
+      await tapVersion(tester, AppVersionFooter.unlockTaps - 1);
+      expect(find.byKey(const ValueKey('contribution-tile')), findsNothing);
+      expect(find.text('ለማሳየት 1 ጊዜ ይንኩ።'), findsOneWidget);
+
+      await tapVersion(tester, 1);
+      expect(find.byKey(const ValueKey('contribution-tile')), findsOneWidget);
+      expect(find.text('የልማት ክፍሉ አሁን ይታያል።'), findsOneWidget);
+      expect(di.sl<SettingsRepository>().isContributionUnlocked(), isTrue);
+    });
+
+    testWidgets('taps spread out over time never reveal it', (tester) async {
+      await pumpSettings(tester);
+      await scrollToFooter(tester);
+
+      for (var round = 0; round < 3; round++) {
+        await tapVersion(tester, AppVersionFooter.unlockTaps - 1);
+        await tester.pump(AppVersionFooter.tapWindow * 2);
+      }
+
+      expect(find.byKey(const ValueKey('contribution-tile')), findsNothing);
+      expect(di.sl<SettingsRepository>().isContributionUnlocked(), isFalse);
+    });
+
+    testWidgets('once revealed it stays, until a long press hides it again',
+        (tester) async {
+      await setUpTestApp(
+        content: {'sda_new': sampleHymns()},
+        prefs: {'contribution_unlocked': true},
+      );
+      _offlineVersionCatalog();
+      await pumpInApp(
+        tester,
+        const Scaffold(body: SettingsPage()),
+        size: const Size(412, 1400),
+      );
+      await _settle(tester);
+      expect(find.byKey(const ValueKey('contribution-tile')), findsOneWidget);
+
+      await scrollToFooter(tester);
+      await tester.longPress(find.byKey(const ValueKey('app-version-footer')));
+      await _settle(tester);
+
+      expect(find.byKey(const ValueKey('contribution-tile')), findsNothing);
+      expect(find.text('የልማት ክፍሉ ተደብቋል።'), findsOneWidget);
+      expect(di.sl<SettingsRepository>().isContributionUnlocked(), isFalse);
+    });
+
+    testWidgets('opening the source code asks before leaving the app',
+        (tester) async {
+      await pumpSettings(tester);
+      await scrollToFooter(tester);
+      await tapVersion(tester, AppVersionFooter.unlockTaps);
+
+      await tester.tap(find.byKey(const ValueKey('contribution-tile')));
+      await _settle(tester);
+      expect(find.text('GitHub ይከፈት?'), findsOneWidget);
+
+      await tester.tap(find.text('ይቅር'));
+      await _settle(tester);
+      expect(find.text('GitHub ይከፈት?'), findsNothing);
+      expect(tester.takeException(), isNull);
     });
   });
 }

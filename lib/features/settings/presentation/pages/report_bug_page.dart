@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
@@ -90,7 +92,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
           diagnostics: {
             'selectedVersion': settingsRepository.getSelectedVersion(),
             'language': settingsRepository.getSelectedLanguage(),
-            'fontSize': settingsRepository.getFontSize(),
+            'fontSize': FontSizeService().getFontSize(),
             'submittedAt': DateTime.now().toUtc().toIso8601String(),
             'appVersion': '${packageInfo.version}+${packageInfo.buildNumber}',
           },
@@ -150,7 +152,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context)?.reportBug ?? 'ስህተት ሪፖርት',
+            AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -160,7 +162,9 @@ class _ReportBugPageState extends State<ReportBugPage> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: const EdgeInsets.all(16),
+              // Room under the send button for the floating message that
+              // says the report was sent.
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
               children: [
                 if (widget.hymn != null) ...[
                   _buildHymnHeader(widget.hymn!, settingsRepository),
@@ -179,7 +183,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       Text(
                         'ርዕስ',
                         style: TextStyle(
-                          fontSize: settingsRepository.getFontSize() * 0.9,
+                          fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryText,
                         ),
@@ -194,14 +198,14 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           maxLength: 160,
                           style: TextStyle(
                             color: AppColors.primaryText,
-                            fontSize: settingsRepository.getFontSize(),
+                            fontSize: FontSizeScope.of(context),
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
                             hintText: 'የችግሩን ርዕስ ያስገቡ...',
                             hintStyle: TextStyle(
                               color: AppColors.tertiaryText,
-                              fontSize: settingsRepository.getFontSize() * 0.9,
+                              fontSize: FontSizeScope.of(context) * 0.9,
                             ),
                             filled: true,
                             fillColor: AppColors.surface.withValues(alpha: 0.3),
@@ -253,7 +257,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       Text(
                         'የኢሜይል አድራሻ (አማራጭ)',
                         style: TextStyle(
-                          fontSize: settingsRepository.getFontSize() * 0.9,
+                          fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryText,
                         ),
@@ -265,14 +269,14 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(
                           color: AppColors.primaryText,
-                          fontSize: settingsRepository.getFontSize(),
+                          fontSize: FontSizeScope.of(context),
                           fontFamily: 'NotoSansEthiopic',
                         ),
                         decoration: InputDecoration(
                           hintText: 'you@example.com',
                           hintStyle: TextStyle(
                             color: AppColors.tertiaryText,
-                            fontSize: settingsRepository.getFontSize() * 0.9,
+                            fontSize: FontSizeScope.of(context) * 0.9,
                           ),
                           filled: true,
                           fillColor: AppColors.surface.withValues(alpha: 0.3),
@@ -321,7 +325,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       Text(
                         'መግለጫ',
                         style: TextStyle(
-                          fontSize: settingsRepository.getFontSize() * 0.9,
+                          fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryText,
                         ),
@@ -337,14 +341,14 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           maxLength: 8000,
                           style: TextStyle(
                             color: AppColors.primaryText,
-                            fontSize: settingsRepository.getFontSize(),
+                            fontSize: FontSizeScope.of(context),
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
                             hintText: 'ችግሩን በዝርዝር ይግለጹ...',
                             hintStyle: TextStyle(
                               color: AppColors.tertiaryText,
-                              fontSize: settingsRepository.getFontSize() * 0.9,
+                              fontSize: FontSizeScope.of(context) * 0.9,
                             ),
                             filled: true,
                             fillColor: AppColors.surface.withValues(alpha: 0.3),
@@ -415,7 +419,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           : Text(
                               'ሪፖርት ላክ',
                               style: TextStyle(
-                                fontSize: settingsRepository.getFontSize(),
+                                fontSize: FontSizeScope.of(context),
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'NotoSansEthiopic',
                               ),
@@ -448,7 +452,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: AppColors.primaryText,
-                fontSize: settings.getFontSize() * 0.95,
+                fontSize: FontSizeScope.of(context) * 0.95,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'NotoSansEthiopic',
               ),
@@ -471,7 +475,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
           Text(
             'የችግሩ ዓይነት',
             style: TextStyle(
-              fontSize: settings.getFontSize() * 0.9,
+              fontSize: FontSizeScope.of(context) * 0.9,
               fontWeight: FontWeight.bold,
               color: AppColors.primaryText,
             ),

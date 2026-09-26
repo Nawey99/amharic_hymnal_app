@@ -33,6 +33,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     try {
       final settingsRepository = sl<SettingsRepository>();
       await settingsRepository.setOnboardingCompleted(true);
+      // Asked once the edition has loaded; see maybeOfferOfflineDownloads.
+      await settingsRepository.setOfflineDownloadOfferPending(true);
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainNavigationPage()),
@@ -417,8 +419,8 @@ class _PreviewScaffold extends StatelessWidget {
                 active: selectedTab == 'ተወዳጅ'),
             _NavHint(
                 icon: Icons.settings_rounded,
-                label: 'ቅንብር',
-                active: selectedTab == 'ቅንብር'),
+                label: 'ቅንብሮች',
+                active: selectedTab == 'ቅንብሮች'),
           ],
         ),
       ],
@@ -444,14 +446,14 @@ class _LibraryPreview extends StatelessWidget {
           _MiniCard(
             icon: Icons.numbers_rounded,
             title: 'በቁጥር መክፈት',
-            subtitle: 'ቁጥር ያስገቡ እና ክፈት ይንኩ',
+            subtitle: 'ቁጥሩን አስገብተው “ክፈት”ን ይንኩ',
             compact: compact,
           ),
           SizedBox(height: compact ? 6 : 8),
           _MiniCard(
             icon: Icons.search_rounded,
-            title: 'ፈልግ',
-            subtitle: 'በርዕስ ወይም በግጥም',
+            title: 'በማውጫ መፈለግ',
+            subtitle: 'በርዕስ ወይም በግጥም ቃላት',
             compact: compact,
           ),
         ],
@@ -684,9 +686,9 @@ class _SettingsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
-      title: 'ቅንብር',
+      title: 'ቅንብሮች',
       actionIcon: Icons.settings_rounded,
-      selectedTab: 'ቅንብር',
+      selectedTab: 'ቅንብሮች',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -705,7 +707,7 @@ class _SettingsPreview extends StatelessWidget {
           SizedBox(height: compact ? 5 : 7),
           _SettingRow(
             icon: Icons.bug_report_rounded,
-            label: 'ስህተት ሪፖርት',
+            label: 'የስህተት ጥቆማ',
             compact: compact,
           ),
         ],
