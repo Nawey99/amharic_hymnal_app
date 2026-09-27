@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -103,7 +103,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
           SnackBar(
             content: Text(result.message),
             backgroundColor:
-                result.isSuccess ? AppColors.accentGreen : Colors.red,
+                result.isSuccess ? context.appColors.accent : Colors.red,
             duration: const Duration(seconds: 3),
           ),
         );
@@ -185,7 +185,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryText,
+                          color: context.appColors.primaryText,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -197,36 +197,37 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           controller: _titleController,
                           maxLength: 160,
                           style: TextStyle(
-                            color: AppColors.primaryText,
+                            color: context.appColors.primaryText,
                             fontSize: FontSizeScope.of(context),
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
                             hintText: 'የችግሩን ርዕስ ያስገቡ...',
                             hintStyle: TextStyle(
-                              color: AppColors.tertiaryText,
+                              color: context.appColors.tertiaryText,
                               fontSize: FontSizeScope.of(context) * 0.9,
                             ),
                             filled: true,
-                            fillColor: AppColors.surface.withValues(alpha: 0.3),
+                            fillColor: context.appColors.surface
+                                .withValues(alpha: 0.3),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.divider,
+                              borderSide: BorderSide(
+                                color: context.appColors.divider,
                                 width: 1,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.divider,
+                              borderSide: BorderSide(
+                                color: context.appColors.divider,
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.accentGreen,
+                              borderSide: BorderSide(
+                                color: context.appColors.accent,
                                 width: 2,
                               ),
                             ),
@@ -259,7 +260,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryText,
+                          color: context.appColors.primaryText,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -268,36 +269,37 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         maxLength: 254,
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(
-                          color: AppColors.primaryText,
+                          color: context.appColors.primaryText,
                           fontSize: FontSizeScope.of(context),
                           fontFamily: 'NotoSansEthiopic',
                         ),
                         decoration: InputDecoration(
                           hintText: 'you@example.com',
                           hintStyle: TextStyle(
-                            color: AppColors.tertiaryText,
+                            color: context.appColors.tertiaryText,
                             fontSize: FontSizeScope.of(context) * 0.9,
                           ),
                           filled: true,
-                          fillColor: AppColors.surface.withValues(alpha: 0.3),
+                          fillColor:
+                              context.appColors.surface.withValues(alpha: 0.3),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.divider,
+                            borderSide: BorderSide(
+                              color: context.appColors.divider,
                               width: 1,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.divider,
+                            borderSide: BorderSide(
+                              color: context.appColors.divider,
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.accentGreen,
+                            borderSide: BorderSide(
+                              color: context.appColors.accent,
                               width: 2,
                             ),
                           ),
@@ -327,7 +329,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryText,
+                          color: context.appColors.primaryText,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -340,36 +342,37 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           maxLines: 8,
                           maxLength: 8000,
                           style: TextStyle(
-                            color: AppColors.primaryText,
+                            color: context.appColors.primaryText,
                             fontSize: FontSizeScope.of(context),
                             fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
                             hintText: 'ችግሩን በዝርዝር ይግለጹ...',
                             hintStyle: TextStyle(
-                              color: AppColors.tertiaryText,
+                              color: context.appColors.tertiaryText,
                               fontSize: FontSizeScope.of(context) * 0.9,
                             ),
                             filled: true,
-                            fillColor: AppColors.surface.withValues(alpha: 0.3),
+                            fillColor: context.appColors.surface
+                                .withValues(alpha: 0.3),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.divider,
+                              borderSide: BorderSide(
+                                color: context.appColors.divider,
                                 width: 1,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.divider,
+                              borderSide: BorderSide(
+                                color: context.appColors.divider,
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppColors.accentGreen,
+                              borderSide: BorderSide(
+                                color: context.appColors.accent,
                                 width: 2,
                               ),
                             ),
@@ -397,7 +400,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitBugReport,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGreen,
+                        backgroundColor: context.appColors.accent,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -443,7 +446,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          const Icon(Icons.music_note, color: AppColors.accentGreen),
+          Icon(Icons.music_note, color: context.appColors.accent),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -451,7 +454,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
                 fontSize: FontSizeScope.of(context) * 0.95,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'NotoSansEthiopic',
@@ -477,7 +480,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
             style: TextStyle(
               fontSize: FontSizeScope.of(context) * 0.9,
               fontWeight: FontWeight.bold,
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
             ),
           ),
           const SizedBox(height: 8),
@@ -492,13 +495,15 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     type.label,
                     style: TextStyle(
                       fontFamily: 'NotoSansEthiopic',
-                      color:
-                          _type == type ? Colors.white : AppColors.primaryText,
+                      color: _type == type
+                          ? Colors.white
+                          : context.appColors.primaryText,
                     ),
                   ),
                   selected: _type == type,
-                  selectedColor: AppColors.accentGreen,
-                  backgroundColor: AppColors.surface.withValues(alpha: 0.3),
+                  selectedColor: context.appColors.accent,
+                  backgroundColor:
+                      context.appColors.surface.withValues(alpha: 0.3),
                   showCheckmark: false,
                   onSelected: (_) => setState(() => _type = type),
                 ),
@@ -521,7 +526,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
               ),
             )
           : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
+      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 }

@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 
@@ -22,7 +22,7 @@ class DonatePage extends StatelessWidget {
   Widget _buildPageContent(BuildContext context) {
     final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: _buildBackgroundDecoration(context, bgService),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -40,34 +40,34 @@ class DonatePage extends StatelessWidget {
               NavBarConstants.getBottomPadding(context),
             ),
             children: [
-              const GlassContainer(
+              GlassContainer(
                 borderRadius: 16.0,
                 blurSigma: 12.0,
                 opacity: 0.12,
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
                     Icon(
                       Icons.favorite,
-                      color: AppColors.accentGreen,
+                      color: context.appColors.accent,
                       size: 64,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       'መተግበሪያውን ይደግፉ',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryText,
+                        color: context.appColors.primaryText,
                       ),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       'ድጋፍዎ ይህን መተግበሪያ ለማሻሻል እና ለማስቀጠል ይረዳናል። ለድጋፍዎ እናመሰግናለን።',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.secondaryText,
+                        color: context.appColors.secondaryText,
                       ),
                     ),
                   ],
@@ -96,7 +96,10 @@ class DonatePage extends StatelessWidget {
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
+  BoxDecoration _buildBackgroundDecoration(
+    BuildContext context,
+    BackgroundImageService bgService,
+  ) {
     return BoxDecoration(
       image: bgService.isEnabled
           ? DecorationImage(
@@ -108,7 +111,7 @@ class DonatePage extends StatelessWidget {
               ),
             )
           : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
+      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -157,7 +160,7 @@ class DonatePage extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: AppColors.accentGreen,
+              color: context.appColors.accent,
               size: 32,
             ),
             const SizedBox(width: 16),
@@ -167,26 +170,26 @@ class DonatePage extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primaryText,
+                      color: context.appColors.primaryText,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.secondaryText,
+                      color: context.appColors.secondaryText,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
             ),
           ],
         ),
@@ -224,7 +227,9 @@ class NationalBankDonationPage extends StatelessWidget {
                     ),
                   )
                 : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
+            color: bgService.isEnabled
+                ? null
+                : context.appColors.primaryBackground,
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -243,15 +248,15 @@ class NationalBankDonationPage extends StatelessWidget {
                   NavBarConstants.getBottomPadding(context),
                 ),
                 children: [
-                  const GlassContainer(
+                  GlassContainer(
                     borderRadius: 16,
                     blurSigma: 12,
                     opacity: 0.12,
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Text(
                       'ይህ ገጽ የባንክ ድጋፍ መረጃ ለማሳየት ተዘጋጅቷል። ትክክለኛው የባንክ ሒሳብ ቁጥር ሲዘጋጅ መረጃው ይሞላል።',
                       style: TextStyle(
-                        color: AppColors.secondaryText,
+                        color: context.appColors.secondaryText,
                         fontSize: 15,
                       ),
                     ),
@@ -296,16 +301,16 @@ class _BankField extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: AppColors.secondaryText,
+                  style: TextStyle(
+                    color: context.appColors.secondaryText,
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: AppColors.primaryText,
+                  style: TextStyle(
+                    color: context.appColors.primaryText,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -316,7 +321,7 @@ class _BankField extends StatelessWidget {
           if (canCopy)
             IconButton(
               tooltip: 'ቅዳ',
-              icon: const Icon(Icons.copy, color: AppColors.accentGreen),
+              icon: Icon(Icons.copy, color: context.appColors.accent),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: value));
                 if (context.mounted) {

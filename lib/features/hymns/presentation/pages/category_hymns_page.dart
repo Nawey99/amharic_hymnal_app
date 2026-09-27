@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
@@ -73,15 +73,15 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                 ),
               )
             : null,
-        color: bgService.isEnabled ? null : AppColors.primaryBackground,
+        color: bgService.isEnabled ? null : context.appColors.primaryBackground,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
             widget.author ?? widget.category,
-            style: const TextStyle(
-              color: AppColors.primaryText,
+            style: TextStyle(
+              color: context.appColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
               fontWeight: FontWeight.bold,
             ),
@@ -93,9 +93,9 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
               ? [
                   // Sort control for Hagerigna mode only
                   PopupMenuButton<String>(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.sort,
-                      color: AppColors.primaryText,
+                      color: context.appColors.primaryText,
                     ),
                     onSelected: (value) {
                       if (value == _sortType) return;
@@ -114,8 +114,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : Icons.check_box_outline_blank,
                               size: 20,
                               color: _sortType == 'number'
-                                  ? AppColors.accentGreen
-                                  : AppColors.secondaryText,
+                                  ? context.appColors.accent
+                                  : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
                             const Text(
@@ -137,8 +137,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : Icons.check_box_outline_blank,
                               size: 20,
                               color: _sortType == 'name'
-                                  ? AppColors.accentGreen
-                                  : AppColors.secondaryText,
+                                  ? context.appColors.accent
+                                  : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
                             const Text(
@@ -159,10 +159,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
           child: BlocBuilder<HymnsBloc, HymnsState>(
             builder: (context, state) {
               if (state is HymnsLoading) {
-                return const Center(
+                return Center(
                   child: CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                        AlwaysStoppedAnimation<Color>(context.appColors.accent),
                   ),
                 );
               }
@@ -173,8 +173,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                     padding: const EdgeInsets.all(32.0),
                     child: Text(
                       state.message,
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
+                      style: TextStyle(
+                        color: context.appColors.primaryText,
                         fontSize: 16,
                         fontFamily: 'NotoSansEthiopic',
                       ),

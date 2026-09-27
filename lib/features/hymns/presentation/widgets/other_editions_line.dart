@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 
 /// "1961: 165 · 2004: 132" for a hymn from the hymnal API, and on a second
@@ -120,7 +120,7 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
           excludeFromSemantics: true,
           child: Row(
             children: [
-              Icon(icon, size: 15, color: AppColors.secondaryText),
+              Icon(icon, size: 15, color: context.appColors.secondaryText),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -130,8 +130,8 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
                   // lyrics down.
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.secondaryText,
+                  style: TextStyle(
+                    color: context.appColors.secondaryText,
                     fontFamily: 'NotoSansEthiopic',
                     fontSize: 12,
                   ),

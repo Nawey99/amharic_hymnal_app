@@ -1,7 +1,7 @@
 // lib/core/widgets/search_text_field.dart
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 
@@ -100,19 +100,19 @@ class _SearchTextFieldState extends State<SearchTextField> {
                 false, // Prevent keyboard interference with Amharic
             autocorrect: false, // Prevent autocorrect interference
             style: TextStyle(
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
               fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
-                color: AppColors.tertiaryText,
+                color: context.appColors.tertiaryText,
                 fontSize: FontSizeScope.of(context) * 0.9,
                 fontFamily: 'NotoSansEthiopic',
               ),
               prefixIcon:
-                  const Icon(Icons.search, color: AppColors.primaryText),
+                  Icon(Icons.search, color: context.appColors.primaryText),
               suffixIcon: _buildSuffixIcon(),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -142,7 +142,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
         return Tooltip(
           message: 'ፍለጋውን አጽዳ',
           child: IconButton(
-            icon: const Icon(Icons.clear, color: AppColors.primaryText),
+            icon: Icon(Icons.clear, color: context.appColors.primaryText),
             onPressed: _handleClear,
           ),
         );

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -72,7 +72,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               )
             : null,
-        color: bgService.isEnabled ? null : AppColors.primaryBackground,
+        color: bgService.isEnabled ? null : context.appColors.primaryBackground,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -84,10 +84,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 child: BlocBuilder<HymnsBloc, HymnsState>(
                   builder: (context, state) {
                     if (state is HymnsLoading) {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.accentGreen),
+                              context.appColors.accent),
                         ),
                       );
                     }
@@ -98,8 +98,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           padding: const EdgeInsets.all(32.0),
                           child: Text(
                             state.message,
-                            style: const TextStyle(
-                              color: AppColors.primaryText,
+                            style: TextStyle(
+                              color: context.appColors.primaryText,
                               fontSize: 16,
                               fontFamily: 'NotoSansEthiopic',
                             ),
@@ -256,11 +256,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
           borderRadius: 12.0,
           blurSigma: 12.0,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
-          color: AppColors.surface,
+          color: context.appColors.surface,
           border: Border.all(
             color: backgroundImageEnabled
                 ? Colors.white.withValues(alpha: 0.3)
-                : AppColors.accentGreen.withValues(alpha: 0.16),
+                : context.appColors.accent.withValues(alpha: 0.16),
             width: 1.2,
           ),
           padding: EdgeInsets.symmetric(
@@ -281,7 +281,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppColors.primaryText,
+                        color: context.appColors.primaryText,
                         fontSize: compactLandscape ? 16 : 17,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'NotoSansEthiopic',
@@ -292,9 +292,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.chevron_right,
-                color: AppColors.secondaryText,
+                color: context.appColors.secondaryText,
                 size: 22,
               ),
             ],
@@ -309,15 +309,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
       width: compactLandscape ? 44 : 58,
       height: compactLandscape ? 44 : 58,
       decoration: BoxDecoration(
-        color: AppColors.accentGreen.withValues(alpha: 0.14),
+        color: context.appColors.accent.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.accentGreen.withValues(alpha: 0.34),
+          color: context.appColors.accent.withValues(alpha: 0.34),
         ),
       ),
       child: Icon(
         CategoryIconMapper.iconFor(category),
-        color: AppColors.accentGreen,
+        color: context.appColors.accent,
         size: compactLandscape ? 24 : 28,
       ),
     );
@@ -353,11 +353,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
           borderRadius: 12.0,
           blurSigma: 12.0,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
-          color: AppColors.surface,
+          color: context.appColors.surface,
           border: Border.all(
             color: backgroundImageEnabled
                 ? Colors.white.withValues(alpha: 0.3)
-                : AppColors.accentGreen.withValues(alpha: 0.16),
+                : context.appColors.accent.withValues(alpha: 0.16),
             width: 1.2,
           ),
           padding: EdgeInsets.symmetric(
@@ -370,15 +370,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 width: compactLandscape ? 44 : 58,
                 height: compactLandscape ? 44 : 58,
                 decoration: BoxDecoration(
-                  color: AppColors.accentGreen.withValues(alpha: 0.14),
+                  color: context.appColors.accent.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: AppColors.accentGreen.withValues(alpha: 0.35),
+                    color: context.appColors.accent.withValues(alpha: 0.35),
                   ),
                 ),
                 child: Icon(
                   Icons.person,
-                  color: AppColors.accentGreen,
+                  color: context.appColors.accent,
                   size: compactLandscape ? 24 : 28,
                 ),
               ),
@@ -389,7 +389,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: AppColors.primaryText,
+                    color: context.appColors.primaryText,
                     fontSize: compactLandscape ? 16 : 17,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'NotoSansEthiopic',
@@ -398,9 +398,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.chevron_right,
-                color: AppColors.secondaryText,
+                color: context.appColors.secondaryText,
                 size: 22,
               ),
             ],

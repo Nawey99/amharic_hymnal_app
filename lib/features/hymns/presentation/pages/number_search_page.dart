@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -193,7 +193,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               ),
             )
           : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
+      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -207,7 +207,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(),
         ),
@@ -227,26 +227,26 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.accentGreen.withValues(alpha: 0.18),
+            color: context.appColors.accent.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: AppColors.accentGreen.withValues(alpha: 0.5),
+              color: context.appColors.accent.withValues(alpha: 0.5),
               width: 1.2,
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.history,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
                 size: 19,
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Text(
                 'ታሪክ',
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
@@ -322,9 +322,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return BlocBuilder<HymnsBloc, HymnsState>(
       builder: (context, state) {
         if (state is HymnsLoading) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(context.appColors.accent),
             ),
           );
         }
@@ -354,16 +355,16 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
               ),
               const SizedBox(height: 16),
               Text(
                 message,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: FontSizeScope.of(context),
                   fontFamily: 'NotoSansEthiopic',
                 ),
@@ -388,7 +389,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           child: Text(
             message,
             style: TextStyle(
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
               fontFamily: 'NotoSansEthiopic',
             ),
@@ -477,7 +478,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       opacity: 0.15,
       border: Border.all(
         color: _numberErrorMessage == null
-            ? AppColors.accentGreen.withValues(alpha: 0.45)
+            ? context.appColors.accent.withValues(alpha: 0.45)
             : Colors.red,
         width: 1.5,
       ),
@@ -485,20 +486,20 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         controller: _numberController,
         focusNode: _numberFocusNode,
         cursorColor:
-            _numberErrorMessage == null ? AppColors.accentGreen : Colors.red,
+            _numberErrorMessage == null ? context.appColors.accent : Colors.red,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (_) => _clearNumberError(),
         onTapOutside: (_) => _dismissInputFocus(),
         style: TextStyle(
-          color: AppColors.primaryText,
+          color: context.appColors.primaryText,
           fontSize: FontSizeScope.of(context) * 1.08,
           fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
           hintStyle: TextStyle(
-            color: AppColors.tertiaryText,
+            color: context.appColors.tertiaryText,
             fontSize: FontSizeScope.of(context) * 1.08,
           ),
           prefixIcon: Padding(
@@ -506,7 +507,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
             child: Text(
               '#',
               style: TextStyle(
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
                 fontSize: FontSizeScope.of(context) * 1.08,
                 fontFamily: 'NotoSansEthiopic',
               ),
@@ -555,19 +556,19 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         onPressed: _openHymn,
         padding: const EdgeInsets.symmetric(vertical: 16),
         borderRadius: 16.0,
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.library_books_outlined,
-                size: 24, color: AppColors.primaryText),
-            SizedBox(width: 12),
+                size: 24, color: context.appColors.primaryText),
+            const SizedBox(width: 12),
             Text(
               'ክፈት',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'NotoSansEthiopic',
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
               ),
             ),
           ],

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
@@ -369,7 +369,7 @@ class _IndexPageState extends State<IndexPage> {
               ),
             )
           : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
+      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -382,13 +382,13 @@ class _IndexPageState extends State<IndexPage> {
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(context),
         ),
         IconButton(
           tooltip: 'ቅደም ተከተል',
-          icon: const Icon(Icons.sort, color: AppColors.primaryText),
+          icon: Icon(Icons.sort, color: context.appColors.primaryText),
           onPressed: () => _showSortDialog(context),
         ),
       ],
@@ -481,7 +481,7 @@ class _IndexPageState extends State<IndexPage> {
                 displayLetter,
                 key: const ValueKey('index-section-indicator'),
                 style: TextStyle(
-                  color: AppColors.accentGreen,
+                  color: context.appColors.accent,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'NotoSansEthiopic',
@@ -568,9 +568,9 @@ class _IndexPageState extends State<IndexPage> {
     required double navBarBottomPadding,
   }) {
     if (state is HymnsLoading) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+          valueColor: AlwaysStoppedAnimation<Color>(context.appColors.accent),
         ),
       );
     }
@@ -690,10 +690,10 @@ class _IndexPageState extends State<IndexPage> {
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.32),
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'አደራደር',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: _buildSortOptions(dialogContext, effectiveSortType),
       ),
@@ -766,12 +766,12 @@ class _IndexPageState extends State<IndexPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.accentGreen.withValues(alpha: 0.2)
+              ? context.appColors.accent.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? AppColors.accentGreen.withValues(alpha: 0.5)
+                ? context.appColors.accent.withValues(alpha: 0.5)
                 : Colors.transparent,
             width: 1.5,
           ),
@@ -780,8 +780,9 @@ class _IndexPageState extends State<IndexPage> {
           children: [
             Icon(
               icon,
-              color:
-                  isSelected ? AppColors.accentGreen : AppColors.secondaryText,
+              color: isSelected
+                  ? context.appColors.accent
+                  : context.appColors.secondaryText,
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -790,17 +791,17 @@ class _IndexPageState extends State<IndexPage> {
                 title,
                 style: TextStyle(
                   color: isSelected
-                      ? AppColors.accentGreen
-                      : AppColors.primaryText,
+                      ? context.appColors.accent
+                      : context.appColors.primaryText,
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
                 size: 20,
               ),
           ],

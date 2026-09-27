@@ -1,7 +1,7 @@
 // lib/core/widgets/error_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 bool _hasBackgroundImage() {
@@ -27,10 +27,10 @@ class AppErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBackground,
+      backgroundColor: context.appColors.primaryBackground,
       body: Container(
         decoration: BoxDecoration(
-          color: AppColors.primaryBackground,
+          color: context.appColors.primaryBackground,
           image: _hasBackgroundImage()
               ? DecorationImage(
                   image: const AssetImage('assets/images/background.jpg'),
@@ -59,10 +59,10 @@ class AppErrorWidget extends StatelessWidget {
                         color: Colors.red,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'ይቅርታ! የሆነ ችግር ተከስቷል',
                         style: TextStyle(
-                          color: AppColors.primaryText,
+                          color: context.appColors.primaryText,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'NotoSansEthiopic',
@@ -72,8 +72,8 @@ class AppErrorWidget extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         message,
-                        style: const TextStyle(
-                          color: AppColors.secondaryText,
+                        style: TextStyle(
+                          color: context.appColors.secondaryText,
                           fontSize: 16,
                           fontFamily: 'NotoSansEthiopic',
                         ),
@@ -84,8 +84,8 @@ class AppErrorWidget extends StatelessWidget {
                         ElevatedButton(
                           onPressed: onRetry,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentGreen,
-                            foregroundColor: AppColors.primaryText,
+                            backgroundColor: context.appColors.accent,
+                            foregroundColor: context.appColors.primaryText,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 32,
                               vertical: 16,

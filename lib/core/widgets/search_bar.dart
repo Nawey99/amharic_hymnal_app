@@ -1,7 +1,7 @@
 // lib/core/widgets/search_bar.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 /// Reusable search bar widget with consistent styling
@@ -57,21 +57,21 @@ class AppSearchBar extends StatelessWidget {
             textInputAction:
                 TextInputAction.done, // No search action - real-time search
             inputFormatters: inputFormatters,
-            style: const TextStyle(
-              color: AppColors.primaryText,
+            style: TextStyle(
+              color: context.appColors.primaryText,
               fontSize: 16,
               fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(
-                color: AppColors.tertiaryText,
+              hintStyle: TextStyle(
+                color: context.appColors.tertiaryText,
                 fontSize: 14,
                 fontFamily: 'NotoSansEthiopic',
               ),
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.search,
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
                 size: 24,
               ),
               suffixIcon: _buildClearButton(),
@@ -98,7 +98,7 @@ class AppSearchBar extends StatelessWidget {
   Widget? _buildClearButton() {
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: controller,
-      builder: (_, value, __) {
+      builder: (context, value, __) {
         if (value.text.isEmpty) {
           return const SizedBox.shrink();
         }
@@ -108,9 +108,9 @@ class AppSearchBar extends StatelessWidget {
           width: 48,
           height: 48,
           child: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.clear,
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
               size: 20,
             ),
             onPressed: () {

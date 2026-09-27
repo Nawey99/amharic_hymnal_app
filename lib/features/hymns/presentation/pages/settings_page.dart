@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -14,7 +15,6 @@ import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_version_footer.dart';
@@ -427,7 +427,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             )
           : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
+      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -440,14 +440,14 @@ class _SettingsPageState extends State<SettingsPage> {
     final leave = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'GitHub ይከፈት?',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
-        content: const Text(
+        content: Text(
           'የመተግበሪያው ምንጭ ኮድ ከመተግበሪያው ውጭ በአሳሽ ይከፈታል።',
-          style: TextStyle(color: AppColors.secondaryText),
+          style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
@@ -486,10 +486,10 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: AppColors.primaryText,
+          color: context.appColors.primaryText,
         ),
       ),
     );

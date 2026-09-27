@@ -225,6 +225,26 @@ class SettingsService {
         false;
   }
 
+  /// The chosen light/dark setting: 'system', 'light' or 'dark'. Read
+  /// before the first frame, so the app never starts in the wrong one.
+  static String getThemeMode() {
+    return _prefs?.getString(AppConstants.keyThemeMode) ?? 'dark';
+  }
+
+  static Future<bool> setThemeMode(String value) async {
+    return await _prefs?.setString(AppConstants.keyThemeMode, value) ?? false;
+  }
+
+  /// The chosen colour family, by its enum name.
+  static String? getThemePalette() {
+    return _prefs?.getString(AppConstants.keyThemePalette);
+  }
+
+  static Future<bool> setThemePalette(String value) async {
+    return await _prefs?.setString(AppConstants.keyThemePalette, value) ??
+        false;
+  }
+
   /// Whether the development and contribution section is shown in Settings.
   /// Hidden until the app version is tapped several times.
   static bool isContributionUnlocked() {

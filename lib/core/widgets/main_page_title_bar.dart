@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 
 class MainPageTitleBar extends StatelessWidget {
@@ -113,7 +113,7 @@ class _TitleText extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
             fontSize: compact ? 21 : 23,
             fontWeight: FontWeight.bold,
             fontFamily: 'NotoSansEthiopic',

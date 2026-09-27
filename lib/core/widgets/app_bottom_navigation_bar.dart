@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 
@@ -124,7 +124,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                           ),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: AppColors.surface.withValues(
+                              color: context.appColors.surface.withValues(
                                 alpha: 0.15,
                               ),
                               borderRadius: BorderRadius.circular(innerRadius),
@@ -147,6 +147,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                       builder: (context, constraints) => Stack(
                         children: [
                           _buildIndicator(
+                            context,
                             constraints.biggest,
                             primaryIndex: primaryIndex,
                             primarySlotWidth: primarySlotWidth,
@@ -209,6 +210,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   /// inset by [_tabInset] on every side, so its round ends follow the bar's.
   /// It fades into the centre slot when the raised number action is chosen.
   Widget _buildIndicator(
+    BuildContext context,
     Size area, {
     required int primaryIndex,
     required double primarySlotWidth,
@@ -252,7 +254,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         child: DecoratedBox(
           decoration: ShapeDecoration(
             shape: const StadiumBorder(),
-            color: AppColors.accentGreen.withValues(alpha: 0.14),
+            color: context.appColors.accent.withValues(alpha: 0.14),
           ),
         ),
       ),
@@ -319,7 +321,8 @@ class _ProgressiveNavigationBackdrop extends StatelessWidget {
                 tileMode: TileMode.clamp,
               ),
               child: ColoredBox(
-                color: AppColors.primaryBackground.withValues(alpha: 0.04),
+                color:
+                    context.appColors.primaryBackground.withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -330,9 +333,9 @@ class _ProgressiveNavigationBackdrop extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.primaryBackground.withValues(alpha: 0.02),
-                  AppColors.primaryBackground.withValues(alpha: 0.18),
-                  AppColors.primaryBackground.withValues(alpha: 0.38),
+                  context.appColors.primaryBackground.withValues(alpha: 0.02),
+                  context.appColors.primaryBackground.withValues(alpha: 0.18),
+                  context.appColors.primaryBackground.withValues(alpha: 0.38),
                 ],
                 stops: const [0, 0.52, 1],
               ),
@@ -389,8 +392,8 @@ class _NavigationDestinationButtonState
             // Same shape as the sliding indicator, so the ripple never
             // spills past the bar's rounded ends.
             customBorder: const StadiumBorder(),
-            splashColor: AppColors.accentGreen.withValues(alpha: 0.16),
-            highlightColor: AppColors.accentGreen.withValues(alpha: 0.08),
+            splashColor: context.appColors.accent.withValues(alpha: 0.16),
+            highlightColor: context.appColors.accent.withValues(alpha: 0.08),
             child: AnimatedScale(
               scale: _pressed ? 0.94 : 1,
               duration: const Duration(milliseconds: 110),
@@ -409,8 +412,8 @@ class _NavigationDestinationButtonState
                       child: Icon(
                         selected ? destination.selectedIcon : destination.icon,
                         color: selected
-                            ? AppColors.accentGreen
-                            : AppColors.secondaryText,
+                            ? context.appColors.accent
+                            : context.appColors.secondaryText,
                         size: compact ? 21 : 23,
                       ),
                     ),
@@ -421,8 +424,8 @@ class _NavigationDestinationButtonState
                         duration: const Duration(milliseconds: 180),
                         style: TextStyle(
                           color: selected
-                              ? AppColors.accentGreen
-                              : AppColors.primaryText,
+                              ? context.appColors.accent
+                              : context.appColors.primaryText,
                           fontSize: compact ? 9.5 : 10.5,
                           fontWeight:
                               selected ? FontWeight.w800 : FontWeight.w500,
@@ -493,10 +496,10 @@ class _PrimaryNavigationActionState extends State<_PrimaryNavigationAction> {
                 duration: Duration(milliseconds: _pressed ? 90 : 180),
                 curve: Curves.easeOut,
                 child: Material(
-                  color: AppColors.accentGreenDark,
+                  color: context.appColors.accentDark,
                   elevation: selected ? 10 : 7,
                   shadowColor:
-                      AppColors.accentGreenDark.withValues(alpha: 0.34),
+                      context.appColors.accentDark.withValues(alpha: 0.34),
                   shape: const CircleBorder(),
                   clipBehavior: Clip.antiAlias,
                   child: SizedBox.square(
@@ -518,8 +521,8 @@ class _PrimaryNavigationActionState extends State<_PrimaryNavigationAction> {
                     maxLines: 1,
                     style: TextStyle(
                       color: selected
-                          ? AppColors.accentGreen
-                          : AppColors.primaryText,
+                          ? context.appColors.accent
+                          : context.appColors.primaryText,
                       fontSize: compact ? 10 : 11,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',

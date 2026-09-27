@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -126,7 +126,9 @@ class _FavoritesPageState extends State<FavoritesPage>
                     ),
                   )
                 : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
+            color: bgService.isEnabled
+                ? null
+                : context.appColors.primaryBackground,
           ),
           child: SafeArea(
             child: Column(
@@ -154,10 +156,10 @@ class _FavoritesPageState extends State<FavoritesPage>
                       // NOT when toggling favorites (which keeps HymnsLoaded state)
                       if (state is HymnsInitial ||
                           (state is HymnsLoading && favorites.isEmpty)) {
-                        return const Center(
+                        return Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.accentGreen),
+                                context.appColors.accent),
                           ),
                         );
                       }
@@ -203,7 +205,7 @@ class _FavoritesPageState extends State<FavoritesPage>
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(),
         ),

@@ -1,10 +1,10 @@
 // lib/features/hymns/presentation/pages/onboarding_page.dart
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/models/onboarding_content.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
@@ -70,7 +70,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                   )
                 : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
+            color: bgService.isEnabled
+                ? null
+                : context.appColors.primaryBackground,
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -110,11 +112,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
       padding: EdgeInsets.fromLTRB(16, compact ? 8 : 14, 16, compact ? 4 : 8),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               'ውዳሴ',
               style: TextStyle(
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 fontFamily: 'NotoSansEthiopic',
@@ -124,7 +126,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           TextButton(
             onPressed: _completeOnboarding,
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.primaryText,
+              foregroundColor: context.appColors.primaryText,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(999),
@@ -173,7 +175,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       children: [
                         Icon(
                           step.icon,
-                          color: AppColors.accentGreen,
+                          color: context.appColors.accent,
                           size: compact ? 25 : 30,
                         ),
                         const SizedBox(width: 10),
@@ -181,7 +183,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           child: Text(
                             step.title,
                             style: TextStyle(
-                              color: AppColors.primaryText,
+                              color: context.appColors.primaryText,
                               fontSize: compact ? 19 : 22,
                               fontWeight: FontWeight.w800,
                               fontFamily: 'NotoSansEthiopic',
@@ -195,7 +197,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Text(
                       step.description,
                       style: TextStyle(
-                        color: AppColors.secondaryText,
+                        color: context.appColors.secondaryText,
                         fontSize: compact ? 13.3 : 15,
                         fontFamily: 'NotoSansEthiopic',
                         height: 1.42,
@@ -222,18 +224,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget _buildChip(String item) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.accentGreen.withValues(alpha: 0.14),
+        color: context.appColors.accent.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: AppColors.accentGreen.withValues(alpha: 0.22),
+          color: context.appColors.accent.withValues(alpha: 0.22),
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Text(
           item,
-          style: const TextStyle(
-            color: AppColors.primaryText,
+          style: TextStyle(
+            color: context.appColors.primaryText,
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
             fontFamily: 'NotoSansEthiopic',
@@ -271,8 +273,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 }
               },
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.accentGreen,
-                foregroundColor: AppColors.primaryText,
+                backgroundColor: context.appColors.accent,
+                foregroundColor: context.appColors.primaryText,
                 padding: EdgeInsets.symmetric(vertical: compact ? 13 : 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -304,7 +306,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       width: isActive ? 22 : 7,
       height: 7,
       decoration: BoxDecoration(
-        color: isActive ? AppColors.accentGreen : AppColors.secondaryText,
+        color: isActive
+            ? context.appColors.accent
+            : context.appColors.secondaryText,
         borderRadius: BorderRadius.circular(999),
       ),
     );
@@ -341,7 +345,7 @@ class _FeaturePreview extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.primaryBackground.withValues(alpha: 0.82),
+        color: context.appColors.primaryBackground.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
@@ -383,8 +387,8 @@ class _PreviewScaffold extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppColors.primaryText,
+                style: TextStyle(
+                  color: context.appColors.primaryText,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
@@ -392,7 +396,7 @@ class _PreviewScaffold extends StatelessWidget {
               ),
             ),
             Icon(actionIcon,
-                color: AppColors.primaryText, size: compact ? 16 : 18),
+                color: context.appColors.primaryText, size: compact ? 16 : 18),
           ],
         ),
         SizedBox(height: compact ? 5 : 10),
@@ -484,17 +488,17 @@ class _NumberPreview extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                SizedBox(width: 14),
+                const SizedBox(width: 14),
                 Text('#',
                     style: TextStyle(
-                        color: AppColors.primaryText,
+                        color: context.appColors.primaryText,
                         fontWeight: FontWeight.w800)),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Text('125',
                     style: TextStyle(
-                        color: AppColors.primaryText,
+                        color: context.appColors.primaryText,
                         fontSize: 18,
                         fontWeight: FontWeight.w800)),
               ],
@@ -505,13 +509,13 @@ class _NumberPreview extends StatelessWidget {
             height: compact ? 34 : 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.accentGreen,
+              color: context.appColors.accent,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
+            child: Text(
               'ክፈት',
               style: TextStyle(
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
                 fontFamily: 'NotoSansEthiopic',
                 fontWeight: FontWeight.w800,
               ),
@@ -624,22 +628,23 @@ class _LyricsPreview extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
+          Text(
             'አምላካችን',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
               fontSize: 15,
               fontWeight: FontWeight.w800,
               fontFamily: 'NotoSansEthiopic',
             ),
           ),
-          const Text(
+          Text(
             'Praise God, From Whom All Blessings Flow',
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: AppColors.secondaryText, fontSize: 10),
+            style:
+                TextStyle(color: context.appColors.secondaryText, fontSize: 10),
           ),
           const SizedBox(height: 8),
           const Row(
@@ -658,12 +663,12 @@ class _LyricsPreview extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(8),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
                 child: Text(
                   'አምላካችን አመስግኑ\nምስጋና ለእርሱ ይሁን\n...',
                   style: TextStyle(
-                    color: AppColors.primaryText,
+                    color: context.appColors.primaryText,
                     fontSize: 12,
                     fontFamily: 'NotoSansEthiopic',
                     height: 1.4,
@@ -732,21 +737,21 @@ class _AccessCallout extends StatelessWidget {
         color: Colors.black.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(12),
         border:
-            Border.all(color: AppColors.accentGreen.withValues(alpha: 0.22)),
+            Border.all(color: context.appColors.accent.withValues(alpha: 0.22)),
       ),
       child: Padding(
         padding: EdgeInsets.all(compact ? 10 : 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.touch_app_rounded,
-                color: AppColors.accentGreen, size: 20),
+            Icon(Icons.touch_app_rounded,
+                color: context.appColors.accent, size: 20),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 text,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: compact ? 12.5 : 13.5,
                   fontFamily: 'NotoSansEthiopic',
                   height: 1.35,
@@ -785,7 +790,8 @@ class _MiniCard extends StatelessWidget {
         padding: EdgeInsets.all(compact ? 8 : 10),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.accentGreen, size: compact ? 20 : 23),
+            Icon(icon,
+                color: context.appColors.accent, size: compact ? 20 : 23),
             SizedBox(width: compact ? 8 : 10),
             Expanded(
               child: Column(
@@ -797,7 +803,7 @@ class _MiniCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.primaryText,
+                      color: context.appColors.primaryText,
                       fontSize: compact ? 12.5 : 14,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',
@@ -808,7 +814,7 @@ class _MiniCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.secondaryText,
+                      color: context.appColors.secondaryText,
                       fontSize: compact ? 10 : 11,
                       fontFamily: 'NotoSansEthiopic',
                     ),
@@ -856,7 +862,7 @@ class _SongRow extends StatelessWidget {
               child: Text(
                 number,
                 style: TextStyle(
-                  color: AppColors.accentGreen,
+                  color: context.appColors.accent,
                   fontSize: compact ? 10 : 11,
                   fontWeight: FontWeight.w800,
                 ),
@@ -872,7 +878,7 @@ class _SongRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.primaryText,
+                      color: context.appColors.primaryText,
                       fontSize: compact ? 11.3 : 12.5,
                       fontWeight: FontWeight.w800,
                       fontFamily: 'NotoSansEthiopic',
@@ -883,7 +889,7 @@ class _SongRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: AppColors.secondaryText,
+                      color: context.appColors.secondaryText,
                       fontSize: compact ? 9.5 : 10.5,
                     ),
                   ),
@@ -892,7 +898,7 @@ class _SongRow extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
               size: compact ? 16 : 18,
             ),
           ],
@@ -927,7 +933,8 @@ class _CategoryRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.accentGreen, size: compact ? 19 : 22),
+            Icon(icon,
+                color: context.appColors.accent, size: compact ? 19 : 22),
             SizedBox(width: compact ? 8 : 10),
             Expanded(
               child: Text(
@@ -935,7 +942,7 @@ class _CategoryRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: compact ? 12.5 : 14,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
@@ -944,7 +951,7 @@ class _CategoryRow extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
               size: compact ? 16 : 18,
             ),
           ],
@@ -985,12 +992,12 @@ class _MediaBox extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.accentGreen, size: 18),
+            Icon(icon, color: context.appColors.accent, size: 18),
             const SizedBox(width: 5),
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.primaryText,
+              style: TextStyle(
+                color: context.appColors.primaryText,
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
                 fontFamily: 'NotoSansEthiopic',
@@ -1014,8 +1021,8 @@ class _RailLabel extends StatelessWidget {
       quarterTurns: 3,
       child: Text(
         text,
-        style: const TextStyle(
-          color: AppColors.accentGreen,
+        style: TextStyle(
+          color: context.appColors.accent,
           fontSize: 9,
           fontWeight: FontWeight.w800,
         ),
@@ -1037,7 +1044,8 @@ class _NavHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? AppColors.accentGreen : AppColors.primaryText;
+    final color =
+        active ? context.appColors.accent : context.appColors.primaryText;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

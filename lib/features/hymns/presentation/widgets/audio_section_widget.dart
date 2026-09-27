@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/music_player_widget.dart';
@@ -85,27 +85,27 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
 
   Widget _buildUnavailableState() {
     if (widget.condensed) {
-      return const GlassContainer(
+      return GlassContainer(
         borderRadius: 18,
         blurSigma: 12,
         opacity: 0.25,
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        margin: EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 10),
         child: Row(
           children: [
             Icon(
               Icons.music_off,
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
               size: 20,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 'ድምፅ አልተገኘም',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.secondaryText,
+                  color: context.appColors.secondaryText,
                   fontSize: 12,
                   fontFamily: 'NotoSansEthiopic',
                 ),
@@ -116,25 +116,25 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
       );
     }
 
-    return const GlassContainer(
+    return GlassContainer(
       borderRadius: 12,
       blurSigma: 12,
       opacity: 0.25,
-      padding: EdgeInsets.all(16),
-      margin: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
           Icon(
             Icons.music_off,
-            color: AppColors.secondaryText,
+            color: context.appColors.secondaryText,
             size: 20,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               'ድምፅ አልተገኘም',
               style: TextStyle(
-                color: AppColors.secondaryText,
+                color: context.appColors.secondaryText,
                 fontSize: 14,
                 fontFamily: 'NotoSansEthiopic',
               ),

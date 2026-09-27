@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/secure_screen_service.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/sheet_music_viewer.dart';
 
@@ -229,14 +229,14 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
             'የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።',
-            style: TextStyle(color: AppColors.primaryText),
+            style: TextStyle(color: context.appColors.primaryText),
           ),
-          backgroundColor: Color(0xFFB3261E),
+          backgroundColor: const Color(0xFFB3261E),
           behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
   }
@@ -264,7 +264,9 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                     ),
                   )
                 : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
+            color: bgService.isEnabled
+                ? null
+                : context.appColors.primaryBackground,
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -277,9 +279,9 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                       children: [
                         IconButton(
                           tooltip: 'ዝጋ',
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.close,
-                            color: AppColors.primaryText,
+                            color: context.appColors.primaryText,
                             size: 28,
                           ),
                           onPressed: () => Navigator.of(context).pop(),
@@ -290,8 +292,8 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                             title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.primaryText,
+                            style: TextStyle(
+                              color: context.appColors.primaryText,
                               fontFamily: 'NotoSansEthiopic',
                               fontSize: 17,
                               fontWeight: FontWeight.w800,
@@ -306,9 +308,9 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.info_outline,
-                            color: AppColors.secondaryText,
+                            color: context.appColors.secondaryText,
                             size: 16,
                           ),
                           const SizedBox(width: 6),
@@ -316,8 +318,8 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                             child: Text(
                               _borrowedCaption!,
                               key: const ValueKey('borrowed-sheet-caption'),
-                              style: const TextStyle(
-                                color: AppColors.secondaryText,
+                              style: TextStyle(
+                                color: context.appColors.secondaryText,
                                 fontFamily: 'NotoSansEthiopic',
                                 fontSize: 13,
                               ),
@@ -338,18 +340,18 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                             imageBuilder: widget.imageBuilder,
                           ),
                           if (_isPrivacyOverlayVisible)
-                            const Positioned.fill(
+                            Positioned.fill(
                               child: AbsorbPointer(
                                 child: ColoredBox(
                                   color: Colors.black,
                                   child: Center(
                                     child: Padding(
-                                      padding: EdgeInsets.all(24),
+                                      padding: const EdgeInsets.all(24),
                                       child: Text(
                                         'Screen capture is not allowed for this content.',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: AppColors.primaryText,
+                                          color: context.appColors.primaryText,
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
                                         ),

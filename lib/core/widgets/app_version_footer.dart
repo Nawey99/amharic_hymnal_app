@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 
 /// The app's name and version, quietly, at the foot of Settings.
 ///
@@ -126,7 +126,7 @@ class _AppVersionFooterState extends State<AppVersionFooter> {
             child: Text(
               version == null ? 'ውዳሴ' : 'ውዳሴ · ስሪት $version',
               style: TextStyle(
-                color: AppColors.secondaryText.withValues(alpha: 0.8),
+                color: context.appColors.secondaryText.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontFamily: 'NotoSansEthiopic',
               ),

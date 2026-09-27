@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
@@ -12,7 +13,6 @@ import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
@@ -170,11 +170,11 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       );
     }
 
-    return const Scaffold(
-      backgroundColor: AppColors.primaryBackground,
+    return Scaffold(
+      backgroundColor: context.appColors.primaryBackground,
       body: Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+          valueColor: AlwaysStoppedAnimation<Color>(context.appColors.accent),
         ),
       ),
     );
@@ -195,12 +195,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       future: _numberLookupFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-            backgroundColor: AppColors.primaryBackground,
+          return Scaffold(
+            backgroundColor: context.appColors.primaryBackground,
             body: Center(
               child: CircularProgressIndicator(
                 valueColor:
-                    AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                    AlwaysStoppedAnimation<Color>(context.appColors.accent),
               ),
             ),
           );
@@ -209,23 +209,23 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         final hymn = snapshot.data;
         if (hymn == null) {
           return Scaffold(
-            backgroundColor: AppColors.primaryBackground,
+            backgroundColor: context.appColors.primaryBackground,
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 64,
-                      color: AppColors.secondaryText,
+                      color: context.appColors.secondaryText,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'Hymn #$hymnNumber not found.',
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
+                      style: TextStyle(
+                        color: context.appColors.primaryText,
                         fontSize: 16,
                         fontFamily: 'NotoSansEthiopic',
                       ),
@@ -470,7 +470,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
                         repeat: ImageRepeat.noRepeat,
                       )
                     : null,
-                color: bgService.isEnabled ? null : AppColors.primaryBackground,
+                color: bgService.isEnabled
+                    ? null
+                    : context.appColors.primaryBackground,
               ),
             ),
           );
@@ -486,10 +488,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       elevation: 0,
       title: Text(
         '- ${hymn.displayNumber} -',
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: 'NotoSansEthiopic',
           fontWeight: FontWeight.bold,
-          color: AppColors.primaryText,
+          color: context.appColors.primaryText,
         ),
       ),
       actions: _buildAppBarActions(hymn, isFavorite, compactActions),
@@ -517,9 +519,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   Widget _buildOverflowMenuButton(Hymn hymn) {
     return PopupMenuButton<_HymnAction>(
-      icon: const Icon(Icons.more_vert, color: AppColors.primaryText),
+      icon: Icon(Icons.more_vert, color: context.appColors.primaryText),
       tooltip: 'ተጨማሪ',
-      color: AppColors.surface,
+      color: context.appColors.surface,
       onSelected: (action) {
         switch (action) {
           case _HymnAction.share:
@@ -529,23 +531,24 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         }
       },
       itemBuilder: (context) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: _HymnAction.share,
           child: ListTile(
-            leading: Icon(Icons.share, color: AppColors.primaryText),
+            leading: Icon(Icons.share, color: context.appColors.primaryText),
             title: Text(
               'አጋራ',
-              style: TextStyle(color: AppColors.primaryText),
+              style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: _HymnAction.report,
           child: ListTile(
-            leading: Icon(Icons.flag_outlined, color: AppColors.primaryText),
+            leading:
+                Icon(Icons.flag_outlined, color: context.appColors.primaryText),
             title: Text(
               'የስህተት ጥቆማ',
-              style: TextStyle(color: AppColors.primaryText),
+              style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
         ),
@@ -558,7 +561,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return IconButton(
       icon: Icon(
         isFavorite ? Icons.favorite : Icons.favorite_border,
-        color: isFavorite ? AppColors.accentGreen : AppColors.primaryText,
+        color: isFavorite
+            ? context.appColors.accent
+            : context.appColors.primaryText,
       ),
       tooltip: isFavorite ? 'ከተወዳጅ አስወግድ' : 'ወደ ተወዳጅ ጨምር',
       onPressed: () {
@@ -577,7 +582,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       width: 48,
       height: 48,
       child: IconButton(
-        icon: const Icon(Icons.share, color: AppColors.primaryText),
+        icon: Icon(Icons.share, color: context.appColors.primaryText),
         tooltip: 'አጋራ',
         onPressed: () => _shareHymn(hymn),
       ),
@@ -736,7 +741,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
         textScaler: TextScaler.noScaling,
         style: TextStyle(
-          color: AppColors.primaryText,
+          color: context.appColors.primaryText,
           fontSize: effectiveFontSize,
           height: AppTheme.getLineHeight(effectiveFontSize),
           fontFamily: 'NotoSansEthiopic',
@@ -760,7 +765,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       width: 48,
       height: 48,
       child: IconButton(
-        icon: const Icon(Icons.flag_outlined, color: AppColors.primaryText),
+        icon: Icon(Icons.flag_outlined, color: context.appColors.primaryText),
         tooltip: 'የስህተት ጥቆማ',
         onPressed: () => _reportProblem(hymn),
       ),

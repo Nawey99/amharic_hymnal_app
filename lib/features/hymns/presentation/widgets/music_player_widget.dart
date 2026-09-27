@@ -1,10 +1,10 @@
 // lib/features/hymns/presentation/widgets/music_player_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 
@@ -259,15 +259,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'የመዝሙሩ ድምፅ ይውረድ?',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
           'ይህ የድምፅ መዝሙር በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ያለ ኢንተርኔት ማጫወት ይችላሉ።'
           '${source.sizeBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(source.sizeBytes!)}'}',
-          style: const TextStyle(color: AppColors.secondaryText),
+          style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
@@ -360,8 +360,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                           children: [
                             Text(
                               widget.hymnTitle,
-                              style: const TextStyle(
-                                color: AppColors.primaryText,
+                              style: TextStyle(
+                                color: context.appColors.primaryText,
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'NotoSansEthiopic',
@@ -376,8 +376,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                 Flexible(
                                   child: Text(
                                     subtitle,
-                                    style: const TextStyle(
-                                      color: AppColors.secondaryText,
+                                    style: TextStyle(
+                                      color: context.appColors.secondaryText,
                                       fontSize: 12,
                                       height: 1.0,
                                     ),
@@ -425,14 +425,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       return SizedBox(
         width: size,
         height: size,
-        child: const Center(
+        child: Center(
           child: SizedBox(
             width: 18,
             height: 18,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                AppColors.accentGreen,
+                context.appColors.accent,
               ),
             ),
           ),
@@ -448,14 +448,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         visualDensity: VisualDensity.compact,
         style: IconButton.styleFrom(
           side: BorderSide(
-            color: AppColors.primaryText.withValues(alpha: 0.88),
+            color: context.appColors.primaryText.withValues(alpha: 0.88),
             width: 2,
           ),
           shape: const CircleBorder(),
         ),
         icon: Icon(
           _isPlaying ? Icons.pause : Icons.play_arrow,
-          color: AppColors.primaryText,
+          color: context.appColors.primaryText,
           size: iconSize,
         ),
         onPressed: () => _handlePlayButtonPressed(isThisHymnActive),
@@ -517,15 +517,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     final badge = Container(
       padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 2),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.accentGreen),
+        border: Border.all(color: context.appColors.accent),
         borderRadius: BorderRadius.circular(6),
       ),
       child: compact
-          ? const Icon(Icons.piano, size: 14, color: AppColors.accentGreen)
-          : const Text(
+          ? Icon(Icons.piano, size: 14, color: context.appColors.accent)
+          : Text(
               label,
               style: TextStyle(
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
                 fontSize: 10,
                 height: 1.1,
                 fontWeight: FontWeight.w700,
@@ -555,8 +555,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
                   _attribution!,
-                  style: const TextStyle(
-                    color: AppColors.secondaryText,
+                  style: TextStyle(
+                    color: context.appColors.secondaryText,
                     fontSize: 11,
                     height: 1.3,
                   ),
@@ -637,15 +637,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                   Duration(milliseconds: value.toInt()),
                 );
               },
-        activeColor: AppColors.accentGreen,
-        inactiveColor: AppColors.secondaryText.withValues(alpha: 0.3),
+        activeColor: context.appColors.accent,
+        inactiveColor: context.appColors.secondaryText.withValues(alpha: 0.3),
       ),
     );
   }
 
   Widget _buildTimeLabels(bool isThisHymnActive, {bool compact = false}) {
     final textStyle = TextStyle(
-      color: AppColors.secondaryText,
+      color: context.appColors.secondaryText,
       fontSize: compact ? 10 : 11,
       height: 1,
     );

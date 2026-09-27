@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
 import 'package:amharic_hymnal_app/core/services/offline_media_download.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/repositories/hymn_repository.dart';
@@ -194,17 +194,17 @@ Future<void> runEditionMediaDownload(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.appColors.surface,
       title: Text(
         words.confirmTitle,
-        style: const TextStyle(color: AppColors.primaryText),
+        style: TextStyle(color: context.appColors.primaryText),
       ),
       content: Text(
         '${HymnalVersions.displayLabel(version)}፦ '
         '${plan.missing.length} ${words.units}፣ '
         '${formatMediaSize(plan.missingBytes)}።\n\n'
         '${words.benefit} Wi-Fi መጠቀም ይመከራል።',
-        style: const TextStyle(color: AppColors.secondaryText),
+        style: TextStyle(color: context.appColors.secondaryText),
       ),
       actions: [
         TextButton(
@@ -428,10 +428,10 @@ class _OfflineDownloadOfferDialogState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: const Text(
+      backgroundColor: context.appColors.surface,
+      title: Text(
         'ያለ ኢንተርኔት ለመጠቀም ማውረድ',
-        style: TextStyle(color: AppColors.primaryText),
+        style: TextStyle(color: context.appColors.primaryText),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -441,14 +441,15 @@ class _OfflineDownloadOfferDialogState
             Text(
               '${HymnalVersions.displayLabel(widget.version)}ን ያለ ኢንተርኔት '
               'ለመጠቀም ምን ይውረድ?',
-              style: const TextStyle(color: AppColors.secondaryText),
+              style: TextStyle(color: context.appColors.secondaryText),
             ),
             const SizedBox(height: 8),
             for (final plan in widget.plans) _buildChoice(plan),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Wi-Fi መጠቀም ይመከራል። በኋላም ከቅንብሮች ማውረድ ይችላሉ።',
-              style: TextStyle(color: AppColors.secondaryText, fontSize: 12),
+              style: TextStyle(
+                  color: context.appColors.secondaryText, fontSize: 12),
             ),
           ],
         ),
@@ -489,7 +490,7 @@ class _OfflineDownloadOfferDialogState
                 audio
                     ? Icons.headphones_outlined
                     : Icons.library_music_outlined,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -498,8 +499,8 @@ class _OfflineDownloadOfferDialogState
                   children: [
                     Text(
                       audio ? 'ድምፆች' : 'ኖታዎች',
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
+                      style: TextStyle(
+                        color: context.appColors.primaryText,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -507,8 +508,8 @@ class _OfflineDownloadOfferDialogState
                     Text(
                       '${plan.missing.length} ${_wordsFor(plan.mediaType).units}'
                       ' · ${formatMediaSize(plan.missingBytes)}',
-                      style: const TextStyle(
-                        color: AppColors.secondaryText,
+                      style: TextStyle(
+                        color: context.appColors.secondaryText,
                         fontSize: 12,
                       ),
                     ),

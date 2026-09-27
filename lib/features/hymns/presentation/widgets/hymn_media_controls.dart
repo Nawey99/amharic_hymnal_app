@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/sheet_music_viewer_page.dart';
@@ -165,15 +165,15 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'ኖታ ይውረድ?',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
           'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።'
           '${totalBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(totalBytes)}'}',
-          style: const TextStyle(color: AppColors.secondaryText),
+          style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
@@ -195,10 +195,10 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'ኖታ በማውረድ ላይ',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -207,13 +207,13 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
               valueListenable: progress,
               builder: (context, value, _) => LinearProgressIndicator(
                 value: value,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'እባክዎ ይጠብቁ...',
-              style: TextStyle(color: AppColors.secondaryText),
+              style: TextStyle(color: context.appColors.secondaryText),
             ),
           ],
         ),
@@ -297,8 +297,9 @@ class _SheetMusicPreviewBox extends StatelessWidget {
             children: [
               Icon(
                 Icons.library_music_outlined,
-                color:
-                    enabled ? AppColors.accentGreen : AppColors.secondaryText,
+                color: enabled
+                    ? context.appColors.accent
+                    : context.appColors.secondaryText,
                 size: condensed ? 22 : 20,
               ),
               if (!condensed) ...[
@@ -309,8 +310,8 @@ class _SheetMusicPreviewBox extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: enabled
-                        ? AppColors.primaryText
-                        : AppColors.secondaryText,
+                        ? context.appColors.primaryText
+                        : context.appColors.secondaryText,
                     fontSize: 11,
                     height: 1,
                     fontWeight: FontWeight.w700,

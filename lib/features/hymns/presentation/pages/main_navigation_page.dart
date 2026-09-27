@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/app_update_service.dart';
 import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -195,15 +195,15 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'አዲስ ስሪት ያስፈልጋል',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
           'እባክዎ መተግበሪያውን ወደ ስሪት $required ወይም ከዚያ በላይ ያዘምኑ። '
           'ያለዚያ አንዳንድ አዳዲስ ይዘቶች በትክክል ላይታዩ ይችላሉ።',
-          style: const TextStyle(color: AppColors.secondaryText),
+          style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           FilledButton(
@@ -610,7 +610,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     return DecoratedBox(
       key: const ValueKey('landscape-navigation-rail'),
       decoration: BoxDecoration(
-        color: AppColors.primaryBackground.withValues(alpha: 0.97),
+        color: context.appColors.primaryBackground.withValues(alpha: 0.97),
         border: Border(
           right: BorderSide(
             color: Colors.white.withValues(alpha: 0.14),
@@ -651,7 +651,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                             border: Border(
                               left: BorderSide(
                                 color: selected
-                                    ? AppColors.accentGreen
+                                    ? context.appColors.accent
                                     : Colors.transparent,
                                 width: 3,
                               ),
@@ -667,8 +667,8 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                               Icon(
                                 selected ? item.selectedIcon : item.icon,
                                 color: selected
-                                    ? AppColors.accentGreen
-                                    : AppColors.secondaryText,
+                                    ? context.appColors.accent
+                                    : context.appColors.secondaryText,
                                 size: selected ? 25 : 22,
                               ),
                               const SizedBox(height: 2),
@@ -679,8 +679,8 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                                   maxLines: 1,
                                   style: TextStyle(
                                     color: selected
-                                        ? AppColors.accentGreen
-                                        : AppColors.primaryText,
+                                        ? context.appColors.accent
+                                        : context.appColors.primaryText,
                                     fontSize: 10,
                                     fontWeight: selected
                                         ? FontWeight.w800

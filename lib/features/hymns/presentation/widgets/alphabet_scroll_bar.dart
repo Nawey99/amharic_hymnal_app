@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 
 class IndexedFastScroller extends StatefulWidget {
@@ -355,7 +355,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: isActive
-                    ? AppColors.accentGreen.withValues(alpha: 0.18)
+                    ? context.appColors.accent.withValues(alpha: 0.18)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -365,8 +365,8 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
                   label,
                   style: TextStyle(
                     color: isActive
-                        ? AppColors.accentGreen
-                        : AppColors.primaryText,
+                        ? context.appColors.accent
+                        : context.appColors.primaryText,
                     fontSize: isActive ? 14 : 12,
                     fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                     fontFamily: 'NotoSansEthiopic',
@@ -397,7 +397,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         child: Container(
           key: const ValueKey('alphabet-horizontal-rail'),
           decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.96),
+            color: context.appColors.surface.withValues(alpha: 0.96),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.16),
@@ -475,14 +475,16 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isActive
-                  ? AppColors.accentGreen.withValues(alpha: 0.18)
+                  ? context.appColors.accent.withValues(alpha: 0.18)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               label,
               style: TextStyle(
-                color: isActive ? AppColors.accentGreen : AppColors.primaryText,
+                color: isActive
+                    ? context.appColors.accent
+                    : context.appColors.primaryText,
                 fontSize: isActive ? 17 : 15,
                 fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
                 fontFamily: 'NotoSansEthiopic',
@@ -516,7 +518,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         child: DecoratedBox(
           key: const ValueKey('fast-scroller-selection-bubble'),
           decoration: BoxDecoration(
-            color: AppColors.accentGreen,
+            color: context.appColors.accent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.28),

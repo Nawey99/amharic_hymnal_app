@@ -3,9 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 class AppTheme {
+  /// The theme for a palette in one brightness, carrying the colours the
+  /// screens read through `context.appColors`.
+  ///
+  /// Only the app's own dark green exists so far, so both brightnesses
+  /// return it: the look does not change while the screens are moved onto
+  /// the theme. The light variants arrive with the palettes.
+  static ThemeData forPalette(AppPalette palette, Brightness brightness) {
+    final colors = AppColorsExtension.of(palette, brightness);
+    return darkTheme.copyWith(extensions: <ThemeExtension<dynamic>>[colors]);
+  }
+
   static ThemeData get darkTheme {
     return ThemeData.dark().copyWith(
       scaffoldBackgroundColor: AppColors.primaryBackground,
