@@ -136,7 +136,7 @@ For every page: loading, empty, error and loaded states, plus the page's main ac
 | iPhone (oldest supported + latest iOS) | — | audio background mode, capture overlay |
 | Web: Chrome, Safari, Firefox | — | once the backend allows your web origin (`CORS_ORIGINS`) |
 
-- **Cloud devices:** Firebase Test Lab for the device matrix. The free tier has a small daily quota. Also use Play's automatic **pre-launch report** on the internal testing track.
+- **Cloud devices:** none. The device matrix is covered by the phones on hand and by Play's automatic **pre-launch report** on the internal testing track.
 
 ### Layer G — Network and failure conditions
 - **Connection states:**
@@ -214,7 +214,7 @@ Rough size: 250–350 new automated tests, plus one manual device pass per relea
 
 **Answers (2026-09-21):** 1 yes (Patrol 3.15, the newest for Flutter 3.27);
 2 dead code deleted, including the disabled Drift database; 3 cloud testing on
-Firebase Test Lab plus the Play internal track; 4 a Samsung S20 Ultra
+the Play internal track (no Firebase); 4 a Samsung S20 Ultra
 (Android 13); 5 iOS later; 6 crash reporting for beta builds (Sentry, off
 unless a DSN is supplied).
 
@@ -226,7 +226,7 @@ unless a DSN is supplied).
 | Coverage gate | `coverage/lcov.info` | output of the run above | GitHub CI | every push and PR (`vars.COVERAGE_MINIMUM`, default 80 %; measured 82.2 % on 2026-09-21) |
 | Full-app flows | `integration_test/app_test.dart` | scripted in-process API; everything else pointed at `content.example.invalid` | GitHub CI: Linux desktop, Android emulators API 24 and API 36; your PC or S20 Ultra by hand | every push and PR |
 | Live API checks | `test_live/` | **production** hymnal API, read-only | GitHub Actions `nightly.yml` → `live-api`; your PC by hand | nightly 01:30 UTC and on demand |
-| Native flows (Patrol) | `integration_test/native/` | **production** API, real Android (back gesture, share sheet, media notification, airplane mode) | Firebase Test Lab (`nightly.yml` → `firebase-devices`, once the Firebase settings exist); your S20 Ultra with `patrol test` | nightly and before each release |
+| Native flows (Patrol) | `integration_test/native/` | **production** API, real Android (back gesture, share sheet, media notification, airplane mode) | your S20 Ultra with `patrol test`, by hand | before each release |
 | Performance | `integration_test/perf/` + `test_driver/perf_driver.dart` | production API, profile build | **your S20 Ultra only** (`flutter drive --profile ...`); results in `build/perf/` | before each release |
 | Manual pass | `docs/mobile-qa-checklist.md` | the release build | S20 Ultra + one low-end Android + (later) an iPhone | before each release |
 
@@ -244,18 +244,6 @@ patrol test --target integration_test/native/native_flows_test.dart   # S20 Ultr
 flutter drive --profile --driver=test_driver/perf_driver.dart `
   --target=integration_test/perf/performance_test.dart
 ```
-
-### Setting up Firebase Test Lab (one time)
-
-1. Create a Firebase project (e.g. `wudase-testing`) and enable Test Lab.
-2. In Google Cloud IAM, create a service account with the **Firebase Test Lab
-   Admin** role (plus **Service Usage Consumer**) and download a JSON key.
-3. In GitHub → Settings → Secrets and variables → Actions add the secret
-   `FIREBASE_TEST_LAB_KEY` (the JSON) and the variable `FIREBASE_PROJECT_ID`.
-4. Optionally set `FTL_DEVICES`, e.g.
-   `model=MediumPhone.arm,version=30 model=x1q,version=29`; list the models
-   with `gcloud firebase test android models list`.
-5. Run **Nightly Device and Live Checks** once from the Actions tab.
 
 ## 8. Results on a real phone (2026-09-22)
 
