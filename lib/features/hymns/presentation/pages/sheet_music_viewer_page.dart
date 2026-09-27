@@ -234,7 +234,7 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
             'የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።',
             style: TextStyle(color: context.appColors.primaryText),
           ),
-          backgroundColor: const Color(0xFFB3261E),
+          backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
         ),

@@ -34,7 +34,7 @@ class EmptyStateWidget extends StatelessWidget {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -96,7 +96,7 @@ class ErrorStateWidget extends StatelessWidget {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,

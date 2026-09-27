@@ -331,11 +331,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     return GlassContainer(
       borderRadius: 18.0,
       blurSigma: 12.0,
-      opacity: 0.2,
+      opacity: context.appColors.glassOpacityOverPhoto,
       padding: EdgeInsets.zero,
       margin: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: const Color(0xE6292929),
+        // Nearly solid, so the controls read against the photograph.
+        color: context.appColors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(18),
         clipBehavior: Clip.antiAlias,
         child: GestureDetector(

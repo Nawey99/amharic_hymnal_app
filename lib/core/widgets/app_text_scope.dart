@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 
@@ -26,9 +27,15 @@ class AppTextScope extends StatelessWidget {
           systemScale.clamp(minSystemScale, maxSystemScale),
         ),
       ),
-      child: FontSizeScope(
-        notifier: FontSizeService(),
-        child: child,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        // Pale text on the bars over a dark app, dark text over a light one.
+        value: Theme.of(context).brightness == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        child: FontSizeScope(
+          notifier: FontSizeService(),
+          child: child,
+        ),
       ),
     );
   }

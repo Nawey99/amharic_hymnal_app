@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
@@ -143,11 +144,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     final settingsRepository = sl<SettingsRepository>();
 
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -175,7 +175,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 GlassContainer(
                   borderRadius: 16,
                   blurSigma: 12,
-                  opacity: 0.12,
+                  opacity: context.appColors.glassOpacity,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +250,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 GlassContainer(
                   borderRadius: 16,
                   blurSigma: 12,
-                  opacity: 0.12,
+                  opacity: context.appColors.glassOpacity,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +319,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 GlassContainer(
                   borderRadius: 16,
                   blurSigma: 12,
-                  opacity: 0.12,
+                  opacity: context.appColors.glassOpacity,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,7 +442,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
@@ -470,7 +470,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,22 +511,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
           ),
         ],
       ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: const AssetImage('assets/images/background.jpg'),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.7),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 }

@@ -85,12 +85,37 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     scrim: Color(0xCC000000),
   );
 
+  /// The same green in daylight.
+  ///
+  /// Not an inversion: the green darkens so it can carry text on white,
+  /// and the frost turns heavy and pale, because white glass over a bright
+  /// photograph needs body to hold dark text. The hairline flips from a
+  /// white highlight to a dark edge, and the shadow softens.
+  static const AppColorsExtension emeraldLight = AppColorsExtension(
+    primaryBackground: Color(0xFFF7F7F5),
+    secondaryBackground: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF),
+    surfaceLight: Color(0xFFEDEDE9),
+    primaryText: Color(0xFF1A1C19),
+    secondaryText: Color(0xFF4A4F46),
+    tertiaryText: Color(0xFF6B7065),
+    accent: Color(0xFF2E7D32),
+    accentDark: Color(0xFF1B5E20),
+    accentLight: Color(0xFF43A047),
+    divider: Color(0xFFDCDCD6),
+    glassTint: Color(0xFFFFFFFF),
+    glassOpacity: 0.55,
+    glassOpacityOverPhoto: 0.72,
+    glassBorder: Color(0x1F000000),
+    glassShadow: Color(0x14000000),
+    scrim: Color(0x9EFFFFFF),
+  );
+
   /// The palette and brightness a screen should paint in.
   static AppColorsExtension of(AppPalette palette, Brightness brightness) {
-    return switch ((palette, brightness)) {
-      // Light emerald is drawn in the next phase, with the glass reworked
-      // for a pale background; until then dark is what the app wears.
-      (AppPalette.emerald, _) => emeraldDark,
+    final light = brightness == Brightness.light;
+    return switch (palette) {
+      AppPalette.emerald => light ? emeraldLight : emeraldDark,
     };
   }
 

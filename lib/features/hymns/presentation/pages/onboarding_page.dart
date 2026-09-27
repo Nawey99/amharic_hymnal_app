@@ -162,7 +162,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: GlassContainer(
                 borderRadius: 18,
                 blurSigma: 12,
-                opacity: 0.16,
+                opacity: context.appColors.glassOpacity,
                 padding: EdgeInsets.all(compact ? 14 : 18),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

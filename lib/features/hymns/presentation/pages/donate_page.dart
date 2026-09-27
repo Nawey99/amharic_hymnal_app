@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -20,9 +21,8 @@ class DonatePage extends StatelessWidget {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(context, bgService),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -43,7 +43,7 @@ class DonatePage extends StatelessWidget {
               GlassContainer(
                 borderRadius: 16.0,
                 blurSigma: 12.0,
-                opacity: 0.12,
+                opacity: context.appColors.glassOpacity,
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
@@ -96,29 +96,6 @@ class DonatePage extends StatelessWidget {
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration(
-    BuildContext context,
-    BackgroundImageService bgService,
-  ) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: _getBackgroundImage(),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.8),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
-    );
-  }
-
-  AssetImage _getBackgroundImage() {
-    return const AssetImage('assets/images/background.jpg');
-  }
-
   Widget _buildDonateOption(
     BuildContext context,
     String title,
@@ -129,7 +106,7 @@ class DonatePage extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16.0,
       blurSigma: 12.0,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () async {
@@ -251,7 +228,7 @@ class NationalBankDonationPage extends StatelessWidget {
                   GlassContainer(
                     borderRadius: 16,
                     blurSigma: 12,
-                    opacity: 0.12,
+                    opacity: context.appColors.glassOpacity,
                     padding: const EdgeInsets.all(20),
                     child: Text(
                       'ይህ ገጽ የባንክ ድጋፍ መረጃ ለማሳየት ተዘጋጅቷል። ትክክለኛው የባንክ ሒሳብ ቁጥር ሲዘጋጅ መረጃው ይሞላል።',
@@ -291,7 +268,7 @@ class _BankField extends StatelessWidget {
     return GlassContainer(
       borderRadius: 14,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [

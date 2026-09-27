@@ -43,7 +43,7 @@ class AppSearchBar extends StatelessWidget {
       child: GlassContainer(
         borderRadius: 20.0,
         blurSigma: 12.0, // Reduced for better performance
-        opacity: 0.2, // Slightly reduced for cleaner look
+        opacity: context.appColors.glassOpacityOverPhoto,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Semantics(
           label: 'Search input',

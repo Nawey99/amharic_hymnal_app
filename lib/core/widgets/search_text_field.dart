@@ -85,7 +85,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
         child: GlassContainer(
           borderRadius: 20.0,
           blurSigma: 18.0,
-          opacity: 0.25,
+          opacity: context.appColors.glassOpacityOverPhoto,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           child: TextField(
             controller: _textController,

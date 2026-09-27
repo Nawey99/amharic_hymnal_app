@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -166,9 +167,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: SafeArea(
         child: Column(
           children: [
@@ -178,22 +178,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           ],
         ),
       ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: _getBackgroundImage(),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.7),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -350,7 +334,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -384,7 +368,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Text(
             message,
@@ -475,7 +459,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return GlassContainer(
       borderRadius: 16.0,
       blurSigma: 12.0,
-      opacity: 0.15,
+      opacity: context.appColors.glassOpacity,
       border: Border.all(
         color: _numberErrorMessage == null
             ? context.appColors.accent.withValues(alpha: 0.45)
@@ -575,11 +559,5 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         ),
       ),
     );
-  }
-
-  ImageProvider _getBackgroundImage() {
-    // Use a placeholder or actual background image
-    // For now, return a placeholder
-    return const AssetImage('assets/images/background.jpg');
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
@@ -23,6 +24,7 @@ import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/donate_page.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/appearance_settings.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/offline_download_flow.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
@@ -141,7 +143,6 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     final itemGap = compactLandscape ? 8.0 : 12.0;
     final sectionGap = compactLandscape ? 14.0 : 24.0;
@@ -155,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -262,6 +263,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       _buildSectionTitle(
                           AppLocalizations.of(context)?.displaySection ??
                               'Display'),
+                      const AppearanceSettings(),
+                      SizedBox(height: itemGap),
                       SettingsSliderTile(
                         title: AppLocalizations.of(context)?.fontSizeLabel ??
                             'Font Size',
@@ -413,22 +416,6 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() => _scrolledUnderTitle = scrolled);
     }
     return false;
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: const AssetImage('assets/images/background.jpg'),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.8),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
-    );
   }
 
   Future<void> _setContributionUnlocked(bool value) async {

@@ -88,7 +88,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
       return GlassContainer(
         borderRadius: 18,
         blurSigma: 12,
-        opacity: 0.25,
+        opacity: context.appColors.glassOpacityOverPhoto,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin: const EdgeInsets.only(bottom: 10),
         child: Row(
@@ -119,7 +119,7 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
     return GlassContainer(
       borderRadius: 12,
       blurSigma: 12,
-      opacity: 0.25,
+      opacity: context.appColors.glassOpacityOverPhoto,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(

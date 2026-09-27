@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -341,9 +342,8 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: SafeArea(
         child: Column(
           children: [
@@ -354,22 +354,6 @@ class _IndexPageState extends State<IndexPage> {
           ],
         ),
       ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: _getBackgroundImage(),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.8),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : context.appColors.primaryBackground,
     );
   }
 
@@ -818,10 +802,6 @@ class _IndexPageState extends State<IndexPage> {
     context.read<HymnsBloc>().add(
           ChangeSort(state.languageCode, state.version, sortType),
         );
-  }
-
-  ImageProvider _getBackgroundImage() {
-    return const AssetImage('assets/images/background.jpg');
   }
 
   List<Hymn> _hymnsForDisplay(List<Hymn> hymns, String? sortType) {

@@ -47,7 +47,7 @@ class SettingsTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
@@ -152,7 +152,7 @@ class SettingsSwitchTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
@@ -363,7 +363,7 @@ class SettingsDropdownTile extends StatelessWidget {
         return GlassContainer(
           borderRadius: 16,
           blurSigma: 12,
-          opacity: 0.12,
+          opacity: context.appColors.glassOpacity,
           padding: EdgeInsets.symmetric(
             horizontal: compactLandscape ? 14 : 16,
             vertical: compactLandscape ? 8 : 12,
@@ -452,7 +452,7 @@ class SettingsSliderTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,

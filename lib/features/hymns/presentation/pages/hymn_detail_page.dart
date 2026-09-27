@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
@@ -452,29 +453,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: ListenableBuilder(
         listenable: BackgroundImageService(),
         builder: (context, _) {
-          final bgService = BackgroundImageService();
-          // Use RepaintBoundary to isolate background rendering and prevent flickering
+          // Use RepaintBoundary to isolate background rendering and
+          // prevent flickering
           return RepaintBoundary(
-            child: Container(
-              decoration: BoxDecoration(
-                image: bgService.isEnabled
-                    ? DecorationImage(
-                        // Use AssetImage directly - Flutter caches assets automatically
-                        image: const AssetImage('assets/images/background.jpg'),
-                        fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(
-                          Colors.black.withValues(alpha: 0.8),
-                          BlendMode.darken,
-                        ),
-                        // Prevent image from reloading on rebuild
-                        repeat: ImageRepeat.noRepeat,
-                      )
-                    : null,
-                color: bgService.isEnabled
-                    ? null
-                    : context.appColors.primaryBackground,
-              ),
-            ),
+            child: Container(decoration: appBackgroundDecoration(context)),
           );
         },
       ),
@@ -732,7 +714,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return GlassContainer(
       borderRadius: 12.0,
       blurSigma: 12.0,
-      opacity: 0.25,
+      opacity: context.appColors.glassOpacityOverPhoto,
       padding: padding,
       // The size below is already the reader's own choice, seeded from the
       // system's text size on a fresh install, so the system scale is not
