@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
-/// The colour families the app can wear.
+/// The name a chosen theme is stored under.
 ///
-/// Only [emerald] is designed so far; it is the app's own dark green look,
-/// and the others arrive once their light and dark variants have been drawn
-/// and checked on a phone.
+/// Only the key: what the theme is called, the circle that stands for it
+/// and its two faces belong to its entry in `AppThemeCatalog`. Cases are
+/// never renamed, because someone has one of them saved.
 enum AppPalette {
-  emerald('አረንጓዴ', Color(0xFF4CAF50));
-
-  const AppPalette(this.label, this.swatch);
-
-  /// Shown beside the palette's swatch in Settings.
-  final String label;
-
-  /// The single colour that stands for the palette in a chooser.
-  final Color swatch;
+  emerald,
+  scentaraPink,
+  purplePetal,
+  livoraFinance,
+  nobleMane,
+  tidalTeal,
+  crimsonEmber,
+  neonGraphite,
+  violetDusk,
+  terracottaSand,
+  indigoAmber,
+  slateMono,
+  oliveGrove,
+  roseGold,
+  highContrast;
 
   /// The palette stored under [name], or [emerald] when the stored one is
   /// missing or from a build that offered more of them.

@@ -509,7 +509,7 @@ class _PrimaryNavigationActionState extends State<_PrimaryNavigationAction> {
                     dimension: diameter,
                     child: Icon(
                       selected ? destination.selectedIcon : destination.icon,
-                      color: Colors.white,
+                      color: context.appColors.onAccent,
                       size: compact ? 28 : 31,
                     ),
                   ),

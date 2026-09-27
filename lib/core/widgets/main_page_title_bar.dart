@@ -32,7 +32,7 @@ class MainPageTitleBar extends StatelessWidget {
         border: Border(
           bottom: BorderSide(
             color: showDivider
-                ? Colors.white.withValues(alpha: 0.14)
+                ? context.appColors.veil.withValues(alpha: 0.14)
                 : Colors.transparent,
             width: 0.5,
           ),

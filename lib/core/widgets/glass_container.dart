@@ -113,8 +113,8 @@ class GlassContainer extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(borderRadius),
-          splashColor: Colors.white.withValues(alpha: 0.1),
-          highlightColor: Colors.white.withValues(alpha: 0.05),
+          splashColor: context.appColors.veil.withValues(alpha: 0.1),
+          highlightColor: context.appColors.veil.withValues(alpha: 0.05),
           child: container,
         ),
       );

@@ -613,7 +613,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         color: context.appColors.primaryBackground.withValues(alpha: 0.97),
         border: Border(
           right: BorderSide(
-            color: Colors.white.withValues(alpha: 0.14),
+            color: context.appColors.veil.withValues(alpha: 0.14),
             width: 0.5,
           ),
         ),

@@ -191,23 +191,8 @@ class NationalBankDonationPage extends StatelessWidget {
     return ListenableBuilder(
       listenable: BackgroundImageService(),
       builder: (context, _) {
-        final bgService = BackgroundImageService();
         return Container(
-          decoration: BoxDecoration(
-            image: bgService.isEnabled
-                ? DecorationImage(
-                    image: const AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.8),
-                      BlendMode.darken,
-                    ),
-                  )
-                : null,
-            color: bgService.isEnabled
-                ? null
-                : context.appColors.primaryBackground,
-          ),
+          decoration: appBackgroundDecoration(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(

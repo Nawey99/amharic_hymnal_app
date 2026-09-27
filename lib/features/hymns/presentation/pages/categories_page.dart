@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -61,19 +62,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
     return Container(
-      decoration: BoxDecoration(
-        image: bgService.isEnabled
-            ? DecorationImage(
-                image: const AssetImage('assets/images/background.jpg'),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withValues(alpha: 0.8),
-                  BlendMode.darken,
-                ),
-              )
-            : null,
-        color: bgService.isEnabled ? null : context.appColors.primaryBackground,
-      ),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -259,7 +248,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           color: context.appColors.surface,
           border: Border.all(
             color: backgroundImageEnabled
-                ? Colors.white.withValues(alpha: 0.3)
+                ? context.appColors.veil.withValues(alpha: 0.3)
                 : context.appColors.accent.withValues(alpha: 0.16),
             width: 1.2,
           ),
@@ -356,7 +345,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           color: context.appColors.surface,
           border: Border.all(
             color: backgroundImageEnabled
-                ? Colors.white.withValues(alpha: 0.3)
+                ? context.appColors.veil.withValues(alpha: 0.3)
                 : context.appColors.accent.withValues(alpha: 0.16),
             width: 1.2,
           ),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -57,23 +58,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return ListenableBuilder(
       listenable: BackgroundImageService(),
       builder: (context, _) {
-        final bgService = BackgroundImageService();
         return Container(
-          decoration: BoxDecoration(
-            image: bgService.isEnabled
-                ? DecorationImage(
-                    image: const AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.82),
-                      BlendMode.darken,
-                    ),
-                  )
-                : null,
-            color: bgService.isEnabled
-                ? null
-                : context.appColors.primaryBackground,
-          ),
+          decoration: appBackgroundDecoration(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: SafeArea(
@@ -347,7 +333,8 @@ class _FeaturePreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.appColors.primaryBackground.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border:
+            Border.all(color: context.appColors.veil.withValues(alpha: 0.1)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -484,9 +471,10 @@ class _NumberPreview extends StatelessWidget {
           Container(
             height: compact ? 38 : 44,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: context.appColors.veil.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              border: Border.all(
+                  color: context.appColors.veil.withValues(alpha: 0.1)),
             ),
             child: Row(
               children: [
@@ -660,7 +648,7 @@ class _LyricsPreview extends StatelessWidget {
           Expanded(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: context.appColors.veil.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
@@ -734,7 +722,7 @@ class _AccessCallout extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.22),
+        color: context.appColors.shade.withValues(alpha: 0.22),
         borderRadius: BorderRadius.circular(12),
         border:
             Border.all(color: context.appColors.accent.withValues(alpha: 0.22)),
@@ -782,9 +770,10 @@ class _MiniCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: context.appColors.veil.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border:
+            Border.all(color: context.appColors.veil.withValues(alpha: 0.08)),
       ),
       child: Padding(
         padding: EdgeInsets.all(compact ? 8 : 10),
@@ -846,9 +835,10 @@ class _SongRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: context.appColors.veil.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border:
+            Border.all(color: context.appColors.veil.withValues(alpha: 0.08)),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -923,7 +913,7 @@ class _CategoryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: context.appColors.veil.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -982,9 +972,10 @@ class _MediaBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
+        color: context.appColors.veil.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border:
+            Border.all(color: context.appColors.veil.withValues(alpha: 0.08)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

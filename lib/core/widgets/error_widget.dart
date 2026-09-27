@@ -1,17 +1,8 @@
 // lib/core/widgets/error_widget.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-
-bool _hasBackgroundImage() {
-  try {
-    rootBundle.load('assets/images/background.jpg');
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
 
 /// Custom error widget for better error display
 class AppErrorWidget extends StatelessWidget {
@@ -29,19 +20,7 @@ class AppErrorWidget extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.appColors.primaryBackground,
       body: Container(
-        decoration: BoxDecoration(
-          color: context.appColors.primaryBackground,
-          image: _hasBackgroundImage()
-              ? DecorationImage(
-                  image: const AssetImage('assets/images/background.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: 0.8),
-                    BlendMode.darken,
-                  ),
-                )
-              : null,
-        ),
+        decoration: appBackgroundDecoration(context),
         child: SafeArea(
           child: Center(
             child: Padding(

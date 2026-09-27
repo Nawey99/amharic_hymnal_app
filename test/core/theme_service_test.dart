@@ -52,7 +52,7 @@ void main() {
     });
 
     test('a palette from a later build reads as the one we have', () async {
-      SharedPreferences.setMockInitialValues({'theme_palette': 'nobleMane'});
+      SharedPreferences.setMockInitialValues({'theme_palette': 'seafoam'});
       await SettingsService.init();
       ThemeService().loadPreferences();
 

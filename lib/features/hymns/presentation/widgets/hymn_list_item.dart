@@ -46,7 +46,7 @@ class HymnListItem extends StatelessWidget {
           color: context.appColors.surface,
           border: Border.all(
             color: backgroundImageEnabled
-                ? Colors.white.withValues(alpha: 0.3)
+                ? context.appColors.veil.withValues(alpha: 0.3)
                 : context.appColors.accent.withValues(alpha: 0.16),
             width: 1.2,
           ),

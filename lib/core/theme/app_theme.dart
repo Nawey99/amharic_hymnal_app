@@ -4,17 +4,14 @@ import 'package:flutter/services.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
+import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 class AppTheme {
   /// The theme for a palette in one brightness, carrying the colours the
   /// screens read through `context.appColors`.
-  ///
-  /// Only the app's own dark green exists so far, so both brightnesses
-  /// return it: the look does not change while the screens are moved onto
-  /// the theme. The light variants arrive with the palettes.
   static ThemeData forPalette(AppPalette palette, Brightness brightness) {
-    return _build(AppColorsExtension.of(palette, brightness), brightness);
+    return _build(AppThemeCatalog.colorsFor(palette, brightness), brightness);
   }
 
   /// The app's own dark look, kept for code and tests that ask for it by
@@ -35,8 +32,8 @@ class AppTheme {
         secondary: colors.accentLight,
         surface: colors.surface,
         error: isDark ? Colors.red.shade400 : Colors.red.shade700,
-        onPrimary: colors.primaryText,
-        onSecondary: colors.primaryText,
+        onPrimary: colors.onAccent,
+        onSecondary: colors.onAccent,
         onSurface: colors.primaryText,
         onError: colors.primaryText,
       ),

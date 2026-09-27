@@ -91,7 +91,8 @@ class SettingsTile extends StatelessWidget {
                       value: progress,
                       minHeight: 4,
                       color: context.appColors.accent,
-                      backgroundColor: Colors.white.withValues(alpha: 0.12),
+                      backgroundColor:
+                          context.appColors.veil.withValues(alpha: 0.12),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -212,12 +213,12 @@ class AppSwitch extends StatelessWidget {
       trackColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? context.appColors.accent
-            : Colors.white.withValues(alpha: 0.16),
+            : context.appColors.veil.withValues(alpha: 0.16),
       ),
       trackOutlineColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? Colors.transparent
-            : Colors.white.withValues(alpha: 0.42),
+            : context.appColors.veil.withValues(alpha: 0.42),
       ),
     );
   }

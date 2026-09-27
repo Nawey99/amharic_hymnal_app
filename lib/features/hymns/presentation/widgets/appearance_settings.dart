@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/services/theme_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
-import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
+import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/theme_carousel.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 /// Chooses light or dark, and which colour family, and shows the choice
@@ -52,9 +53,9 @@ class AppearanceSettings extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _ModeRow(theme: theme),
-            if (AppPalette.values.length > 1) ...[
+            if (AppThemeCatalog.themes.length > 1) ...[
               const SizedBox(height: 14),
-              _PaletteRow(theme: theme),
+              ThemeCarousel(theme: theme),
             ],
           ],
         ),
@@ -159,70 +160,6 @@ class _ModeButton extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _PaletteRow extends StatelessWidget {
-  final ThemeService theme;
-
-  const _PaletteRow({required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-    return SizedBox(
-      height: 64,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: AppPalette.values.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final palette = AppPalette.values[index];
-          final selected = theme.palette == palette;
-          return Semantics(
-            button: true,
-            selected: selected,
-            label: palette.label,
-            excludeSemantics: true,
-            child: InkWell(
-              key: ValueKey('theme-palette-${palette.name}'),
-              onTap: () => theme.setPalette(palette),
-              borderRadius: BorderRadius.circular(30),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: palette.swatch,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: selected ? colors.primaryText : colors.divider,
-                        width: selected ? 2.5 : 1,
-                      ),
-                    ),
-                    child: selected
-                        ? const Icon(Icons.check, size: 20, color: Colors.white)
-                        : null,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    palette.label,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color:
-                          selected ? colors.primaryText : colors.secondaryText,
-                      fontFamily: 'NotoSansEthiopic',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }

@@ -334,10 +334,10 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
         vertical: IndexedFastScroller.verticalPadding,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.28),
+        color: context.appColors.shade.withValues(alpha: 0.28),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: context.appColors.veil.withValues(alpha: 0.12),
           width: IndexedFastScroller.verticalBorderWidth,
         ),
       ),
@@ -400,7 +400,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
             color: context.appColors.surface.withValues(alpha: 0.96),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.16),
+              color: context.appColors.veil.withValues(alpha: 0.16),
             ),
             boxShadow: [
               BoxShadow(
@@ -521,7 +521,7 @@ class _IndexedFastScrollerState extends State<IndexedFastScroller> {
             color: context.appColors.accent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.28),
+              color: context.appColors.veil.withValues(alpha: 0.28),
             ),
             boxShadow: [
               BoxShadow(

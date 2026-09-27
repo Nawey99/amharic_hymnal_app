@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
@@ -62,19 +63,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
 
   Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
     return Container(
-      decoration: BoxDecoration(
-        image: bgService.isEnabled
-            ? DecorationImage(
-                image: const AssetImage('assets/images/background.jpg'),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withValues(alpha: 0.8),
-                  BlendMode.darken,
-                ),
-              )
-            : null,
-        color: bgService.isEnabled ? null : context.appColors.primaryBackground,
-      ),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

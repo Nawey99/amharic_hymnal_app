@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
+import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
 
 /// WCAG relative luminance.
 double _luminance(Color color) {
@@ -59,9 +60,12 @@ void main() {
     );
   }
 
-  for (final palette in AppPalette.values) {
+  // Driven off the catalogue, so a theme is measured the moment it is
+  // listed and nobody has to remember to add it here.
+  for (final spec in AppThemeCatalog.themes) {
+    final palette = spec.id;
     for (final brightness in Brightness.values) {
-      final colors = AppColorsExtension.of(palette, brightness);
+      final colors = spec.colorsFor(brightness);
       final name = '${palette.name} ${brightness.name}';
 
       test('$name: text is readable on the page and on a panel', () {
@@ -123,7 +127,7 @@ void main() {
 
       test('$name: the raised button matches the tab beside it', () {
         expect(
-          contrast(const Color(0xFFFFFFFF), colors.raisedAction),
+          contrast(colors.onAccent, colors.raisedAction),
           greaterThanOrEqualTo(3.0),
           reason: 'the number on the button',
         );
@@ -134,16 +138,17 @@ void main() {
       });
 
       test('$name: the accent carries its own text and stands out', () {
-        // Filled green buttons carry white text. The app shipped with
-        // 0xFF4CAF50, where white reads at 2.78 rather than the 3.0 a
-        // control needs; that is recorded here rather than waved through,
-        // and every palette drawn since has to clear the line.
+        // A filled button carries onAccent: white over a deep colour,
+        // ink over a pastel or a gold. The app shipped with 0xFF4CAF50,
+        // where white reads at 2.78 rather than the 3.0 a control needs;
+        // that is recorded here rather than waved through, and every
+        // palette drawn since has to clear the line.
         final shippedDarkGreen =
             palette == AppPalette.emerald && brightness == Brightness.dark;
         expect(
-          contrast(const Color(0xFFFFFFFF), colors.accent),
+          contrast(colors.onAccent, colors.accent),
           greaterThanOrEqualTo(shippedDarkGreen ? 2.75 : 3.0),
-          reason: 'white on the accent',
+          reason: 'what is written on the accent',
         );
         // And the accent has to be visible as text or an icon on the page.
         expect(
@@ -188,5 +193,18 @@ void main() {
     expect(light.barTint, isNot(dark.barTint));
     expect(light.barOpacity, greaterThan(dark.barOpacity));
     expect(light.barBorder, isNot(dark.barBorder));
+  });
+
+  test('every name that can be stored has a theme in the catalogue', () {
+    expect(
+      AppThemeCatalog.themes.map((theme) => theme.id).toSet(),
+      AppPalette.values.toSet(),
+      reason: 'a stored choice with no theme would silently fall back',
+    );
+    expect(
+      AppThemeCatalog.themes.map((theme) => theme.label).toSet(),
+      hasLength(AppThemeCatalog.themes.length),
+      reason: 'two themes sharing a name cannot be told apart in the chooser',
+    );
   });
 }
