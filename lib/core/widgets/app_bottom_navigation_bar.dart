@@ -124,12 +124,15 @@ class AppBottomNavigationBar extends StatelessWidget {
                           ),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: context.appColors.surface.withValues(
-                                alpha: 0.15,
+                              // The bar's own fill and edge: a faint pill
+                              // over a dark app, nearly solid over a light
+                              // one, where a white haze would disappear.
+                              color: context.appColors.barTint.withValues(
+                                alpha: context.appColors.barOpacity,
                               ),
                               borderRadius: BorderRadius.circular(innerRadius),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.24),
+                                color: context.appColors.barBorder,
                                 width: 0.9,
                               ),
                             ),
@@ -496,10 +499,10 @@ class _PrimaryNavigationActionState extends State<_PrimaryNavigationAction> {
                 duration: Duration(milliseconds: _pressed ? 90 : 180),
                 curve: Curves.easeOut,
                 child: Material(
-                  color: context.appColors.accentDark,
+                  color: context.appColors.raisedAction,
                   elevation: selected ? 10 : 7,
                   shadowColor:
-                      context.appColors.accentDark.withValues(alpha: 0.34),
+                      context.appColors.raisedAction.withValues(alpha: 0.34),
                   shape: const CircleBorder(),
                   clipBehavior: Clip.antiAlias,
                   child: SizedBox.square(

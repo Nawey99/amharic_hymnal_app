@@ -29,6 +29,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     required this.glassOpacityOverPhoto,
     required this.glassBorder,
     required this.glassShadow,
+    required this.barTint,
+    required this.barOpacity,
+    required this.barBorder,
+    required this.raisedAction,
     required this.scrim,
   });
 
@@ -60,6 +64,18 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   final Color glassBorder;
   final Color glassShadow;
 
+  /// The floating navigation bar. It sits over anything - a photograph, a
+  /// white card, a page of lyrics - so it carries its own fill and edge
+  /// rather than the panel's: barely there over a dark app, nearly solid
+  /// over a light one, where a faint white pill would vanish.
+  final Color barTint;
+  final double barOpacity;
+  final Color barBorder;
+
+  /// The raised number button. The same green the selected tab uses, so
+  /// the two do not sit side by side a shade apart.
+  final Color raisedAction;
+
   /// Laid over the photograph so text stays readable on it.
   final Color scrim;
 
@@ -82,6 +98,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     glassOpacityOverPhoto: 0.3,
     glassBorder: Color(0x4DFFFFFF),
     glassShadow: Color(0x33000000),
+    barTint: AppColors.surface,
+    barOpacity: 0.15,
+    barBorder: Color(0x3DFFFFFF),
+    raisedAction: AppColors.accentGreenDark,
     scrim: Color(0xCC000000),
   );
 
@@ -108,6 +128,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     glassOpacityOverPhoto: 0.72,
     glassBorder: Color(0x1F000000),
     glassShadow: Color(0x14000000),
+    barTint: Color(0xFFFFFFFF),
+    barOpacity: 0.86,
+    barBorder: Color(0x1A000000),
+    raisedAction: Color(0xFF2E7D32),
     scrim: Color(0x9EFFFFFF),
   );
 
@@ -137,6 +161,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     double? glassOpacityOverPhoto,
     Color? glassBorder,
     Color? glassShadow,
+    Color? barTint,
+    double? barOpacity,
+    Color? barBorder,
+    Color? raisedAction,
     Color? scrim,
   }) {
     return AppColorsExtension(
@@ -157,6 +185,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
           glassOpacityOverPhoto ?? this.glassOpacityOverPhoto,
       glassBorder: glassBorder ?? this.glassBorder,
       glassShadow: glassShadow ?? this.glassShadow,
+      barTint: barTint ?? this.barTint,
+      barOpacity: barOpacity ?? this.barOpacity,
+      barBorder: barBorder ?? this.barBorder,
+      raisedAction: raisedAction ?? this.raisedAction,
       scrim: scrim ?? this.scrim,
     );
   }
@@ -190,6 +222,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
       ),
       glassBorder: mix(glassBorder, other.glassBorder),
       glassShadow: mix(glassShadow, other.glassShadow),
+      barTint: mix(barTint, other.barTint),
+      barOpacity: lerpDouble(barOpacity, other.barOpacity, t),
+      barBorder: mix(barBorder, other.barBorder),
+      raisedAction: mix(raisedAction, other.raisedAction),
       scrim: mix(scrim, other.scrim),
     );
   }
