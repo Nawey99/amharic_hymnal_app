@@ -1,8 +1,8 @@
 # Privacy Policy — ውዳሴ (Wudase)
 
 > The published copy is `docs/privacy.html`, served at
-> <https://nawey99.github.io/amharic_hymnal_app/privacy.html>; keep the two in step. The Amharic summary still wants a second
-> pair of eyes before the listing goes live.
+> <https://nawey99.github.io/amharic_hymnal_app/privacy.html>; keep the two
+> in step. The policy is in English; the app itself is in Amharic.
 
 **Effective date:** 28 September 2026
 **Publisher:** Naol Yadete Wordofa
@@ -116,17 +116,6 @@ someone types them in.
 
 If this policy changes, we will update the effective date above and, for
 important changes, tell you in the app.
-
----
-
-## በአጭሩ (Amharic summary — for review)
-
-- ውዳሴ መለያ ወይም መግቢያ አይፈልግም፤ ማስታወቂያም የለውም።
-- ቅንብሮችዎ፣ ተወዳጆችዎ፣ ታሪክዎ እና ፍለጋዎ በስልክዎ ላይ ብቻ ይቀመጣሉ።
-- መተግበሪያው የትኞቹ መዝሙሮች እንደተከፈቱ ስም-አልባ ቁጥር ይልካል (ለ90 ቀናት ይቀመጣል)።
-- ሪፖርት የሚላከው እርስዎ ሲልኩ ብቻ ነው፤ የመገናኛ አድራሻ የሚካተተው እርስዎ ከጻፉት ብቻ ነው።
-- የሙከራ (ቤታ) ስሪቶች የብልሽት ሪፖርት ሊልኩ ይችላሉ፤ ለሕዝብ የሚለቀቁ ስሪቶች አይልኩም።
-- ጥያቄ ካለዎት፦ Nawey99@gmail.com
 
 ---
 
