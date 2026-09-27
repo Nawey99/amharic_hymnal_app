@@ -32,6 +32,16 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  /// Where the privacy policy lives. The store listing points at the same
+  /// page, so the two can never say different things.
+  static final Uri privacyUri =
+      Uri.parse('https://nawey99.github.io/amharic_hymnal_app/privacy.html');
+
+  /// The donation page is held back until there is an account number to
+  /// show: a page that says "to be added later" is worse than no page.
+  /// One line here brings it back.
+  static const bool donationsReady = false;
+
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
@@ -360,20 +370,31 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SizedBox(height: itemGap),
                       ],
+                      if (SettingsPage.donationsReady) ...[
+                        SettingsTile(
+                          key: const ValueKey('donate-tile'),
+                          icon: Icons.favorite,
+                          title: AppLocalizations.of(context)?.donateLabel ??
+                              'ይለግሱ',
+                          description:
+                              AppLocalizations.of(context)?.donateDescription ??
+                                  'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const DonatePage()),
+                            );
+                          },
+                        ),
+                        SizedBox(height: itemGap),
+                      ],
                       SettingsTile(
-                        icon: Icons.favorite,
-                        title:
-                            AppLocalizations.of(context)?.donateLabel ?? 'ይለግሱ',
-                        description:
-                            AppLocalizations.of(context)?.donateDescription ??
-                                'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const DonatePage()),
-                          );
-                        },
+                        key: const ValueKey('privacy-tile'),
+                        icon: Icons.privacy_tip_outlined,
+                        title: 'የግላዊነት ፖሊሲ',
+                        description: 'መተግበሪያው ስለ መረጃዎ ምን እንደሚያደርግ',
+                        onTap: _openPrivacyPolicy,
                       ),
                       SizedBox(height: itemGap),
                       SettingsTile(
@@ -460,6 +481,18 @@ class _SettingsPageState extends State<SettingsPage> {
         const SnackBar(
           content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
         ),
+      );
+    }
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final opened = await launchUrl(
+      SettingsPage.privacyUri,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('የግላዊነት ፖሊሲውን መክፈት አልተቻለም')),
       );
     }
   }

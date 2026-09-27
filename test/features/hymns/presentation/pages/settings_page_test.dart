@@ -101,6 +101,37 @@ void main() {
       expect(state.hymns, hasLength(3));
     });
 
+    testWidgets(
+        'the privacy policy is reachable, and points at the page '
+        'the store listing names', (tester) async {
+      await pumpSettings(tester);
+
+      final tile = find.byKey(const ValueKey('privacy-tile'));
+      await tester.scrollUntilVisible(
+        tile,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await _settle(tester);
+
+      expect(tile, findsOneWidget);
+      expect(find.text('የግላዊነት ፖሊሲ'), findsOneWidget);
+      expect(
+        SettingsPage.privacyUri.toString(),
+        'https://nawey99.github.io/amharic_hymnal_app/privacy.html',
+      );
+    });
+
+    testWidgets('no donation entry while there is no account number to show',
+        (tester) async {
+      await pumpSettings(tester);
+      await scrollToFooter(tester);
+
+      expect(SettingsPage.donationsReady, isFalse);
+      expect(find.byKey(const ValueKey('donate-tile')), findsNothing);
+      expect(find.text('ይለግሱ'), findsNothing);
+    });
+
     testWidgets('keep-screen-on is saved and applied', (tester) async {
       await pumpSettings(tester);
       expect(di.sl<SettingsRepository>().getKeepScreenOn(), isFalse);
