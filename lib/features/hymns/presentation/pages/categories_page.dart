@@ -243,7 +243,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         borderRadius: BorderRadius.circular(12),
         child: GlassContainer(
           borderRadius: 12.0,
-          blurSigma: 12.0,
+          blur: false,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
           color: context.appColors.surface,
           border: Border.all(
@@ -340,7 +340,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         borderRadius: BorderRadius.circular(12),
         child: GlassContainer(
           borderRadius: 12.0,
-          blurSigma: 12.0,
+          blur: false,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
           color: context.appColors.surface,
           border: Border.all(

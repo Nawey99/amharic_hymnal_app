@@ -298,53 +298,30 @@ class _ProgressiveNavigationBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // What the page fades into behind the bar.
+    //
+    // This was a blur behind a shader mask, so that the frost came on
+    // gradually from the top: two layers the phone had to save and read
+    // back on every frame of every scroll, for a strip a hundred pixels
+    // tall. The gradient below does the same fading with paint alone,
+    // and the bar itself keeps its own frost.
     return ClipRRect(
       borderRadius: BorderRadius.vertical(top: Radius.circular(topRadius)),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ShaderMask(
-            key: const ValueKey('navigation-outer-fade'),
-            blendMode: BlendMode.dstIn,
-            shaderCallback: (bounds) => LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.16),
-                Colors.black.withValues(alpha: 0.62),
-                Colors.black,
-              ],
-              stops: const [0, 0.5, 1],
-            ).createShader(bounds),
-            child: BackdropFilter(
-              key: const ValueKey('navigation-outer-glass'),
-              filter: ImageFilter.blur(
-                sigmaX: 13,
-                sigmaY: 13,
-                tileMode: TileMode.clamp,
-              ),
-              child: ColoredBox(
-                color:
-                    context.appColors.primaryBackground.withValues(alpha: 0.04),
-              ),
-            ),
+      child: DecoratedBox(
+        key: const ValueKey('navigation-outer-scrim'),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              context.appColors.primaryBackground.withValues(alpha: 0.06),
+              context.appColors.primaryBackground.withValues(alpha: 0.26),
+              context.appColors.primaryBackground.withValues(alpha: 0.46),
+            ],
+            stops: const [0, 0.52, 1],
           ),
-          DecoratedBox(
-            key: const ValueKey('navigation-outer-scrim'),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  context.appColors.primaryBackground.withValues(alpha: 0.02),
-                  context.appColors.primaryBackground.withValues(alpha: 0.18),
-                  context.appColors.primaryBackground.withValues(alpha: 0.38),
-                ],
-                stops: const [0, 0.52, 1],
-              ),
-            ),
-          ),
-        ],
+        ),
+        child: const SizedBox.expand(),
       ),
     );
   }
