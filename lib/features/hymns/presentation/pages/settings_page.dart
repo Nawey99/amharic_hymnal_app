@@ -291,10 +291,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         divisions: 18,
                         highlight:
                             _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
-                        previewBuilder: (context, value) => FontSizePreview(
-                          fontSize: value,
-                          compact: ResponsiveLayout.isCompactLandscape(context),
-                        ),
+                        previewBuilder: (context, value) =>
+                            FontSizePreview(fontSize: value),
                         onChanged: (value) async {
                           // Clamp value to valid range before any operations
                           final clampedValue = value.clamp(12.0, 30.0);
