@@ -8,13 +8,12 @@ import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 /// The sample under the slider is only worth having if it is the truth:
 /// what it shows has to be what the hymn page will show.
 void main() {
-  Future<void> pumpPreview(WidgetTester tester, double size,
-      {bool compact = false}) async {
+  Future<void> pumpPreview(WidgetTester tester, double size) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.darkTheme,
         home: Scaffold(
-          body: FontSizePreview(fontSize: size, compact: compact),
+          body: FontSizePreview(fontSize: size),
         ),
       ),
     );
@@ -64,12 +63,11 @@ void main() {
     expect(small.height, large.height);
   });
 
-  testWidgets('two lines standing, one lying down', (tester) async {
+  testWidgets('one line of the hymn, whichever way the phone is held',
+      (tester) async {
     await pumpPreview(tester, 20);
-    expect(tester.widget<Text>(find.byType(Text).first).maxLines, 2);
-
-    await pumpPreview(tester, 20, compact: true);
     expect(tester.widget<Text>(find.byType(Text).first).maxLines, 1);
+    expect(find.text('አምላካችን አመስግኑ'), findsOneWidget);
   });
 
   group('the slider it sits under', () {
