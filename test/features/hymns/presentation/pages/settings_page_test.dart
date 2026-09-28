@@ -146,6 +146,14 @@ void main() {
     testWidgets('offers whole-book sheet music and audio downloads',
         (tester) async {
       await pumpSettings(tester);
+      // The page is long enough that the second tile is built only once
+      // it has been scrolled to.
+      await tester.scrollUntilVisible(
+        find.text('ድምፆችን በሙሉ አውርድ'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await _settle(tester);
 
       expect(find.text('ኖታዎችን በሙሉ አውርድ'), findsOneWidget);
       expect(find.text('ድምፆችን በሙሉ አውርድ'), findsOneWidget);

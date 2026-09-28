@@ -19,6 +19,7 @@ import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_version_footer.dart';
+import 'package:amharic_hymnal_app/core/widgets/font_size_preview.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/widgets/settings_tiles.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -285,8 +286,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         value: _fontSize.clamp(12.0, 30.0),
                         min: 12,
                         max: 30,
+                        // Whole points: two readers on "17" should have
+                        // the same text.
+                        divisions: 18,
                         highlight:
                             _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
+                        previewBuilder: (context, value) => FontSizePreview(
+                          fontSize: value,
+                          compact: ResponsiveLayout.isCompactLandscape(context),
+                        ),
                         onChanged: (value) async {
                           // Clamp value to valid range before any operations
                           final clampedValue = value.clamp(12.0, 30.0);

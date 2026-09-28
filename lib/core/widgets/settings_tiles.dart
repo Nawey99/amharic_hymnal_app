@@ -402,12 +402,26 @@ class SettingsDropdownTile extends StatelessWidget {
 }
 
 /// Reusable settings slider tile widget
-class SettingsSliderTile extends StatelessWidget {
+class SettingsSliderTile extends StatefulWidget {
   final String title;
   final double value;
   final double min;
   final double max;
+
+  /// Whole steps, so the number beside the slider is exactly what the
+  /// reader gets.
+  final int? divisions;
+
+  /// Shows the number beside the title when it is not null.
   final String? highlight;
+
+  /// Drawn under the slider and rebuilt as it moves: what the reader is
+  /// choosing, rather than a number standing for it.
+  final Widget Function(BuildContext context, double value)? previewBuilder;
+
+  /// Called when the reader lets go. The value is not written on every
+  /// frame of a drag: that was thirty-odd saves and as many rebuilds of
+  /// the whole app for one gesture, none of which anyone could see.
   final ValueChanged<double> onChanged;
 
   const SettingsSliderTile({
@@ -416,40 +430,39 @@ class SettingsSliderTile extends StatelessWidget {
     required this.value,
     required this.min,
     required this.max,
+    this.divisions,
     this.highlight,
+    this.previewBuilder,
     required this.onChanged,
   });
 
   @override
+  State<SettingsSliderTile> createState() => _SettingsSliderTileState();
+}
+
+class _SettingsSliderTileState extends State<SettingsSliderTile> {
+  /// Where the reader's finger is, while it is down.
+  double? _dragging;
+
+  @override
+  void didUpdateWidget(SettingsSliderTile old) {
+    super.didUpdateWidget(old);
+    // The choice has arrived back from the setting it was saved in.
+    if (_dragging != null && (widget.value - _dragging!).abs() < 0.01) {
+      _dragging = null;
+    }
+  }
+
+  double get _safeValue {
+    final value = _dragging ?? widget.value;
+    if (!value.isFinite || value.isNaN) return widget.min;
+    return value.clamp(widget.min, widget.max).toDouble();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final compactLandscape = ResponsiveLayout.isCompactLandscape(context);
-    // CRITICAL: Clamp value BEFORE any widget construction to prevent Slider assertion errors
-    // Handle NaN, infinity, and out-of-range cases with maximum defensive programming
-
-    double safeValue;
-
-    // First, handle non-finite values
-    if (!value.isFinite || value.isNaN) {
-      safeValue = min;
-    } else if (value < min) {
-      safeValue = min;
-    } else if (value > max) {
-      safeValue = max;
-    } else {
-      safeValue = value;
-    }
-
-    // Double-clamp to be absolutely sure
-    final clampedValue = safeValue.clamp(min, max);
-
-    // Final validation with explicit range check
-    double finalValue;
-    if (clampedValue >= min && clampedValue <= max && clampedValue.isFinite) {
-      finalValue = clampedValue;
-    } else {
-      // Fallback to min if anything is wrong
-      finalValue = min;
-    }
+    final value = _safeValue;
 
     return GlassContainer(
       borderRadius: 16,
@@ -467,7 +480,7 @@ class SettingsSliderTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -475,9 +488,9 @@ class SettingsSliderTile extends StatelessWidget {
                   ),
                 ),
               ),
-              if (highlight != null)
+              if (widget.highlight != null)
                 Text(
-                  finalValue.toStringAsFixed(0),
+                  value.toStringAsFixed(0),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -488,12 +501,18 @@ class SettingsSliderTile extends StatelessWidget {
           ),
           SizedBox(height: compactLandscape ? 4 : 8),
           Slider(
-            value: finalValue,
-            min: min,
-            max: max,
+            value: value,
+            min: widget.min,
+            max: widget.max,
+            divisions: widget.divisions,
             activeColor: context.appColors.accent,
-            onChanged: onChanged,
+            onChanged: (next) => setState(() => _dragging = next),
+            onChangeEnd: widget.onChanged,
           ),
+          if (widget.previewBuilder != null) ...[
+            SizedBox(height: compactLandscape ? 4 : 8),
+            widget.previewBuilder!(context, value),
+          ],
         ],
       ),
     );
