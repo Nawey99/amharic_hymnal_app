@@ -165,9 +165,32 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      # Built here rather than inside the emulator step: the Android SDK
-      # bits (NDK, CMake) and the Gradle cache can take ten minutes on a
-      # cold runner, and in there they count against the test's own clock.
+      # Flutter allows a test twelve minutes to load, and loading one on
+      # a device means building, installing and starting the app. That
+      # cannot be raised from here (--timeout governs the test, not the
+      # load), so the build has to be quick instead: the caches below
+      # save the five minutes a cold runner spends fetching the NDK and
+      # compiling from nothing.
+      - name: Cache Gradle
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Cache the Android SDK build pieces
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk/ndk
+            /usr/local/lib/android/sdk/cmake
+          key: android-sdk-${{ runner.os }}-ndk26-cmake322
+          restore-keys: android-sdk-${{ runner.os }}-
+
+      # Built here rather than inside the emulator step, where it would
+      # count against the test's own clock.
       - name: Warm the Android build
         run: flutter build apk --debug --target-platform android-x64
 
@@ -179,8 +202,6 @@ jobs:
           target: google_apis
           arch: x86_64
           disable-animations: true
-          # Installing and starting a debug build on the API 24 image is
-          # slow; the default twelve minutes has no room for it.
           script: >-
             flutter test integration_test/app_test.dart --timeout 25m
             --dart-define=WUDASE_CONTENT_API_URL=https://content.example.invalid
