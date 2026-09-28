@@ -36,4 +36,20 @@ abstract class SettingsRepository {
   // Onboarding
   bool isOnboardingCompleted();
   Future<bool> setOnboardingCompleted(bool value);
+
+  // Offline downloads offered after onboarding
+  bool isOfflineDownloadOfferPending();
+  Future<bool> setOfflineDownloadOfferPending(bool value);
+
+  // The hidden development and contribution section
+  bool isContributionUnlocked();
+  Future<bool> setContributionUnlocked(bool value);
+
+  // A whole edition's sheet music or audio kept on the phone
+  bool isMediaKeptOffline(String version, String mediaType);
+  Future<bool> setMediaKeptOffline(
+    String version,
+    String mediaType,
+    bool value,
+  );
 }

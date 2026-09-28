@@ -10,6 +10,7 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/pages/categories_
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/settings_page.dart';
+import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' as di;
 
 Future<HymnsBloc> _pumpShell(
@@ -72,7 +73,7 @@ void main() {
     expect(find.text('ማውጫ'), findsOneWidget);
     expect(find.text('ቁጥር'), findsOneWidget);
     expect(find.text('ተወዳጅ'), findsOneWidget);
-    expect(find.text('ቅንብር'), findsOneWidget);
+    expect(find.text('ቅንብሮች'), findsOneWidget);
 
     final navBar = tester.widget<AppBottomNavigationBar>(
       find.byType(AppBottomNavigationBar),
@@ -138,6 +139,138 @@ void main() {
     );
     expect(navBar.selectedIndex, 2);
     expect(tester.takeException(), isNull);
+  });
+
+  for (final id in ['category', 'settings']) {
+    testWidgets('selected $id tab keeps an even gap inside the bar',
+        (tester) async {
+      final bloc = await _pumpShell(tester, initialDestination: id);
+      addTearDown(bloc.close);
+      await tester.pumpAndSettle();
+
+      final bar = tester.getRect(
+        find.byKey(const ValueKey('navigation-inner-glass')),
+      );
+      final indicator = tester.getRect(
+        find.byKey(const ValueKey('bottom-nav-indicator')),
+      );
+      final tab = tester.getRect(find.byKey(ValueKey('bottom-nav-$id')));
+
+      final gaps = [
+        indicator.top - bar.top,
+        bar.bottom - indicator.bottom,
+        id == 'category'
+            ? indicator.left - bar.left
+            : bar.right - indicator.right,
+      ];
+      for (final gap in gaps) {
+        expect(gap, closeTo(5, 0.5));
+      }
+      expect(indicator, tab, reason: 'the highlight sits on the tab');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('messages float above the bottom bar, leaving it tappable',
+      (tester) async {
+    final bloc = await _pumpShell(tester, initialDestination: 'index');
+    addTearDown(bloc.close);
+
+    ScaffoldMessenger.of(
+      tester.element(find.byType(AppBottomNavigationBar)),
+    ).showSnackBar(const SnackBar(content: Text('message')));
+    await tester.pumpAndSettle();
+
+    // The card itself; the SnackBar's box includes its inset padding.
+    final message = tester.getRect(find
+        .descendant(of: find.byType(SnackBar), matching: find.byType(Material))
+        .first);
+    final bar = tester.getRect(
+      find.byKey(const ValueKey('navigation-inner-glass')),
+    );
+    expect(message.bottom, lessThanOrEqualTo(bar.top));
+
+    await tester.tap(find.byKey(const ValueKey('bottom-nav-settings')));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<AppBottomNavigationBar>(find.byType(AppBottomNavigationBar))
+          .selectedIndex,
+      4,
+    );
+  });
+
+  testWidgets('the highlight hides when the number action is selected',
+      (tester) async {
+    final bloc = await _pumpShell(tester, initialDestination: 'number');
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    final opacity = tester.widget<AnimatedOpacity>(
+      find.descendant(
+        of: find.byKey(const ValueKey('bottom-nav-indicator')),
+        matching: find.byType(AnimatedOpacity),
+      ),
+    );
+    expect(opacity.opacity, 0);
+  });
+
+  testWidgets('the report form opens clear of the bottom bar', (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'settings',
+      usePlaceholderPagesForTesting: false,
+    );
+    addTearDown(bloc.close);
+    for (var frame = 0; frame < 20; frame++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    final reportTile = find.byKey(const ValueKey('report-bug-tile'));
+    for (var scroll = 0;
+        scroll < 12 && reportTile.evaluate().isEmpty;
+        scroll++) {
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.ensureVisible(reportTile);
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(reportTile);
+    for (var frame = 0; frame < 10; frame++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.byType(ReportBugPage), findsOneWidget);
+    expect(
+      find.byType(AppBottomNavigationBar),
+      findsNothing,
+      reason: 'the floating bar would cover the send button',
+    );
+
+    await tester.pageBack();
+    for (var frame = 0; frame < 10; frame++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.byType(ReportBugPage), findsNothing);
+    expect(find.byType(AppBottomNavigationBar), findsOneWidget);
+  });
+
+  testWidgets('the bar holds its shape at the largest phone text size',
+      (tester) async {
+    final bloc = await _pumpShell(
+      tester,
+      size: const Size(360, 640),
+      textScale: 2,
+    );
+    addTearDown(bloc.close);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull, reason: 'nothing overflows');
+    final bar = tester.getRect(find.byType(AppBottomNavigationBar));
+    expect(bar.height, lessThanOrEqualTo(120));
+    for (final label in ['ምድብ', 'ማውጫ', 'ቁጥር', 'ተወዳጅ']) {
+      expect(find.text(label), findsOneWidget, reason: '$label is still there');
+    }
   });
 
   testWidgets('category tab is hidden for Hagerigna', (tester) async {
@@ -246,7 +379,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(AppBottomNavigationBar), findsNothing);
-    for (final label in const ['ምድብ', 'ማውጫ', 'ቁጥር', 'ተወዳጅ', 'ቅንብር']) {
+    for (final label in const ['ምድብ', 'ማውጫ', 'ቁጥር', 'ተወዳጅ', 'ቅንብሮች']) {
       expect(find.text(label), findsOneWidget);
     }
 
@@ -309,7 +442,7 @@ void main() {
 
     await tester.drag(find.byType(ListView), const Offset(0, -1000));
     await tester.pumpAndSettle();
-    expect(find.text('ስህተት ላክ'), findsOneWidget);
+    expect(find.text('የስህተት ጥቆማ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -345,6 +478,48 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('detail-number')));
     await _pumpNavigation(tester);
+  });
+
+  testWidgets('back on a hymn ends it, in that tab and after another tab',
+      (tester) async {
+    const hymn = Hymn(
+      id: 'closed-number-hymn',
+      number: 21,
+      title: 'Closed hymn',
+      lyrics: 'Closed lyrics',
+    );
+    final bloc = await _pumpShell(
+      tester,
+      initialDestination: 'number',
+      initialActiveHymn: hymn,
+      initialActiveDestination: 'number',
+      hymnDetailBuilder: _buildTestHymnDetail,
+    );
+    addTearDown(bloc.close);
+
+    // Reopened by tapping its own tab, as before the hymn was closed.
+    await tester.tap(find.text('ማውጫ'));
+    await _pumpNavigation(tester);
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+
+    // The system back gesture, as from the back arrow.
+    await tester.binding.handlePopRoute();
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+
+    // The tab it was opened from now shows its list, not the hymn again.
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+
+    await tester.tap(find.text('ማውጫ'));
+    await _pumpNavigation(tester);
+    await tester.tap(find.text('ቁጥር'));
+    await _pumpNavigation(tester);
+    expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('tapping the owning tab from its hymn clears hymn memory',
@@ -401,7 +576,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('ውዳሴ ምን ያደርጋል?'), findsOneWidget);
+      expect(find.text('ስለ ውዳሴ መተግበሪያ'), findsOneWidget);
       expect(find.textContaining('ከታች'), findsWidgets);
       expect(find.text('Skip'), findsNothing);
       expect(find.text('Next'), findsNothing);
@@ -412,7 +587,7 @@ void main() {
         'በማውጫ ይፈልጉ',
         'በምድብ ያግኙ',
         'ግጥም፣ ድምፅ እና ኖታ',
-        'ቅንብርን ይቆጣጠሩ',
+        'ቅንብሮችን ያስተካክሉ',
       ]) {
         await tester.tap(find.text('ቀጣይ'));
         await tester.pumpAndSettle();
@@ -432,11 +607,27 @@ Future<void> _pumpNavigation(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 350));
 }
 
+/// Stands in for the hymn page: it reports being closed the same way, so
+/// the shell's back handling is exercised.
 Widget _buildTestHymnDetail(
   Hymn hymn,
   String sourceDestination,
   ValueChanged<String> onDestinationSelected,
   ValueChanged<Hymn> onHymnChanged,
+  VoidCallback onClosed,
+) {
+  return PopScope(
+    onPopInvokedWithResult: (didPop, _) {
+      if (didPop) onClosed();
+    },
+    child: _testHymnDetailBody(hymn, sourceDestination, onDestinationSelected),
+  );
+}
+
+Widget _testHymnDetailBody(
+  Hymn hymn,
+  String sourceDestination,
+  ValueChanged<String> onDestinationSelected,
 ) {
   return Scaffold(
     key: const ValueKey('test-hymn-detail'),

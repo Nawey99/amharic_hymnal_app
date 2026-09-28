@@ -220,7 +220,7 @@ void main() {
     await _goBack(tester);
 
     // Switch to the 1975 book through Settings.
-    await tester.tap(find.text('ቅንብር').last);
+    await tester.tap(find.text('ቅንብሮች').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('የ2004 ውዳሴ መዝሙር').first);
     await tester.pumpAndSettle();

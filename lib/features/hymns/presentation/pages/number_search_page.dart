@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -19,7 +20,6 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callbac
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/history_page.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 class NumberSearchPage extends StatefulWidget {
   final HymnOpenCallback? onOpenHymn;
@@ -112,7 +112,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       final exists = numbers.contains(number);
       if (number < min || number > max || !exists) {
         _showInvalidNumberMessage(
-          'ይህ ቁጥር በአሁኑ መዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
+          'ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
         );
         return;
       }
@@ -167,9 +167,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: SafeArea(
         child: Column(
           children: [
@@ -179,22 +178,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           ],
         ),
       ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: _getBackgroundImage(),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.7),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
     );
   }
 
@@ -208,7 +191,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(),
         ),
@@ -228,26 +211,26 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: AppColors.accentGreen.withValues(alpha: 0.18),
+            color: context.appColors.accent.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: AppColors.accentGreen.withValues(alpha: 0.5),
+              color: context.appColors.accent.withValues(alpha: 0.5),
               width: 1.2,
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.history,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
                 size: 19,
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Text(
                 'ታሪክ',
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'NotoSansEthiopic',
@@ -323,9 +306,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return BlocBuilder<HymnsBloc, HymnsState>(
       builder: (context, state) {
         if (state is HymnsLoading) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(context.appColors.accent),
             ),
           );
         }
@@ -336,7 +320,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           if (state.hymns.isEmpty) {
             return _buildEmptyMessage('No hymns found');
           }
-          return _buildSearchResultsList(state.hymns);
+          return _buildSearchResultsList(context, state.hymns);
         }
         return const SizedBox.shrink();
       },
@@ -344,29 +328,28 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildErrorMessage(String message) {
-    final settingsRepository = sl<SettingsRepository>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
               ),
               const SizedBox(height: 16),
               Text(
                 message,
                 style: TextStyle(
-                  color: AppColors.primaryText,
-                  fontSize: settingsRepository.getFontSize(),
+                  color: context.appColors.primaryText,
+                  fontSize: FontSizeScope.of(context),
                   fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
@@ -379,20 +362,19 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildEmptyMessage(String message) {
-    final settingsRepository = sl<SettingsRepository>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Text(
             message,
             style: TextStyle(
-              color: AppColors.primaryText,
-              fontSize: settingsRepository.getFontSize(),
+              color: context.appColors.primaryText,
+              fontSize: FontSizeScope.of(context),
               fontFamily: 'NotoSansEthiopic',
             ),
             textAlign: TextAlign.center,
@@ -402,9 +384,13 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     );
   }
 
-  Widget _buildSearchResultsList(List<dynamic> hymns) {
-    // Add bottom padding to prevent content from going under navigation bar
-    final bottomPadding = NavBarConstants.getBottomPadding(context);
+  /// [context] must be inside the page's SafeArea, which has already taken
+  /// the system navigation inset.
+  Widget _buildSearchResultsList(BuildContext context, List<dynamic> hymns) {
+    // Add bottom padding to prevent content from going under navigation bar.
+    // The last item's own gap already counts towards it.
+    final bottomPadding = NavBarConstants.getBottomPadding(context) -
+        HymnListItem.bottomGap(context);
 
     return ListView.builder(
       controller: _scrollController,
@@ -470,14 +456,13 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   }
 
   Widget _buildNumberInputField() {
-    final settingsRepository = sl<SettingsRepository>();
     return GlassContainer(
       borderRadius: 16.0,
       blurSigma: 12.0,
-      opacity: 0.15,
+      opacity: context.appColors.glassOpacity,
       border: Border.all(
         color: _numberErrorMessage == null
-            ? AppColors.accentGreen.withValues(alpha: 0.45)
+            ? context.appColors.accent.withValues(alpha: 0.45)
             : Colors.red,
         width: 1.5,
       ),
@@ -485,29 +470,29 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         controller: _numberController,
         focusNode: _numberFocusNode,
         cursorColor:
-            _numberErrorMessage == null ? AppColors.accentGreen : Colors.red,
+            _numberErrorMessage == null ? context.appColors.accent : Colors.red,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (_) => _clearNumberError(),
         onTapOutside: (_) => _dismissInputFocus(),
         style: TextStyle(
-          color: AppColors.primaryText,
-          fontSize: settingsRepository.getFontSize() * 1.08,
+          color: context.appColors.primaryText,
+          fontSize: FontSizeScope.of(context) * 1.08,
           fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
           hintStyle: TextStyle(
-            color: AppColors.tertiaryText,
-            fontSize: settingsRepository.getFontSize() * 1.08,
+            color: context.appColors.tertiaryText,
+            fontSize: FontSizeScope.of(context) * 1.08,
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.all(14.0),
             child: Text(
               '#',
               style: TextStyle(
-                color: AppColors.primaryText,
-                fontSize: settingsRepository.getFontSize() * 1.08,
+                color: context.appColors.primaryText,
+                fontSize: FontSizeScope.of(context) * 1.08,
                 fontFamily: 'NotoSansEthiopic',
               ),
             ),
@@ -555,30 +540,24 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         onPressed: _openHymn,
         padding: const EdgeInsets.symmetric(vertical: 16),
         borderRadius: 16.0,
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.library_books_outlined,
-                size: 24, color: AppColors.primaryText),
-            SizedBox(width: 12),
+                size: 24, color: context.appColors.primaryText),
+            const SizedBox(width: 12),
             Text(
               'ክፈት',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'NotoSansEthiopic',
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  ImageProvider _getBackgroundImage() {
-    // Use a placeholder or actual background image
-    // For now, return a placeholder
-    return const AssetImage('assets/images/background.jpg');
   }
 }

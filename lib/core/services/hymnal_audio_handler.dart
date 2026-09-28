@@ -34,6 +34,11 @@ class HymnalAudioHandler extends BaseAudioHandler
       _broadcastState(_player.playbackEvent);
     });
     _player.durationStream.listen(_syncCurrentDuration);
+    // One hymn is open at a time: when it ends, let go of the notification
+    // instead of leaving a finished hymn sitting in it.
+    _player.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) unawaited(stop());
+    });
     _broadcastState(_player.playbackEvent);
   }
 
@@ -216,7 +221,6 @@ class HymnalAudioHandler extends BaseAudioHandler
   }
 
   void _broadcastState(PlaybackEvent event) {
-    final hasPlaylist = queue.value.length > 1;
     final processingState = mapJustAudioProcessingState(
       _player.processingState,
     );
@@ -238,22 +242,17 @@ class HymnalAudioHandler extends BaseAudioHandler
         processingState != AudioProcessingState.error;
     final controls = mediaControlsFor(
       hasMediaItem: hasMediaItem,
-      hasPlaylist: hasPlaylist,
       playing: playing,
     );
 
     playbackState.add(
       playbackState.value.copyWith(
         controls: controls,
-        systemActions: hasMediaItem
-            ? const {
-                MediaAction.seek,
-                MediaAction.seekBackward,
-                MediaAction.seekForward,
-              }
-            : const <MediaAction>{},
+        // The notification's own bar moves within the hymn; no buttons do.
+        systemActions:
+            hasMediaItem ? const {MediaAction.seek} : const <MediaAction>{},
         androidCompactActionIndices:
-            hasMediaItem ? const [0, 1, 2] : const <int>[],
+            hasMediaItem ? const [0, 1] : const <int>[],
         processingState: processingState,
         playing: playing,
         updatePosition: _player.position,
@@ -294,26 +293,18 @@ AudioProcessingState mapJustAudioProcessingState(ProcessingState state) {
   };
 }
 
+/// The notification's buttons. One hymn is open at a time, so it offers
+/// only playing it and putting it away: buttons that look like track
+/// navigation would have nowhere to go.
 List<MediaControl> mediaControlsFor({
   required bool hasMediaItem,
-  required bool hasPlaylist,
   required bool playing,
 }) {
   if (!hasMediaItem) return const <MediaControl>[];
-  final playControl = playing ? MediaControl.pause : MediaControl.play;
-  return hasPlaylist
-      ? <MediaControl>[
-          MediaControl.skipToPrevious,
-          playControl,
-          MediaControl.skipToNext,
-          MediaControl.stop,
-        ]
-      : <MediaControl>[
-          MediaControl.rewind,
-          playControl,
-          MediaControl.fastForward,
-          MediaControl.stop,
-        ];
+  return <MediaControl>[
+    playing ? MediaControl.pause : MediaControl.play,
+    MediaControl.stop,
+  ];
 }
 
 Duration clampAudioPosition(Duration position, Duration? duration) {

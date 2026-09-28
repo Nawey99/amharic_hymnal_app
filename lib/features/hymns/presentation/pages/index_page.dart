@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
@@ -48,6 +49,7 @@ class _IndexPageState extends State<IndexPage> {
   int _sectionJumpGeneration = 0;
   bool _isSectionJumpInProgress = false;
   double _lastMeasuredHymnItemExtent = _estimatedHymnItemExtent;
+  bool _sectionUpdateScheduled = false;
   @override
   void initState() {
     super.initState();
@@ -69,8 +71,21 @@ class _IndexPageState extends State<IndexPage> {
     super.dispose();
   }
 
-  /// Update section indicator based on current scroll position
+  /// Update section indicator based on current scroll position.
+  ///
+  /// Scroll notifications arrive before the list is laid out at the new
+  /// offset, so the rows are read once that frame is done.
   void _updateSectionIndicator() {
+    if (_sectionUpdateScheduled) return;
+    _sectionUpdateScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sectionUpdateScheduled = false;
+      if (mounted) _syncSectionIndicator();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  void _syncSectionIndicator() {
     if (!_scrollController.hasClients || _isSectionJumpInProgress) return;
 
     final state = context.read<HymnsBloc>().state;
@@ -244,6 +259,9 @@ class _IndexPageState extends State<IndexPage> {
 
     final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
     final viewportBottom = viewportTop + viewportBox.size.height;
+    // An item whose card has scrolled away can still reach into the list
+    // with the gap below it; that item is not visible.
+    final itemGap = HymnListItem.bottomGap(context);
     int? bestIndex;
     double? bestTop;
 
@@ -253,7 +271,7 @@ class _IndexPageState extends State<IndexPage> {
       if (itemBox == null || !itemBox.hasSize) continue;
 
       final itemTop = itemBox.localToGlobal(Offset.zero).dy;
-      final itemBottom = itemTop + itemBox.size.height;
+      final itemBottom = itemTop + itemBox.size.height - itemGap;
       if (itemBottom <= viewportTop || itemTop >= viewportBottom) continue;
 
       if (bestTop == null || itemTop < bestTop) {
@@ -324,9 +342,8 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _buildPageContent(BuildContext context) {
-    final bgService = BackgroundImageService();
     return Container(
-      decoration: _buildBackgroundDecoration(bgService),
+      decoration: appBackgroundDecoration(context),
       child: SafeArea(
         child: Column(
           children: [
@@ -340,22 +357,6 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration(BackgroundImageService bgService) {
-    return BoxDecoration(
-      image: bgService.isEnabled
-          ? DecorationImage(
-              image: _getBackgroundImage(),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.8),
-                BlendMode.darken,
-              ),
-            )
-          : null,
-      color: bgService.isEnabled ? null : AppColors.primaryBackground,
-    );
-  }
-
   Widget _buildHeader(BuildContext context) {
     return MainPageTitleBar(
       title: 'መዝሙር ማውጫ',
@@ -365,13 +366,13 @@ class _IndexPageState extends State<IndexPage> {
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(context),
         ),
         IconButton(
           tooltip: 'ቅደም ተከተል',
-          icon: const Icon(Icons.sort, color: AppColors.primaryText),
+          icon: Icon(Icons.sort, color: context.appColors.primaryText),
           onPressed: () => _showSortDialog(context),
         ),
       ],
@@ -386,8 +387,10 @@ class _IndexPageState extends State<IndexPage> {
         _searchFocusNode.unfocus();
       }
     });
-    if (willShowSearch && _searchController.currentQuery.isNotEmpty) {
-      _handleSearchQuery(_searchController.currentQuery);
+    // Closing search ends it: the list goes back to its sort order, with
+    // the letter rail when sorted by name.
+    if (!willShowSearch && _searchController.currentQuery.isNotEmpty) {
+      _searchController.clear();
     }
   }
 
@@ -462,7 +465,7 @@ class _IndexPageState extends State<IndexPage> {
                 displayLetter,
                 key: const ValueKey('index-section-indicator'),
                 style: TextStyle(
-                  color: AppColors.accentGreen,
+                  color: context.appColors.accent,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'NotoSansEthiopic',
@@ -507,8 +510,11 @@ class _IndexPageState extends State<IndexPage> {
                 children: [
                   _buildHymnListView(
                     state,
-                    useHorizontalAlphabetRail: useHorizontalAlphabetRail,
-                    viewportHeight: constraints.maxHeight,
+                    showsVerticalAlphabetRail:
+                        labels.isNotEmpty && !useHorizontalAlphabetRail,
+                    // Read inside the page's SafeArea, which has already
+                    // taken the system navigation inset.
+                    navBarBottomPadding: alphabetRailBottomPadding,
                   ),
                   if (labels.isNotEmpty)
                     AlphabetScrollBar(
@@ -531,6 +537,9 @@ class _IndexPageState extends State<IndexPage> {
 
   List<String> _alphabetLabelsForState(HymnsState state) {
     if (state is! HymnsLoaded || state.sortType != 'name') return const [];
+    // The rail is for browsing. With search open there is no room for it
+    // beside the field and keyboard, and typing replaces the list anyway.
+    if (_isSearchVisible) return const [];
 
     final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
     final availableLabels = _buildAlphabetIndex(hymnsToDisplay).keys.toList();
@@ -539,13 +548,13 @@ class _IndexPageState extends State<IndexPage> {
 
   Widget _buildHymnListView(
     HymnsState state, {
-    required bool useHorizontalAlphabetRail,
-    required double viewportHeight,
+    required bool showsVerticalAlphabetRail,
+    required double navBarBottomPadding,
   }) {
     if (state is HymnsLoading) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+          valueColor: AlwaysStoppedAnimation<Color>(context.appColors.accent),
         ),
       );
     }
@@ -562,18 +571,16 @@ class _IndexPageState extends State<IndexPage> {
 
     return _buildHymnListItems(
       state,
-      useHorizontalAlphabetRail: useHorizontalAlphabetRail,
-      viewportHeight: viewportHeight,
+      showsVerticalAlphabetRail: showsVerticalAlphabetRail,
+      navBarBottomPadding: navBarBottomPadding,
     );
   }
 
   Widget _buildHymnListItems(
     HymnsLoaded state, {
-    required bool useHorizontalAlphabetRail,
-    required double viewportHeight,
+    required bool showsVerticalAlphabetRail,
+    required double navBarBottomPadding,
   }) {
-    final hasAlphabetScrollBar =
-        state.sortType == 'name' && state.hymns.isNotEmpty;
     final hasNumberScrollbar = state.sortType == 'number';
     final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
 
@@ -585,22 +592,16 @@ class _IndexPageState extends State<IndexPage> {
       return EmptyStateWidget(
         icon: Icons.music_note,
         title: AppLocalizations.of(context)?.noHymnsFound ?? 'No hymns found',
-        message: state.sortType == 'name' ? 'በስም ለማደራጀት መዝሙር አልተገኘም' : null,
+        message: state.sortType == 'name' ? 'በስም የተደረደረ መዝሙር አልተገኘም' : null,
       );
     }
 
-    final rightPadding =
-        hasAlphabetScrollBar && !useHorizontalAlphabetRail ? 54.0 : 16.0;
-    final standardBottomPadding = NavBarConstants.getBottomPadding(context);
-    // Let even the final alphabet section align with the viewport top.
-    final sectionAlignmentBottomPadding = hasAlphabetScrollBar
-        ? (viewportHeight - _lastMeasuredHymnItemExtent)
-            .clamp(0.0, double.infinity)
-            .toDouble()
-        : 0.0;
-    final bottomPadding = sectionAlignmentBottomPadding > standardBottomPadding
-        ? sectionAlignmentBottomPadding
-        : standardBottomPadding;
+    // Room for the vertical letter rail only while it is shown.
+    final rightPadding = showsVerticalAlphabetRail ? 54.0 : 16.0;
+    // The last item's own gap counts towards the space above the nav bar, so
+    // the list ends as far above it as the category list does. Sections
+    // near the end scroll as far as they can rather than to the very top.
+    final bottomPadding = navBarBottomPadding - HymnListItem.bottomGap(context);
 
     final listView = ListView.builder(
       controller: _scrollController,
@@ -673,10 +674,10 @@ class _IndexPageState extends State<IndexPage> {
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.32),
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'አደራደር',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         content: _buildSortOptions(dialogContext, effectiveSortType),
       ),
@@ -749,12 +750,12 @@ class _IndexPageState extends State<IndexPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.accentGreen.withValues(alpha: 0.2)
+              ? context.appColors.accent.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? AppColors.accentGreen.withValues(alpha: 0.5)
+                ? context.appColors.accent.withValues(alpha: 0.5)
                 : Colors.transparent,
             width: 1.5,
           ),
@@ -763,8 +764,9 @@ class _IndexPageState extends State<IndexPage> {
           children: [
             Icon(
               icon,
-              color:
-                  isSelected ? AppColors.accentGreen : AppColors.secondaryText,
+              color: isSelected
+                  ? context.appColors.accent
+                  : context.appColors.secondaryText,
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -773,17 +775,17 @@ class _IndexPageState extends State<IndexPage> {
                 title,
                 style: TextStyle(
                   color: isSelected
-                      ? AppColors.accentGreen
-                      : AppColors.primaryText,
+                      ? context.appColors.accent
+                      : context.appColors.primaryText,
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
                 size: 20,
               ),
           ],
@@ -800,10 +802,6 @@ class _IndexPageState extends State<IndexPage> {
     context.read<HymnsBloc>().add(
           ChangeSort(state.languageCode, state.version, sortType),
         );
-  }
-
-  ImageProvider _getBackgroundImage() {
-    return const AssetImage('assets/images/background.jpg');
   }
 
   List<Hymn> _hymnsForDisplay(List<Hymn> hymns, String? sortType) {

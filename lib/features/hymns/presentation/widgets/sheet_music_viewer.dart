@@ -2,8 +2,8 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/media_reference.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
 import 'package:flutter/material.dart';
@@ -115,7 +115,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Widget _buildEmptyState() {
-    return const SizedBox(
+    return SizedBox(
       height: 200,
       child: Center(
         child: Column(
@@ -124,13 +124,13 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             Icon(
               Icons.music_note,
               size: 48,
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               'ኖታ አልተገኘም',
               style: TextStyle(
-                color: AppColors.secondaryText,
+                color: context.appColors.secondaryText,
                 fontSize: 14,
                 fontFamily: 'NotoSansEthiopic',
               ),
@@ -161,8 +161,8 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _currentPage == index
-                  ? AppColors.accentGreen
-                  : AppColors.secondaryText.withValues(alpha: 0.3),
+                  ? context.appColors.accent
+                  : context.appColors.secondaryText.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -389,9 +389,9 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       },
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded || frame != null) return child;
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+            valueColor: AlwaysStoppedAnimation<Color>(context.appColors.accent),
           ),
         );
       },
@@ -399,21 +399,21 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Widget _buildUnavailableImage() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.broken_image,
             size: 48,
-            color: AppColors.secondaryText,
+            color: context.appColors.secondaryText,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'የኖታ ምስል አልተገኘም',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.secondaryText,
+              color: context.appColors.secondaryText,
               fontSize: 12,
               fontFamily: 'NotoSansEthiopic',
             ),

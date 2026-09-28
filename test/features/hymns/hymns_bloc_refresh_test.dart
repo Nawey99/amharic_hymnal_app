@@ -90,6 +90,23 @@ class _FakeSettingsRepository implements SettingsRepository {
   @override
   Future<bool> setOnboardingCompleted(bool value) async => true;
   @override
+  bool isOfflineDownloadOfferPending() => false;
+  @override
+  Future<bool> setOfflineDownloadOfferPending(bool value) async => true;
+  @override
+  bool isContributionUnlocked() => false;
+  @override
+  Future<bool> setContributionUnlocked(bool value) async => true;
+  @override
+  bool isMediaKeptOffline(String version, String mediaType) => false;
+  @override
+  Future<bool> setMediaKeptOffline(
+    String version,
+    String mediaType,
+    bool value,
+  ) async =>
+      true;
+  @override
   Future<bool> setSelectedLanguage(String languageCode) async {
     language = languageCode;
     return true;

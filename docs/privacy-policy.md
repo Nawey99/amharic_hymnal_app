@@ -1,12 +1,12 @@
 # Privacy Policy — ውዳሴ (Wudase)
 
-> **Before publishing:** replace every `[[...]]`, have the text reviewed, and
-> check the Amharic summary with a native speaker. The published copy is
-> `web/privacy.html`; keep the two in step.
+> The published copy is `docs/privacy.html`, served at
+> <https://nawey99.github.io/amharic_hymnal_app/privacy.html>; keep the two
+> in step. The policy is in English; the app itself is in Amharic.
 
-**Effective date:** [[date of publication]]
-**Publisher:** [[name of the person, church or organisation responsible, e.g. Filowha Seventh Day Adventist Church]]
-**Contact:** [[email address for privacy questions]]
+**Effective date:** 28 September 2026
+**Publisher:** Naol Yadete Wordofa
+**Contact:** Nawey99@gmail.com
 
 ## In short
 
@@ -58,7 +58,7 @@ receive:
 We do not store your IP address with a report. If you are offline, the report
 waits on your phone (encrypted) and is sent the next time the app can reach
 the server. Reports are read only by the people who maintain the hymnal and
-kept for [[how long, e.g. "until resolved, and at most 12 months"]].
+kept until the problem is resolved, and at most 12 months.
 
 ### 4. Crash reports (test versions only)
 Test (beta) versions may send a crash report when the app fails: the error,
@@ -66,7 +66,7 @@ where in the app it happened, the app version, and the phone model and
 operating system. Crash reports contain no name, account, IP-derived data or
 screenshots. **Public versions of the app never send crash reports.** Crash
 reports are processed by Sentry (sentry.io) and kept for
-[[Sentry retention, e.g. 30 or 90 days per your Sentry plan]].
+90 days, after which Sentry deletes them.
 
 ## Who processes the data
 
@@ -108,25 +108,14 @@ someone types them in.
 
 - You can use the whole app without sending a report.
 - Uninstall the app, or clear its storage, to delete everything on your phone.
-- To see, correct or delete a report you sent, email [[email address]] with
+- To see, correct or delete a report you sent, email Nawey99@gmail.com with
   roughly when you sent it and what it said. We will reply within
-  [[e.g. 30 days]].
+  30 days.
 
 ## Changes
 
 If this policy changes, we will update the effective date above and, for
 important changes, tell you in the app.
-
----
-
-## በአጭሩ (Amharic summary — for review)
-
-- ውዳሴ መለያ ወይም መግቢያ አይፈልግም፤ ማስታወቂያም የለውም።
-- ቅንብሮችዎ፣ ተወዳጆችዎ፣ ታሪክዎ እና ፍለጋዎ በስልክዎ ላይ ብቻ ይቀመጣሉ።
-- መተግበሪያው የትኞቹ መዝሙሮች እንደተከፈቱ ስም-አልባ ቁጥር ይልካል (ለ90 ቀናት ይቀመጣል)።
-- ሪፖርት የሚላከው እርስዎ ሲልኩ ብቻ ነው፤ የመገናኛ አድራሻ የሚካተተው እርስዎ ከጻፉት ብቻ ነው።
-- የሙከራ (ቤታ) ስሪቶች የብልሽት ሪፖርት ሊልኩ ይችላሉ፤ ለሕዝብ የሚለቀቁ ስሪቶች አይልኩም።
-- ጥያቄ ካለዎት፦ [[email address]]
 
 ---
 

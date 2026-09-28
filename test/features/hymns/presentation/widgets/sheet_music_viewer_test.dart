@@ -431,7 +431,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(
-      find.text('Screenshots of sheet music are not permitted.'),
+      find.text('የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።'),
       findsOneWidget,
     );
 

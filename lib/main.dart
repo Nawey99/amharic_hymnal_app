@@ -12,6 +12,8 @@ import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
 import 'package:amharic_hymnal_app/core/services/crash_reporting.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
+import 'package:amharic_hymnal_app/core/services/theme_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -203,32 +205,33 @@ class MyApp extends StatelessWidget {
         }
         return bloc;
       },
-      child: MaterialApp(
-        title: 'ውዳሴ',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        locale: Locale(languageCode),
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: _getInitialPage(settingsRepository),
-        builder: (context, child) {
-          // Support system font scaling (1.0x to 2.0x) for accessibility
-          // Clamp to reasonable range to prevent UI overflow
-          final textScaler = MediaQuery.of(context).textScaler;
-          final clampedScaler = TextScaler.linear(
-            textScaler.scale(1.0).clamp(1.0, 2.0),
-          );
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: clampedScaler),
-            child: child!,
-          );
-        },
+      child: ListenableBuilder(
+        listenable: ThemeService(),
+        builder: (context, _) => _buildApp(settingsRepository, languageCode),
       ),
+    );
+  }
+
+  /// Rebuilt whenever the chosen look changes, so the palette and the
+  /// light/dark setting reach every screen at once.
+  Widget _buildApp(SettingsRepository settingsRepository, String languageCode) {
+    final theme = ThemeService();
+    return MaterialApp(
+      title: 'ውዳሴ',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.forPalette(theme.palette, Brightness.light),
+      darkTheme: AppTheme.forPalette(theme.palette, Brightness.dark),
+      themeMode: theme.themeMode,
+      locale: Locale(languageCode),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: _getInitialPage(settingsRepository),
+      builder: (context, child) => AppTextScope(child: child!),
     );
   }
 }

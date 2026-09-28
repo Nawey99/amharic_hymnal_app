@@ -60,74 +60,26 @@ void main() {
     );
   });
 
-  test('uses seek controls for one item and queue controls for playlists', () {
-    final single = mediaControlsFor(
-      hasMediaItem: true,
-      hasPlaylist: false,
-      playing: true,
-    );
-    expect(
-        single, containsAll([MediaControl.rewind, MediaControl.fastForward]));
-    expect(single, contains(MediaControl.pause));
+  test('the notification offers only playing the hymn and putting it away', () {
+    final playing = mediaControlsFor(hasMediaItem: true, playing: true);
+    expect(playing, [MediaControl.pause, MediaControl.stop]);
 
-    final playlist = mediaControlsFor(
-      hasMediaItem: true,
-      hasPlaylist: true,
-      playing: false,
-    );
-    expect(
-      playlist,
-      containsAll([MediaControl.skipToPrevious, MediaControl.skipToNext]),
-    );
-    expect(playlist, contains(MediaControl.play));
+    final paused = mediaControlsFor(hasMediaItem: true, playing: false);
+    expect(paused, [MediaControl.play, MediaControl.stop]);
 
-    expect(
-      mediaControlsFor(
-        hasMediaItem: false,
-        hasPlaylist: false,
-        playing: false,
-      ),
-      isEmpty,
-    );
-  });
+    // One hymn is open at a time: nothing that looks like track navigation.
+    for (final controls in [playing, paused]) {
+      expect(
+        controls,
+        isNot(anyElement(isIn([
+          MediaControl.skipToNext,
+          MediaControl.skipToPrevious,
+          MediaControl.rewind,
+          MediaControl.fastForward,
+        ]))),
+      );
+    }
 
-  test('builds complete serializable notification metadata', () {
-    final artwork = Uri.file('/tmp/wudase_media_artwork.png');
-    final item = buildHymnMediaItem(
-      hymnNumber: 12,
-      mediaId: 'file:///tmp/wudase-audio-12.mp3',
-      sourceType: HymnalAudioHandler.sourceTypeFile,
-      source: '/tmp/wudase-audio-12.mp3',
-      version: 'sda_new',
-      hymnTitle: 'Test hymn',
-      artworkUri: artwork,
-    );
-
-    expect(item.title, 'Test hymn');
-    expect(item.album, GlobalAudioService.appAlbumName);
-    expect(item.artUri, artwork);
-    expect(item.extras?['hymnNumber'], 12);
-    expect(item.extras?['version'], 'sda_new');
-    expect(
-      item.extras?[HymnalAudioHandler.sourceExtra],
-      '/tmp/wudase-audio-12.mp3',
-    );
-  });
-
-  test('clamps seek positions without platform-sized integer assumptions', () {
-    const duration = Duration(minutes: 2);
-
-    expect(
-      clampAudioPosition(const Duration(seconds: -5), duration),
-      Duration.zero,
-    );
-    expect(
-      clampAudioPosition(const Duration(minutes: 3), duration),
-      duration,
-    );
-    expect(
-      clampAudioPosition(const Duration(seconds: 45), null),
-      const Duration(seconds: 45),
-    );
+    expect(mediaControlsFor(hasMediaItem: false, playing: false), isEmpty);
   });
 }

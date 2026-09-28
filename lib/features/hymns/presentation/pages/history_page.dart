@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -42,21 +43,8 @@ class _HistoryPageState extends State<HistoryPage> {
     return ListenableBuilder(
       listenable: BackgroundImageService(),
       builder: (context, _) {
-        final bgService = BackgroundImageService();
         return Container(
-          decoration: BoxDecoration(
-            image: bgService.isEnabled
-                ? DecorationImage(
-                    image: const AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.8),
-                      BlendMode.darken,
-                    ),
-                  )
-                : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
-          ),
+          decoration: appBackgroundDecoration(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
@@ -69,7 +57,7 @@ class _HistoryPageState extends State<HistoryPage> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   onPressed: () => _showClearHistoryDialog(context),
                   tooltip: 'ታሪክን አጽዳ',
                 ),
@@ -81,10 +69,10 @@ class _HistoryPageState extends State<HistoryPage> {
                   final history = HistoryService.getHistoryEntries();
 
                   if (state is HymnsLoading) {
-                    return const Center(
+                    return Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.accentGreen),
+                            context.appColors.accent),
                       ),
                     );
                   }
@@ -96,10 +84,10 @@ class _HistoryPageState extends State<HistoryPage> {
                   }
 
                   if (state is! HymnsLoaded) {
-                    return const Center(
+                    return Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.accentGreen),
+                            context.appColors.accent),
                       ),
                     );
                   }
@@ -108,7 +96,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     return const EmptyStateWidget(
                       icon: Icons.history,
                       title: 'እስካሁን ታሪክ የለም',
-                      message: 'መዝሙር ሲከፍቱ እዚህ ይታያል',
+                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -130,8 +118,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   if (historyHymns.isEmpty) {
                     return const EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'በዚህ መዝሙር ስብስብ ታሪክ የለም',
-                      message: 'መዝሙር ከከፈቱ በኋላ እዚህ ይታያል',
+                      title: 'በዚህ የመዝሙር ስብስብ ውስጥ ታሪክ የለም',
+                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -140,7 +128,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       16,
                       16,
                       16,
-                      NavBarConstants.getBottomPadding(context),
+                      NavBarConstants.getBottomPadding(context) -
+                          HymnListItem.bottomGap(context),
                     ),
                     itemCount: historyHymns.length,
                     itemBuilder: (context, index) {
@@ -158,9 +147,9 @@ class _HistoryPageState extends State<HistoryPage> {
                             color: Colors.red.withValues(alpha: 0.22),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.delete_outline,
-                            color: AppColors.primaryText,
+                            color: context.appColors.primaryText,
                           ),
                         ),
                         onDismissed: (_) async {
@@ -202,21 +191,21 @@ class _HistoryPageState extends State<HistoryPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
+        backgroundColor: context.appColors.surface,
+        title: Text(
           'ታሪክን አጽዳ',
-          style: TextStyle(color: AppColors.primaryText),
+          style: TextStyle(color: context.appColors.primaryText),
         ),
-        content: const Text(
-          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጠፋ?',
-          style: TextStyle(color: AppColors.primaryText),
+        content: Text(
+          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጥፋ?',
+          style: TextStyle(color: context.appColors.primaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'ይቅር',
-              style: TextStyle(color: AppColors.primaryText),
+              style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
           TextButton(
@@ -227,9 +216,9 @@ class _HistoryPageState extends State<HistoryPage> {
                 setState(() {}); // Refresh the page
               }
             },
-            child: const Text(
+            child: Text(
               'አጽዳ',
-              style: TextStyle(color: AppColors.accentGreen),
+              style: TextStyle(color: context.appColors.accent),
             ),
           ),
         ],

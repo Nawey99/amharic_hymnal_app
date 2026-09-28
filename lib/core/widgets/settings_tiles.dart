@@ -1,25 +1,44 @@
 // lib/core/widgets/settings_tiles.dart
 import 'package:flutter/material.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
 /// Reusable settings tile widget with icon, title, and description
 class SettingsTile extends StatelessWidget {
-  final IconData icon;
+  /// Shown before the title. Leave it out to line the title up with switch
+  /// tiles in the same section.
+  final IconData? icon;
   final String title;
   final String description;
   final VoidCallback? onTap;
   final bool showTrailingIcon;
 
+  /// Replaces the chevron, for a tile that acts in place (such as a
+  /// download) instead of opening a page.
+  final IconData? trailingIcon;
+
+  /// From 0 to 1 while work the tile started is under way: shown as a bar
+  /// under the description, with [onStop] in place of the trailing icon.
+  final double? progress;
+
+  /// Replaces the percentage under the bar, e.g. while waiting to start.
+  final String? progressLabel;
+
+  final VoidCallback? onStop;
+
   const SettingsTile({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     required this.description,
     this.onTap,
     this.showTrailingIcon = true,
+    this.trailingIcon,
+    this.progress,
+    this.progressLabel,
+    this.onStop,
   });
 
   @override
@@ -28,45 +47,85 @@ class SettingsTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
       ),
-      onTap: onTap ?? () {},
+      onTap: progress == null ? (onTap ?? () {}) : null,
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: AppColors.accentGreen,
-            size: compactLandscape ? 22 : 24,
-          ),
-          SizedBox(width: compactLandscape ? 12 : 16),
+          if (icon != null) ...[
+            Icon(
+              icon,
+              color: context.appColors.accent,
+              size: compactLandscape ? 22 : 24,
+            ),
+            SizedBox(width: compactLandscape ? 12 : 16),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryText,
+                    color: context.appColors.primaryText,
                   ),
                 ),
                 SizedBox(height: compactLandscape ? 2 : 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.secondaryText,
+                    color: context.appColors.secondaryText,
                   ),
                 ),
+                if (progress != null) ...[
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 4,
+                      color: context.appColors.accent,
+                      backgroundColor:
+                          context.appColors.veil.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    progressLabel ?? '${(progress! * 100).round()}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: context.appColors.accent,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-          if (showTrailingIcon)
-            const Icon(Icons.chevron_right, color: AppColors.secondaryText),
+          if (progress != null && onStop != null)
+            IconButton(
+              tooltip: 'አቁም',
+              onPressed: onStop,
+              icon: Icon(
+                Icons.stop_circle_outlined,
+                color: context.appColors.primaryText,
+              ),
+            )
+          else if (trailingIcon != null) ...[
+            const SizedBox(width: 12),
+            Icon(
+              trailingIcon,
+              color: context.appColors.accent,
+              size: compactLandscape ? 24 : 28,
+            ),
+          ] else if (showTrailingIcon)
+            Icon(Icons.chevron_right, color: context.appColors.secondaryText),
         ],
       ),
     );
@@ -94,7 +153,7 @@ class SettingsSwitchTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
@@ -108,29 +167,58 @@ class SettingsSwitchTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryText,
+                    color: context.appColors.primaryText,
                   ),
                 ),
                 SizedBox(height: compactLandscape ? 2 : 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.secondaryText,
+                    color: context.appColors.secondaryText,
                   ),
                 ),
               ],
             ),
           ),
-          Switch(
-            value: value,
-            activeColor: AppColors.accentGreen,
-            onChanged: onChanged,
-          ),
+          const SizedBox(width: 12),
+          AppSwitch(value: value, onChanged: onChanged),
         ],
+      ),
+    );
+  }
+}
+
+/// The app's switch. Off is a choice, not a disabled control, so the thumb
+/// stays bright and the track visible.
+class AppSwitch extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  const AppSwitch({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: value,
+      onChanged: onChanged,
+      thumbColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? Colors.white
+            : context.appColors.primaryText.withValues(alpha: 0.9),
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? context.appColors.accent
+            : context.appColors.veil.withValues(alpha: 0.16),
+      ),
+      trackOutlineColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? Colors.transparent
+            : context.appColors.veil.withValues(alpha: 0.42),
       ),
     );
   }
@@ -175,18 +263,18 @@ class SettingsDropdownTile extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryText,
+                color: context.appColors.primaryText,
               ),
             ),
             SizedBox(height: compactLandscape ? 2 : 4),
             Text(
               description,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.secondaryText,
+                color: context.appColors.secondaryText,
               ),
             ),
           ],
@@ -197,23 +285,23 @@ class SettingsDropdownTile extends StatelessWidget {
           child: DropdownButtonFormField<String>(
             value: selectedValue,
             isExpanded: true,
-            dropdownColor: AppColors.surface,
+            dropdownColor: context.appColors.surface,
             borderRadius: BorderRadius.circular(14),
             menuMaxHeight: 320,
-            icon: const Icon(
+            icon: Icon(
               Icons.expand_more,
-              color: AppColors.accentGreen,
+              color: context.appColors.accent,
             ),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: AppColors.primaryText,
+              color: context.appColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               isDense: true,
               filled: true,
-              fillColor: AppColors.surface.withValues(alpha: 0.72),
+              fillColor: context.appColors.surface.withValues(alpha: 0.72),
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: compactLandscape ? 8 : 12,
@@ -221,13 +309,13 @@ class SettingsDropdownTile extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: AppColors.divider.withValues(alpha: 0.5),
+                  color: context.appColors.divider.withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: AppColors.divider.withValues(alpha: 0.55),
+                  color: context.appColors.divider.withValues(alpha: 0.55),
                   width: 1,
                 ),
               ),
@@ -240,8 +328,8 @@ class SettingsDropdownTile extends StatelessWidget {
                     _labelForItem(item),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.primaryText,
+                    style: TextStyle(
+                      color: context.appColors.primaryText,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'NotoSansEthiopic',
@@ -260,8 +348,8 @@ class SettingsDropdownTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: isSelected
-                        ? AppColors.accentGreen
-                        : AppColors.primaryText,
+                        ? context.appColors.accent
+                        : context.appColors.primaryText,
                     fontSize: 15,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     fontFamily: 'NotoSansEthiopic',
@@ -276,7 +364,7 @@ class SettingsDropdownTile extends StatelessWidget {
         return GlassContainer(
           borderRadius: 16,
           blurSigma: 12,
-          opacity: 0.12,
+          opacity: context.appColors.glassOpacity,
           padding: EdgeInsets.symmetric(
             horizontal: compactLandscape ? 14 : 16,
             vertical: compactLandscape ? 8 : 12,
@@ -365,7 +453,7 @@ class SettingsSliderTile extends StatelessWidget {
     return GlassContainer(
       borderRadius: 16,
       blurSigma: 12,
-      opacity: 0.12,
+      opacity: context.appColors.glassOpacity,
       padding: EdgeInsets.symmetric(
         horizontal: compactLandscape ? 14 : 16,
         vertical: compactLandscape ? 8 : 12,
@@ -379,20 +467,20 @@ class SettingsSliderTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryText,
+                    color: context.appColors.primaryText,
                   ),
                 ),
               ),
               if (highlight != null)
                 Text(
                   finalValue.toStringAsFixed(0),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.accentGreen,
+                    color: context.appColors.accent,
                   ),
                 ),
             ],
@@ -402,7 +490,7 @@ class SettingsSliderTile extends StatelessWidget {
             value: finalValue,
             min: min,
             max: max,
-            activeColor: AppColors.accentGreen,
+            activeColor: context.appColors.accent,
             onChanged: onChanged,
           ),
         ],

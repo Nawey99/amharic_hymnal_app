@@ -131,7 +131,7 @@ void main() {
     await tester.tap(find.text('ዘማሪ ሀ'));
     await tester.pumpAndSettle();
 
-    expect(find.text('ደራሲ፦ ዘማሪ ሀ'), findsOneWidget);
+    expect(find.text('ዘማሪ ሀ'), findsOneWidget);
     expect(find.text('መዝሙር 1'), findsOneWidget);
     expect(find.text('መዝሙር 3'), findsOneWidget);
     expect(find.text('መዝሙር 2'), findsNothing);
@@ -146,7 +146,7 @@ void main() {
       },
     );
 
-    expect(find.text('ደራሲዎች አልተገኙም'), findsOneWidget);
+    expect(find.text('ዘማሪዎች አልተገኙም'), findsOneWidget);
   });
 
   testWidgets('shows the error when hymns cannot be loaded', (tester) async {

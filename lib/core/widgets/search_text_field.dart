@@ -1,10 +1,9 @@
 // lib/core/widgets/search_text_field.dart
 import 'package:flutter/material.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 /// Pure UI-only search text field widget
 ///
@@ -79,8 +78,6 @@ class _SearchTextFieldState extends State<SearchTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
       child: ClipRRect(
@@ -88,7 +85,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
         child: GlassContainer(
           borderRadius: 20.0,
           blurSigma: 18.0,
-          opacity: 0.25,
+          opacity: context.appColors.glassOpacityOverPhoto,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           child: TextField(
             controller: _textController,
@@ -103,19 +100,19 @@ class _SearchTextFieldState extends State<SearchTextField> {
                 false, // Prevent keyboard interference with Amharic
             autocorrect: false, // Prevent autocorrect interference
             style: TextStyle(
-              color: AppColors.primaryText,
-              fontSize: settingsRepository.getFontSize(),
+              color: context.appColors.primaryText,
+              fontSize: FontSizeScope.of(context),
               fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
-                color: AppColors.tertiaryText,
-                fontSize: settingsRepository.getFontSize() * 0.9,
+                color: context.appColors.tertiaryText,
+                fontSize: FontSizeScope.of(context) * 0.9,
                 fontFamily: 'NotoSansEthiopic',
               ),
               prefixIcon:
-                  const Icon(Icons.search, color: AppColors.primaryText),
+                  Icon(Icons.search, color: context.appColors.primaryText),
               suffixIcon: _buildSuffixIcon(),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -143,9 +140,9 @@ class _SearchTextFieldState extends State<SearchTextField> {
 
         // Show clear button (wrapped in Tooltip to prevent ticker issues)
         return Tooltip(
-          message: 'Clear search',
+          message: 'ፍለጋውን አጽዳ',
           child: IconButton(
-            icon: const Icon(Icons.clear, color: AppColors.primaryText),
+            icon: Icon(Icons.clear, color: context.appColors.primaryText),
             onPressed: _handleClear,
           ),
         );

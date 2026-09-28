@@ -11,8 +11,8 @@ import '../../../../helpers/fakes.dart';
 import '../../../../helpers/list_page_helpers.dart';
 import '../../../../helpers/test_app.dart';
 
-const _noFavoritesYet = 'እስካሁን ምንም ተወዳጆች የሉም';
-const _noFavoritesFound = 'ምንም ተወዳጆች አልተገኙም';
+const _noFavoritesYet = 'እስካሁን ምንም የተመረጠ ተወዳጅ መዝሙር የለም';
+const _noFavoritesFound = 'ምንም ተወዳጅ መዝሙር አልተገኘም';
 
 void main() {
   late List<Hymn> opened;

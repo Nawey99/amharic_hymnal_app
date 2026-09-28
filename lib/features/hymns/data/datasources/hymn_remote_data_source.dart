@@ -39,8 +39,8 @@ class HymnRemoteDataSource {
   static const freshnessWindow = Duration(minutes: 1);
 
   /// How often an edition is downloaded whole instead of patched. Deltas do
-  /// not report songs deleted outright, nor re-scans of pages an edition
-  /// borrows from another, so a periodic full copy catches both.
+  /// not report songs removed outright rather than tombstoned, so a periodic
+  /// full copy catches them.
   static const fullRefreshInterval = Duration(days: 7);
 
   static const _checkTimeout = Duration(seconds: 5);

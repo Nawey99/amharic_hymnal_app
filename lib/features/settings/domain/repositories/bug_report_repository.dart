@@ -5,7 +5,7 @@ enum ReportType {
   sheetMusic('SHEET_MUSIC', 'የኖታ ስህተት'),
   audio('AUDIO', 'የድምፅ ችግር'),
   appBug('APP_BUG', 'የመተግበሪያ ችግር'),
-  suggestion('SUGGESTION', 'ሀሳብ'),
+  suggestion('SUGGESTION', 'የማሻሻያ ሐሳብ'),
   other('OTHER', 'ሌላ');
 
   const ReportType(this.apiValue, this.label);

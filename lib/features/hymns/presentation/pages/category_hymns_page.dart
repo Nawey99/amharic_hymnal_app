@@ -2,9 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
@@ -62,26 +63,14 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
 
   Widget _buildPage(BuildContext context, BackgroundImageService bgService) {
     return Container(
-      decoration: BoxDecoration(
-        image: bgService.isEnabled
-            ? DecorationImage(
-                image: const AssetImage('assets/images/background.jpg'),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withValues(alpha: 0.8),
-                  BlendMode.darken,
-                ),
-              )
-            : null,
-        color: bgService.isEnabled ? null : AppColors.primaryBackground,
-      ),
+      decoration: appBackgroundDecoration(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
-            widget.author != null ? 'ደራሲ፦ ${widget.author}' : widget.category,
-            style: const TextStyle(
-              color: AppColors.primaryText,
+            widget.author ?? widget.category,
+            style: TextStyle(
+              color: context.appColors.primaryText,
               fontFamily: 'NotoSansEthiopic',
               fontWeight: FontWeight.bold,
             ),
@@ -93,9 +82,9 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
               ? [
                   // Sort control for Hagerigna mode only
                   PopupMenuButton<String>(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.sort,
-                      color: AppColors.primaryText,
+                      color: context.appColors.primaryText,
                     ),
                     onSelected: (value) {
                       if (value == _sortType) return;
@@ -114,8 +103,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : Icons.check_box_outline_blank,
                               size: 20,
                               color: _sortType == 'number'
-                                  ? AppColors.accentGreen
-                                  : AppColors.secondaryText,
+                                  ? context.appColors.accent
+                                  : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
                             const Text(
@@ -137,8 +126,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : Icons.check_box_outline_blank,
                               size: 20,
                               color: _sortType == 'name'
-                                  ? AppColors.accentGreen
-                                  : AppColors.secondaryText,
+                                  ? context.appColors.accent
+                                  : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
                             const Text(
@@ -159,10 +148,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
           child: BlocBuilder<HymnsBloc, HymnsState>(
             builder: (context, state) {
               if (state is HymnsLoading) {
-                return const Center(
+                return Center(
                   child: CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(AppColors.accentGreen),
+                        AlwaysStoppedAnimation<Color>(context.appColors.accent),
                   ),
                 );
               }
@@ -173,8 +162,8 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                     padding: const EdgeInsets.all(32.0),
                     child: Text(
                       state.message,
-                      style: const TextStyle(
-                        color: AppColors.primaryText,
+                      style: TextStyle(
+                        color: context.appColors.primaryText,
                         fontSize: 16,
                         fontFamily: 'NotoSansEthiopic',
                       ),
@@ -218,13 +207,16 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
                     title: widget.author != null
-                        ? 'ለዚህ ደራሲ መዝሙር አልተገኘም'
+                        ? 'ለዚህ ዘማሪ መዝሙር አልተገኘም'
                         : 'በዚህ ምድብ መዝሙር አልተገኘም',
                   );
                 }
 
                 // Add bottom padding to prevent content from going under navigation bar
-                final bottomPadding = NavBarConstants.getBottomPadding(context);
+                // The last item's own gap already counts towards it.
+                final bottomPadding =
+                    NavBarConstants.getBottomPadding(context) -
+                        HymnListItem.bottomGap(context);
 
                 return ListView.builder(
                   padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding),

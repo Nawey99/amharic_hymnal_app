@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -113,21 +114,8 @@ class _FavoritesPageState extends State<FavoritesPage>
     return ListenableBuilder(
       listenable: BackgroundImageService(),
       builder: (context, _) {
-        final bgService = BackgroundImageService();
         return Container(
-          decoration: BoxDecoration(
-            image: bgService.isEnabled
-                ? DecorationImage(
-                    image: const AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black.withValues(alpha: 0.8),
-                      BlendMode.darken,
-                    ),
-                  )
-                : null,
-            color: bgService.isEnabled ? null : AppColors.primaryBackground,
-          ),
+          decoration: appBackgroundDecoration(context),
           child: SafeArea(
             child: Column(
               children: [
@@ -154,10 +142,10 @@ class _FavoritesPageState extends State<FavoritesPage>
                       // NOT when toggling favorites (which keeps HymnsLoaded state)
                       if (state is HymnsInitial ||
                           (state is HymnsLoading && favorites.isEmpty)) {
-                        return const Center(
+                        return Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.accentGreen),
+                                context.appColors.accent),
                           ),
                         );
                       }
@@ -203,7 +191,7 @@ class _FavoritesPageState extends State<FavoritesPage>
           tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
-            color: AppColors.primaryText,
+            color: context.appColors.primaryText,
           ),
           onPressed: () => _toggleSearch(),
         ),
@@ -222,7 +210,7 @@ class _FavoritesPageState extends State<FavoritesPage>
     return AppSearchBar(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'ተወዳጆችን ይፈልጉ...',
+      hintText: 'ተወዳጅ መዝሙሮችን ይፈልጉ...',
       autofocus: false,
       onChanged: (value) {
         _handleSearchChange();
@@ -289,7 +277,9 @@ class _FavoritesPageState extends State<FavoritesPage>
     }
 
     // Add bottom padding to prevent content from going under navigation bar
-    final bottomPadding = NavBarConstants.getBottomPadding(context);
+    // The last item's own gap already counts towards it.
+    final bottomPadding = NavBarConstants.getBottomPadding(context) -
+        HymnListItem.bottomGap(context);
 
     return ListView.builder(
       controller: _scrollController,

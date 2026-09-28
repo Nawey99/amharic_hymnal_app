@@ -105,6 +105,10 @@ class HymnalVersionService extends ChangeNotifier {
         (isSda && year != null ? 'የ$year ውዳሴ መዝሙር' : title ?? id);
     final baseShortLabel =
         known?.shortLabel ?? (isSda && year != null ? '$year ውዳሴ' : baseLabel);
+    // Shown where space is tight, e.g. "1961: 165"; never marked "being
+    // prepared", as a book with no songs has no hymn to point at.
+    final briefLabel =
+        known?.briefLabel ?? (year != null ? '$year' : title ?? id);
     // `songs: false` is a hymnal still being prepared: list it as such rather
     // than as an empty book.
     final capabilities = json['capabilities'];
@@ -115,6 +119,7 @@ class HymnalVersionService extends ChangeNotifier {
       id: id,
       label: ready ? baseLabel : '$baseLabel$notReady',
       shortLabel: ready ? baseShortLabel : '$baseShortLabel$notReady',
+      briefLabel: briefLabel,
       isSda: isSda,
       hasCategories: isSda,
       fallbackDatabaseVersion: known?.fallbackDatabaseVersion ?? id,

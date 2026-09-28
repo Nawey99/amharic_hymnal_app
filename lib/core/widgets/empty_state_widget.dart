@@ -1,10 +1,9 @@
 // lib/core/widgets/empty_state_widget.dart
 import 'package:flutter/material.dart';
 
-import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
-import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 
 /// Reusable empty state widget with icon, title, and message
 class EmptyStateWidget extends StatelessWidget {
@@ -12,7 +11,9 @@ class EmptyStateWidget extends StatelessWidget {
   final String title;
   final String? message;
   final double iconSize;
-  final Color iconColor;
+
+  /// Left unset, the palette's accent is used.
+  final Color? iconColor;
 
   const EmptyStateWidget({
     super.key,
@@ -20,13 +21,12 @@ class EmptyStateWidget extends StatelessWidget {
     required this.title,
     this.message,
     this.iconSize = 64,
-    this.iconColor = AppColors.accentGreen,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-    final fontSize = settingsRepository.getFontSize();
+    final fontSize = FontSizeScope.of(context);
 
     return Center(
       child: Padding(
@@ -34,7 +34,7 @@ class EmptyStateWidget extends StatelessWidget {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -42,13 +42,13 @@ class EmptyStateWidget extends StatelessWidget {
               Icon(
                 icon,
                 size: iconSize,
-                color: iconColor,
+                color: iconColor ?? context.appColors.accent,
               ),
               const SizedBox(height: 16),
               Text(
                 title,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: fontSize * 1.1,
                   fontWeight: FontWeight.w500,
                   fontFamily: 'NotoSansEthiopic',
@@ -60,7 +60,7 @@ class EmptyStateWidget extends StatelessWidget {
                 Text(
                   message!,
                   style: TextStyle(
-                    color: AppColors.secondaryText,
+                    color: context.appColors.secondaryText,
                     fontSize: fontSize * 0.9,
                     fontFamily: 'NotoSansEthiopic',
                   ),
@@ -88,8 +88,7 @@ class ErrorStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsRepository = sl<SettingsRepository>();
-    final fontSize = settingsRepository.getFontSize();
+    final fontSize = FontSizeScope.of(context);
 
     return Center(
       child: Padding(
@@ -97,21 +96,21 @@ class ErrorStateWidget extends StatelessWidget {
         child: GlassContainer(
           borderRadius: 16.0,
           blurSigma: 12.0,
-          opacity: 0.15,
+          opacity: context.appColors.glassOpacity,
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppColors.accentGreen,
+                color: context.appColors.accent,
               ),
               const SizedBox(height: 16),
               Text(
                 message,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: context.appColors.primaryText,
                   fontSize: fontSize,
                   fontFamily: 'NotoSansEthiopic',
                 ),
@@ -122,10 +121,10 @@ class ErrorStateWidget extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onRetry,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentGreen,
-                    foregroundColor: AppColors.primaryText,
+                    backgroundColor: context.appColors.accent,
+                    foregroundColor: context.appColors.primaryText,
                   ),
-                  child: const Text('Retry'),
+                  child: const Text('እንደገና ይሞክሩ'),
                 ),
               ],
             ],

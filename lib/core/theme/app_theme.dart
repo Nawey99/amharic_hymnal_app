@@ -2,135 +2,153 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
+import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 class AppTheme {
-  static ThemeData get darkTheme {
-    return ThemeData.dark().copyWith(
-      scaffoldBackgroundColor: AppColors.primaryBackground,
+  /// The theme for a palette in one brightness, carrying the colours the
+  /// screens read through `context.appColors`.
+  static ThemeData forPalette(AppPalette palette, Brightness brightness) {
+    return _build(AppThemeCatalog.colorsFor(palette, brightness), brightness);
+  }
+
+  /// The app's own dark look, kept for code and tests that ask for it by
+  /// name.
+  static ThemeData get darkTheme =>
+      forPalette(AppPalette.emerald, Brightness.dark);
+
+  static ThemeData _build(AppColorsExtension colors, Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final base = isDark ? ThemeData.dark() : ThemeData.light();
+    return base.copyWith(
+      extensions: <ThemeExtension<dynamic>>[colors],
+      scaffoldBackgroundColor: colors.primaryBackground,
       // Note: primaryColor is ignored when colorScheme is set, so we only use colorScheme
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.accentGreen,
-        secondary: AppColors.accentGreenLight,
-        surface: AppColors.surface,
-        error: Colors.red,
-        onPrimary: AppColors.primaryText,
-        onSecondary: AppColors.primaryText,
-        onSurface: AppColors.primaryText,
-        onError: AppColors.primaryText,
+      colorScheme: ColorScheme(
+        brightness: brightness,
+        primary: colors.accent,
+        secondary: colors.accentLight,
+        surface: colors.surface,
+        error: isDark ? Colors.red.shade400 : Colors.red.shade700,
+        onPrimary: colors.onAccent,
+        onSecondary: colors.onAccent,
+        onSurface: colors.primaryText,
+        onError: colors.primaryText,
       ),
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         displayLarge: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 32,
           fontWeight: FontWeight.bold,
         ),
         displayMedium: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 28,
           fontWeight: FontWeight.bold,
         ),
         displaySmall: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
         headlineLarge: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
         headlineMedium: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
         headlineSmall: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
         titleLarge: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
         titleMedium: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         titleSmall: TextStyle(
-          color: AppColors.secondaryText,
+          color: colors.secondaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         bodyLarge: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 16,
         ),
         bodyMedium: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
         ),
         bodySmall: TextStyle(
-          color: AppColors.secondaryText,
+          color: colors.secondaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
         ),
         labelLarge: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         labelMedium: TextStyle(
-          color: AppColors.secondaryText,
+          color: colors.secondaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
         ),
         labelSmall: TextStyle(
-          color: AppColors.tertiaryText,
+          color: colors.tertiaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 10,
         ),
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primaryBackground,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colors.primaryBackground,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: AppColors.primaryText,
+          color: colors.primaryText,
           fontFamily: 'NotoSansEthiopic',
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: AppColors.primaryText),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: IconThemeData(color: colors.primaryText),
+        systemOverlayStyle:
+            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       ),
       cardTheme: CardTheme(
-        color: AppColors.surface,
+        color: colors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      dividerColor: AppColors.divider,
+      dividerColor: colors.divider,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: colors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -141,17 +159,17 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.accentGreen, width: 2),
+          borderSide: BorderSide(color: colors.accent, width: 2),
         ),
-        hintStyle: const TextStyle(
-          color: AppColors.tertiaryText,
+        hintStyle: TextStyle(
+          color: colors.tertiaryText,
           fontFamily: 'NotoSansEthiopic',
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.surface,
-          foregroundColor: AppColors.primaryText,
+          backgroundColor: colors.surface,
+          foregroundColor: colors.primaryText,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -159,17 +177,34 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.primaryBackground,
-        selectedItemColor: AppColors.accentGreen,
-        unselectedItemColor: AppColors.secondaryText,
-        selectedLabelStyle: TextStyle(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: colors.primaryBackground,
+        selectedItemColor: colors.accent,
+        unselectedItemColor: colors.secondaryText,
+        selectedLabelStyle: const TextStyle(
           fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
         ),
-        unselectedLabelStyle: TextStyle(
+        unselectedLabelStyle: const TextStyle(
           fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
+        ),
+      ),
+      // Messages float as a card, so they never become a strip across the
+      // floating navigation bar. The shell lifts them above the bar.
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: colors.surface,
+        contentTextStyle: TextStyle(
+          color: colors.primaryText,
+          fontSize: 14,
+          fontFamily: 'NotoSansEthiopic',
+        ),
+        actionTextColor: colors.accent,
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(color: colors.glassBorder),
         ),
       ),
     );

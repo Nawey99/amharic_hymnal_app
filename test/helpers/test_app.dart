@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -26,6 +27,13 @@ Future<FakeHymnLocalDataSource> setUpTestApp({
 }) async {
   await di.sl.reset();
   HistoryService.resetForTesting();
+  PackageInfo.setMockInitialValues(
+    appName: 'ውዳሴ',
+    packageName: 'com.nawey99.wudase',
+    version: '1.2.3',
+    buildNumber: '4',
+    buildSignature: '',
+  );
   SharedPreferences.setMockInitialValues({
     'onboarding_completed': true,
     'selected_language': 'am',

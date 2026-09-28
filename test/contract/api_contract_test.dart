@@ -7,7 +7,6 @@ import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/app_update_service.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
-import 'package:amharic_hymnal_app/core/services/sheet_music_bulk_download_service.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
 
@@ -33,7 +32,6 @@ void main() {
       'song_1975_0130.json': '/api/v1/songs/{songId}',
       'sync_1975_sample.json': '/api/v1/sync',
       'manifest_2004.json': '/api/v1/manifest',
-      'sheet_pages_1961_sample.json': '/api/v1/downloads/sheet-music/pages',
     };
 
     responses.forEach((fixture, path) {
@@ -258,26 +256,6 @@ void main() {
       expect(minimum, '1.0.0');
       expect(await service('0.9.9').requiredVersion('am-sda-2004'), '1.0.0');
       expect(await service('1.0.0').requiredVersion('am-sda-2004'), isNull);
-    });
-
-    test('the recorded page list plans a verified download', () async {
-      final api = FakeHymnalApi(baseUrl: base)
-        ..on('/downloads/sheet-music/pages',
-            (_) => _recorded('sheet_pages_1961_sample.json'));
-      final recorded =
-          apiFixtureData<Map<String, dynamic>>('sheet_pages_1961_sample.json');
-
-      final plan = await SheetMusicBulkDownloadService(
-        baseUrl: base,
-        client: api.client,
-        cache: MemoryMediaCache(),
-      ).plan('am-sda-1961');
-
-      expect(plan.pageCount, 4);
-      expect(plan.missingBytes, recorded['totalSizeBytes']);
-      expect(plan.missing.every((source) => source.isVerifiable), isTrue);
-      expect(plan.missing.every((source) => source.fileExtension == '.webp'),
-          isTrue);
     });
 
     test('recorded errors surface their stable codes', () async {

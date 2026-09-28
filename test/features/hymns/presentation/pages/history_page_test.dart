@@ -9,7 +9,7 @@ import '../../../../helpers/list_page_helpers.dart';
 import '../../../../helpers/test_app.dart';
 
 const _noHistory = 'እስካሁን ታሪክ የለም';
-const _noHistoryInBook = 'በዚህ መዝሙር ስብስብ ታሪክ የለም';
+const _noHistoryInBook = 'በዚህ የመዝሙር ስብስብ ውስጥ ታሪክ የለም';
 
 void main() {
   late List<Hymn> opened;
@@ -86,7 +86,7 @@ void main() {
 
     await tester.tap(find.byTooltip('ታሪክን አጽዳ'));
     await tester.pumpAndSettle();
-    expect(find.text('የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጠፋ?'), findsOneWidget);
+    expect(find.text('የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጥፋ?'), findsOneWidget);
 
     await tester.tap(find.text('አጽዳ'));
     await tester.pumpAndSettle();

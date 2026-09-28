@@ -1,7 +1,7 @@
 // lib/core/widgets/glass_container.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
+import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 
 /// A reusable glassmorphism container widget with frosted glass effect
 class GlassContainer extends StatelessWidget {
@@ -12,7 +12,10 @@ class GlassContainer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
   final double blurSigma;
-  final double opacity;
+
+  /// How solid the frost is. Left unset, the palette decides, which is
+  /// what lets a light palette use a heavier frost than a dark one.
+  final double? opacity;
   final Color? color;
   final Border? border;
   final VoidCallback? onTap;
@@ -27,7 +30,7 @@ class GlassContainer extends StatelessWidget {
     this.borderRadius = 12.0,
     this.blurSigma =
         8.0, // Reduced default from 10.0 to 8.0 for better performance
-    this.opacity = 0.1,
+    this.opacity,
     this.color,
     this.border,
     this.onTap,
@@ -38,6 +41,8 @@ class GlassContainer extends StatelessWidget {
     // Optimize blur: use animated value with Tween for smooth transitions
     // Cap at 8 for GPU-accelerated performance on low-tier devices
     final optimizedBlurSigma = (blurSigma > 8 ? 8.0 : blurSigma).toDouble();
+    final colors = context.appColors;
+    final frost = opacity ?? colors.glassOpacity;
 
     final container = RepaintBoundary(
       child: AnimatedContainer(
@@ -77,21 +82,18 @@ class GlassContainer extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      (color ?? AppColors.surface).withValues(
-                          alpha: opacity * 1.5), // Increased opacity
-                      (color ?? AppColors.surface)
-                          .withValues(alpha: opacity * 1.2),
+                      (color ?? colors.glassTint)
+                          .withValues(alpha: frost * 1.5),
+                      (color ?? colors.glassTint)
+                          .withValues(alpha: frost * 1.2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(borderRadius),
                   border: border ??
-                      Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 1.5,
-                      ),
+                      Border.all(color: colors.glassBorder, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
+                      color: colors.glassShadow,
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -111,8 +113,8 @@ class GlassContainer extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(borderRadius),
-          splashColor: Colors.white.withValues(alpha: 0.1),
-          highlightColor: Colors.white.withValues(alpha: 0.05),
+          splashColor: context.appColors.veil.withValues(alpha: 0.1),
+          highlightColor: context.appColors.veil.withValues(alpha: 0.05),
           child: container,
         ),
       );
@@ -146,9 +148,10 @@ class GlassCard extends StatelessWidget {
       margin: margin ?? const EdgeInsets.only(bottom: 12),
       borderRadius: borderRadius,
       blurSigma: 12.0,
-      opacity: 0.3, // Increased opacity for better visibility
-      color: AppColors
-          .surface, // Use surface color instead of white for better contrast
+      // A card carries more frost than a plain panel, so its text holds
+      // against the photograph behind it.
+      opacity: context.appColors.glassOpacityOverPhoto,
+      color: context.appColors.glassTint,
       onTap: onTap,
       child: child,
     );

@@ -149,14 +149,14 @@ void main() {
         );
 
     await tester.pumpWidget(player(null));
-    expect(find.text('መሣሪያ ብቻ'), findsNothing);
+    expect(find.text('የሙዚቃ መሣሪያ ብቻ'), findsNothing);
 
     await tester.pumpWidget(player(const HymnAudioInfo(
       file: HymnMediaFile(url: 'https://api.example.test/a/7'),
       isSynthesized: true,
       attribution: 'Rendered from MIDI.',
     )));
-    expect(find.text('መሣሪያ ብቻ'), findsOneWidget);
+    expect(find.text('የሙዚቃ መሣሪያ ብቻ'), findsOneWidget);
 
     await tester.tap(find.text('Title'));
     for (var frame = 0; frame < 14; frame++) {
@@ -201,10 +201,7 @@ void main() {
     ));
     await tester.pump();
 
-    expect(
-      find.text('በሌሎች መጻሕፍት፦ 1961 ውዳሴ ቁ. 165 · 2004 ውዳሴ ቁ. 132'),
-      findsOneWidget,
-    );
+    expect(find.text('1961: 165 · 2004: 132'), findsOneWidget);
   });
 
   testWidgets('bundled hymns show no other-books line', (tester) async {
@@ -261,8 +258,73 @@ void main() {
       }),
     );
 
-    expect(find.text('በሌሎች መጻሕፍት፦ 2004 ውዳሴ ቁ. 132'), findsOneWidget);
-    expect(find.text('ተመሳሳይ መዝሙሮች፦ 2004 ውዳሴ ቁ. 112'), findsOneWidget);
+    expect(find.text('2004: 132'), findsOneWidget);
+    expect(find.text('2004: 112'), findsOneWidget);
+  });
+
+  testWidgets('both notes stay on one line each, above the lyrics',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await pumpLine(
+      tester,
+      serviceAnswering({
+        'otherEditions': [
+          same,
+          {
+            'songId': 'am-sda-1961-0165',
+            'number': 165,
+            'versionCode': 'am-sda-1961',
+          },
+          {
+            'songId': 'am-hagerigna-0007',
+            'number': 7,
+            'versionCode': 'am-hagerigna',
+          },
+        ],
+        'similarEditions': [similar],
+      }),
+    );
+
+    final oneLine = tester
+        .getSize(find.byKey(const ValueKey('similar-editions-line')))
+        .height;
+    for (final key in ['other-editions-line', 'similar-editions-line']) {
+      expect(
+        tester.getSize(find.byKey(ValueKey(key))).height,
+        oneLine,
+        reason: '$key wraps onto a second line',
+      );
+    }
+    expect(
+      tester.getSize(find.byType(OtherEditionsLine)).height,
+      lessThan(48),
+      reason: 'both notes together stay a thin strip above the lyrics',
+    );
+  });
+
+  testWidgets('a screen reader still hears the book and number in full',
+      (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpLine(
+      tester,
+      serviceAnswering({
+        'otherEditions': [same],
+        'similarEditions': [similar],
+      }),
+    );
+
+    expect(
+      find.bySemanticsLabel('በሌሎች መጻሕፍት፦ የ2004 ውዳሴ መዝሙር ቁጥር 132'),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel('ተመሳሳይ መዝሙሮች፦ የ2004 ውዳሴ መዝሙር ቁጥር 112'),
+      findsOneWidget,
+    );
+    handle.dispose();
   });
 
   testWidgets('a hymn with only similar hymns shows only that line',

@@ -32,17 +32,17 @@ class AppLocalizations {
 
   String get languageDescription => _localizedValue({
         'en': 'Select the language for hymns',
-        'am': 'ለመዝሙሮች ቋንቋ ይምረጡ',
+        'am': 'የመዝሙሮችን ቋንቋ ይምረጡ',
       });
 
   String get versionLabel => _localizedValue({
         'en': 'Version',
-        'am': 'ሥሪት',
+        'am': 'ስሪት',
       });
 
   String get versionDescription => _localizedValue({
         'en': 'Select hymnal version',
-        'am': 'የመዝሙር ሥሪት ይምረጡ',
+        'am': 'የመዝሙር ስሪት ይምረጡ',
       });
 
   String get fontSizeLabel => _localizedValue({
@@ -57,22 +57,22 @@ class AppLocalizations {
 
   String get backgroundImageDescription => _localizedValue({
         'en': 'Show background image in hymn view',
-        'am': 'በመዝሙር እይታ ውስጥ የጀርባ ምስል አሳይ',
+        'am': 'በመዝሙር ገጽ ላይ የጀርባ ምስል አሳይ',
       });
 
   String get keepScreenOnLabel => _localizedValue({
         'en': 'Keep Screen On',
-        'am': 'ማያ ማብራት',
+        'am': 'ማያ እንዳይጠፋ',
       });
 
   String get keepScreenOnDescription => _localizedValue({
         'en': 'Prevent screen from turning off',
-        'am': 'ማያ እንዳይጠፋ ይከለክላል',
+        'am': 'መዝሙር በሚነበብበት ጊዜ ማያ እንዳይጠፋ ያደርጋል',
       });
 
   String get developmentContributionLabel => _localizedValue({
         'en': 'Development & Contribution',
-        'am': 'ልማት እና አስተዋፅዖ',
+        'am': 'ማበልጸግ እና ተሳትፎ',
       });
 
   String get developmentContributionDescription => _localizedValue({
@@ -87,7 +87,7 @@ class AppLocalizations {
 
   String get donateDescription => _localizedValue({
         'en': 'Support the development of this app',
-        'am': 'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
+        'am': 'የዚህን መተግበሪያ እድገት ይደግፉ',
       });
 
   String get contentSection => _localizedValue({
@@ -97,7 +97,7 @@ class AppLocalizations {
 
   String get displaySection => _localizedValue({
         'en': 'Display',
-        'am': 'አሳያ',
+        'am': 'ማሳያ',
       });
 
   String get generalSection => _localizedValue({
@@ -130,7 +130,7 @@ class AppLocalizations {
   // Hymn Detail Page
   String get sheetMusic => _localizedValue({
         'en': 'Sheet Music',
-        'am': 'የሙዚቃ ወረቀት',
+        'am': 'የሙዚቃ ኖታ',
       });
 
   String get audioPlayer => _localizedValue({
@@ -140,17 +140,17 @@ class AppLocalizations {
 
   String get audioPlayerComingSoon => _localizedValue({
         'en': 'Audio player feature coming soon',
-        'am': 'የድምፅ ማጫወቻ ባህሪ በቅርቡ ይመጣል',
+        'am': 'የድምፅ ማጫወቻ አገልግሎት በቅርቡ ይቀርባል',
       });
 
   String get lyricsCopied => _localizedValue({
         'en': 'Lyrics copied to clipboard!',
-        'am': 'የመዝሙር ግጥሞች ወደ ደብተር ተገልብጠዋል!',
+        'am': 'የመዝሙሩ ግጥም ተቀድቷል!',
       });
 
   String get sheetMusicComingSoon => _localizedValue({
         'en': 'Sheet music viewer\n(Coming soon)',
-        'am': 'የሙዚቃ ወረቀት አሳያ\n(በቅርቡ ይመጣል)',
+        'am': 'የኖታ ማሳያ\n(በቅርቡ ይቀርባል)',
       });
 
   // Common messages
@@ -161,17 +161,17 @@ class AppLocalizations {
 
   String get noFavoritesYet => _localizedValue({
         'en': 'No favorites yet',
-        'am': 'እስካሁን ምንም ተወዳጆች የሉም',
+        'am': 'እስካሁን ምንም የተመረጠ ተወዳጅ መዝሙር የለም',
       });
 
   String get noFavoritesFound => _localizedValue({
         'en': 'No favorites found',
-        'am': 'ምንም ተወዳጆች አልተገኙም',
+        'am': 'ምንም ተወዳጅ መዝሙር አልተገኘም',
       });
 
   String get addToFavoritesHint => _localizedValue({
         'en': 'Tap the heart icon on any hymn to add it to favorites',
-        'am': 'ማንኛውንም መዝሙር ወደ ተወዳጆች ለመጨመር የልብ አዶውን ይንኩ',
+        'am': 'ማንኛውንም መዝሙር ወደ ተወዳጅ መዝሙሮች ለመጨመር የልብ ምልክቱን ይንኩ',
       });
 
   // Number Search Page
@@ -189,7 +189,7 @@ class AppLocalizations {
   // Support Page
   String get copiedToClipboard => _localizedValue({
         'en': 'copied to clipboard',
-        'am': 'ወደ ደብተር ተገልብጧል',
+        'am': 'ተቀድቷል',
       });
 
   // Feedback Page
@@ -200,7 +200,7 @@ class AppLocalizations {
 
   String get feedbackCopied => _localizedValue({
         'en': 'Feedback copied to clipboard. Thank you!',
-        'am': 'አስተያየት ወደ ደብተር ተገልብጧል። አመሰግናለሁ!',
+        'am': 'አስተያየትዎ ተቀድቷል። እናመሰግናለን!',
       });
 
   String get history => _localizedValue({
@@ -210,12 +210,12 @@ class AppLocalizations {
 
   String get reportBug => _localizedValue({
         'en': 'Report Bug',
-        'am': 'ስህተት ሪፖርት',
+        'am': 'የስህተት ጥቆማ',
       });
 
   String get errorSharing => _localizedValue({
         'en': 'Error sharing',
-        'am': 'ስህተት በማጋራት',
+        'am': 'በማጋራት ላይ ስህተት ተከስቷል',
       });
 
   String get error => _localizedValue({
