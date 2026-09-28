@@ -141,4 +141,19 @@ void main() {
       expect(saved.single, saved.single.roundToDouble());
     });
   });
+
+  testWidgets('the line sits the same distance from the top and the bottom',
+      (tester) async {
+    for (final size in [12.0, 20.0, 30.0]) {
+      await pumpPreview(tester, size);
+      final box = tester.getRect(find.byType(FontSizePreview));
+      final text = tester.getRect(find.byType(Text).first);
+
+      expect(
+        text.top - box.top,
+        moreOrLessEquals(box.bottom - text.bottom, epsilon: 1),
+        reason: 'at $size the sample is not centred in its box',
+      );
+    }
+  });
 }

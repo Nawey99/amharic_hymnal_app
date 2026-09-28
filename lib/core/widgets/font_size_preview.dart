@@ -33,8 +33,10 @@ class FontSizePreview extends StatelessWidget {
         border: Border.all(color: colors.glassBorder),
       ),
       child: ClipRect(
+        // Centred, so the space above the line matches the space below
+        // it at every size; the box is sized for the largest.
         child: Align(
-          alignment: Alignment.topLeft,
+          alignment: Alignment.centerLeft,
           child: Text(
             _sample,
             // The chosen size is absolute, as it is on the hymn page: it
