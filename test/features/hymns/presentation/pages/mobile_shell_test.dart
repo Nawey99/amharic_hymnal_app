@@ -86,26 +86,27 @@ void main() {
       ['category', 'index', 'number', 'favorites', 'settings'],
     );
     expect(
-      find.byKey(const ValueKey('navigation-outer-fade')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('navigation-outer-glass')),
+      find.byKey(const ValueKey('navigation-outer-scrim')),
       findsOneWidget,
     );
     expect(
       find.byKey(const ValueKey('navigation-inner-glass')),
       findsOneWidget,
     );
-
-    final outerGlass = tester.getRect(
-      find.byKey(const ValueKey('navigation-outer-glass')),
+    // The page fades into the bar over a wider, deeper area than the bar
+    // itself covers.
+    final scrim = tester.getRect(
+      find.byKey(const ValueKey('navigation-outer-scrim')),
     );
     final innerGlass = tester.getRect(
       find.byKey(const ValueKey('navigation-inner-glass')),
     );
-    expect(outerGlass.width, greaterThan(innerGlass.width));
-    expect(outerGlass.bottom, greaterThan(innerGlass.bottom));
+    expect(scrim.width, greaterThan(innerGlass.width));
+    expect(scrim.bottom, greaterThan(innerGlass.bottom));
+    // One frost, not three. Each one costs the phone a layer to save and
+    // a backdrop to read, on every frame of every scroll underneath it.
+    expect(find.byType(BackdropFilter), findsOneWidget);
+    expect(find.byType(ShaderMask), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

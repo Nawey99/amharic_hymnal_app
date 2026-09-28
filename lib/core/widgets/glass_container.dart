@@ -20,6 +20,13 @@ class GlassContainer extends StatelessWidget {
   final Border? border;
   final VoidCallback? onTap;
 
+  /// Whether to frost what is behind the panel.
+  ///
+  /// True for the few panels that float over the page. False where
+  /// panels repeat — a list row is a panel, and blurring each one costs
+  /// a layer per row on every frame.
+  final bool blur;
+
   const GlassContainer({
     super.key,
     required this.child,
@@ -34,85 +41,83 @@ class GlassContainer extends StatelessWidget {
     this.color,
     this.border,
     this.onTap,
+    this.blur = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Optimize blur: use animated value with Tween for smooth transitions
-    // Cap at 8 for GPU-accelerated performance on low-tier devices
-    final optimizedBlurSigma = (blurSigma > 8 ? 8.0 : blurSigma).toDouble();
     final colors = context.appColors;
     final frost = opacity ?? colors.glassOpacity;
+    final radius = BorderRadius.circular(borderRadius);
 
-    final container = RepaintBoundary(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        child: ClipRRect(
-          clipBehavior: Clip.antiAlias,
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: Stack(
-            children: [
-              // Blur only the background, not the content
-              // Optimized: GPU-accelerated BackdropFilter with capped sigma
-              Positioned.fill(
-                child: RepaintBoundary(
-                  child: BackdropFilter(
-                    // Cap blur sigma at 8 for better performance on mobile devices
-                    // GPU-accelerated for smooth 60fps on mid-tier devices
-                    filter: ImageFilter.blur(
-                      sigmaX: optimizedBlurSigma,
-                      sigmaY: optimizedBlurSigma,
-                    ),
-                    child: Container(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
-              ),
-              // Content on top
-              Container(
-                width: width ??
-                    double.infinity, // Fill available width if not specified
-                height: height,
-                padding: padding,
-                margin: margin,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      (color ?? colors.glassTint)
-                          .withValues(alpha: frost * 1.5),
-                      (color ?? colors.glassTint)
-                          .withValues(alpha: frost * 1.2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  border: border ??
-                      Border.all(color: colors.glassBorder, width: 1.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.glassShadow,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: child,
-              ),
-            ],
-          ),
-        ),
+    final decoration = BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          (color ?? colors.glassTint).withValues(alpha: frost * 1.5),
+          (color ?? colors.glassTint).withValues(alpha: frost * 1.2),
+        ],
       ),
+      borderRadius: radius,
+      border: border ?? Border.all(color: colors.glassBorder, width: 1.5),
+      // A drop shadow is a blur of its own. A panel that floats can
+      // afford one; a row in a list of three hundred cannot, and its
+      // border already lifts it off the page.
+      boxShadow: blur
+          ? [
+              BoxShadow(
+                color: colors.glassShadow,
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ]
+          : null,
     );
+
+    final panel = Container(
+      width: width ?? double.infinity,
+      height: height,
+      padding: padding,
+      margin: margin,
+      decoration: decoration,
+      child: child,
+    );
+
+    // A panel that does not blur is a decoration and nothing more: no
+    // layer to save, no backdrop to read, no clip. That matters where
+    // panels are many — a list of hymns had one blur per row, and a
+    // phone has to redraw all of them for every frame of a scroll.
+    final Widget container = blur
+        ? RepaintBoundary(
+            child: ClipRRect(
+              clipBehavior: Clip.antiAlias,
+              borderRadius: radius,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: BackdropFilter(
+                      // Eight is as far as the frost is worth paying for.
+                      filter: ImageFilter.blur(
+                        sigmaX: blurSigma.clamp(0.0, 8.0),
+                        sigmaY: blurSigma.clamp(0.0, 8.0),
+                      ),
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+                  panel,
+                ],
+              ),
+            ),
+          )
+        : panel;
 
     if (onTap != null) {
       return Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: radius,
           splashColor: context.appColors.veil.withValues(alpha: 0.1),
           highlightColor: context.appColors.veil.withValues(alpha: 0.05),
           child: container,

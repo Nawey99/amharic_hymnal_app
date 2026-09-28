@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
+import 'package:amharic_hymnal_app/core/services/frame_stats_probe.dart';
 import 'package:amharic_hymnal_app/core/services/screen_service.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/bug_report_queue_service.dart';
@@ -52,6 +53,7 @@ void main() async {
   }
 
   // Beta builds with a Sentry DSN report crashes; other builds run as-is.
+  FrameStatsProbe.start();
   await CrashReporting.run(() => runApp(const AppInitializer()));
 }
 

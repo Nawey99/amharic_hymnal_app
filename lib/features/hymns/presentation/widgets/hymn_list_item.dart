@@ -41,7 +41,10 @@ class HymnListItem extends StatelessWidget {
         child: GlassContainer(
           margin: EdgeInsets.only(bottom: bottomGap(context)),
           borderRadius: 12.0,
-          blurSigma: 12.0,
+          // One blur per row is one layer per row, on every frame of a
+          // scroll. The frost behind a panel this opaque was never
+          // visible anyway.
+          blur: false,
           opacity: backgroundImageEnabled ? 0.22 : 0.62,
           color: context.appColors.surface,
           border: Border.all(

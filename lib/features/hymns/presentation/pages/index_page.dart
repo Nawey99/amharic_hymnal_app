@@ -41,6 +41,9 @@ class _IndexPageState extends State<IndexPage> {
   static const double _listVerticalPadding = 8.0;
   static const int _maxSectionJumpRefinements = 4;
 
+  /// How far either side of the estimate to look for the topmost row.
+  static const int _visibleScanRadius = 12;
+
   final SearchStateController _searchController = SearchStateController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -57,6 +60,9 @@ class _IndexPageState extends State<IndexPage> {
   bool _sectionUpdateScheduled = false;
   String? _revealedHymnKey;
   bool _revealScheduled = false;
+  List<Hymn>? _displayCacheSource;
+  String? _displayCacheSort;
+  List<Hymn>? _displayCache;
   @override
   void initState() {
     super.initState();
@@ -371,20 +377,36 @@ class _IndexPageState extends State<IndexPage> {
     int? bestIndex;
     double? bestTop;
 
-    for (var index = 0; index < hymns.length; index++) {
-      final itemContext = _keyForHymn(hymns[index]).currentContext;
-      final itemBox = itemContext?.findRenderObject() as RenderBox?;
-      if (itemBox == null || !itemBox.hasSize) continue;
+    // Rows near the estimate first: that is where the answer is on a
+    // steady scroll, and walking all three hundred every frame asks for
+    // three hundred keys to be made and kept.
+    void scan(int first, int last) {
+      for (var index = first; index <= last; index++) {
+        final itemContext = _keyForHymn(hymns[index]).currentContext;
+        final itemBox = itemContext?.findRenderObject() as RenderBox?;
+        if (itemBox == null || !itemBox.hasSize) continue;
 
-      final itemTop = itemBox.localToGlobal(Offset.zero).dy;
-      final itemBottom = itemTop + itemBox.size.height - itemGap;
-      if (itemBottom <= viewportTop || itemTop >= viewportBottom) continue;
+        final itemTop = itemBox.localToGlobal(Offset.zero).dy;
+        final itemBottom = itemTop + itemBox.size.height - itemGap;
+        if (itemBottom <= viewportTop || itemTop >= viewportBottom) continue;
 
-      if (bestTop == null || itemTop < bestTop) {
-        bestTop = itemTop;
-        bestIndex = index;
+        if (bestTop == null || itemTop < bestTop!) {
+          bestTop = itemTop;
+          bestIndex = index;
+        }
       }
     }
+
+    final estimate = _estimatedTopVisibleIndex(hymns.length) ?? 0;
+    scan(
+      (estimate - _visibleScanRadius).clamp(0, hymns.length - 1),
+      (estimate + _visibleScanRadius).clamp(0, hymns.length - 1),
+    );
+    // The estimate assumes every row is the same height. When it is far
+    // enough out that nothing near it is on screen — after a jump, or
+    // where rows are unusually tall — the whole list is searched, which
+    // is rare and always right.
+    if (bestIndex == null) scan(0, hymns.length - 1);
 
     return bestIndex ?? _estimatedTopVisibleIndex(hymns.length);
   }
@@ -921,7 +943,23 @@ class _IndexPageState extends State<IndexPage> {
         );
   }
 
+  /// The hymns to show, filtered once per list and order rather than on
+  /// every build. The result is read four times a build and the list can
+  /// be three hundred long.
   List<Hymn> _hymnsForDisplay(List<Hymn> hymns, String? sortType) {
+    if (identical(hymns, _displayCacheSource) &&
+        sortType == _displayCacheSort &&
+        _displayCache != null) {
+      return _displayCache!;
+    }
+    final result = _filterForDisplay(hymns, sortType);
+    _displayCacheSource = hymns;
+    _displayCacheSort = sortType;
+    _displayCache = result;
+    return result;
+  }
+
+  List<Hymn> _filterForDisplay(List<Hymn> hymns, String? sortType) {
     final validHymns = hymns.where((hymn) {
       final hasNumber = hymn.displayNumber > 0;
       if (sortType == 'name') {
