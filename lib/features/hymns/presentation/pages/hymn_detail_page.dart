@@ -722,19 +722,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       child: SelectableText(
         hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
         textScaler: TextScaler.noScaling,
-        style: TextStyle(
+        style: AppTheme.lyricsTextStyle(
           color: context.appColors.primaryText,
           fontSize: effectiveFontSize,
-          height: AppTheme.getLineHeight(effectiveFontSize),
-          fontFamily: 'NotoSansEthiopic',
-          letterSpacing: AppTheme.getLetterSpacing(effectiveFontSize),
-          shadows: [
-            Shadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
         ),
         textAlign: TextAlign.start,
         textWidthBasis: TextWidthBasis.parent,

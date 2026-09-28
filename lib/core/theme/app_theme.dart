@@ -210,6 +210,32 @@ class AppTheme {
     );
   }
 
+  /// How a hymn's words are set, at the size the reader chose.
+  ///
+  /// The settings preview draws with this too, so what is chosen there is
+  /// what appears on the hymn page: the line height and letter spacing
+  /// both move with the size, and they are most of what "bigger" feels
+  /// like.
+  static TextStyle lyricsTextStyle({
+    required Color color,
+    required double fontSize,
+  }) {
+    return TextStyle(
+      color: color,
+      fontSize: fontSize,
+      height: getLineHeight(fontSize),
+      fontFamily: 'NotoSansEthiopic',
+      letterSpacing: getLetterSpacing(fontSize),
+      shadows: [
+        Shadow(
+          color: Colors.black.withValues(alpha: 0.5),
+          blurRadius: 2,
+          offset: const Offset(0, 1),
+        ),
+      ],
+    );
+  }
+
   /// Theme scale utilities for responsive spacing and sizing
 
   /// Base font sizes for different text styles
