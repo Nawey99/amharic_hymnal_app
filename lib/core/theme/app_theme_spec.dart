@@ -125,7 +125,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.violetDusk,
       label: 'ሐምራዊ',
-      swatch: SwatchFill(Color(0xFFB69CFF), Color(0xFF5B3FBF)),
+      swatch: SwatchFill(Color(0xFF8E99FF), Color(0xFF4340C4)),
       light: AppColorsExtension.violetDuskLight,
       dark: AppColorsExtension.violetDuskDark,
     ),

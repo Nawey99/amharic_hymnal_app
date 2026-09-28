@@ -34,6 +34,30 @@ double contrast(Color foreground, Color background) {
 Color composite(Color panel, double opacity, Color behind) =>
     Color.lerp(behind, panel, opacity)!;
 
+/// The hue of a colour in degrees, for telling two families apart.
+double _hue(Color color) {
+  final r = color.r, g = color.g, b = color.b;
+  final max = math.max(r, math.max(g, b));
+  final min = math.min(r, math.min(g, b));
+  final span = max - min;
+  if (span < 0.001) return 0;
+  final double hue;
+  if (max == r) {
+    hue = 60 * (((g - b) / span) % 6);
+  } else if (max == g) {
+    hue = 60 * ((b - r) / span + 2);
+  } else {
+    hue = 60 * ((r - g) / span + 4);
+  }
+  return hue < 0 ? hue + 360 : hue;
+}
+
+/// How far apart two hues are on the wheel, 0 to 180.
+double _hueGap(Color a, Color b) {
+  final gap = (_hue(a) - _hue(b)).abs();
+  return gap > 180 ? 360 - gap : gap;
+}
+
 void main() {
   /// The frost a card paints, over the page and over the photograph.
   ({Color onPage, Color onPhoto}) glassOf(AppColorsExtension colors) {
@@ -135,6 +159,14 @@ void main() {
         final tabToButton = contrast(colors.accent, colors.raisedAction);
         expect(tabToButton, lessThan(1.6),
             reason: 'the button and the chosen tab are the same green');
+        // Lightness alone does not catch a button left behind when the
+        // accent moved to another hue: two violets differ by nothing a
+        // contrast ratio can see, and the app showed the old one.
+        expect(
+          _hueGap(colors.accent, colors.raisedAction),
+          lessThan(12),
+          reason: 'the button and the chosen tab are the same colour',
+        );
       });
 
       test('$name: the accent carries its own text and stands out', () {
