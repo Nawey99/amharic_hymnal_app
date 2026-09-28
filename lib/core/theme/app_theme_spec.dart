@@ -44,6 +44,9 @@ class AppThemeSpec {
   /// Shown under the chooser while this theme is the centred one.
   final String label;
 
+  /// The same name for a reader who has the app in English.
+  final String englishLabel;
+
   final SwatchFill swatch;
 
   final AppColorsExtension light;
@@ -52,6 +55,7 @@ class AppThemeSpec {
   const AppThemeSpec({
     required this.id,
     required this.label,
+    required this.englishLabel,
     required this.swatch,
     required this.light,
     required this.dark,
@@ -59,6 +63,10 @@ class AppThemeSpec {
 
   AppColorsExtension colorsFor(Brightness brightness) =>
       brightness == Brightness.light ? light : dark;
+
+  /// The name in the language the app is speaking.
+  String labelFor(Locale? locale) =>
+      locale?.languageCode == 'en' ? englishLabel : label;
 }
 
 /// The themes the app offers, in the order the chooser shows them.
@@ -71,6 +79,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.emerald,
       label: 'አረንጓዴ',
+      englishLabel: 'Emerald',
       swatch: SwatchFill(Color(0xFF4CAF50), Color(0xFF2E7D32)),
       light: AppColorsExtension.emeraldLight,
       dark: AppColorsExtension.emeraldDark,
@@ -78,6 +87,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.scentaraPink,
       label: 'ሮዝ',
+      englishLabel: 'Rose',
       swatch: SwatchFill(Color(0xFFF2A0BF), Color(0xFFA32B62)),
       light: AppColorsExtension.scentaraPinkLight,
       dark: AppColorsExtension.scentaraPinkDark,
@@ -85,6 +95,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.purplePetal,
       label: 'ወይንጠጅ',
+      englishLabel: 'Violet',
       swatch: SwatchFill(Color(0xFFB79CFF), Color(0xFF6B3FC4)),
       light: AppColorsExtension.purplePetalLight,
       dark: AppColorsExtension.purplePetalDark,
@@ -92,6 +103,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.livoraFinance,
       label: 'ሰማያዊ',
+      englishLabel: 'Blue',
       swatch: SwatchFill(Color(0xFF6FB2FF), Color(0xFF0B5FC4)),
       light: AppColorsExtension.livoraFinanceLight,
       dark: AppColorsExtension.livoraFinanceDark,
@@ -99,6 +111,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.nobleMane,
       label: 'ወርቃማ',
+      englishLabel: 'Gold',
       swatch: SwatchFill(Color(0xFFE0A32E), Color(0xFF8A5A0B)),
       light: AppColorsExtension.nobleManeLight,
       dark: AppColorsExtension.nobleManeDark,
@@ -106,6 +119,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.tidalTeal,
       label: 'ቱርኳዝ',
+      englishLabel: 'Turquoise',
       swatch: SwatchFill(Color(0xFF2FD4C7), Color(0xFF00695F)),
       light: AppColorsExtension.tidalTealLight,
       dark: AppColorsExtension.tidalTealDark,
@@ -113,6 +127,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.crimsonEmber,
       label: 'ቀይ',
+      englishLabel: 'Ember',
       swatch: SwatchFill(Color(0xFFF2635F), Color(0xFFB3261E)),
       light: AppColorsExtension.crimsonEmberLight,
       dark: AppColorsExtension.crimsonEmberDark,
@@ -120,6 +135,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.neonGraphite,
       label: 'ኒዮን',
+      englishLabel: 'Neon',
       swatch: SwatchFill(Color(0xFF4DFF9F), Color(0xFF23303A)),
       light: AppColorsExtension.neonGraphiteLight,
       dark: AppColorsExtension.neonGraphiteDark,
@@ -127,6 +143,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.violetDusk,
       label: 'ሐምራዊ',
+      englishLabel: 'Periwinkle',
       swatch: SwatchFill(Color(0xFF8E99FF), Color(0xFF4340C4)),
       light: AppColorsExtension.violetDuskLight,
       dark: AppColorsExtension.violetDuskDark,
@@ -134,6 +151,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.terracottaSand,
       label: 'አሸዋ',
+      englishLabel: 'Sand',
       swatch: SwatchFill(Color(0xFFE8935C), Color(0xFFA34A1B)),
       light: AppColorsExtension.terracottaSandLight,
       dark: AppColorsExtension.terracottaSandDark,
@@ -141,6 +159,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.indigoAmber,
       label: 'ኢንዲጎ',
+      englishLabel: 'Indigo',
       swatch: SwatchFill(Color(0xFFF5B233), Color(0xFF2E3F8F)),
       light: AppColorsExtension.indigoAmberLight,
       dark: AppColorsExtension.indigoAmberDark,
@@ -148,6 +167,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.slateMono,
       label: 'ግራጫ',
+      englishLabel: 'Slate',
       swatch: SwatchFill(Color(0xFFA9BCC9), Color(0xFF3C5766)),
       light: AppColorsExtension.slateMonoLight,
       dark: AppColorsExtension.slateMonoDark,
@@ -155,6 +175,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.oliveGrove,
       label: 'ወይራ',
+      englishLabel: 'Olive',
       swatch: SwatchFill(Color(0xFFA8D14A), Color(0xFF46660F)),
       light: AppColorsExtension.oliveGroveLight,
       dark: AppColorsExtension.oliveGroveDark,
@@ -162,6 +183,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.roseGold,
       label: 'መዳብ',
+      englishLabel: 'Copper',
       swatch: SwatchFill(Color(0xFFE8A598), Color(0xFFA0503C)),
       light: AppColorsExtension.roseGoldLight,
       dark: AppColorsExtension.roseGoldDark,
@@ -170,6 +192,7 @@ abstract final class AppThemeCatalog {
     AppThemeSpec(
       id: AppPalette.highContrast,
       label: 'ንጽጽር',
+      englishLabel: 'Contrast',
       swatch: SwatchFill(Color(0xFFFFEB3B), Color(0xFF000000)),
       light: AppColorsExtension.highContrastLight,
       dark: AppColorsExtension.highContrastDark,

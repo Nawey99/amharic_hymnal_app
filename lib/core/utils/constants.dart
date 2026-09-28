@@ -16,6 +16,7 @@ class AppConstants {
   static const String keyContributionUnlocked = 'contribution_unlocked';
   static const String keyThemeMode = 'theme_mode';
   static const String keyThemePalette = 'theme_palette';
+  static const String keyUiLanguage = 'ui_language';
   static const String keyOfflineDownloadOfferPending =
       'offline_download_offer_pending';
   static const String keyDataCollectionEnabled = 'data_collection_enabled';

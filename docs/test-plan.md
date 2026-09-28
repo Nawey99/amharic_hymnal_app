@@ -224,7 +224,7 @@ unless a DSN is supplied).
 |---|---|---|---|---|
 | Unit, widget, contract, failure, accessibility | `test/` | fakes and recorded fixtures only; **never the network** | your PC (`flutter test`) and GitHub CI (Linux) | every push and PR |
 | Coverage gate | `coverage/lcov.info` | output of the run above | GitHub CI | every push and PR (`vars.COVERAGE_MINIMUM`, default 80 %; measured 82.2 % on 2026-09-21) |
-| Full-app flows | `integration_test/app_test.dart` | scripted in-process API; everything else pointed at `content.example.invalid` | GitHub CI: Linux desktop, Android emulators API 24 and API 36; your PC or S20 Ultra by hand | every push and PR |
+| Full-app flows | `integration_test/app_test.dart` | scripted in-process API; everything else pointed at `content.example.invalid` | GitHub CI: Linux desktop and an API 36 emulator on every push and PR; an API 24 emulator nightly (`nightly.yml` → `oldest-android`), since that image needs longer to install the app than a pull request is allowed | every push and PR; minSdk nightly |
 | Live API checks | `test_live/` | **production** hymnal API, read-only | GitHub Actions `nightly.yml` → `live-api`; your PC by hand | nightly 01:30 UTC and on demand |
 | Native flows (Patrol) | `integration_test/native/` | **production** API, real Android (back gesture, share sheet, media notification, airplane mode) | your S20 Ultra with `patrol test`, by hand | before each release |
 | Performance | `integration_test/perf/` + `test_driver/perf_driver.dart` | production API, profile build | **your S20 Ultra only** (`flutter drive --profile ...`); results in `build/perf/` | before each release |

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/services/theme_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
@@ -20,7 +22,10 @@ void main() {
 
   /// The appearance section inside an app that follows the chosen look, as
   /// Settings sits inside the real one.
-  Future<void> pumpSettings(WidgetTester tester) async {
+  Future<void> pumpSettings(
+    WidgetTester tester, {
+    Locale locale = const Locale('am'),
+  }) async {
     await tester.pumpWidget(
       ListenableBuilder(
         listenable: ThemeService(),
@@ -29,6 +34,14 @@ void main() {
           darkTheme:
               AppTheme.forPalette(ThemeService().palette, Brightness.dark),
           themeMode: ThemeService().themeMode,
+          locale: locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: const Scaffold(body: AppearanceSettings()),
         ),
       ),
@@ -202,5 +215,17 @@ void main() {
         epsilon: 1,
       ),
     );
+  });
+
+  testWidgets('in English the modes and the themes are named in English',
+      (tester) async {
+    await pumpSettings(tester, locale: const Locale('en'));
+
+    expect(find.text('Light'), findsOneWidget);
+    expect(find.text('Dark'), findsOneWidget);
+    expect(find.text('Phone'), findsOneWidget);
+    expect(find.text('Appearance'), findsOneWidget);
+    expect(find.text('Emerald'), findsOneWidget);
+    expect(find.text('አረንጓዴ'), findsNothing);
   });
 }

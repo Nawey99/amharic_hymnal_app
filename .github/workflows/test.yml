@@ -141,9 +141,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 24 is minSdk (Android 7); 36 is the Play target (Android 16:
-        # mandatory edge-to-edge and predictive back).
-        api-level: [24, 36]
+        # 36 is the Play target (Android 16: mandatory edge-to-edge and
+        # predictive back). minSdk 24 is covered nightly instead: on a
+        # free runner that image needs eleven minutes just to install and
+        # start the app, and Flutter allows twelve for the whole load,
+        # so on a pull request it fails on the clock rather than on the
+        # code.
+        api-level: [36]
 
     steps:
       - name: Checkout code

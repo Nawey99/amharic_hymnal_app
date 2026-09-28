@@ -184,11 +184,13 @@ class _FavoritesPageState extends State<FavoritesPage>
 
   Widget _buildHeader(BuildContext context) {
     return MainPageTitleBar(
-      title: 'ተወዳጆች',
+      title: AppLocalizations.of(context)?.favoritesTitle ?? 'ተወዳጆች',
       actions: [
         IconButton(
           // Also the TalkBack/VoiceOver label.
-          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
+          tooltip: _isSearchVisible
+              ? AppLocalizations.of(context)?.closeSearch ?? 'ፍለጋ ዝጋ'
+              : AppLocalizations.of(context)?.search ?? 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: context.appColors.primaryText,
@@ -210,7 +212,8 @@ class _FavoritesPageState extends State<FavoritesPage>
     return AppSearchBar(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'ተወዳጅ መዝሙሮችን ይፈልጉ...',
+      hintText: AppLocalizations.of(context)?.searchFavoritesHint ??
+          'ተወዳጅ መዝሙሮችን ይፈልጉ...',
       autofocus: false,
       onChanged: (value) {
         _handleSearchChange();

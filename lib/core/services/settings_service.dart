@@ -245,6 +245,16 @@ class SettingsService {
         false;
   }
 
+  /// The language the app speaks in, by its stored name: 'am', 'en' or
+  /// 'system'. Not the hymns' language, which is chosen separately.
+  static String? getUiLanguage() {
+    return _prefs?.getString(AppConstants.keyUiLanguage);
+  }
+
+  static Future<bool> setUiLanguage(String value) async {
+    return await _prefs?.setString(AppConstants.keyUiLanguage, value) ?? false;
+  }
+
   /// Whether the development and contribution section is shown in Settings.
   /// Hidden until the app version is tapped several times.
   static bool isContributionUnlocked() {

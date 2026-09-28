@@ -1,41 +1,45 @@
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
-import 'package:amharic_hymnal_app/core/services/theme_service.dart';
+import 'package:amharic_hymnal_app/core/services/language_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
-import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
-import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/theme_carousel.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 
-/// Chooses light or dark, and which colour family, and shows the choice
-/// taking effect on the page underneath as it is made.
-class AppearanceSettings extends StatelessWidget {
-  final ThemeService? service;
+/// Chooses the language the app speaks in.
+///
+/// Separate from the hymns' language above it: the words of the app and
+/// the words of the book are two different choices, and a reader may want
+/// an English interface over an Amharic hymnal.
+class LanguageSettings extends StatelessWidget {
+  final LanguageService? service;
 
-  const AppearanceSettings({super.key, this.service});
+  const LanguageSettings({super.key, this.service});
 
-  static const _modes = <(ThemeMode, IconData)>[
-    (ThemeMode.light, Icons.light_mode_outlined),
-    (ThemeMode.dark, Icons.dark_mode_outlined),
-    (ThemeMode.system, Icons.phone_android_outlined),
+  static const _choices = <(AppLanguage, IconData)>[
+    (AppLanguage.amharic, Icons.translate_rounded),
+    (AppLanguage.english, Icons.abc_rounded),
+    (AppLanguage.system, Icons.phone_android_outlined),
   ];
 
-  static String labelFor(BuildContext context, ThemeMode mode) {
+  static String labelFor(BuildContext context, AppLanguage language) {
     final words = AppLocalizations.of(context);
-    return switch (mode) {
-      ThemeMode.light => words?.themeModeLight ?? 'ብርሃን',
-      ThemeMode.dark => words?.themeModeDark ?? 'ጨለማ',
-      ThemeMode.system => words?.followThePhone ?? 'የስልኩ',
+    return switch (language) {
+      // Each language names itself, so it can be recognised by someone
+      // who cannot read the other.
+      // verbatim: a language names itself
+      AppLanguage.amharic => 'አማርኛ',
+      AppLanguage.english => 'English',
+      AppLanguage.system => words?.followThePhone ?? 'የስልኩ',
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = service ?? ThemeService();
+    final language = service ?? LanguageService();
     final colors = context.appColors;
 
     return ListenableBuilder(
-      listenable: theme,
+      listenable: language,
       builder: (context, _) => GlassContainer(
         borderRadius: 16,
         blurSigma: 12,
@@ -44,7 +48,7 @@ class AppearanceSettings extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)?.appearanceLabel ?? 'ገጽታ',
+              AppLocalizations.of(context)?.appLanguageLabel ?? 'የመተግበሪያ ቋንቋ',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -54,8 +58,8 @@ class AppearanceSettings extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              AppLocalizations.of(context)?.appearanceDescription ??
-                  'የመተግበሪያውን ብርሃን እና ቀለም ይምረጡ',
+              AppLocalizations.of(context)?.appLanguageDescription ??
+                  'የመተግበሪያው ጽሑፍ ቋንቋ',
               style: TextStyle(
                 fontSize: 12,
                 color: colors.secondaryText,
@@ -63,11 +67,24 @@ class AppearanceSettings extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _ModeRow(theme: theme),
-            if (AppThemeCatalog.themes.length > 1) ...[
-              const SizedBox(height: 14),
-              ThemeCarousel(theme: theme),
-            ],
+            Row(
+              children: [
+                for (final (choice, icon) in _choices)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: _LanguageButton(
+                        key: ValueKey('app-language-${choice.storageValue}'),
+                        label: labelFor(context, choice),
+                        icon: icon,
+                        selected: language.language == choice,
+                        colors: colors,
+                        onTap: () => language.setLanguage(choice),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
@@ -75,43 +92,14 @@ class AppearanceSettings extends StatelessWidget {
   }
 }
 
-class _ModeRow extends StatelessWidget {
-  final ThemeService theme;
-
-  const _ModeRow({required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.appColors;
-    return Row(
-      children: [
-        for (final (mode, icon) in AppearanceSettings._modes)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _ModeButton(
-                key: ValueKey('theme-mode-${mode.name}'),
-                label: AppearanceSettings.labelFor(context, mode),
-                icon: icon,
-                selected: theme.themeMode == mode,
-                colors: colors,
-                onTap: () => theme.setThemeMode(mode),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _ModeButton extends StatelessWidget {
+class _LanguageButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final bool selected;
   final AppColorsExtension colors;
   final VoidCallback onTap;
 
-  const _ModeButton({
+  const _LanguageButton({
     super.key,
     required this.label,
     required this.icon,

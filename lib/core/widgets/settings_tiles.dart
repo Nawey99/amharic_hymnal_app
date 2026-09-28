@@ -1,4 +1,5 @@
 // lib/core/widgets/settings_tiles.dart
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
@@ -110,7 +111,7 @@ class SettingsTile extends StatelessWidget {
           ),
           if (progress != null && onStop != null)
             IconButton(
-              tooltip: 'አቁም',
+              tooltip: AppLocalizations.of(context)?.stop ?? 'አቁም',
               onPressed: onStop,
               icon: Icon(
                 Icons.stop_circle_outlined,

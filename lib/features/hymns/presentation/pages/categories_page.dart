@@ -1,3 +1,4 @@
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -68,7 +69,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
         body: SafeArea(
           child: Column(
             children: [
-              const MainPageTitleBar(title: 'ምድቦች'),
+              MainPageTitleBar(
+                  title:
+                      AppLocalizations.of(context)?.categoriesTitle ?? 'ምድቦች'),
               Expanded(
                 child: BlocBuilder<HymnsBloc, HymnsState>(
                   builder: (context, state) {
@@ -109,9 +112,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         );
 
                         if (categories.isEmpty) {
-                          return const EmptyStateWidget(
+                          return EmptyStateWidget(
                             icon: Icons.category_outlined,
-                            title: 'ምድቦች አልተገኙም',
+                            title: AppLocalizations.of(context)
+                                    ?.noCategoriesFound ??
+                                'ምድቦች አልተገኙም',
                           );
                         }
 
@@ -147,9 +152,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         final authors = _extractAuthors(state.hymns);
 
                         if (authors.isEmpty) {
-                          return const EmptyStateWidget(
+                          return EmptyStateWidget(
                             icon: Icons.person_outline,
-                            title: 'ዘማሪዎች አልተገኙም',
+                            title:
+                                AppLocalizations.of(context)?.noAuthorsFound ??
+                                    'ዘማሪዎች አልተገኙም',
                           );
                         }
 
@@ -187,9 +194,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     }
 
                     // For other versions, show empty state
-                    return const EmptyStateWidget(
+                    return EmptyStateWidget(
                       icon: Icons.category_outlined,
-                      title: 'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
+                      title: AppLocalizations.of(context)
+                              ?.categoriesAdventistOnly ??
+                          'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
                     );
                   },
                 ),

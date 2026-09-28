@@ -85,7 +85,9 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   void _openHymn() {
     final numberText = _numberController.text.trim();
     if (numberText.isEmpty) {
-      _showInvalidNumberMessage('እባክዎ የመዝሙር ቁጥር ያስገቡ።');
+      _showInvalidNumberMessage(
+          AppLocalizations.of(context)?.pleaseEnterHymnNumber ??
+              'እባክዎ የመዝሙር ቁጥር ያስገቡ።');
       return;
     }
 
@@ -112,7 +114,9 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       final exists = numbers.contains(number);
       if (number < min || number > max || !exists) {
         _showInvalidNumberMessage(
-          'ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
+          AppLocalizations.of(context)?.numberNotInCollection(min, max) ??
+              'ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። '
+                  'እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
         );
         return;
       }
@@ -183,12 +187,15 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
 
   Widget _buildHeader(BuildContext context) {
     return MainPageTitleBar(
+      // verbatim: the app's own name, which is not translated
       title: 'ውዳሴ',
       leading: _buildHistoryButton(context),
       actions: [
         IconButton(
           // Also the TalkBack/VoiceOver label.
-          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
+          tooltip: _isSearchVisible
+              ? AppLocalizations.of(context)?.closeSearch ?? 'ፍለጋ ዝጋ'
+              : AppLocalizations.of(context)?.search ?? 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: context.appColors.primaryText,
@@ -201,7 +208,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
 
   Widget _buildHistoryButton(BuildContext context) {
     return Tooltip(
-      message: 'ታሪክ',
+      message: AppLocalizations.of(context)?.history ?? 'ታሪክ',
       child: InkWell(
         onTap: () => _openHistory(context),
         borderRadius: BorderRadius.circular(999),
@@ -228,7 +235,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               ),
               const SizedBox(width: 5),
               Text(
-                'ታሪክ',
+                AppLocalizations.of(context)?.history ?? 'ታሪክ',
                 style: TextStyle(
                   color: context.appColors.primaryText,
                   fontSize: 13,
@@ -281,7 +288,8 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return SearchTextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'በርዕስ መዝሙር ይፈልጉ...',
+      hintText: AppLocalizations.of(context)?.searchByTitleHint ??
+          'በርዕስ መዝሙር ይፈልጉ...',
       autofocus: false,
       onClear: () {
         final state = context.read<HymnsBloc>().state;
@@ -547,7 +555,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 size: 24, color: context.appColors.primaryText),
             const SizedBox(width: 12),
             Text(
-              'ክፈት',
+              AppLocalizations.of(context)?.open ?? 'ክፈት',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
