@@ -227,6 +227,23 @@ void main() {
     expect(light.barBorder, isNot(dark.barBorder));
   });
 
+  test('every circle in the chooser is a gradient', () {
+    // A flat circle looks unfinished beside fourteen that are not; the
+    // first five were flat until someone noticed.
+    for (final theme in AppThemeCatalog.themes) {
+      expect(
+        theme.swatch.isGradient,
+        isTrue,
+        reason: '${theme.id.name} would sit dull in the row',
+      );
+      expect(
+        theme.swatch.start,
+        isNot(theme.swatch.end),
+        reason: '${theme.id.name} has two stops of the same colour',
+      );
+    }
+  });
+
   test('every name that can be stored has a theme in the catalogue', () {
     expect(
       AppThemeCatalog.themes.map((theme) => theme.id).toSet(),
