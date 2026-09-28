@@ -131,6 +131,7 @@ jobs:
       - name: Run integration tests
         run: >-
           xvfb-run --auto-servernum flutter test integration_test/app_test.dart -d linux
+          --timeout 25m
           --dart-define=WUDASE_CONTENT_API_URL=https://content.example.invalid
 
   android-emulator:
@@ -164,6 +165,12 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # Built here rather than inside the emulator step: the Android SDK
+      # bits (NDK, CMake) and the Gradle cache can take ten minutes on a
+      # cold runner, and in there they count against the test's own clock.
+      - name: Warm the Android build
+        run: flutter build apk --debug --target-platform android-x64
+
       # Deterministic: scripted content, everything else unreachable.
       - name: Run integration tests on the emulator
         uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
@@ -172,8 +179,10 @@ jobs:
           target: google_apis
           arch: x86_64
           disable-animations: true
+          # Installing and starting a debug build on the API 24 image is
+          # slow; the default twelve minutes has no room for it.
           script: >-
-            flutter test integration_test/app_test.dart
+            flutter test integration_test/app_test.dart --timeout 25m
             --dart-define=WUDASE_CONTENT_API_URL=https://content.example.invalid
 
   lint:
