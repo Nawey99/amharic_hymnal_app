@@ -112,7 +112,8 @@ class _ThemeCarouselState extends State<ThemeCarousel> {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 180),
           child: Text(
-            AppThemeCatalog.themes[_centred].label,
+            AppThemeCatalog.themes[_centred]
+                .labelFor(Localizations.maybeLocaleOf(context)),
             key: ValueKey(
                 'theme-name-${AppThemeCatalog.themes[_centred].id.name}'),
             style: TextStyle(
@@ -153,7 +154,7 @@ class _ThemeSwatch extends StatelessWidget {
     return Semantics(
       button: true,
       selected: centred,
-      label: spec.label,
+      label: spec.labelFor(Localizations.maybeLocaleOf(context)),
       excludeSemantics: true,
       child: Center(
         child: InkWell(

@@ -1,3 +1,4 @@
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -191,24 +192,26 @@ class _MainNavigationPageState extends State<MainNavigationPage>
       return; // Offline or unknown: never block the hymnal on this.
     }
     if (required == null || !mounted) return;
+    final requiredVersion = required;
 
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'አዲስ ስሪት ያስፈልጋል',
+          AppLocalizations.of(context)?.updateRequiredTitle ?? 'አዲስ ስሪት ያስፈልጋል',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
-          'እባክዎ መተግበሪያውን ወደ ስሪት $required ወይም ከዚያ በላይ ያዘምኑ። '
-          'ያለዚያ አንዳንድ አዳዲስ ይዘቶች በትክክል ላይታዩ ይችላሉ።',
+          AppLocalizations.of(context)?.updateRequiredBody(requiredVersion) ??
+              'እባክዎ መተግበሪያውን ወደ ስሪት $requiredVersion ወይም ከዚያ በላይ ያዘምኑ። '
+                  'ያለዚያ አንዳንድ አዳዲስ ይዘቶች በትክክል ላይታዩ ይችላሉ።',
           style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('እሺ'),
+            child: Text(AppLocalizations.of(context)?.ok ?? 'እሺ'),
           ),
         ],
       ),
@@ -517,7 +520,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
           ),
           icon: Icons.category_outlined,
           selectedIcon: Icons.category_rounded,
-          label: 'ምድብ',
+          label: AppLocalizations.of(context)?.navCategory ?? 'ምድብ',
         ),
       _NavItem(
         destination: _NavDestination.hymnIndex,
@@ -529,7 +532,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         ),
         icon: Icons.list_alt_outlined,
         selectedIcon: Icons.list_alt_rounded,
-        label: 'ማውጫ',
+        label: AppLocalizations.of(context)?.navIndex ?? 'ማውጫ',
       ),
       _NavItem(
         destination: _NavDestination.number,
@@ -540,7 +543,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         ),
         icon: Icons.numbers_rounded,
         selectedIcon: Icons.numbers_rounded,
-        label: 'ቁጥር',
+        label: AppLocalizations.of(context)?.navNumber ?? 'ቁጥር',
       ),
       _NavItem(
         destination: _NavDestination.favorites,
@@ -552,14 +555,14 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         ),
         icon: Icons.favorite_outline_rounded,
         selectedIcon: Icons.favorite_rounded,
-        label: 'ተወዳጅ',
+        label: AppLocalizations.of(context)?.navFavorites ?? 'ተወዳጅ',
       ),
       _NavItem(
         destination: _NavDestination.settings,
         page: _pageFor(const SettingsPage()),
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'ቅንብሮች',
+        label: AppLocalizations.of(context)?.navSettings ?? 'ቅንብሮች',
       ),
     ];
   }

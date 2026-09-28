@@ -13,6 +13,7 @@ import 'package:amharic_hymnal_app/core/services/crash_reporting.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
+import 'package:amharic_hymnal_app/core/services/language_service.dart';
 import 'package:amharic_hymnal_app/core/services/theme_service.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
@@ -206,15 +207,15 @@ class MyApp extends StatelessWidget {
         return bloc;
       },
       child: ListenableBuilder(
-        listenable: ThemeService(),
-        builder: (context, _) => _buildApp(settingsRepository, languageCode),
+        listenable: Listenable.merge([ThemeService(), LanguageService()]),
+        builder: (context, _) => _buildApp(settingsRepository),
       ),
     );
   }
 
-  /// Rebuilt whenever the chosen look changes, so the palette and the
-  /// light/dark setting reach every screen at once.
-  Widget _buildApp(SettingsRepository settingsRepository, String languageCode) {
+  /// Rebuilt whenever the chosen look or language changes, so the palette,
+  /// the light/dark setting and the words reach every screen at once.
+  Widget _buildApp(SettingsRepository settingsRepository) {
     final theme = ThemeService();
     return MaterialApp(
       title: 'ውዳሴ',
@@ -222,7 +223,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.forPalette(theme.palette, Brightness.light),
       darkTheme: AppTheme.forPalette(theme.palette, Brightness.dark),
       themeMode: theme.themeMode,
-      locale: Locale(languageCode),
+      locale: LanguageService().locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

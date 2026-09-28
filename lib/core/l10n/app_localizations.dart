@@ -229,6 +229,236 @@ class AppLocalizations {
         'am': 'ስህተት:',
       });
 
+  // The shell: navigation, settings and the chrome of the tabs.
+  String get navCategory => _localizedValue({
+        'en': 'Categories',
+        'am': 'ምድብ',
+      });
+
+  String get navIndex => _localizedValue({
+        'en': 'Index',
+        'am': 'ማውጫ',
+      });
+
+  String get navNumber => _localizedValue({
+        'en': 'Number',
+        'am': 'ቁጥር',
+      });
+
+  String get navFavorites => _localizedValue({
+        'en': 'Favourites',
+        'am': 'ተወዳጅ',
+      });
+
+  String get navSettings => _localizedValue({
+        'en': 'Settings',
+        'am': 'ቅንብሮች',
+      });
+
+  String get aboutSection => _localizedValue({
+        'en': 'About the app',
+        'am': 'ስለ መተግበሪያው',
+      });
+
+  String get appLanguageLabel => _localizedValue({
+        'en': 'App language',
+        'am': 'የመተግበሪያ ቋንቋ',
+      });
+
+  String get appLanguageDescription => _localizedValue({
+        'en': 'The language the app speaks in',
+        'am': 'የመተግበሪያው ጽሑፍ ቋንቋ',
+      });
+
+  String get followThePhone => _localizedValue({
+        'en': 'Phone',
+        'am': 'የስልኩ',
+      });
+
+  String get appearanceLabel => _localizedValue({
+        'en': 'Appearance',
+        'am': 'ገጽታ',
+      });
+
+  String get appearanceDescription => _localizedValue({
+        'en': 'Choose the brightness and colour of the app',
+        'am': 'የመተግበሪያውን ብርሃን እና ቀለም ይምረጡ',
+      });
+
+  String get themeModeLight => _localizedValue({
+        'en': 'Light',
+        'am': 'ብርሃን',
+      });
+
+  String get themeModeDark => _localizedValue({
+        'en': 'Dark',
+        'am': 'ጨለማ',
+      });
+
+  String get privacyPolicyLabel => _localizedValue({
+        'en': 'Privacy policy',
+        'am': 'የግላዊነት ፖሊሲ',
+      });
+
+  String get privacyPolicyDescription => _localizedValue({
+        'en': 'What the app does with your information',
+        'am': 'መተግበሪያው ስለ መረጃዎ ምን እንደሚያደርግ',
+      });
+
+  String get privacyPolicyOpenFailed => _localizedValue({
+        'en': 'Could not open the privacy policy',
+        'am': 'የግላዊነት ፖሊሲውን መክፈት አልተቻለም',
+      });
+
+  String get reportBugDescription => _localizedValue({
+        'en': 'Report a problem or suggest an improvement',
+        'am': 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
+      });
+
+  String get openGitHubTitle => _localizedValue({
+        'en': 'Open GitHub?',
+        'am': 'GitHub ይከፈት?',
+      });
+
+  String get openGitHubBody => _localizedValue({
+        'en': 'The source code opens in a browser, outside the app.',
+        'am': 'የመተግበሪያው ምንጭ ኮድ ከመተግበሪያው ውጭ በአሳሽ ይከፈታል።',
+      });
+
+  String get gitHubOpenFailed => _localizedValue({
+        'en': 'Could not open the GitHub page',
+        'am': 'የGitHub ገጽ መክፈት አልተቻለም',
+      });
+
+  String get cancel => _localizedValue({
+        'en': 'Cancel',
+        'am': 'ይቅር',
+      });
+
+  String get open => _localizedValue({
+        'en': 'Open',
+        'am': 'ክፈት',
+      });
+
+  String get ok => _localizedValue({
+        'en': 'OK',
+        'am': 'እሺ',
+      });
+
+  String get stop => _localizedValue({
+        'en': 'Stop',
+        'am': 'አቁም',
+      });
+
+  String get updateRequiredTitle => _localizedValue({
+        'en': 'A newer version is needed',
+        'am': 'አዲስ ስሪት ያስፈልጋል',
+      });
+
+  String get indexTitle => _localizedValue({
+        'en': 'Hymn index',
+        'am': 'መዝሙር ማውጫ',
+      });
+
+  String get search => _localizedValue({
+        'en': 'Search',
+        'am': 'ፈልግ',
+      });
+
+  String get closeSearch => _localizedValue({
+        'en': 'Close search',
+        'am': 'ፍለጋ ዝጋ',
+      });
+
+  String get sortOrder => _localizedValue({
+        'en': 'Sort order',
+        'am': 'ቅደም ተከተል',
+      });
+
+  String get sortDialogTitle => _localizedValue({
+        'en': 'Order',
+        'am': 'አደራደር',
+      });
+
+  String get sortByNumber => _localizedValue({
+        'en': 'By number',
+        'am': 'በቁጥር',
+      });
+
+  String get sortByName => _localizedValue({
+        'en': 'By name',
+        'am': 'በስም',
+      });
+
+  String get searchHymnsHint => _localizedValue({
+        'en': 'Search hymns…',
+        'am': 'መዝሙር ይፈልጉ...',
+      });
+
+  String get searchByTitleHint => _localizedValue({
+        'en': 'Search hymns by title…',
+        'am': 'በርዕስ መዝሙር ይፈልጉ...',
+      });
+
+  String get searchFavoritesHint => _localizedValue({
+        'en': 'Search favourite hymns…',
+        'am': 'ተወዳጅ መዝሙሮችን ይፈልጉ...',
+      });
+
+  String get noHymnsInNameOrder => _localizedValue({
+        'en': 'No hymns found in name order',
+        'am': 'በስም የተደረደረ መዝሙር አልተገኘም',
+      });
+
+  String get categoriesTitle => _localizedValue({
+        'en': 'Categories',
+        'am': 'ምድቦች',
+      });
+
+  String get noCategoriesFound => _localizedValue({
+        'en': 'No categories found',
+        'am': 'ምድቦች አልተገኙም',
+      });
+
+  String get noAuthorsFound => _localizedValue({
+        'en': 'No authors found',
+        'am': 'ዘማሪዎች አልተገኙም',
+      });
+
+  String get categoriesAdventistOnly => _localizedValue({
+        'en': 'Categories are only available for the Adventist hymnal',
+        'am': 'ምድቦች ለአድቬንቲስት መዝሙር ብቻ ይገኛሉ',
+      });
+
+  String get favoritesTitle => _localizedValue({
+        'en': 'Favourites',
+        'am': 'ተወዳጆች',
+      });
+
+  String get pleaseEnterHymnNumber => _localizedValue({
+        'en': 'Please enter a hymn number.',
+        'am': 'እባክዎ የመዝሙር ቁጥር ያስገቡ።',
+      });
+
+  String updateRequiredBody(String required) => _localizedValue({
+        'en': 'Please update the app to version $required or later. '
+            'Without it some newer hymns may not appear correctly.',
+        'am': 'እባክዎ መተግበሪያውን ወደ ስሪት $required ወይም ከዚያ በላይ ያዘምኑ። '
+            'ያለዚያ አንዳንድ አዳዲስ ይዘቶች በትክክል ላይታዩ ይችላሉ።',
+      });
+
+  String hymnNumber(int number) => _localizedValue({
+        'en': 'Hymn $number',
+        'am': 'መዝሙር $number',
+      });
+
+  String numberNotInCollection(int min, int max) => _localizedValue({
+        'en': 'That number is not in this collection. '
+            'Please enter a number between $min and $max.',
+        'am': 'ይህ ቁጥር በአሁኑ የመዝሙር ስብስብ ውስጥ የለም። '
+            'እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
+      });
+
   String _localizedValue(Map<String, String> values) {
     final langCode = locale.languageCode;
     return values[langCode] ?? values['en'] ?? '';

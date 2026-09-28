@@ -330,6 +330,7 @@ class _IndexPageState extends State<IndexPage> {
   String _titleForIndexing(Hymn hymn) {
     return hymn.displayTitle.isNotEmpty
         ? hymn.displayTitle
+        // verbatim: sorts the list, so it must not move with the language
         : 'መዝሙር ${hymn.displayNumber}';
   }
 
@@ -359,11 +360,13 @@ class _IndexPageState extends State<IndexPage> {
 
   Widget _buildHeader(BuildContext context) {
     return MainPageTitleBar(
-      title: 'መዝሙር ማውጫ',
+      title: AppLocalizations.of(context)?.indexTitle ?? 'መዝሙር ማውጫ',
       actions: [
         IconButton(
           // Also the TalkBack/VoiceOver label.
-          tooltip: _isSearchVisible ? 'ፍለጋ ዝጋ' : 'ፈልግ',
+          tooltip: _isSearchVisible
+              ? AppLocalizations.of(context)?.closeSearch ?? 'ፍለጋ ዝጋ'
+              : AppLocalizations.of(context)?.search ?? 'ፈልግ',
           icon: Icon(
             _isSearchVisible ? Icons.close : Icons.search,
             color: context.appColors.primaryText,
@@ -371,7 +374,7 @@ class _IndexPageState extends State<IndexPage> {
           onPressed: () => _toggleSearch(context),
         ),
         IconButton(
-          tooltip: 'ቅደም ተከተል',
+          tooltip: AppLocalizations.of(context)?.sortOrder ?? 'ቅደም ተከተል',
           icon: Icon(Icons.sort, color: context.appColors.primaryText),
           onPressed: () => _showSortDialog(context),
         ),
@@ -418,7 +421,7 @@ class _IndexPageState extends State<IndexPage> {
     return SearchTextField(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'መዝሙር ይፈልጉ...',
+      hintText: AppLocalizations.of(context)?.searchHymnsHint ?? 'መዝሙር ይፈልጉ...',
       autofocus: false,
       onClear: () => _reloadHymns(context),
     );
@@ -451,6 +454,7 @@ class _IndexPageState extends State<IndexPage> {
           // Use current section letter if available, otherwise use first hymn's letter
           final firstHymnTitle = state.hymns.first.displayTitle.isNotEmpty
               ? state.hymns.first.displayTitle
+              // verbatim: picks a section letter, and is never shown
               : 'መዝሙር ${state.hymns.first.displayNumber}';
           final displayLetter = _currentSectionLetter.isNotEmpty
               ? _currentSectionLetter
@@ -592,7 +596,10 @@ class _IndexPageState extends State<IndexPage> {
       return EmptyStateWidget(
         icon: Icons.music_note,
         title: AppLocalizations.of(context)?.noHymnsFound ?? 'No hymns found',
-        message: state.sortType == 'name' ? 'በስም የተደረደረ መዝሙር አልተገኘም' : null,
+        message: state.sortType == 'name'
+            ? AppLocalizations.of(context)?.noHymnsInNameOrder ??
+                'በስም የተደረደረ መዝሙር አልተገኘም'
+            : null,
       );
     }
 
@@ -676,7 +683,7 @@ class _IndexPageState extends State<IndexPage> {
       builder: (dialogContext) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'አደራደር',
+          AppLocalizations.of(context)?.sortDialogTitle ?? 'አደራደር',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: _buildSortOptions(dialogContext, effectiveSortType),
@@ -704,13 +711,13 @@ class _IndexPageState extends State<IndexPage> {
       children: [
         _buildSortOption(
           dialogContext,
-          'በቁጥር',
+          AppLocalizations.of(context)?.sortByNumber ?? 'በቁጥር',
           'number',
           currentSortType,
         ),
         _buildSortOption(
           dialogContext,
-          'በስም',
+          AppLocalizations.of(context)?.sortByName ?? 'በስም',
           'name',
           currentSortType,
         ),

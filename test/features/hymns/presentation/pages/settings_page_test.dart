@@ -257,6 +257,13 @@ void main() {
         size: const Size(412, 1400),
       );
       await _settle(tester);
+      // The page is long enough that the tile is built only once reached.
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('contribution-tile')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await _settle(tester);
       expect(find.byKey(const ValueKey('contribution-tile')), findsOneWidget);
 
       await scrollToFooter(tester);

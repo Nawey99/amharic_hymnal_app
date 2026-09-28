@@ -25,6 +25,7 @@ import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/donate_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/appearance_settings.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/language_settings.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/offline_download_flow.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 import 'package:amharic_hymnal_app/injection_container.dart' show sl;
@@ -173,7 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             children: [
               MainPageTitleBar(
-                title: 'ቅንብሮች',
+                title: AppLocalizations.of(context)?.settingsTitle ?? 'ቅንብሮች',
                 showDivider: _scrolledUnderTitle,
               ),
               Expanded(
@@ -273,6 +274,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       _buildSectionTitle(
                           AppLocalizations.of(context)?.displaySection ??
                               'Display'),
+                      const LanguageSettings(),
+                      SizedBox(height: itemGap),
                       const AppearanceSettings(),
                       SizedBox(height: itemGap),
                       SettingsSliderTile(
@@ -352,7 +355,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ],
                       SizedBox(height: sectionGap),
-                      _buildSectionTitle('ስለ መተግበሪያው'),
+                      _buildSectionTitle(
+                          AppLocalizations.of(context)?.aboutSection ??
+                              'ስለ መተግበሪያው'),
                       // For contributors only: shown after tapping the
                       // version at the foot of the page, so nobody leaves
                       // for GitHub by accident.
@@ -392,8 +397,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       SettingsTile(
                         key: const ValueKey('privacy-tile'),
                         icon: Icons.privacy_tip_outlined,
-                        title: 'የግላዊነት ፖሊሲ',
-                        description: 'መተግበሪያው ስለ መረጃዎ ምን እንደሚያደርግ',
+                        title:
+                            AppLocalizations.of(context)?.privacyPolicyLabel ??
+                                'የግላዊነት ፖሊሲ',
+                        description: AppLocalizations.of(context)
+                                ?.privacyPolicyDescription ??
+                            'መተግበሪያው ስለ መረጃዎ ምን እንደሚያደርግ',
                         onTap: _openPrivacyPolicy,
                       ),
                       SizedBox(height: itemGap),
@@ -402,7 +411,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.bug_report,
                         title: AppLocalizations.of(context)?.reportBug ??
                             'የስህተት ጥቆማ',
-                        description: 'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
+                        description: AppLocalizations.of(context)
+                                ?.reportBugDescription ??
+                            'ችግር ወይም የማሻሻያ ሐሳብ ያሳውቁ',
                         onTap: () {
                           // Over the whole app: the floating navigation bar
                           // would otherwise cover the form's send button.
@@ -450,21 +461,22 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'GitHub ይከፈት?',
+          AppLocalizations.of(context)?.openGitHubTitle ?? 'GitHub ይከፈት?',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
-          'የመተግበሪያው ምንጭ ኮድ ከመተግበሪያው ውጭ በአሳሽ ይከፈታል።',
+          AppLocalizations.of(context)?.openGitHubBody ??
+              'የመተግበሪያው ምንጭ ኮድ ከመተግበሪያው ውጭ በአሳሽ ይከፈታል።',
           style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('ይቅር'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'ይቅር'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('ክፈት'),
+            child: Text(AppLocalizations.of(context)?.open ?? 'ክፈት'),
           ),
         ],
       ),
@@ -478,8 +490,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
     if (!opened && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('የGitHub ገጽ መክፈት አልተቻለም'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)?.gitHubOpenFailed ??
+              'የGitHub ገጽ መክፈት አልተቻለም'),
         ),
       );
     }
@@ -492,7 +505,10 @@ class _SettingsPageState extends State<SettingsPage> {
     );
     if (!opened && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('የግላዊነት ፖሊሲውን መክፈት አልተቻለም')),
+        SnackBar(
+            content: Text(
+                AppLocalizations.of(context)?.privacyPolicyOpenFailed ??
+                    'የግላዊነት ፖሊሲውን መክፈት አልተቻለም')),
       );
     }
   }
