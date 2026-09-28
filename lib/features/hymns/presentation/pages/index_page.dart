@@ -25,7 +25,12 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail
 class IndexPage extends StatefulWidget {
   final HymnOpenCallback? onOpenHymn;
 
-  const IndexPage({super.key, this.onOpenHymn});
+  /// Where the app keeps the hymn last opened, from any tab. The list
+  /// follows it, so turning to the index after reading 78 lands on 78
+  /// rather than on the first page of the book.
+  final HymnTabSession? session;
+
+  const IndexPage({super.key, this.onOpenHymn, this.session});
 
   @override
   State<IndexPage> createState() => _IndexPageState();
@@ -50,6 +55,8 @@ class _IndexPageState extends State<IndexPage> {
   bool _isSectionJumpInProgress = false;
   double _lastMeasuredHymnItemExtent = _estimatedHymnItemExtent;
   bool _sectionUpdateScheduled = false;
+  String? _revealedHymnKey;
+  bool _revealScheduled = false;
   @override
   void initState() {
     super.initState();
@@ -59,10 +66,12 @@ class _IndexPageState extends State<IndexPage> {
       if (!mounted) return;
       _handleSearchQuery(query);
     });
+    widget.session?.addListener(_scheduleReveal);
   }
 
   @override
   void dispose() {
+    widget.session?.removeListener(_scheduleReveal);
     _searchSubscription?.cancel();
     _scrollController.removeListener(_updateSectionIndicator);
     _searchController.dispose();
@@ -167,6 +176,103 @@ class _IndexPageState extends State<IndexPage> {
         _isSectionJumpInProgress = false;
       }
     }
+  }
+
+  /// Brings the hymn the reader last opened into view, once.
+  ///
+  /// Only when it has changed: after this has put 78 on screen, scrolling
+  /// away and coming back leaves the list where the reader put it. Opening
+  /// another hymn is what moves it again.
+  void _scheduleReveal() {
+    if (_revealScheduled) return;
+    _revealScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _revealScheduled = false;
+      if (mounted) _revealLastOpenedHymn();
+    });
+    // Registering a callback does not ask for a frame, and without one it
+    // never runs.
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  void _revealLastOpenedHymn() {
+    final target = widget.session?.lastOpened;
+    if (target == null) return;
+    final targetKey = _hymnKey(target);
+    if (targetKey == _revealedHymnKey) return;
+
+    // Searching is the reader's own business; the list must not jump
+    // underneath what they are typing.
+    if (_isSearchVisible) return;
+
+    final state = context.read<HymnsBloc>().state;
+    if (state is! HymnsLoaded || state.hymns.isEmpty) return;
+    if (widget.session?.lastOpenedVersion != state.version) return;
+
+    final hymnsToDisplay = _hymnsForDisplay(state.hymns, state.sortType);
+    final index =
+        hymnsToDisplay.indexWhere((hymn) => _hymnKey(hymn) == targetKey);
+    // Another book, or a hymn that has since gone: nothing to reveal.
+    if (index < 0) {
+      _revealedHymnKey = targetKey;
+      return;
+    }
+    if (!_scrollController.hasClients) return;
+
+    // Already in front of the reader: mark it seen and leave the list be.
+    if (_isHymnOnScreen(target)) {
+      _revealedHymnKey = targetKey;
+      return;
+    }
+
+    _revealedHymnKey = targetKey;
+    final leadIn = _revealLeadIn();
+    final itemHeight = _measuredHymnItemExtent(hymnsToDisplay);
+    final estimated =
+        ((index * itemHeight) + _listVerticalPadding - leadIn).clamp(
+      0.0,
+      _scrollController.position.maxScrollExtent,
+    );
+    _scrollController.jumpTo(estimated.toDouble());
+    _scheduleRevealRefinement(target, leadIn);
+  }
+
+  /// The hymn sits a third of the way down, so the numbers either side of
+  /// it are on screen too.
+  double _revealLeadIn() {
+    final viewportBox =
+        _listViewportKey.currentContext?.findRenderObject() as RenderBox?;
+    final height = viewportBox?.hasSize == true ? viewportBox!.size.height : 0;
+    return height > 0 ? height / 3 : _lastMeasuredHymnItemExtent;
+  }
+
+  void _scheduleRevealRefinement(Hymn hymn, double leadIn, {int attempt = 0}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      // The row has to be built before it can be measured, and the first
+      // jump only gets close, so this runs again once it is.
+      if (_alignHymnInViewport(hymn, leadIn: leadIn)) return;
+      if (attempt >= _maxSectionJumpRefinements) return;
+      _scheduleRevealRefinement(hymn, leadIn, attempt: attempt + 1);
+    });
+  }
+
+  bool _isHymnOnScreen(Hymn hymn) {
+    final viewportBox =
+        _listViewportKey.currentContext?.findRenderObject() as RenderBox?;
+    final itemBox =
+        _keyForHymn(hymn).currentContext?.findRenderObject() as RenderBox?;
+    if (viewportBox == null ||
+        itemBox == null ||
+        !viewportBox.hasSize ||
+        !itemBox.hasSize) {
+      return false;
+    }
+    final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
+    final viewportBottom = viewportTop + viewportBox.size.height;
+    final itemTop = itemBox.localToGlobal(Offset.zero).dy;
+    final itemBottom = itemTop + itemBox.size.height;
+    return itemBottom > viewportTop && itemTop < viewportBottom;
   }
 
   void _scheduleSectionJumpRefinement({
@@ -291,7 +397,11 @@ class _IndexPageState extends State<IndexPage> {
     return estimated.clamp(0, hymnCount - 1).toInt();
   }
 
-  bool _alignHymnWithViewportTop(Hymn hymn) {
+  bool _alignHymnWithViewportTop(Hymn hymn) =>
+      _alignHymnInViewport(hymn, leadIn: 0);
+
+  /// Puts [hymn] [leadIn] pixels below the top of the list.
+  bool _alignHymnInViewport(Hymn hymn, {required double leadIn}) {
     if (!_scrollController.hasClients) return false;
 
     final viewportContext = _listViewportKey.currentContext;
@@ -307,7 +417,7 @@ class _IndexPageState extends State<IndexPage> {
 
     final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
     final itemTop = itemBox.localToGlobal(Offset.zero).dy;
-    final target = (_scrollController.offset + itemTop - viewportTop)
+    final target = (_scrollController.offset + itemTop - viewportTop - leadIn)
         .clamp(
           0.0,
           _scrollController.position.maxScrollExtent,
@@ -609,6 +719,13 @@ class _IndexPageState extends State<IndexPage> {
     // the list ends as far above it as the category list does. Sections
     // near the end scroll as far as they can rather than to the very top.
     final bottomPadding = navBarBottomPadding - HymnListItem.bottomGap(context);
+
+    // The hymns have arrived: if one is waiting to be revealed, now is
+    // when it can be found and scrolled to.
+    if (widget.session?.lastOpened != null &&
+        _hymnKey(widget.session!.lastOpened!) != _revealedHymnKey) {
+      _scheduleReveal();
+    }
 
     final listView = ListView.builder(
       controller: _scrollController,

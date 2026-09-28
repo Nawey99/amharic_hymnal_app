@@ -5,8 +5,10 @@ import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
 
 /// What a theme's circle shows in the chooser.
 ///
-/// One colour for a theme built on a single idea, two for a theme that
-/// pairs a canvas with an accent from another family.
+/// Two colours, run corner to corner: the accent the theme wears in the
+/// dark and the deeper one it wears in the light. A flat circle sits
+/// dull beside them, so `end` is left out only where a theme really is
+/// one colour.
 @immutable
 class SwatchFill {
   final Color start;
@@ -78,7 +80,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.emerald,
       label: 'አረንጓዴ',
       englishLabel: 'Emerald',
-      swatch: SwatchFill(Color(0xFF4CAF50)),
+      swatch: SwatchFill(Color(0xFF4CAF50), Color(0xFF2E7D32)),
       light: AppColorsExtension.emeraldLight,
       dark: AppColorsExtension.emeraldDark,
     ),
@@ -86,7 +88,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.scentaraPink,
       label: 'ሮዝ',
       englishLabel: 'Rose',
-      swatch: SwatchFill(Color(0xFFD2648F)),
+      swatch: SwatchFill(Color(0xFFF2A0BF), Color(0xFFA32B62)),
       light: AppColorsExtension.scentaraPinkLight,
       dark: AppColorsExtension.scentaraPinkDark,
     ),
@@ -94,7 +96,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.purplePetal,
       label: 'ወይንጠጅ',
       englishLabel: 'Violet',
-      swatch: SwatchFill(Color(0xFF7E57D6)),
+      swatch: SwatchFill(Color(0xFFB79CFF), Color(0xFF6B3FC4)),
       light: AppColorsExtension.purplePetalLight,
       dark: AppColorsExtension.purplePetalDark,
     ),
@@ -102,7 +104,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.livoraFinance,
       label: 'ሰማያዊ',
       englishLabel: 'Blue',
-      swatch: SwatchFill(Color(0xFF1E6FD9)),
+      swatch: SwatchFill(Color(0xFF6FB2FF), Color(0xFF0B5FC4)),
       light: AppColorsExtension.livoraFinanceLight,
       dark: AppColorsExtension.livoraFinanceDark,
     ),
@@ -110,7 +112,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.nobleMane,
       label: 'ወርቃማ',
       englishLabel: 'Gold',
-      swatch: SwatchFill(Color(0xFFD9A441)),
+      swatch: SwatchFill(Color(0xFFE0A32E), Color(0xFF8A5A0B)),
       light: AppColorsExtension.nobleManeLight,
       dark: AppColorsExtension.nobleManeDark,
     ),
@@ -142,7 +144,7 @@ abstract final class AppThemeCatalog {
       id: AppPalette.violetDusk,
       label: 'ሐምራዊ',
       englishLabel: 'Periwinkle',
-      swatch: SwatchFill(Color(0xFFB69CFF), Color(0xFF5B3FBF)),
+      swatch: SwatchFill(Color(0xFF8E99FF), Color(0xFF4340C4)),
       light: AppColorsExtension.violetDuskLight,
       dark: AppColorsExtension.violetDuskDark,
     ),

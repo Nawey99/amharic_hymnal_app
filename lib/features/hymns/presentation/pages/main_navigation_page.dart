@@ -91,6 +91,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _hymnSession.dispose();
     super.dispose();
   }
 
@@ -528,6 +529,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
           IndexPage(
             onOpenHymn: (hymn) =>
                 _openHymnFrom(_NavDestination.hymnIndex, hymn),
+            session: _hymnSession,
           ),
         ),
         icon: Icons.list_alt_outlined,
