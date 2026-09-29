@@ -72,7 +72,9 @@ class GlobalAudioService {
         androidNotificationChannelName: notificationChannelName,
         androidNotificationChannelDescription:
             'Hymn accompaniment playback controls',
-        androidStopForegroundOnPause: false,
+        // Paused audio lets go of the foreground, so the phone can
+        // reclaim the app instead of holding it and its screen alive.
+        androidStopForegroundOnPause: true,
         fastForwardInterval: HymnalAudioHandler.seekInterval,
         rewindInterval: HymnalAudioHandler.seekInterval,
         preloadArtwork: true,

@@ -170,6 +170,25 @@ class HymnalAudioHandler extends BaseAudioHandler
     await super.stop();
   }
 
+  /// The app has been swiped out of Recents.
+  ///
+  /// A hymnal is not a music player: nobody dismisses it meaning "keep
+  /// playing". Leaving the player alive also kept the whole process
+  /// alive, so the app could be gone from Recents and still holding a
+  /// screen. The service ends with the app.
+  @override
+  Future<void> onTaskRemoved() async {
+    await stop();
+    await super.onTaskRemoved();
+  }
+
+  /// The reader swiped the notification away.
+  @override
+  Future<void> onNotificationDeleted() async {
+    await stop();
+    await super.onNotificationDeleted();
+  }
+
   @override
   Future<void> seek(Duration position) async {
     await _player.seek(clampAudioPosition(position, _player.duration));
