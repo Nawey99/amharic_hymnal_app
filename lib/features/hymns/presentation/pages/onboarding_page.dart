@@ -22,7 +22,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  static const List<OnboardingStep> _steps = OnboardingContent.steps;
+  List<OnboardingStep> get _steps =>
+      OnboardingContent.stepsFor(AppLocalizations.of(context)!);
 
   @override
   void dispose() {
@@ -42,11 +43,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       );
     } catch (e) {
       if (!mounted) return;
+      final l = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '${AppLocalizations.of(context)?.errorOccurred ?? 'ስህተት'} ${e.toString()}',
-          ),
+          content: Text('${l.errorOccurred} ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -94,13 +94,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _buildTopBar(bool compact) {
+    final l = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(16, compact ? 8 : 14, 16, compact ? 4 : 8),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              'ውዳሴ',
+              l.appTitle,
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontSize: 22,
@@ -118,9 +119,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
-            child: const Text(
-              'ዝለል',
-              style: TextStyle(
+            child: Text(
+              l.onboardingSkip,
+              style: const TextStyle(
                 fontFamily: 'NotoSansEthiopic',
                 fontWeight: FontWeight.w700,
               ),
@@ -269,7 +270,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 160),
                 child: Text(
-                  _currentPage < _steps.length - 1 ? 'ቀጣይ' : 'ጀምር',
+                  _currentPage < _steps.length - 1
+                      ? AppLocalizations.of(context)!.onboardingNext
+                      : AppLocalizations.of(context)!.onboardingStart,
                   key: ValueKey(_currentPage == _steps.length - 1),
                   style: const TextStyle(
                     fontSize: 17,
@@ -364,6 +367,7 @@ class _PreviewScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Column(
       children: [
         Row(
@@ -394,24 +398,24 @@ class _PreviewScaffold extends StatelessWidget {
           children: [
             _NavHint(
                 icon: Icons.category_rounded,
-                label: 'ምድብ',
-                active: selectedTab == 'ምድብ'),
+                label: l.navCategoriesTab,
+                active: selectedTab == 'categories'),
             _NavHint(
                 icon: Icons.list_alt_rounded,
-                label: 'ማውጫ',
-                active: selectedTab == 'ማውጫ'),
+                label: l.navIndexTab,
+                active: selectedTab == 'index'),
             _NavHint(
                 icon: Icons.numbers_rounded,
-                label: 'ቁጥር',
-                active: selectedTab == 'ቁጥር'),
+                label: l.navNumberTab,
+                active: selectedTab == 'number'),
             _NavHint(
                 icon: Icons.favorite_rounded,
-                label: 'ተወዳጅ',
-                active: selectedTab == 'ተወዳጅ'),
+                label: l.navFavouritesTab,
+                active: selectedTab == 'favourites'),
             _NavHint(
                 icon: Icons.settings_rounded,
-                label: 'ቅንብሮች',
-                active: selectedTab == 'ቅንብሮች'),
+                label: l.navSettingsTab,
+                active: selectedTab == 'settings'),
           ],
         ),
       ],
@@ -426,25 +430,26 @@ class _LibraryPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
-      title: 'ውዳሴ',
+      title: l.appTitle,
       actionIcon: Icons.search_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: 'number',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _MiniCard(
             icon: Icons.numbers_rounded,
-            title: 'በቁጥር መክፈት',
-            subtitle: 'ቁጥሩን አስገብተው “ክፈት”ን ይንኩ',
+            title: l.previewOpenByNumber,
+            subtitle: l.previewNumberHint,
             compact: compact,
           ),
           SizedBox(height: compact ? 6 : 8),
           _MiniCard(
             icon: Icons.search_rounded,
-            title: 'በማውጫ መፈለግ',
-            subtitle: 'በርዕስ ወይም በግጥም ቃላት',
+            title: l.previewSearchIndex,
+            subtitle: l.previewByTitleOrLyrics,
             compact: compact,
           ),
         ],
@@ -460,10 +465,11 @@ class _NumberPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
-      title: 'ውዳሴ',
+      title: l.appTitle,
       actionIcon: Icons.history_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: 'number',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -501,7 +507,7 @@ class _NumberPreview extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              'ክፈት',
+              l.previewOpen,
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontFamily: 'NotoSansEthiopic',
@@ -522,10 +528,11 @@ class _IndexPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
-      title: 'ማውጫ',
+      title: l.navIndexTab,
       actionIcon: Icons.sort_rounded,
-      selectedTab: 'ማውጫ',
+      selectedTab: 'index',
       compact: compact,
       child: Row(
         children: [
@@ -570,10 +577,11 @@ class _CategoriesPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
-      title: 'ምድቦች',
+      title: l.previewCategories,
       actionIcon: Icons.category_rounded,
-      selectedTab: 'ምድብ',
+      selectedTab: 'categories',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -608,10 +616,11 @@ class _LyricsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
       title: '- 1 -',
       actionIcon: Icons.favorite_border_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: 'number',
       compact: compact,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -635,13 +644,19 @@ class _LyricsPreview extends StatelessWidget {
                 TextStyle(color: context.appColors.secondaryText, fontSize: 10),
           ),
           const SizedBox(height: 8),
-          const Row(
+          Row(
             children: [
               Expanded(
-                  child:
-                      _MediaBox(icon: Icons.play_arrow_rounded, label: 'ድምፅ')),
-              SizedBox(width: 8),
-              _MediaBox(icon: Icons.library_music_rounded, label: 'ኖታ'),
+                child: _MediaBox(
+                  icon: Icons.play_arrow_rounded,
+                  label: l.previewMediaAudio,
+                ),
+              ),
+              const SizedBox(width: 8),
+              _MediaBox(
+                icon: Icons.library_music_rounded,
+                label: l.previewMediaSheet,
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -678,29 +693,30 @@ class _SettingsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return _PreviewScaffold(
-      title: 'ቅንብሮች',
+      title: l.navSettingsTab,
       actionIcon: Icons.settings_rounded,
-      selectedTab: 'ቅንብሮች',
+      selectedTab: 'settings',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _SettingRow(
             icon: Icons.library_books_rounded,
-            label: 'የመዝሙር ስብስብ',
+            label: l.previewSettingHymnalCollection,
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _SettingRow(
             icon: Icons.format_size_rounded,
-            label: 'የፊደል መጠን',
+            label: l.previewSettingFontSize,
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _SettingRow(
             icon: Icons.bug_report_rounded,
-            label: 'የስህተት ጥቆማ',
+            label: l.previewSettingBugReport,
             compact: compact,
           ),
         ],

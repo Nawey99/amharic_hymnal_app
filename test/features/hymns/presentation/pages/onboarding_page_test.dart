@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/models/onboarding_content.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/main_navigation_page.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/onboarding_page.dart';
@@ -53,7 +54,10 @@ void main() {
   testWidgets('"next" walks every step, and the last one starts the app',
       (tester) async {
     await pumpOnboarding(tester);
-    final steps = OnboardingContent.steps.length;
+    // The step count is stable across locales; use Amharic to look it up.
+    final steps = OnboardingContent.stepsFor(
+      AppLocalizations(const Locale('am')),
+    ).length;
 
     for (var step = 1; step < steps; step++) {
       expect(find.text('ቀጣይ'), findsOneWidget, reason: 'step $step');

@@ -459,6 +459,594 @@ class AppLocalizations {
             'እባክዎ ከ$min እስከ $max ያለ ቁጥር ያስገቡ።',
       });
 
+  // App title and app-wide labels
+  String get appTitle => _localizedValue({
+        'en': 'Wudase',
+        'am': 'ውዳሴ',
+      });
+
+  String get initializationFailed => _localizedValue({
+        'en': 'Failed to start the app',
+        'am': 'መተግበሪያውን ማስጀመር አልተቻለም',
+      });
+
+  String initializationFailedWith(String message) => _localizedValue({
+        'en': 'Failed to start the app: $message',
+        'am': 'መተግበሪያውን ማስጀመር አልተቻለም: $message',
+      });
+
+  // Onboarding
+  String get onboardingSkip => _localizedValue({
+        'en': 'Skip',
+        'am': 'ዝለል',
+      });
+
+  String get onboardingNext => _localizedValue({
+        'en': 'Next',
+        'am': 'ቀጣይ',
+      });
+
+  String get onboardingStart => _localizedValue({
+        'en': 'Start',
+        'am': 'ጀምር',
+      });
+
+  String get onboardingStep1Title => _localizedValue({
+        'en': 'About the Wudase app',
+        'am': 'ስለ ውዳሴ መተግበሪያ',
+      });
+
+  String get onboardingStep1Description => _localizedValue({
+        'en':
+            'Wudase brings Amharic Adventist and Hagerigna hymns — their lyrics, sheet music and audio — together in one place.',
+        'am':
+            'ውዳሴ የአማርኛ አድቬንቲስት እና የሀገርኛ መዝሙሮችን ከነግጥማቸው፣ ከሙዚቃ ኖታና ከድምፃቸው ጋር በአንድ ቦታ ያቀርባል።',
+      });
+
+  String get onboardingStep1Access => _localizedValue({
+        'en':
+            'When the app opens, the Number page appears first. Use the tab bar at the bottom to move between pages.',
+        'am': 'መተግበሪያው ሲከፈት መጀመሪያ የቁጥር ገጽ ይታያል። ከታች የሚገኘው የማውጫ አሞሌ በገጾች መካከል ለመዘዋወር ያገለግላል።',
+      });
+
+  String get onboardingStep1Bullet1 => _localizedValue({
+        'en': 'Hymn lyrics',
+        'am': 'የመዝሙር ግጥሞች',
+      });
+
+  String get onboardingStep1Bullet2 => _localizedValue({
+        'en': 'Open by number',
+        'am': 'በቁጥር መክፈት',
+      });
+
+  String get onboardingStep1Bullet3 => _localizedValue({
+        'en': 'Save favourites',
+        'am': 'ተወዳጆችን መመዝገብ',
+      });
+
+  String get onboardingStep2Title => _localizedValue({
+        'en': 'Open a hymn by number',
+        'am': 'በቁጥር መዝሙር ይክፈቱ',
+      });
+
+  String get onboardingStep2Description => _localizedValue({
+        'en':
+            'If you know the hymn number you can jump straight to the lyrics. If the number is not in the collection the app will tell you.',
+        'am':
+            'የመዝሙሩን ቁጥር ካወቁ በፍጥነት ወደ ግጥሙ መግባት ይችላሉ። ቁጥሩ በስብስቡ ውስጥ ካልገኘ መተግበሪያው ያሳውቃል።',
+      });
+
+  String get onboardingStep2Access => _localizedValue({
+        'en': 'Tap "Number" at the bottom, enter the hymn number, then tap "Open".',
+        'am': 'ከታች “ቁጥር”ን ይንኩ፤ የመዝሙሩን ቁጥር ካስገቡ በኋላ “ክፈት”ን ይጫኑ።',
+      });
+
+  String get onboardingStep2Bullet1 => _localizedValue({
+        'en': 'Search by number',
+        'am': 'በቁጥር መፈለግ',
+      });
+
+  String get onboardingStep2Bullet2 => _localizedValue({
+        'en': 'Open directly',
+        'am': 'በቀጥታ መክፈት',
+      });
+
+  String get onboardingStep2Bullet3 => _localizedValue({
+        'en': 'Read the lyrics',
+        'am': 'ግጥሙን ማንበብ',
+      });
+
+  String get onboardingStep3Title => _localizedValue({
+        'en': 'Find with the index',
+        'am': 'በማውጫ ይፈልጉ',
+      });
+
+  String get onboardingStep3Description => _localizedValue({
+        'en':
+            'The index shows hymns by number or by title. You can also search by title, English title or a word from the lyrics.',
+        'am':
+            'ማውጫ መዝሙሮችን በቁጥር ወይም በርዕስ ቅደም ተከተል ያሳያል። በተጨማሪም በፍለጋ ሳጥኑ ውስጥ በርዕስ፣ በእንግሊዝኛ ርዕስ ወይም በግጥም ቃላት መፈለግ ይችላሉ።',
+      });
+
+  String get onboardingStep3Access => _localizedValue({
+        'en':
+            'Tap "Index" at the bottom. Tap the search icon to search, or the sort button to reorder by number or by title.',
+        'am':
+            'ከታች “ማውጫ”ን ይንኩ። የፍለጋ ምልክቱን በመንካት መፈለግ፣ ወይም የአደራደር አዝራሩን በመንካት በቁጥር አሊያም በርዕስ ቅደም ተከተል ማስተካከል ይችላሉ።',
+      });
+
+  String get onboardingStep3Bullet1 => _localizedValue({
+        'en': 'By title',
+        'am': 'በርዕስ',
+      });
+
+  String get onboardingStep3Bullet2 => _localizedValue({
+        'en': 'By lyrics',
+        'am': 'በግጥም',
+      });
+
+  String get onboardingStep3Bullet3 => _localizedValue({
+        'en': 'By number or letter',
+        'am': 'በቁጥር ወይም በፊደል',
+      });
+
+  String get onboardingStep4Title => _localizedValue({
+        'en': 'Find by category',
+        'am': 'በምድብ ያግኙ',
+      });
+
+  String get onboardingStep4Description => _localizedValue({
+        'en':
+            'Categories group hymns by theme — such as praise, prayer, Sabbath, marriage and hope.',
+        'am':
+            'ምድቦች መዝሙሮችን እንደ ምስጋና፣ ጸሎት፣ ሰንበት፣ ጋብቻ እና ተስፋ በርዕሰ ጉዳይ ያደራጃሉ።',
+      });
+
+  String get onboardingStep4Access => _localizedValue({
+        'en':
+            'Tap "Categories" at the bottom and pick the category you want; the hymns inside it are then listed.',
+        'am':
+            'ከታች “ምድብ”ን ይንኩና የሚፈልጉትን ምድብ ይምረጡ፤ ከዚያም በምድቡ ሥር የተካተቱት መዝሙሮች ይዘረዘራሉ።',
+      });
+
+  String get onboardingStep5Title => _localizedValue({
+        'en': 'Lyrics, audio and sheet music',
+        'am': 'ግጥም፣ ድምፅ እና ኖታ',
+      });
+
+  String get onboardingStep5Description => _localizedValue({
+        'en':
+            'The hymn page shows its number, its Amharic and English titles, and the full lyrics. When audio is available you can play it here; when sheet music is available you can open it full-screen.',
+        'am':
+            'የመዝሙሩ ገጽ ቁጥሩን፣ የአማርኛና የእንግሊዝኛ ርዕሱን እንዲሁም ሙሉ ግጥሙን ያሳያል። ድምፅ ሲኖረው ከዚያው ማጫወት፣ የሙዚቃ ኖታ ሲኖረውም በሙሉ ገጽ መክፈት ይችላሉ።',
+      });
+
+  String get onboardingStep5Access => _localizedValue({
+        'en':
+            'From any hymn list, tap the hymn you want. Tap the heart to add it to favourites; tap the sheet-music icon to open the notation.',
+        'am':
+            'ከማንኛውም የመዝሙር ዝርዝር ውስጥ የሚፈልጉትን መዝሙር ይንኩ። የልብ ምልክቱን በመንካት ወደ ተወዳጅ መዝሙሮች ማከል፣ የኖታ ምልክቱን በመንካት ደግሞ ኖታውን መክፈት ይችላሉ።',
+      });
+
+  String get onboardingStep5Bullet1 => _localizedValue({
+        'en': 'Read lyrics',
+        'am': 'ግጥም ማንበብ',
+      });
+
+  String get onboardingStep5Bullet2 => _localizedValue({
+        'en': 'Play audio',
+        'am': 'ድምፅ መጫወት',
+      });
+
+  String get onboardingStep5Bullet3 => _localizedValue({
+        'en': 'Open sheet music',
+        'am': 'ኖታ መክፈት',
+      });
+
+  String get onboardingStep6Title => _localizedValue({
+        'en': 'Adjust settings',
+        'am': 'ቅንብሮችን ያስተካክሉ',
+      });
+
+  String get onboardingStep6Description => _localizedValue({
+        'en':
+            'The Settings page has the hymnal collection, font size, background image, keep-screen-on switch, donation link and bug report.',
+        'am':
+            'ከቅንብሮች ገጽ የመዝሙር ስብስብን፣ የፊደል መጠንን፣ የጀርባ ምስልን፣ ማያ እንዳይጠፋ ማድረግን፣ የልገሳ ድጋፍን እና የስህተት ጥቆማን ያገኛሉ።',
+      });
+
+  String get onboardingStep6Access => _localizedValue({
+        'en':
+            'Tap "Settings" at the bottom. Use the collection selector to switch between the 2004, 1975 or 1961 Wudase or the Hagerigna hymnal.',
+        'am':
+            'ከታች “ቅንብሮች”ን ይንኩ። የ2004፣ የ1975 ወይም የ1961 ውዳሴ መዝሙርን አሊያም የሀገርኛ መዝሙር ስብስብን ለመቀየር የስብስብ ምርጫውን ይጠቀሙ።',
+      });
+
+  String get onboardingStep6Bullet1 => _localizedValue({
+        'en': 'Hymnal collection',
+        'am': 'የመዝሙር ስብስብ',
+      });
+
+  String get onboardingStep6Bullet2 => _localizedValue({
+        'en': 'Font size',
+        'am': 'የፊደል መጠን',
+      });
+
+  String get onboardingStep6Bullet3 => _localizedValue({
+        'en': 'Bug report',
+        'am': 'የስህተት ጥቆማ',
+      });
+
+  // Preview labels (used in onboarding previews)
+  String get previewOpenByNumber => _localizedValue({
+        'en': 'Open by number',
+        'am': 'በቁጥር መክፈት',
+      });
+
+  String get previewSearchIndex => _localizedValue({
+        'en': 'Search the index',
+        'am': 'በማውጫ መፈለግ',
+      });
+
+  String get previewByTitleOrLyrics => _localizedValue({
+        'en': 'By title or word from lyrics',
+        'am': 'በርዕስ ወይም በግጥም ቃላት',
+      });
+
+  String get previewNumberHint => _localizedValue({
+        'en': 'Enter the number and tap "Open"',
+        'am': 'ቁጥሩን አስገብተው “ክፈት”ን ይንኩ',
+      });
+
+  String get previewOpen => _localizedValue({
+        'en': 'Open',
+        'am': 'ክፈት',
+      });
+
+  String get previewCategories => _localizedValue({
+        'en': 'Categories',
+        'am': 'ምድቦች',
+      });
+
+  String get previewSampleLyrics => _localizedValue({
+        'en':
+            'Praise our God,\nHonour be to Him,\n...',
+        'am': 'አምላካችን አመስግኑ\nምስጋና ለእርሱ ይሁን\n...',
+      });
+
+  String get previewMediaAudio => _localizedValue({
+        'en': 'Audio',
+        'am': 'ድምፅ',
+      });
+
+  String get previewMediaSheet => _localizedValue({
+        'en': 'Sheet music',
+        'am': 'ኖታ',
+      });
+
+  String get previewSettingHymnalCollection => _localizedValue({
+        'en': 'Hymnal collection',
+        'am': 'የመዝሙር ስብስብ',
+      });
+
+  String get previewSettingFontSize => _localizedValue({
+        'en': 'Font size',
+        'am': 'የፊደል መጠን',
+      });
+
+  String get previewSettingBugReport => _localizedValue({
+        'en': 'Report bug',
+        'am': 'የስህተት ጥቆማ',
+      });
+
+  // Offline downloads
+  String get downloadAllSheetsTitle => _localizedValue({
+        'en': 'Download all sheet music',
+        'am': 'ኖታዎችን በሙሉ አውርድ',
+      });
+
+  String get downloadAllSheetsDescription => _localizedValue({
+        'en': 'For opening the hymnals\' sheet music without internet',
+        'am': 'የመዝሙር መጻሕፍትን ኖታዎች ያለ ኢንተርኔት ለመክፈት',
+      });
+
+  String get downloadAllAudiosTitle => _localizedValue({
+        'en': 'Download all audios',
+        'am': 'ድምፆችን በሙሉ አውርድ',
+      });
+
+  String get downloadAllAudiosDescription => _localizedValue({
+        'en': 'For listening to the hymnals without internet',
+        'am': 'የመዝሙር መጻሕፍትን ድምፆች ያለ ኢንተርኔት ለማዳመጥ',
+      });
+
+  String get downloadSheetsConfirmTitle => _localizedValue({
+        'en': 'Download all sheet music?',
+        'am': 'ሁሉም ኖታዎች ይውረዱ?',
+      });
+
+  String get downloadAudiosConfirmTitle => _localizedValue({
+        'en': 'Download all audios?',
+        'am': 'ሁሉም ድምፆች ይውረዱ?',
+      });
+
+  String get downloadUnitPages => _localizedValue({
+        'en': 'pages',
+        'am': 'ገጾች',
+      });
+
+  String get downloadUnitAudios => _localizedValue({
+        'en': 'audios',
+        'am': 'ድምፆች',
+      });
+
+  String get downloadSheetsBenefit => _localizedValue({
+        'en': 'Once downloaded, you can open the sheet music without internet.',
+        'am': 'ከወረዱ በኋላ ኖታዎቹን ያለ ኢንተርኔት መክፈት ይችላሉ።',
+      });
+
+  String get downloadAudiosBenefit => _localizedValue({
+        'en': 'Once downloaded, you can listen to the hymns without internet.',
+        'am': 'ከወረዱ በኋላ መዝሙሮቹን ያለ ኢንተርኔት ማዳመጥ ይችላሉ።',
+      });
+
+  String get downloadWifiRecommended => _localizedValue({
+        'en': 'Wi-Fi is recommended.',
+        'am': 'Wi-Fi መጠቀም ይመከራል።',
+      });
+
+  String get downloadSheetsNone => _localizedValue({
+        'en': 'This hymnal has no sheet music.',
+        'am': 'ይህ የመዝሙር መጽሐፍ ኖታ የለውም።',
+      });
+
+  String get downloadAudiosNone => _localizedValue({
+        'en': 'This hymnal has no audio.',
+        'am': 'ይህ የመዝሙር መጽሐፍ ድምፅ የለውም።',
+      });
+
+  String get downloadSheetsNoneAll => _localizedValue({
+        'en': 'These hymnals have no sheet music.',
+        'am': 'እነዚህ የመዝሙር መጻሕፍት ኖታ የላቸውም።',
+      });
+
+  String get downloadAudiosNoneAll => _localizedValue({
+        'en': 'These hymnals have no audio.',
+        'am': 'እነዚህ የመዝሙር መጻሕፍት ድምፅ የላቸውም።',
+      });
+
+  String get downloadSheetsAllPresent => _localizedValue({
+        'en': 'All sheet music is on your device.',
+        'am': 'ሁሉም ኖታዎች በመሣሪያዎ ላይ አሉ።',
+      });
+
+  String get downloadAudiosAllPresent => _localizedValue({
+        'en': 'All audio is on your device.',
+        'am': 'ሁሉም ድምፆች በመሣሪያዎ ላይ አሉ።',
+      });
+
+  String get downloadSheetsStarted => _localizedValue({
+        'en': 'Downloading sheet music. You can keep using the app.',
+        'am': 'ኖታዎች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
+      });
+
+  String get downloadAudiosStarted => _localizedValue({
+        'en': 'Downloading audio. You can keep using the app.',
+        'am': 'ድምፆች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
+      });
+
+  String get downloadSheetsFinished => _localizedValue({
+        'en': 'All sheet music has been downloaded.',
+        'am': 'ሁሉም ኖታዎች ወርደዋል።',
+      });
+
+  String get downloadAudiosFinished => _localizedValue({
+        'en': 'All audio has been downloaded.',
+        'am': 'ሁሉም ድምፆች ወርደዋል።',
+      });
+
+  String downloadSheetsStopped(int saved) => _localizedValue({
+        'en': 'Download stopped. $saved pages saved.',
+        'am': 'ማውረድ ቆሟል። $saved ገጾች ተቀምጠዋል።',
+      });
+
+  String downloadAudiosStopped(int saved) => _localizedValue({
+        'en': 'Download stopped. $saved audios saved.',
+        'am': 'ማውረድ ቆሟል። $saved ድምፆች ተቀምጠዋል።',
+      });
+
+  String downloadSheetsFailed(int count) => _localizedValue({
+        'en':
+            'Could not download $count pages. Trying again will only fetch the ones that are still missing.',
+        'am': '$count ገጾችን ማውረድ አልተቻለም። እንደገና ሲሞክሩ የቀሩት ብቻ ይወርዳሉ።',
+      });
+
+  String downloadAudiosFailed(int count) => _localizedValue({
+        'en':
+            'Could not download $count audios. Trying again will only fetch the ones that are still missing.',
+        'am': '$count ድምፆችን ማውረድ አልተቻለም። እንደገና ሲሞክሩ የቀሩት ብቻ ይወርዳሉ።',
+      });
+
+  String downloadSheetsUpdated(int count) => _localizedValue({
+        'en': '$count new pages downloaded.',
+        'am': '$count አዲስ ገጾች ወርደዋል።',
+      });
+
+  String downloadAudiosUpdated(int count) => _localizedValue({
+        'en': '$count new audios downloaded.',
+        'am': '$count አዲስ ድምፆች ወርደዋል።',
+      });
+
+  String downloadAllDone(int itemCount, String unit, String size) =>
+      _localizedValue({
+        'en': 'All downloaded · $itemCount $unit · $size',
+        'am': 'ሁሉም ወርደዋል · $itemCount $unit · $size',
+      });
+
+  String downloadUpdatesAvailable(int count, String unit, String size) =>
+      _localizedValue({
+        'en': '$count new $unit to download · $size',
+        'am': '$count አዲስ $unit ለማውረድ · $size',
+      });
+
+  String get downloadListUnavailable => _localizedValue({
+        'en': 'Could not get the list of hymns.',
+        'am': 'የመዝሙሮቹን ዝርዝር ማግኘት አልተቻለም።',
+      });
+
+  String get downloadNeedInternet => _localizedValue({
+        'en':
+            'An internet connection is needed to download. Please try again later.',
+        'am': 'ለማውረድ መጀመሪያ የኢንተርኔት ግንኙነት ያስፈልጋል። እባክዎ ቆይተው እንደገና ይሞክሩ።',
+      });
+
+  String downloadConfirmBodyAll(int items, String unit, String size,
+          String benefit) =>
+      _localizedValue({
+        'en': 'All hymnals: $items $unit, $size.\n\n$benefit Wi-Fi is recommended.',
+        'am': 'ሁሉም መዝሙር መጻሕፍት፦ $items $unit፣ $size።\n\n$benefit Wi-Fi መጠቀም ይመከራል።',
+      });
+
+  String downloadConfirmBodySingle(String hymnalLabel, int items, String unit,
+          String size, String benefit) =>
+      _localizedValue({
+        'en': '$hymnalLabel: $items $unit, $size.\n\n$benefit Wi-Fi is recommended.',
+        'am': '$hymnalLabel፦ $items $unit፣ $size።\n\n$benefit Wi-Fi መጠቀም ይመከራል።',
+      });
+
+  String get downloadCancel => _localizedValue({
+        'en': 'Cancel',
+        'am': 'ይቅር',
+      });
+
+  String get downloadStart => _localizedValue({
+        'en': 'Download',
+        'am': 'አውርድ',
+      });
+
+  String get downloadWaiting => _localizedValue({
+        'en': 'Waiting',
+        'am': 'በመጠባበቅ ላይ',
+      });
+
+  String get downloadChecking => _localizedValue({
+        'en': 'Checking what is already downloaded…',
+        'am': 'የተቀመጡትን በማጣራት ላይ…',
+      });
+
+  String get downloadOfferTitle => _localizedValue({
+        'en': 'Download for offline use',
+        'am': 'ያለ ኢንተርኔት ለመጠቀም ማውረድ',
+      });
+
+  String downloadOfferBody(String hymnalLabel) => _localizedValue({
+        'en': 'What should be downloaded for offline use of $hymnalLabel?',
+        'am': '${hymnalLabel}ን ያለ ኢንተርኔት ለመጠቀም ምን ይውረድ?',
+      });
+
+  String get downloadOfferHintLater => _localizedValue({
+        'en': 'Wi-Fi is recommended. You can also download later from Settings.',
+        'am': 'Wi-Fi መጠቀም ይመከራል። በኋላም ከቅንብሮች ማውረድ ይችላሉ።',
+      });
+
+  String get downloadOfferLater => _localizedValue({
+        'en': 'Later',
+        'am': 'በኋላ',
+      });
+
+  String get downloadOfferAudios => _localizedValue({
+        'en': 'Audios',
+        'am': 'ድምፆች',
+      });
+
+  String get downloadOfferSheets => _localizedValue({
+        'en': 'Sheet music',
+        'am': 'ኖታዎች',
+      });
+
+  // Main navigation & tabs
+  String get navCategoriesTab => _localizedValue({
+        'en': 'Categories',
+        'am': 'ምድብ',
+      });
+
+  String get navIndexTab => _localizedValue({
+        'en': 'Index',
+        'am': 'ማውጫ',
+      });
+
+  String get navNumberTab => _localizedValue({
+        'en': 'Number',
+        'am': 'ቁጥር',
+      });
+
+  String get navFavouritesTab => _localizedValue({
+        'en': 'Favourites',
+        'am': 'ተወዳጅ',
+      });
+
+  String get navSettingsTab => _localizedValue({
+        'en': 'Settings',
+        'am': 'ቅንብሮች',
+      });
+
+  // Settings page fallbacks
+  String get contributionLabel => _localizedValue({
+        'en': 'Development & contribution',
+        'am': 'ልማት እና አስተዋፅዖ',
+      });
+
+  String get contributionDescription => _localizedValue({
+        'en': 'View source code and contribute',
+        'am': 'የምንጭ ኮድ ይመልከቱ እና ይሳተፉ',
+      });
+
+  String get donateShortLabel => _localizedValue({
+        'en': 'Donate',
+        'am': 'ይለግሱ',
+      });
+
+  String get donateShortDescription => _localizedValue({
+        'en': 'Support the development of this app',
+        'am': 'የዚህን መተግበሪያ ልማት ድጋፍ ያድርጉ',
+      });
+
+  // Hymnal edition labels in English
+  String hymnalLabelEn(String versionId) => _localizedValue({
+        'en': _englishHymnalLabelFor(versionId),
+        'am': _amharicHymnalLabelFor(versionId),
+      });
+
+  static String _englishHymnalLabelFor(String versionId) {
+    switch (versionId) {
+      case 'sda_new':
+        return '2004 Wudase hymnal';
+      case 'sda_old':
+        return '1975 Wudase hymnal';
+      case 'sda_1960':
+        return '1961 Wudase hymnal';
+      case 'hagerigna':
+        return 'Hagerigna hymnal';
+      default:
+        return versionId;
+    }
+  }
+
+  static String _amharicHymnalLabelFor(String versionId) {
+    switch (versionId) {
+      case 'sda_new':
+        return 'የ2004 ውዳሴ መዝሙር';
+      case 'sda_old':
+        return 'የ1975 ውዳሴ መዝሙር';
+      case 'sda_1960':
+        return 'የ1961 ውዳሴ መዝሙር';
+      case 'hagerigna':
+        return 'የሀገርኛ መዝሙር';
+      default:
+        return versionId;
+    }
+  }
+
   String _localizedValue(Map<String, String> values) {
     final langCode = locale.languageCode;
     return values[langCode] ?? values['en'] ?? '';

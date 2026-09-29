@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -42,6 +44,14 @@ Future<HymnsBloc> _pumpShell(
     BlocProvider<HymnsBloc>.value(
       value: bloc,
       child: MaterialApp(
+        locale: const Locale('am'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         home: MediaQuery(
           data: MediaQueryData(
             size: size,
@@ -248,7 +258,10 @@ void main() {
       reason: 'the floating bar would cover the send button',
     );
 
-    await tester.pageBack();
+    // The Material back button's tooltip is localized (Amharic here), so
+    // fetch it directly rather than relying on tester.pageBack()'s English
+    // "Back" tooltip lookup.
+    await tester.tap(find.byType(BackButton));
     for (var frame = 0; frame < 10; frame++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
@@ -572,6 +585,14 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           key: ValueKey(size),
+          locale: const Locale('am'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: const OnboardingPage(),
         ),
       );
