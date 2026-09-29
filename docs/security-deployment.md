@@ -59,6 +59,60 @@ To use a local copy of the hymnal API, add
 `10.0.2.2` instead of `127.0.0.1` for an Android emulator. Flutter web must be
 served from an origin listed in the API's `CORS_ORIGINS`.
 
+## Beta build with crash reporting
+
+Crash reports go to Sentry only when the build supplies a DSN. Public
+Play Store / App Store builds are built without the DSN and send nothing.
+See `lib/core/services/crash_reporting.dart` for the exact fields that
+are reported and the PII scrub.
+
+### One-time Sentry setup
+
+1. Sign in at [sentry.io](https://sentry.io/) and create (or join) an
+   organisation.
+2. **New project** → platform **Flutter** → project name **wudase-beta**.
+3. Open **Settings → Projects → wudase-beta → Client Keys (DSN)** and
+   copy the DSN. It looks like
+   `https://<32-char-key>@o<orgid>.ingest.us.sentry.io/<projid>`.
+4. Set **Retention → 90 days** on the project to match the privacy policy.
+5. Keep the DSN out of the repository. Store it in a shell env var
+   (`WUDASE_SENTRY_DSN`) or in a local `.env` file that is git-ignored.
+
+### Beta build commands
+
+Android app bundle:
+
+```powershell
+flutter build appbundle --release `
+  --dart-define=WUDASE_SENTRY_DSN=$env:WUDASE_SENTRY_DSN `
+  --dart-define=WUDASE_SENTRY_ENVIRONMENT=beta
+```
+
+iOS IPA (run on macOS):
+
+```powershell
+flutter build ipa --release `
+  --dart-define=WUDASE_SENTRY_DSN=$env:WUDASE_SENTRY_DSN `
+  --dart-define=WUDASE_SENTRY_ENVIRONMENT=beta
+```
+
+Leaving `WUDASE_SENTRY_DSN` unset disables reporting entirely — this is
+how public store releases are built. `WUDASE_SENTRY_ENVIRONMENT`
+defaults to `beta` when the DSN is set.
+
+### Verifying the wiring
+
+- After installing a beta build, open Settings → **Report bug** and
+  submit a "smoke" report. That path does not use Sentry, but confirms
+  the app is running the beta build.
+- To force a real crash-report path, wrap an intentional throw in
+  `CrashReporting.recordError(Exception('sentry-smoke'), StackTrace.current)`
+  from a temporary tap handler, then check the Sentry project's Issues
+  page. Remove the temporary code before releasing.
+- Reports never include: user identity, IP address, screenshots, or the
+  Flutter widget tree. `CrashReporting.scrub` clears the last three
+  before the event leaves the device.
+
 ## Store release
 
 Before a public release: the final application ID, Android and iOS signing,
