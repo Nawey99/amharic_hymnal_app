@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
 import 'package:amharic_hymnal_app/core/services/offline_media_download.dart';
@@ -70,6 +72,14 @@ void main() {
     Future<void> Function(BuildContext context) action,
   ) async {
     await tester.pumpWidget(MaterialApp(
+      locale: const Locale('am'),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: Builder(
           builder: (context) => TextButton(
@@ -79,6 +89,7 @@ void main() {
         ),
       ),
     ));
+    await _settle(tester); // wait for localizations delegates to load
     await tester.tap(find.text('run'));
     await _settle(tester);
   }
@@ -317,6 +328,14 @@ void main() {
     Future<void> pumpTile(WidgetTester tester, String mediaType) async {
       await controller.updateStatus('sda_new', _syncedHymns());
       await tester.pumpWidget(MaterialApp(
+        locale: const Locale('am'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: OfflineDownloadTile(
             mediaType: mediaType,
@@ -325,7 +344,7 @@ void main() {
           ),
         ),
       ));
-      await tester.pump();
+      await _settle(tester); // wait for localizations delegates to load
     }
 
     testWidgets('offers the download with its size', (tester) async {
@@ -417,6 +436,7 @@ void main() {
       await tapToRun(tester, (context) async {
         downloadKeptMediaChanges(
           ScaffoldMessenger.of(context),
+          AppLocalizations.of(context)!,
           controller: controller,
         );
       });
@@ -461,10 +481,12 @@ void main() {
         (tester) async {
       await tapToRun(tester, (context) async {
         final messenger = ScaffoldMessenger.of(context);
+        final l = AppLocalizations.of(context)!;
         final plan =
             await controller.downloader.plan(_syncedHymns(), MediaType.audio);
         startOfflineDownload(
           messenger,
+          l,
           'sda_new',
           plan,
           controller: controller,

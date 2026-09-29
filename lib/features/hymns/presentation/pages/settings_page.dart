@@ -246,7 +246,11 @@ class _SettingsPageState extends State<SettingsPage> {
                             .map(
                               (version) => DropdownMenuItem(
                                 value: version.id,
-                                child: Text(version.label),
+                                child: Text(
+                                  AppLocalizations.of(context)
+                                          ?.hymnalLabelEn(version.id) ??
+                                      version.label,
+                                ),
                               ),
                             )
                             .toList(growable: false),
@@ -350,14 +354,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       if (!kIsWeb) ...[
                         SizedBox(height: itemGap),
-                        OfflineDownloadTile(
+                        AllEditionsDownloadTile(
                           mediaType: MediaType.sheetMusic,
-                          version: _selectedVersion,
+                          versions: [
+                            for (final v in HymnalVersions.all) v.id,
+                          ],
                         ),
                         SizedBox(height: itemGap),
-                        OfflineDownloadTile(
+                        AllEditionsDownloadTile(
                           mediaType: MediaType.audio,
-                          version: _selectedVersion,
+                          versions: [
+                            for (final v in HymnalVersions.all) v.id,
+                          ],
                         ),
                       ],
                       SizedBox(height: sectionGap),

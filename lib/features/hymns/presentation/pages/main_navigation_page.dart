@@ -141,7 +141,10 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     if (hymnsAreFromServer(state.hymns, state.version)) {
       await downloads.updateStatus(state.version, state.hymns);
       if (!mounted) return;
-      downloadKeptMediaChanges(ScaffoldMessenger.of(context));
+      downloadKeptMediaChanges(
+        ScaffoldMessenger.of(context),
+        AppLocalizations.of(context)!,
+      );
     } else {
       downloads.clearStatus();
     }
