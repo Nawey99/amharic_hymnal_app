@@ -16,7 +16,8 @@ class SdaParser {
     List<String> newTitleArray = [];
     List<String> oldTitleArray = [];
     List<String> newLyricsArray = [];
-    List<String> englishTitleArray = [];
+    List<String> newEnglishTitleArray = [];
+    List<String> oldEnglishTitleArray = [];
     List<String> oldLyricsArray = [];
 
     for (var array in arrays) {
@@ -31,7 +32,9 @@ class SdaParser {
         } else if (name == 'new_song' && items != null) {
           newLyricsArray = items.map((e) => e?.toString() ?? '').toList();
         } else if (name == 'new_title_en' && items != null) {
-          englishTitleArray = items.map((e) => e?.toString() ?? '').toList();
+          newEnglishTitleArray = items.map((e) => e?.toString() ?? '').toList();
+        } else if (name == 'old_title_en' && items != null) {
+          oldEnglishTitleArray = items.map((e) => e?.toString() ?? '').toList();
         } else if (name == 'old_song' && items != null) {
           oldLyricsArray = items.map((e) => e?.toString() ?? '').toList();
         }
@@ -43,7 +46,8 @@ class SdaParser {
       newTitleArray.length,
       oldTitleArray.length,
       newLyricsArray.length,
-      englishTitleArray.length,
+      newEnglishTitleArray.length,
+      oldEnglishTitleArray.length,
       oldLyricsArray.length,
     ].reduce((a, b) => a > b ? a : b);
 
@@ -56,7 +60,11 @@ class SdaParser {
     // 2004 #132). So each hymn carries only its own book's fields; mixing them
     // put the other book's title and lyrics into search and categories.
     final isOld = normalizedVersion == HymnalVersions.sdaOld;
-    String at(List<String> items, int i) => items.length > i ? items[i] : '';
+    // Titles and lyrics arrive with occasional trailing whitespace from
+    // the source book (e.g. 2004 #2 "ቅዱስ ቅዱስ ቅዱስ "); a leaked space
+    // breaks equality-based cross-edition lookups downstream.
+    String at(List<String> items, int i) =>
+        items.length > i ? items[i].trim() : '';
 
     for (int i = 0; i < maxLength; i++) {
       final number = i + 1;
@@ -84,8 +92,12 @@ class SdaParser {
         'old_hymnal_title': isOld ? title : '',
         'new_hymnal_lyrics': isOld ? '' : lyrics,
         'old_hymnal_lyrics': isOld ? lyrics : '',
-        // `new_title_en` holds the 2004 book's English titles.
-        'english_title_old': isOld ? '' : at(englishTitleArray, i),
+        // Each book carries its own English title so English-title search
+        // works on both editions offline. `new_title_en` holds the 2004
+        // English titles; `old_title_en` holds the 1975 English titles.
+        'english_title_old': isOld
+            ? at(oldEnglishTitleArray, i)
+            : at(newEnglishTitleArray, i),
         'created_at': now,
         'updated_at': now,
       });

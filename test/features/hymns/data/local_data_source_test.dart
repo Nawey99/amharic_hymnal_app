@@ -83,10 +83,10 @@ void main() {
       expect(differing, isNotEmpty);
     });
 
-    test('Hagerigna comes from its own bundle, 121 songs', () async {
+    test('Hagerigna comes from its own bundle, 120 songs', () async {
       final songs = await source.getHymns('am', HymnalVersions.hagerigna);
 
-      expect(songs, hasLength(121));
+      expect(songs, hasLength(120));
       expect(songs.every((s) => s.isHagerigna), isTrue);
     });
 

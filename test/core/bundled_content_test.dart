@@ -97,11 +97,11 @@ void main() {
   });
 
   group('HagerignaParser on the bundled file', () {
-    test('121 songs numbered 1..121 with title, lyrics and artist', () {
+    test('120 songs numbered 1..120 with title, lyrics and artist', () {
       final songs = HagerignaParser.parse(hagerigna);
 
-      expect(songs, hasLength(121));
-      _expectNumbersWithoutGaps(songs, 121);
+      expect(songs, hasLength(120));
+      _expectNumbersWithoutGaps(songs, 120);
       final titles = _array(hagerigna, 'song_title_text');
       for (var i = 0; i < songs.length; i++) {
         expect(songs[i]['title'], titles[i]);
@@ -156,7 +156,7 @@ void main() {
       expect(
           await source.getHymns('am', HymnalVersions.sdaOld), hasLength(294));
       expect(await source.getHymns('am', HymnalVersions.hagerigna),
-          hasLength(121));
+          hasLength(120));
     });
 
     test('the legacy "hymnal" ID reads the 2004 book', () async {
@@ -182,7 +182,7 @@ void main() {
       ]);
 
       expect(results[0], hasLength(325));
-      expect(results[1], hasLength(121));
+      expect(results[1], hasLength(120));
     });
   });
 }

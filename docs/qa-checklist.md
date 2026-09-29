@@ -9,7 +9,7 @@
 ## Manual Android Checks
 
 - Onboarding fits small screens.
-- Bottom navigation shows Number, Index, Categories, Favorites, Settings.
+- Bottom navigation shows Categories, Index, Number, Favorites, Settings — in that order left-to-right, with Number as the raised centre action. (Hagerigna has no Categories tab, so its order becomes Index, Number, Favorites, Settings.)
 - Settings switches between New SDA, Old SDA, and Hagerigna.
 - Number and Index search preserve typed text when collapsed.
 - Index sort defaults to number and can switch to name.
