@@ -84,6 +84,12 @@ class OfflineDownloadController extends ChangeNotifier {
   final Set<String> _cancelled = {};
   String? _running;
 
+  /// Progress arrives with every network chunk from several files at once;
+  /// listeners hear about it at most this often, so the screens showing it
+  /// are not rebuilt hundreds of times a second.
+  static const progressInterval = Duration(milliseconds: 100);
+  DateTime? _lastProgressNotice;
+
   /// Whether a download of [mediaType] is queued or running.
   bool isActive(String mediaType) => _progress.containsKey(mediaType);
 
@@ -117,6 +123,83 @@ class OfflineDownloadController extends ChangeNotifier {
     return true;
   }
 
+  /// Carries on whole-edition downloads the app was closed in the middle
+  /// of, and shows those still running, so their progress shows and Stop
+  /// works. Called once the app has started.
+  ///
+  /// [unfinished] lists the (version, media type) downloads that never got
+  /// to end; each is planned again from [loadHymns] and downloaded, which
+  /// follows the files the system still has and sends the rest. Without an
+  /// entry, files still running are simply followed. [onEnded] hears when
+  /// one ends; [onStopped] when the reader stopped it.
+  Future<void> resumeRunningDownloads({
+    List<(String, String)> unfinished = const [],
+    Future<List<Hymn>> Function(String version)? loadHymns,
+    void Function(String version, String mediaType)? onEnded,
+    void Function(String version, String mediaType)? onStopped,
+  }) async {
+    final transfer = downloader.transfer;
+    for (final mediaType in const [MediaType.sheetMusic, MediaType.audio]) {
+      if (isActive(mediaType)) continue;
+
+      final version = [
+        for (final (version, type) in unfinished)
+          if (type == mediaType) version,
+      ].firstOrNull;
+      if (version != null && loadHymns != null) {
+        final MediaDownloadPlan plan;
+        try {
+          plan = await downloader.plan(await loadHymns(version), mediaType);
+        } catch (_) {
+          continue; // Not readable yet; the entry stays for next time.
+        }
+        if (plan.missing.isEmpty) {
+          onEnded?.call(version, mediaType);
+          continue;
+        }
+        start(
+          mediaType,
+          (onProgress, isCancelled) => downloader.download(
+            plan,
+            onProgress: onProgress,
+            isCancelled: isCancelled,
+            version: version,
+          ),
+          onDone: (result) {
+            onEnded?.call(version, mediaType);
+            if (result.cancelled) onStopped?.call(version, mediaType);
+          },
+        );
+        continue;
+      }
+
+      if (!await transfer.hasRunning(mediaType)) continue;
+      start(
+        mediaType,
+        (onProgress, isCancelled) async {
+          final running = await transfer.resume(
+            mediaType,
+            onProgress: onProgress,
+            isCancelled: isCancelled,
+          );
+          if (running == null) {
+            return const MediaDownloadResult(
+              downloaded: 0,
+              failed: 0,
+              cancelled: false,
+            );
+          }
+          final version = running.version;
+          if (running.result.cancelled && version != null) {
+            onStopped?.call(version, mediaType);
+          }
+          return running.result;
+        },
+        onDone: (_) {},
+      );
+    }
+  }
+
   /// Stops [mediaType]: a queued download never starts, a running one
   /// finishes the files in flight and then stops.
   void stop(String mediaType) {
@@ -146,7 +229,15 @@ class OfflineDownloadController extends ChangeNotifier {
         result = await job.run(
           (done, total) {
             _progress[job.mediaType] = (done: done, total: total);
-            notifyListeners();
+            final now = DateTime.now();
+            final last = _lastProgressNotice;
+            if (last == null ||
+                done >= total ||
+                now.isBefore(last) ||
+                now.difference(last) >= progressInterval) {
+              _lastProgressNotice = now;
+              notifyListeners();
+            }
           },
           () => _cancelled.contains(job.mediaType),
         );

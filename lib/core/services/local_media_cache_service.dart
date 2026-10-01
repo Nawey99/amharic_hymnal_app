@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import 'package:amharic_hymnal_app/core/services/device_storage_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_reference.dart';
 
 typedef MediaCacheDirectoryProvider = Future<Directory> Function();
@@ -103,6 +104,9 @@ abstract interface class MediaCache {
 
   Future<void> clearMediaType(String mediaType);
 
+  /// Bytes free where media is stored, or null when unknown.
+  Future<int?> freeBytes();
+
   /// Deletes downloaded files stored under a checksum that is not in
   /// [checksums]. Files keyed by URL are left alone.
   Future<void> retainOnly(Set<String> checksums, List<String> mediaTypes);
@@ -120,19 +124,142 @@ class LocalMediaCacheService implements MediaCache {
   final http.Client _client;
   final MediaCacheDirectoryProvider _directoryProvider;
 
+  /// How long a download may go without receiving a byte before it is
+  /// given up. Mobile connections can stop delivering without closing, and
+  /// waiting for them would hold up every other file behind it.
+  final Duration idleTimeout;
+
   /// The most a download may be when the content API gave no size for it.
   static const int maxBytesWithoutSize = 200 * 1024 * 1024;
+
+  /// Partial files left by a run that was killed mid-download, cleared once
+  /// before this run starts its own.
+  Future<void>? _partialsCleared;
 
   LocalMediaCacheService({
     http.Client? client,
     MediaCacheDirectoryProvider? directoryProvider,
+    this.idleTimeout = const Duration(seconds: 30),
   })  : _client = client ?? http.Client(),
         _directoryProvider =
             directoryProvider ?? getApplicationSupportDirectory;
 
   LocalMediaCacheService._()
       : _client = http.Client(),
-        _directoryProvider = getApplicationSupportDirectory;
+        _directoryProvider = getApplicationSupportDirectory,
+        idleTimeout = const Duration(seconds: 30);
+
+  @override
+  Future<int?> freeBytes() async {
+    if (kIsWeb) return null;
+    return DeviceStorageService.freeBytes(await _root());
+  }
+
+  /// Suffix of a file a background download has finished but the app has
+  /// not yet checked against its checksum.
+  static const stagedSuffix = '.unverified';
+
+  /// Where a background download of [source] writes its file:
+  /// `media_cache/<type>/incoming/<cache name>.unverified`. It only becomes
+  /// cached media once [promoteStaged] has checked it.
+  Future<File> stagingFileFor(MediaSource source, String mediaType) async {
+    final target = await _fileFor(source, mediaType);
+    return File(path.join(
+      target.parent.path,
+      'incoming',
+      '${path.basename(target.path)}$stagedSuffix',
+    ));
+  }
+
+  /// Checks a finished background download and moves it into the cache.
+  ///
+  /// The file is named after the checksum it must have, so this needs
+  /// nothing else and also works for downloads that finished while the app
+  /// was closed. A file that does not match is deleted. Returns whether the
+  /// media is now cached.
+  Future<bool> promoteStaged(File staged) async {
+    if (!staged.path.endsWith(stagedSuffix) || !await staged.exists()) {
+      return false;
+    }
+    final name = path
+        .basename(staged.path)
+        .substring(0, path.basename(staged.path).length - stagedSuffix.length);
+    final target = File(path.join(staged.parent.parent.path, name));
+    try {
+      final match = _checksumFileName.firstMatch(name);
+      final length = await staged.length();
+      final valid = length > 0 &&
+          (match == null ||
+              (await sha256.bind(staged.openRead()).first).toString() ==
+                  match.group(1));
+      if (!valid) {
+        await staged.delete();
+        return false;
+      }
+      if (await target.exists()) {
+        await staged.delete();
+      } else {
+        await staged.rename(target.path);
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Whether the file [staged] stands for is already in the cache, e.g.
+  /// promoted by another follower of the same download.
+  Future<bool> isPromoted(File staged) async {
+    if (!staged.path.endsWith(stagedSuffix)) return false;
+    final name = path.basename(staged.path);
+    final target = File(path.join(
+      staged.parent.parent.path,
+      name.substring(0, name.length - stagedSuffix.length),
+    ));
+    return await target.exists() && await target.length() > 0;
+  }
+
+  /// Promotes every finished background download, e.g. after the app was
+  /// closed while they ran. Returns how many were added to the cache.
+  Future<int> promoteAllStaged() async {
+    if (kIsWeb) return 0;
+    var promoted = 0;
+    final root = await _root();
+    if (!await root.exists()) return 0;
+    await for (final entity in root.list(recursive: true)) {
+      if (entity is File && entity.path.endsWith(stagedSuffix)) {
+        if (await promoteStaged(entity)) promoted++;
+      }
+    }
+    return promoted;
+  }
+
+  /// What a background download needs before it writes anything: partial
+  /// files of a killed run gone, and the cache kept out of iOS backups.
+  Future<void> prepareForTransfer() async {
+    if (kIsWeb) return;
+    await (_partialsCleared ??= _clearPartials());
+    await DeviceStorageService.excludeFromBackup(await _root());
+  }
+
+  Future<Directory> _root() async =>
+      Directory(path.join((await _directoryProvider()).path, 'media_cache'));
+
+  /// Deletes `.part` files under the media cache. Only safe before this run
+  /// has started any download, which is the only time it is called.
+  Future<void> _clearPartials() async {
+    try {
+      final root = await _root();
+      if (!await root.exists()) return;
+      await for (final entity in root.list(recursive: true)) {
+        if (entity is File && entity.path.endsWith('.part')) {
+          await entity.delete();
+        }
+      }
+    } catch (_) {
+      // Tidying only; a file that cannot be removed now is tried next run.
+    }
+  }
 
   @override
   Future<String?> cachedPath(MediaSource source, String mediaType) async {
@@ -171,8 +298,10 @@ class LocalMediaCacheService implements MediaCache {
           path: existingPath, bytes: await existing.length());
     }
 
+    await (_partialsCleared ??= _clearPartials());
     final target = await _fileFor(source, mediaType);
     await target.parent.create(recursive: true);
+    await DeviceStorageService.excludeFromBackup(await _root());
     final temporary = File(
       '${target.path}.${DateTime.now().microsecondsSinceEpoch}.part',
     );
@@ -197,7 +326,7 @@ class LocalMediaCacheService implements MediaCache {
       // file approaches, so a response that never ends cannot fill the
       // device.
       final ceiling = source.sizeBytes ?? maxBytesWithoutSize;
-      await for (final chunk in response.stream) {
+      await for (final chunk in response.stream.timeout(idleTimeout)) {
         received += chunk.length;
         if (received > ceiling) {
           throw MediaIntegrityException(
@@ -304,9 +433,8 @@ class LocalMediaCacheService implements MediaCache {
   }
 
   Future<Directory> _directoryFor(String mediaType) async {
-    final root = await _directoryProvider();
     final cleanType = mediaType.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
-    return Directory(path.join(root.path, 'media_cache', cleanType));
+    return Directory(path.join((await _root()).path, cleanType));
   }
 
   String _stableHash(String value) {
