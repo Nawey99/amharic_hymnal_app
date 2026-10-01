@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart'
     show debugPrint, kDebugMode, listEquals;
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 typedef SheetMusicImageBuilder = Widget Function(
   BuildContext context,
   String filePath,
@@ -128,11 +130,10 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
             ),
             const SizedBox(height: 12),
             Text(
-              'ኖታ አልተገኘም',
+              (AppLocalizations.of(context)?.sheetNotFound ?? 'ኖታ አልተገኘም'),
               style: TextStyle(
                 color: context.appColors.secondaryText,
                 fontSize: 14,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ],
@@ -410,12 +411,12 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
           ),
           const SizedBox(height: 12),
           Text(
-            'የኖታ ምስል አልተገኘም',
+            (AppLocalizations.of(context)?.sheetImageNotFound ??
+                'የኖታ ምስል አልተገኘም'),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: context.appColors.secondaryText,
               fontSize: 12,
-              fontFamily: 'NotoSansEthiopic',
             ),
           ),
         ],

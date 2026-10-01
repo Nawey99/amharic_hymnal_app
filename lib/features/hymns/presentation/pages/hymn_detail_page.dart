@@ -2,12 +2,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_swipe_route.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -81,7 +84,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   List<int>? _lyricsPinchPointerIds;
   double _lyricsPinchStartDistance = 0;
   bool _isLyricsPinching = false;
-  final Map<int, bool> _favoriteOverrides = {};
+
+  /// Favourite state shown before the bloc confirms it, by song ID.
+  final Map<String, bool> _favoriteOverrides = {};
   final ScrollController _lyricsScrollController = ScrollController();
   bool _isMediaCondensed = false;
 
@@ -118,16 +123,13 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     // Initialize history service if needed
     await HistoryService.init();
 
-    // Track the hymn if we have a hymn or hymn number
+    // Track the hymn by its song ID, which names its book.
+    final version = _getVersion();
     if (widget.hymn != null) {
-      await HistoryService.addToHistory(
-        widget.hymn!.displayNumber,
-        version: _getVersion(),
-      );
+      await HistoryService.addToHistory(widget.hymn!.songIdIn(version));
     } else if (widget.hymnNumber != null) {
       await HistoryService.addToHistory(
-        widget.hymnNumber!,
-        version: _getVersion(),
+        HymnalVersions.songId(version, widget.hymnNumber!),
       );
     }
   }
@@ -228,7 +230,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,
-                        fontFamily: 'NotoSansEthiopic',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -261,9 +262,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
     _syncDisplayedHymn(hymn);
     final settingsRepository = sl<SettingsRepository>();
-    final isFavorite = _favoriteOverrides[hymn.displayNumber] ??
-        settingsRepository.isFavorite(hymn.displayNumber);
     final version = _getVersion();
+    final songId = hymn.songIdIn(version);
+    final isFavorite =
+        _favoriteOverrides[songId] ?? settingsRepository.isFavoriteSong(songId);
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
@@ -292,70 +294,82 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         _isHorizontalDrag = false;
       },
       behavior: HitTestBehavior.translucent,
-      child: Stack(
-        children: [
-          _buildBackground(),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            extendBody: true,
-            appBar: _buildAppBar(hymn, isFavorite),
-            resizeToAvoidBottomInset: false,
-            bottomNavigationBar: _buildLyricsBottomNavigation(version),
-            body: BlocListener<HymnsBloc, HymnsState>(
-              listener: (context, state) {
-                // Update UI when favorite status changes
-                if (mounted) {
-                  setState(() {});
-                }
-              },
-              child: ListenableBuilder(
-                listenable: FontSizeService(),
-                builder: (context, _) {
-                  // Get font size reactively - updates in real-time
-                  final fontSize = FontSizeService().getFontSize();
-                  return _buildBody(hymn, fontSize);
+      child: Semantics(
+        customSemanticsActions: {
+          CustomSemanticsAction(
+            label: AppLocalizations.of(context)?.hymnNext ?? 'ቀጣይ መዝሙር',
+          ): () => _goToAdjacentHymn(hymn.displayNumber, forward: true),
+          if (hymn.displayNumber > 1)
+            CustomSemanticsAction(
+              label: AppLocalizations.of(context)?.hymnPrevious ?? 'ያለፈው መዝሙር',
+            ): () => _goToAdjacentHymn(hymn.displayNumber, forward: false),
+        },
+        child: Stack(
+          children: [
+            _buildBackground(),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBody: true,
+              appBar: _buildAppBar(hymn, isFavorite),
+              resizeToAvoidBottomInset: false,
+              bottomNavigationBar: _buildLyricsBottomNavigation(version),
+              body: BlocListener<HymnsBloc, HymnsState>(
+                listener: (context, state) {
+                  // Update UI when favorite status changes
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
+                child: ListenableBuilder(
+                  listenable: FontSizeService(),
+                  builder: (context, _) {
+                    // Get font size reactively - updates in real-time
+                    final fontSize = FontSizeService().getFontSize();
+                    return _buildBody(hymn, fontSize);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildLyricsBottomNavigation(String version) {
     final showCategory = HymnalVersions.hasCategories(version);
+    final l = AppLocalizations.of(context);
     final items = <_LyricsNavItem>[
       if (showCategory)
-        const _LyricsNavItem(
+        _LyricsNavItem(
           id: 'category',
           icon: Icons.category_outlined,
           selectedIcon: Icons.category_rounded,
-          label: 'ምድብ',
+          label: l?.navCategory ?? 'ምድብ',
         ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'index',
         icon: Icons.list_alt_outlined,
         selectedIcon: Icons.list_alt_rounded,
-        label: 'ማውጫ',
+        label: l?.navIndex ?? 'ማውጫ',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'number',
         icon: Icons.numbers_rounded,
         selectedIcon: Icons.numbers_rounded,
-        label: 'ቁጥር',
+        label: l?.navNumber ?? 'ቁጥር',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'favorites',
         icon: Icons.favorite_outline_rounded,
         selectedIcon: Icons.favorite_rounded,
-        label: 'ተወዳጅ',
+        label: l?.navFavorites ?? 'ተወዳጅ',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'settings',
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'ቅንብሮች',
+        label: l?.navSettings ?? 'ቅንብሮች',
       ),
     ];
     final selectedIndex = items.indexWhere(
@@ -415,25 +429,39 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       return Future.value();
     }
 
-    final nextNumber = switch (details.primaryVelocity!) {
-      < 0 => currentNumber + 1,
-      > 0 when currentNumber > 1 => currentNumber - 1,
-      _ => null,
-    };
+    final velocity = details.primaryVelocity!;
+    if (velocity == 0) return Future.value();
+    return _goToAdjacentHymn(currentNumber, forward: velocity < 0);
+  }
+
+  /// Opens the hymn after (or before) [currentNumber]. Swiping does this,
+  /// and so do the screen reader's actions, for anyone who cannot swipe.
+  Future<void> _goToAdjacentHymn(int currentNumber, {required bool forward}) {
+    if (!mounted || _isLoadingAdjacentHymn) return Future.value();
+    final nextNumber = forward
+        ? currentNumber + 1
+        : (currentNumber > 1 ? currentNumber - 1 : null);
     if (nextNumber == null) return Future.value();
 
     _isLoadingAdjacentHymn = true;
     return _loadHymnByNumber(nextNumber).then((hymn) {
       if (!mounted) return;
       if (hymn == null) {
-        _showComingSoonMessage('መዝሙር ቁጥር $nextNumber አልተገኘም');
+        _showComingSoonMessage(
+          AppLocalizations.of(context)?.hymnNotFoundNumber(nextNumber) ??
+              'መዝሙር ቁጥር $nextNumber አልተገኘም',
+        );
         return;
       }
       widget.onHymnChanged?.call(hymn);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => HymnDetailPage(
+        hymnSwipeRoute(
+          // Swiping left goes on through the book; swiping right goes
+          // back. The page has to come from the side the hand came from,
+          // or turning back looks exactly like turning on.
+          forward: nextNumber > currentNumber,
+          page: HymnDetailPage(
             hymn: hymn,
             sourceDestination: widget.sourceDestination,
             onDestinationSelected: widget.onDestinationSelected,
@@ -471,7 +499,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       title: Text(
         '- ${hymn.displayNumber} -',
         style: TextStyle(
-          fontFamily: 'NotoSansEthiopic',
           fontWeight: FontWeight.bold,
           color: context.appColors.primaryText,
         ),
@@ -502,7 +529,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildOverflowMenuButton(Hymn hymn) {
     return PopupMenuButton<_HymnAction>(
       icon: Icon(Icons.more_vert, color: context.appColors.primaryText),
-      tooltip: 'ተጨማሪ',
+      tooltip: AppLocalizations.of(context)?.hymnMore ?? 'ተጨማሪ',
       color: context.appColors.surface,
       onSelected: (action) {
         switch (action) {
@@ -518,7 +545,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           child: ListTile(
             leading: Icon(Icons.share, color: context.appColors.primaryText),
             title: Text(
-              'አጋራ',
+              AppLocalizations.of(context)?.hymnShare ?? 'አጋራ',
               style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
@@ -529,7 +556,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             leading:
                 Icon(Icons.flag_outlined, color: context.appColors.primaryText),
             title: Text(
-              'የስህተት ጥቆማ',
+              AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
               style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
@@ -547,13 +574,17 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             ? context.appColors.accent
             : context.appColors.primaryText,
       ),
-      tooltip: isFavorite ? 'ከተወዳጅ አስወግድ' : 'ወደ ተወዳጅ ጨምር',
+      tooltip: isFavorite
+          ? (AppLocalizations.of(context)?.hymnRemoveFavorite ?? 'ከተወዳጅ አስወግድ')
+          : (AppLocalizations.of(context)?.hymnAddFavorite ?? 'ወደ ተወዳጅ ጨምር'),
       onPressed: () {
         setState(() {
-          _favoriteOverrides[hymn.displayNumber] = !isFavorite;
+          _favoriteOverrides[hymn.songIdIn(_getVersion())] = !isFavorite;
         });
         // Dispatch the toggle event - UI updates instantly via BLoC
-        context.read<HymnsBloc>().add(ToggleFavorite(hymn.displayNumber));
+        context
+            .read<HymnsBloc>()
+            .add(ToggleFavorite(hymn.songIdIn(_getVersion())));
       },
     );
   }
@@ -565,7 +596,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: Icon(Icons.share, color: context.appColors.primaryText),
-        tooltip: 'አጋራ',
+        tooltip: AppLocalizations.of(context)?.hymnShare ?? 'አጋራ',
         onPressed: () => _shareHymn(hymn),
       ),
     );
@@ -720,7 +751,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       // system's text size on a fresh install, so the system scale is not
       // applied to it a second time.
       child: SelectableText(
-        hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
+        hymn.displayLyrics.isNotEmpty
+            ? hymn.displayLyrics
+            : (AppLocalizations.of(context)?.hymnNoLyrics ?? 'ግጥም አልተገኘም'),
         textScaler: TextScaler.noScaling,
         style: AppTheme.lyricsTextStyle(
           color: context.appColors.primaryText,
@@ -738,7 +771,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: Icon(Icons.flag_outlined, color: context.appColors.primaryText),
-        tooltip: 'የስህተት ጥቆማ',
+        tooltip: AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
         onPressed: () => _reportProblem(hymn),
       ),
     );
@@ -762,7 +795,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('በማጋራት ላይ ስህተት ተከስቷል: $e'),
+            content: Text(
+              AppLocalizations.of(context)?.shareFailed(e.toString()) ??
+                  'በማጋራት ላይ ስህተት ተከስቷል: $e',
+            ),
             duration: const Duration(seconds: 2),
           ),
         );

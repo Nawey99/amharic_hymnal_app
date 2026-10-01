@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -101,13 +103,12 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'ድምፅ አልተገኘም',
+                (AppLocalizations.of(context)?.audioNotFound ?? 'ድምፅ አልተገኘም'),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: context.appColors.secondaryText,
                   fontSize: 12,
-                  fontFamily: 'NotoSansEthiopic',
                 ),
               ),
             ),
@@ -132,11 +133,10 @@ class _AudioSectionWidgetState extends State<AudioSectionWidget> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'ድምፅ አልተገኘም',
+              (AppLocalizations.of(context)?.audioNotFound ?? 'ድምፅ አልተገኘም'),
               style: TextStyle(
                 color: context.appColors.secondaryText,
                 fontSize: 14,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),

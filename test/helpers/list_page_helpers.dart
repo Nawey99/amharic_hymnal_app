@@ -24,8 +24,9 @@ HymnModel listHymn(
 double topOf(WidgetTester tester, String text) =>
     tester.getTopLeft(find.text(text).first).dy;
 
-/// The message the bloc shows when content cannot be loaded.
-const loadErrorMessage = 'Hymns could not be loaded. Please try again.';
+/// What an Amharic screen says when content cannot be loaded. It used to be
+/// the bloc's English sentence, shown as-is whatever the app's language.
+const loadErrorMessage = 'መዝሙሮቹን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።';
 
 /// Finds the loading spinner.
 Finder get spinner => find.byType(CircularProgressIndicator);

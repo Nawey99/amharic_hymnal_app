@@ -31,6 +31,9 @@ class ReportBugPage extends StatefulWidget {
 }
 
 class _ReportBugPageState extends State<ReportBugPage> {
+  /// The words this page says, in whichever language the app is set to.
+  AppLocalizations? get l => AppLocalizations.of(context);
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
@@ -54,7 +57,12 @@ class _ReportBugPageState extends State<ReportBugPage> {
   String _withHymnReference(String description) {
     final hymn = widget.hymn;
     if (hymn == null || _songId != null) return description;
-    return 'መዝሙር ${hymn.displayNumber} (${hymn.displayTitle})\n\n$description';
+    return l?.reportHymnReference(
+          hymn.displayNumber,
+          hymn.displayTitle,
+          description,
+        ) ??
+        'መዝሙር ${hymn.displayNumber} (${hymn.displayTitle})\n\n$description';
   }
 
   @override
@@ -102,7 +110,14 @@ class _ReportBugPageState extends State<ReportBugPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result.message),
+            content: Text(
+              result.submitted
+                  ? (l?.reportSent ?? 'የስህተት ሪፖርት ተልኳል!')
+                  : result.queued
+                      ? (l?.reportQueued ?? 'ሪፖርቱ ተቀምጧል። ኢንተርኔት ሲኖር ይላካል።')
+                      : (l?.reportSendFailed ??
+                          'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።'),
+            ),
             backgroundColor:
                 result.isSuccess ? context.appColors.accent : Colors.red,
             duration: const Duration(seconds: 3),
@@ -119,10 +134,11 @@ class _ReportBugPageState extends State<ReportBugPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።'),
+          SnackBar(
+            content: Text(l?.reportSendFailed ??
+                'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።'),
             backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -181,7 +197,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'ርዕስ',
+                        (l?.reportTitleLabel ?? 'ርዕስ'),
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
@@ -190,19 +206,19 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       ),
                       const SizedBox(height: 8),
                       Semantics(
-                        label: 'የስህተት ሪፖርት ርዕስ',
+                        label: (l?.reportTitleSemantic ?? 'የስህተት ሪፖርት ርዕስ'),
                         textField: true,
-                        hint: 'ርዕስ ያስገቡ',
+                        hint: (l?.reportTitleHintShort ?? 'ርዕስ ያስገቡ'),
                         child: TextFormField(
                           controller: _titleController,
                           maxLength: 160,
                           style: TextStyle(
                             color: context.appColors.primaryText,
                             fontSize: FontSizeScope.of(context),
-                            fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
-                            hintText: 'የችግሩን ርዕስ ያስገቡ...',
+                            hintText:
+                                (l?.reportTitleHint ?? 'የችግሩን ርዕስ ያስገቡ...'),
                             hintStyle: TextStyle(
                               color: context.appColors.tertiaryText,
                               fontSize: FontSizeScope.of(context) * 0.9,
@@ -234,10 +250,12 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'እባክዎ ርዕስ ያስገቡ';
+                              return (l?.reportTitleRequired ??
+                                  'እባክዎ ርዕስ ያስገቡ');
                             }
                             if (value.trim().length < 3) {
-                              return 'ርዕሱ ቢያንስ 3 ፊደላት መሆን አለበት';
+                              return (l?.reportTitleTooShort ??
+                                  'ርዕሱ ቢያንስ 3 ፊደላት መሆን አለበት');
                             }
                             return null;
                           },
@@ -256,7 +274,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'የኢሜይል አድራሻ (አማራጭ)',
+                        (l?.reportEmailLabel ?? 'የኢሜይል አድራሻ (አማራጭ)'),
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
@@ -271,7 +289,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         style: TextStyle(
                           color: context.appColors.primaryText,
                           fontSize: FontSizeScope.of(context),
-                          fontFamily: 'NotoSansEthiopic',
                         ),
                         decoration: InputDecoration(
                           hintText: 'you@example.com',
@@ -309,7 +326,9 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           if (email.isEmpty) return null;
                           final isValid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
                               .hasMatch(email);
-                          return isValid ? null : 'ትክክለኛ ኢሜይል ያስገቡ';
+                          return isValid
+                              ? null
+                              : (l?.reportEmailInvalid ?? 'ትክክለኛ ኢሜይል ያስገቡ');
                         },
                       ),
                     ],
@@ -325,7 +344,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'መግለጫ',
+                        (l?.reportDescriptionLabel ?? 'መግለጫ'),
                         style: TextStyle(
                           fontSize: FontSizeScope.of(context) * 0.9,
                           fontWeight: FontWeight.bold,
@@ -334,9 +353,11 @@ class _ReportBugPageState extends State<ReportBugPage> {
                       ),
                       const SizedBox(height: 8),
                       Semantics(
-                        label: 'የስህተት ሪፖርት መግለጫ',
+                        label:
+                            (l?.reportDescriptionSemantic ?? 'የስህተት ሪፖርት መግለጫ'),
                         textField: true,
-                        hint: 'ችግሩን በዝርዝር ይግለጹ',
+                        hint: (l?.reportDescriptionHintShort ??
+                            'ችግሩን በዝርዝር ይግለጹ'),
                         child: TextFormField(
                           controller: _descriptionController,
                           maxLines: 8,
@@ -344,10 +365,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           style: TextStyle(
                             color: context.appColors.primaryText,
                             fontSize: FontSizeScope.of(context),
-                            fontFamily: 'NotoSansEthiopic',
                           ),
                           decoration: InputDecoration(
-                            hintText: 'ችግሩን በዝርዝር ይግለጹ...',
+                            hintText: (l?.reportDescriptionHint ??
+                                'ችግሩን በዝርዝር ይግለጹ...'),
                             hintStyle: TextStyle(
                               color: context.appColors.tertiaryText,
                               fontSize: FontSizeScope.of(context) * 0.9,
@@ -379,10 +400,12 @@ class _ReportBugPageState extends State<ReportBugPage> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'እባክዎ መግለጫ ያስገቡ';
+                              return (l?.reportDescriptionRequired ??
+                                  'እባክዎ መግለጫ ያስገቡ');
                             }
                             if (value.trim().length < 10) {
-                              return 'መግለጫው ቢያንስ 10 ፊደላት መሆን አለበት';
+                              return (l?.reportDescriptionTooShort ??
+                                  'መግለጫው ቢያንስ 10 ፊደላት መሆን አለበት');
                             }
                             return null;
                           },
@@ -393,7 +416,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 ),
                 const SizedBox(height: 24),
                 Semantics(
-                  label: 'የስህተት ሪፖርት ላክ',
+                  label: (l?.reportSendSemantic ?? 'የስህተት ሪፖርት ላክ'),
                   button: true,
                   child: SizedBox(
                     width: double.infinity,
@@ -420,11 +443,10 @@ class _ReportBugPageState extends State<ReportBugPage> {
                               ),
                             )
                           : Text(
-                              'ሪፖርት ላክ',
+                              (l?.reportSend ?? 'ሪፖርት ላክ'),
                               style: TextStyle(
                                 fontSize: FontSizeScope.of(context),
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'NotoSansEthiopic',
                               ),
                             ),
                     ),
@@ -450,14 +472,14 @@ class _ReportBugPageState extends State<ReportBugPage> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'ስለ መዝሙር ${hymn.displayNumber} · ${hymn.displayTitle}',
+              l?.reportAboutHymn(hymn.displayNumber, hymn.displayTitle) ??
+                  'ስለ መዝሙር ${hymn.displayNumber} · ${hymn.displayTitle}',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontSize: FontSizeScope.of(context) * 0.95,
                 fontWeight: FontWeight.w600,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
@@ -476,7 +498,7 @@ class _ReportBugPageState extends State<ReportBugPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'የችግሩ ዓይነት',
+            (l?.reportTypeHeading ?? 'የችግሩ ዓይነት'),
             style: TextStyle(
               fontSize: FontSizeScope.of(context) * 0.9,
               fontWeight: FontWeight.bold,
@@ -492,9 +514,8 @@ class _ReportBugPageState extends State<ReportBugPage> {
                 ChoiceChip(
                   key: ValueKey('report_type_${type.name}'),
                   label: Text(
-                    type.label,
+                    type.labelFor(l),
                     style: TextStyle(
-                      fontFamily: 'NotoSansEthiopic',
                       color: _type == type
                           ? Colors.white
                           : context.appColors.primaryText,

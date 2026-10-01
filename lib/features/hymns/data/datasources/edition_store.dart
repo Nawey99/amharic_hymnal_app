@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import 'package:amharic_hymnal_app/core/services/device_storage_service.dart';
+
 /// One edition's catalogue as last synced from the hymnal API.
 class StoredEdition {
   static const schemaVersion = 1;
@@ -106,6 +108,23 @@ class FileEditionStore implements EditionStore {
 
   final EditionStoreDirectoryProvider _directoryProvider;
 
+  /// Partial writes left by a run that was killed mid-write, cleared once
+  /// before this run writes its own.
+  Future<void>? _partialsCleared;
+
+  Future<void> _clearPartials(Directory directory) async {
+    try {
+      if (!await directory.exists()) return;
+      await for (final entity in directory.list()) {
+        if (entity is File && entity.path.endsWith('.part')) {
+          await entity.delete();
+        }
+      }
+    } catch (_) {
+      // Tidying only.
+    }
+  }
+
   Future<Directory> _directory() async {
     final root = await _directoryProvider();
     return Directory(path.join(root.path, 'content_cache'));
@@ -152,6 +171,9 @@ class FileEditionStore implements EditionStore {
   Future<void> write(String key, StoredEdition edition) async {
     final file = await _fileFor(key);
     await file.parent.create(recursive: true);
+    await (_partialsCleared ??= _clearPartials(file.parent));
+    // The catalogue can always be synced again: keep it out of backups.
+    await DeviceStorageService.excludeFromBackup(file.parent);
     // Write aside and rename, so a crash never leaves half a catalogue.
     final temporary =
         File('${file.path}.${DateTime.now().microsecondsSinceEpoch}.part');

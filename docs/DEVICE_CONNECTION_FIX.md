@@ -40,13 +40,13 @@
 After authorizing, you should see:
 ```
 List of devices attached
-R5CT62VNMVK    device
+<device-serial>    device
 ```
 
 And in `flutter devices`:
 ```
 Found 1 connected device:
-  SM S9080 (mobile) • R5CT62VNMVK • android-arm64 • Android 16 (API 36)
+  SM S9080 (mobile) • <device-serial> • android-arm64 • Android 16 (API 36)
 ```
 
 ### If Still Not Working

@@ -1,3 +1,4 @@
+import 'package:amharic_hymnal_app/core/services/background_media_transfer.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -111,10 +112,22 @@ Future<MediaDownloadResult> downloadMissingMedia(
 /// checksum, so the list is built from the hymns on the device: no request,
 /// and the state is known offline. It matches the API's own page list.
 class EditionMediaDownloader {
-  EditionMediaDownloader({MediaCache? cache})
-      : _cache = cache ?? LocalMediaCacheService.instance;
+  /// On a phone the transfer is handed to the system so it carries on in
+  /// the background ([BackgroundMediaTransfer]); elsewhere, and whenever a
+  /// [cache] is given (tests), files download inside the app.
+  EditionMediaDownloader({MediaCache? cache, MediaTransfer? transfer})
+      : _cache = cache ?? LocalMediaCacheService.instance,
+        transfer = transfer ??
+            (cache == null ? BackgroundMediaTransfer.shared : null) ??
+            InProcessMediaTransfer(cache ?? LocalMediaCacheService.instance);
 
   final MediaCache _cache;
+
+  /// How the files of a plan reach the phone.
+  final MediaTransfer transfer;
+
+  /// Bytes free where downloads are stored, or null when unknown.
+  Future<int?> freeBytes() => _cache.freeBytes();
 
   static Iterable<HymnMediaFile> _filesOf(Hymn hymn, String mediaType) =>
       mediaType == MediaType.audio
@@ -144,15 +157,25 @@ class EditionMediaDownloader {
     );
   }
 
+  /// Downloads [plan]'s missing files for [version].
   Future<MediaDownloadResult> download(
     MediaDownloadPlan plan, {
     void Function(int doneBytes, int totalBytes)? onProgress,
     bool Function()? isCancelled,
-  }) =>
-      downloadMissingMedia(
-        _cache,
-        plan,
-        onProgress: onProgress,
-        isCancelled: isCancelled,
-      );
+    String? version,
+  }) {
+    final transfer = this.transfer;
+    return transfer is BackgroundMediaTransfer
+        ? transfer.download(
+            plan,
+            onProgress: onProgress,
+            isCancelled: isCancelled,
+            version: version,
+          )
+        : transfer.download(
+            plan,
+            onProgress: onProgress,
+            isCancelled: isCancelled,
+          );
+  }
 }

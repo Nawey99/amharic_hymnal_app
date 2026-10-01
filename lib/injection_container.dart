@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
+import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_version_service.dart';
@@ -30,6 +31,9 @@ void registerAudioHandler(AudioHandler handler) {
 
 Future<void> initDependencies() async {
   await SettingsService.init();
+  // History is read by the History tab as soon as it is built; it must not
+  // wait for the first hymn to be opened, or it looks empty after a restart.
+  await HistoryService.init();
 
   // Initialize BackgroundImageService with current setting
   BackgroundImageService()

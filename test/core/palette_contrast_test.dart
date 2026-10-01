@@ -115,6 +115,26 @@ void main() {
         }
       });
 
+      /// The Index's section letter is the one piece of text with no panel
+      /// under it: it sits straight on the scrimmed photograph. It used to
+      /// carry a drop shadow for legibility, which blurred it; this is the
+      /// measurement that replaced the shadow, so weakening the scrim or
+      /// lightening an accent now fails here instead of going unnoticed.
+      test('$name: the section letter reads on the photograph', () {
+        final photo = composite(
+          colors.scrim,
+          colors.scrim.a,
+          const Color(0xFF7F7F7F),
+        );
+
+        // 20px bold is large text, where WCAG asks 3:1 rather than 4.5:1.
+        expect(
+          contrast(colors.accent, photo),
+          greaterThanOrEqualTo(3.0),
+          reason: 'the section letter over the photograph',
+        );
+      });
+
       test('$name: the bar can be seen, and read, wherever it floats', () {
         // The bar sits over the photograph on one page and over white
         // cards on the next, so it is judged against both.

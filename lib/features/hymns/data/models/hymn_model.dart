@@ -34,6 +34,12 @@ class HymnModel extends Hymn {
   // ignore: overridden_fields
   final List<HymnSheetPage>? sheetPages;
 
+  // Set by the bundled-data source; never read from or written to JSON.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  // ignore: overridden_fields
+  final bool isBundled;
+
   @JsonKey(name: 'new_hymnal_number')
   @override
   // ignore: overridden_fields
@@ -54,6 +60,7 @@ class HymnModel extends Hymn {
     this.sheetMusic,
     this.audioInfo,
     this.sheetPages,
+    this.isBundled = false,
     // Hagerigna fields
     super.artist,
     super.song,
@@ -71,6 +78,7 @@ class HymnModel extends Hymn {
           sheetMusic: sheetMusic,
           audioInfo: audioInfo,
           sheetPages: sheetPages,
+          isBundled: isBundled,
           newHymnalNumber: newHymnalNumber,
           oldHymnalNumber: oldHymnalNumber,
         );

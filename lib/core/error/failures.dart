@@ -51,3 +51,20 @@ class SyncFailure extends Failure {
   @override
   List<Object> get props => message != null ? [message!] : [];
 }
+
+/// The hymn asked for does not exist in the edition. Not an error in the
+/// app or the network: the number is simply not in the book.
+class NotFoundFailure extends Failure {
+  final int? number;
+
+  const NotFoundFailure([this.number]);
+
+  @override
+  List<Object> get props => number != null ? [number!] : [];
+}
+
+/// The edition has been withdrawn from the hymnal API, so it can no longer
+/// be shown even from a stored copy.
+class EditionUnavailableFailure extends Failure {
+  const EditionUnavailableFailure();
+}

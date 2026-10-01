@@ -11,6 +11,7 @@ class SettingsService {
 
   static Future<void> init({double? systemTextScale}) async {
     _prefs = await SharedPreferences.getInstance();
+    await _migrateFavoritesToSongIds();
 
     // Fix any existing out-of-range font size values in SharedPreferences
     final fontSize = _prefs?.getDouble(AppConstants.keyFontSize);
@@ -21,7 +22,8 @@ class SettingsService {
       );
       return;
     }
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     if ((fontSize - clampedFontSize).abs() > 0.01) {
       // Value was out of range, fix it immediately
       await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize);
@@ -36,7 +38,8 @@ class SettingsService {
         systemTextScale.isFinite && systemTextScale > 0 ? systemTextScale : 1.0;
     await _prefs?.setDouble(
       AppConstants.keyFontSize,
-      (AppConstants.defaultFontSize * scale).clamp(12.0, 30.0),
+      (AppConstants.defaultFontSize * scale)
+          .clamp(AppConstants.minFontSize, AppConstants.maxFontSize),
     );
   }
 
@@ -78,17 +81,19 @@ class SettingsService {
   }
 
   // Font Size
-  // Always clamps to valid range (12.0-30.0) to prevent slider assertion errors
+  // Always clamps to the valid range (AppConstants.minFontSize to
+  // maxFontSize) to prevent slider assertion errors
   static double getFontSize() {
     final fontSize = _prefs?.getDouble(AppConstants.keyFontSize) ??
         AppConstants.defaultFontSize;
     // Clamp to valid range to fix any existing out-of-range values
-    return fontSize.clamp(12.0, 30.0);
+    return fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
   }
 
   static Future<bool> setFontSize(double fontSize) async {
     // Clamp to valid range before saving to prevent slider assertion errors
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     return await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize) ??
         false;
   }
@@ -115,104 +120,67 @@ class SettingsService {
         false;
   }
 
-  // Favorites
-  static String _favoriteKey(String version, int hymnNumber) {
-    return '${HymnalVersions.normalizeId(version)}:$hymnNumber';
-  }
+  // Favourites, kept by song ID (`am-sda-2004-0132`). The ID names the
+  // edition, so each book keeps its own; and it survives a hymn being
+  // renumbered, which a number would not.
+  static final RegExp _songIdPattern =
+      RegExp(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$');
 
-  static List<String> getFavoriteHymnKeys() {
+  static List<String> getFavoriteSongIds() {
     final stored =
-        _prefs?.getStringList(AppConstants.keyFavoriteHymnsVersioned) ??
-            const <String>[];
-    return stored
-        .where((item) => RegExp(r'^[a-z0-9_]+:\d+$').hasMatch(item))
-        .toSet()
-        .toList()
-      ..sort();
+        _prefs?.getStringList(AppConstants.keyFavoriteSongIds) ?? const [];
+    return stored.where(_songIdPattern.hasMatch).toSet().toList()..sort();
   }
 
-  static List<int> getFavoriteHymns() {
-    final version = getSelectedVersion();
-    // Favourites saved before they were kept per book are moved into the
-    // selected book once, the first time; after that the old list is gone, so
-    // it can never leak into another book that has no favourites yet.
-    if (_prefs?.getStringList(AppConstants.keyFavoriteHymnsVersioned) == null) {
-      final legacy = _legacyFavoriteHymns();
-      if (legacy.isNotEmpty) {
-        _prefs?.setStringList(
-          AppConstants.keyFavoriteHymnsVersioned,
-          legacy.map((number) => _favoriteKey(version, number)).toSet().toList()
-            ..sort(),
-        );
-        _prefs?.remove(AppConstants.keyFavoriteHymns);
-        return legacy;
+  static bool isFavoriteSong(String songId) =>
+      getFavoriteSongIds().contains(songId);
+
+  static Future<bool> setFavoriteSongIds(Iterable<String> songIds) async {
+    final cleaned = songIds.where(_songIdPattern.hasMatch).toSet().toList()
+      ..sort();
+    return await _prefs?.setStringList(
+          AppConstants.keyFavoriteSongIds,
+          cleaned,
+        ) ??
+        false;
+  }
+
+  static Future<bool> toggleFavoriteSong(String songId) async {
+    final favorites = getFavoriteSongIds().toSet();
+    if (!favorites.remove(songId)) favorites.add(songId);
+    return setFavoriteSongIds(favorites);
+  }
+
+  /// Moves favourites saved by an older version into song IDs, once, at
+  /// start-up. `sda_new:132` becomes `am-sda-2004-0132`; the oldest,
+  /// number-only list belonged to the selected book. Exact, because every
+  /// song was created under the ID its number gives (`HymnalVersions.songId`).
+  static Future<void> _migrateFavoritesToSongIds() async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    final byVersion =
+        prefs.getStringList(AppConstants.keyFavoriteHymnsVersioned);
+    final numbersOnly = prefs.getStringList(AppConstants.keyFavoriteHymns);
+    if (byVersion == null && numbersOnly == null) return;
+
+    final migrated = {...getFavoriteSongIds()};
+    final versionedKey = RegExp(r'^([a-z0-9_]+):(\d+)$');
+    for (final key in byVersion ?? const <String>[]) {
+      final match = versionedKey.firstMatch(key);
+      final number = int.tryParse(match?.group(2) ?? '');
+      if (match == null || number == null || number <= 0) continue;
+      migrated.add(HymnalVersions.songId(match.group(1)!, number));
+    }
+    final selected = getSelectedVersion();
+    for (final value in numbersOnly ?? const <String>[]) {
+      final number = int.tryParse(value);
+      if (number != null && number > 0) {
+        migrated.add(HymnalVersions.songId(selected, number));
       }
     }
-    return getFavoriteHymnKeys()
-        .where((key) => key.startsWith('$version:'))
-        .map((key) => int.tryParse(key.split(':').last) ?? 0)
-        .where((e) => e > 0)
-        .toList();
-  }
-
-  static List<int> _legacyFavoriteHymns() {
-    final favorites = _prefs?.getStringList(AppConstants.keyFavoriteHymns);
-    if (favorites == null) return [];
-    return favorites
-        .map((e) => int.tryParse(e) ?? 0)
-        .where((e) => e > 0)
-        .toList();
-  }
-
-  static Future<bool> setFavoriteHymns(List<int> hymnNumbers) async {
-    final version = getSelectedVersion();
-    final otherVersionFavorites = getFavoriteHymnKeys()
-        .where((key) => !key.startsWith('$version:'))
-        .toList();
-    final currentVersionFavorites = hymnNumbers
-        .where((number) => number > 0)
-        .map((number) => _favoriteKey(version, number));
-    final merged = {
-      ...otherVersionFavorites,
-      ...currentVersionFavorites,
-    }.toList()
-      ..sort();
-
-    await _prefs?.remove(AppConstants.keyFavoriteHymns);
-    return await _prefs?.setStringList(
-            AppConstants.keyFavoriteHymnsVersioned, merged) ??
-        false;
-  }
-
-  static Future<bool> toggleFavorite(int hymnNumber, {String? version}) async {
-    final selectedVersion = HymnalVersions.normalizeId(
-      version ?? getSelectedVersion(),
-    );
-    final key = _favoriteKey(selectedVersion, hymnNumber);
-    getFavoriteHymns(); // Move any old-format favourites first.
-    final favorites = getFavoriteHymnKeys().toSet();
-    if (favorites.contains(key)) {
-      favorites.remove(key);
-    } else {
-      favorites.add(key);
-    }
-    final sorted = favorites.toList()..sort();
-    // The old number-only list is not kept up to date; it would otherwise be
-    // mistaken for favourites of a book that has none yet.
-    await _prefs?.remove(AppConstants.keyFavoriteHymns);
-    return await _prefs?.setStringList(
-            AppConstants.keyFavoriteHymnsVersioned, sorted) ??
-        false;
-  }
-
-  static bool isFavorite(int hymnNumber, {String? version}) {
-    final selectedVersion = HymnalVersions.normalizeId(
-      version ?? getSelectedVersion(),
-    );
-    return getFavoriteHymnKeys().contains(_favoriteKey(
-      selectedVersion,
-      hymnNumber,
-    ));
+    await setFavoriteSongIds(migrated);
+    await prefs.remove(AppConstants.keyFavoriteHymnsVersioned);
+    await prefs.remove(AppConstants.keyFavoriteHymns);
   }
 
   // Onboarding
@@ -287,6 +255,35 @@ class SettingsService {
     return await _prefs?.setStringList(
           AppConstants.keyMediaKeptOffline,
           kept.toList()..sort(),
+        ) ??
+        false;
+  }
+
+  /// Whole-edition downloads the reader started that have not ended, as
+  /// (version, media type). Each is cleared when its download ends, however
+  /// it ends, so one still here at start-up was cut off by the app closing.
+  static List<(String, String)> getUnfinishedDownloads() => [
+        for (final entry
+            in _prefs?.getStringList(AppConstants.keyUnfinishedDownloads) ??
+                const <String>[])
+          if (entry.split('|') case [final version, final mediaType])
+            (version, mediaType),
+      ];
+
+  static Future<bool> setDownloadUnfinished(
+    String version,
+    String mediaType,
+    bool value,
+  ) async {
+    final entries = {
+      ...?_prefs?.getStringList(AppConstants.keyUnfinishedDownloads),
+    };
+    value
+        ? entries.add('$version|$mediaType')
+        : entries.remove('$version|$mediaType');
+    return await _prefs?.setStringList(
+          AppConstants.keyUnfinishedDownloads,
+          entries.toList()..sort(),
         ) ??
         false;
   }

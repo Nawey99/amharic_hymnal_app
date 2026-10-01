@@ -1,5 +1,7 @@
 // lib/core/widgets/search_text_field.dart
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -102,14 +104,12 @@ class _SearchTextFieldState extends State<SearchTextField> {
             style: TextStyle(
               color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
-              fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
                 color: context.appColors.tertiaryText,
                 fontSize: FontSizeScope.of(context) * 0.9,
-                fontFamily: 'NotoSansEthiopic',
               ),
               prefixIcon:
                   Icon(Icons.search, color: context.appColors.primaryText),
@@ -140,7 +140,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
 
         // Show clear button (wrapped in Tooltip to prevent ticker issues)
         return Tooltip(
-          message: 'ፍለጋውን አጽዳ',
+          message: AppLocalizations.of(context)?.clearSearch ?? 'ፍለጋውን አጽዳ',
           child: IconButton(
             icon: Icon(Icons.clear, color: context.appColors.primaryText),
             onPressed: _handleClear,

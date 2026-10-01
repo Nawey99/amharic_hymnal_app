@@ -32,6 +32,23 @@ class _DroppingClient extends http.BaseClient {
   }
 }
 
+/// Sends [first] and then nothing, never closing: a mobile connection that
+/// stops delivering without saying so.
+class _StallingClient extends http.BaseClient {
+  _StallingClient(this.first, {this.contentLength});
+
+  final List<int> first;
+  final int? contentLength;
+  final controller = StreamController<List<int>>();
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    controller.add(first);
+    return http.StreamedResponse(controller.stream, 200,
+        contentLength: contentLength);
+  }
+}
+
 void main() {
   late Directory root;
   final bytes = List<int>.generate(4000, (i) => i % 251);
@@ -120,5 +137,45 @@ void main() {
             .cachedPath(source, MediaType.audio),
         isNull);
     expect(await filesLeft(), isEmpty);
+  });
+
+  test('a connection that stalls is given up, leaving nothing behind',
+      () async {
+    final client =
+        _StallingClient(bytes.sublist(0, 1000), contentLength: bytes.length);
+    addTearDown(client.controller.close);
+    final cache = LocalMediaCacheService(
+      client: client,
+      directoryProvider: () async => root,
+      idleTimeout: const Duration(milliseconds: 50),
+    );
+    final source = MediaSource(uri,
+        checksumSha256: checksum,
+        sizeBytes: bytes.length,
+        contentType: 'audio/mp4');
+
+    await expectLater(
+      cache.download(source, MediaType.audio),
+      throwsA(isA<TimeoutException>()),
+    );
+    expect(await filesLeft(), isEmpty);
+  });
+
+  test('partial files left by a killed run are cleared before downloading',
+      () async {
+    final directory = Directory('${root.path}/media_cache/${MediaType.audio}');
+    await directory.create(recursive: true);
+    final orphan = File('${directory.path}/$checksum.m4a.1700000000000.part');
+    await orphan.writeAsBytes(bytes.sublist(0, 10));
+
+    final cache = cacheWith(_DroppingClient([bytes]));
+    final source = MediaSource(uri,
+        checksumSha256: checksum,
+        sizeBytes: bytes.length,
+        contentType: 'audio/mp4');
+    await cache.download(source, MediaType.audio);
+
+    expect(await orphan.exists(), isFalse);
+    expect(await filesLeft(), ['$checksum.m4a']);
   });
 }

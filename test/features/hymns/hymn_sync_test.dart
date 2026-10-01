@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
+import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/edition_store.dart';
@@ -278,7 +279,10 @@ void main() {
         _delta('2026-09-22T08:00:00.000Z', isActive: false);
     now = now.add(const Duration(days: 1));
 
-    expect(await newSource().getHymns('am', 'sda_new'), isEmpty);
+    await expectLater(
+      newSource().getHymns('am', 'sda_new'),
+      throwsA(isA<EditionUnavailableException>()),
+    );
     expect(store.files, isEmpty);
   });
 

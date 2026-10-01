@@ -409,7 +409,6 @@ class _NavigationDestinationButtonState
                           fontSize: compact ? 9.5 : 10.5,
                           fontWeight:
                               selected ? FontWeight.w800 : FontWeight.w500,
-                          fontFamily: 'NotoSansEthiopic',
                         ),
                         child: Text(destination.label, maxLines: 1),
                       ),
@@ -505,7 +504,6 @@ class _PrimaryNavigationActionState extends State<_PrimaryNavigationAction> {
                           : context.appColors.primaryText,
                       fontSize: compact ? 10 : 11,
                       fontWeight: FontWeight.w800,
-                      fontFamily: 'NotoSansEthiopic',
                     ),
                   ),
                 ),

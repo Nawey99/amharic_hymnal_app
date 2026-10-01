@@ -9,7 +9,7 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list
 import '../../../../helpers/test_app.dart';
 
 const _hymn = Hymn(
-  id: 'sda_new-sda-1',
+  id: 'am-sda-2004-0001',
   number: 1,
   title: 'አምላካችን',
   lyrics: 'አምላካችን አመስግኑ',

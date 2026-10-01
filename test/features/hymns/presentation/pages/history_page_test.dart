@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/history_page.dart';
@@ -29,7 +30,7 @@ void main() {
     source.error = loadError;
     await HistoryService.init();
     for (final (version, number) in entries) {
-      await HistoryService.addToHistory(number, version: version);
+      await HistoryService.addToHistory(HymnalVersions.songId(version, number));
     }
 
     opened = [];

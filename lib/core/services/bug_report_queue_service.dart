@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart'
     show
@@ -42,6 +43,7 @@ class BugReportQueueService {
     if (kIsWeb) return;
 
     final preferences = await SharedPreferences.getInstance();
+    await _forgetQueueFromEarlierInstall(preferences);
     final legacyQueue = preferences.getString(_queueKey);
     if (legacyQueue == null) return;
 
@@ -50,6 +52,30 @@ class BugReportQueueService {
       await _secureStorage.write(key: _queueKey, value: legacyQueue);
     }
     await preferences.remove(_queueKey);
+  }
+
+  static const String _installMarkerKey = 'bug_report_queue_install_seen';
+
+  /// The iOS Keychain outlives the app: a report queued before an uninstall
+  /// would still be there after a reinstall and be sent at launch.
+  /// Preferences do not outlive it. A report can only be written after
+  /// onboarding, so an install that has not finished onboarding has queued
+  /// nothing itself, and whatever the secure store holds is from before.
+  Future<void> _forgetQueueFromEarlierInstall(
+    SharedPreferences preferences,
+  ) async {
+    if (preferences.getBool(_installMarkerKey) == true) return;
+    try {
+      final onboarded =
+          preferences.getBool(AppConstants.keyOnboardingCompleted) == true;
+      if (!onboarded) await _secureStorage.delete(key: _queueKey);
+      await preferences.setBool(_installMarkerKey, true);
+    } catch (error) {
+      // Asked again next launch.
+      if (kDebugMode) {
+        debugPrint('Could not check for an earlier queue: $error');
+      }
+    }
   }
 
   /// Add a bug report to the queue

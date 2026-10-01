@@ -49,7 +49,6 @@ class AppearanceSettings extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: colors.primaryText,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
             const SizedBox(height: 2),
@@ -59,7 +58,6 @@ class AppearanceSettings extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 color: colors.secondaryText,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
             const SizedBox(height: 12),
@@ -163,7 +161,6 @@ class _ModeButton extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: selected ? colors.accent : colors.primaryText,
-                      fontFamily: 'NotoSansEthiopic',
                     ),
                   ),
                 ),

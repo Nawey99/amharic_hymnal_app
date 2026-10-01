@@ -68,6 +68,12 @@ class MemoryMediaCache implements MediaCache {
   @override
   Future<void> clearMediaType(String mediaType) async => stored.clear();
 
+  /// Free space to report; null means the phone cannot say.
+  int? free;
+
+  @override
+  Future<int?> freeBytes() async => free;
+
   @override
   Future<void> retainOnly(
       Set<String> checksums, List<String> mediaTypes) async {

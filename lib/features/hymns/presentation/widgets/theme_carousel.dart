@@ -120,7 +120,6 @@ class _ThemeCarouselState extends State<ThemeCarousel> {
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: colors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
             ),
           ),
         ),

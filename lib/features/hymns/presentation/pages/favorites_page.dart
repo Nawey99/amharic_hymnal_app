@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
@@ -128,13 +130,21 @@ class _FavoritesPageState extends State<FavoritesPage>
                     },
                     builder: (context, state) {
                       final settingsRepository = sl<SettingsRepository>();
-                      // Get fresh favorites list to ensure instant updates
-                      final favorites = settingsRepository.getFavoriteHymns();
+                      final version = state is HymnsLoaded
+                          ? state.version
+                          : settingsRepository.getSelectedVersion();
+                      // Fresh from storage for instant updates: this book's
+                      // favourites, whose song IDs begin with its code.
+                      final prefix = '${HymnalVersions.apiCode(version)}-';
+                      final favorites = settingsRepository
+                          .getFavoriteSongIds()
+                          .where((id) => id.startsWith(prefix))
+                          .toList();
 
                       // Handle errors
                       if (state is HymnsError) {
                         return ErrorStateWidget(
-                          message: state.message,
+                          message: hymnsErrorText(context, state),
                         );
                       }
 
@@ -154,7 +164,8 @@ class _FavoritesPageState extends State<FavoritesPage>
                       if (state is! HymnsLoaded && favorites.isNotEmpty) {
                         // Show favorites from SharedPreferences even if state isn't loaded
                         // This prevents flickering during favorite removal
-                        return _buildFavoritesList(context, favorites, []);
+                        return _buildFavoritesList(
+                            context, favorites, [], version);
                       }
 
                       // State is loaded - show favorites
@@ -170,7 +181,7 @@ class _FavoritesPageState extends State<FavoritesPage>
                       }
 
                       return _buildFavoritesList(
-                          context, favorites, state.hymns);
+                          context, favorites, state.hymns, version);
                     },
                   ),
                 ),
@@ -228,14 +239,15 @@ class _FavoritesPageState extends State<FavoritesPage>
   /// Uses SharedPreferences as source of truth for instant updates
   Widget _buildFavoritesList(
     BuildContext context,
-    List<int> favorites,
+    List<String> favorites,
     List<Hymn> allHymns,
+    String version,
   ) {
     // Optimistic UI: Filter favorites based on SharedPreferences (source of truth)
     // This ensures instant removal without waiting for database or state updates
     var favoriteHymns = allHymns.where((hymn) {
       // Use SharedPreferences as the source of truth for instant updates
-      return favorites.contains(hymn.displayNumber);
+      return favorites.contains(hymn.songIdIn(version));
     }).toList();
 
     // Apply search filter if search is active

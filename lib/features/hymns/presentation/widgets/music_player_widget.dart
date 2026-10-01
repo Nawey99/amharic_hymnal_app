@@ -1,7 +1,9 @@
 // lib/features/hymns/presentation/widgets/music_player_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
@@ -170,6 +172,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   }
 
   Future<void> _loadAudio() async {
+    // Captured before the awaits below, so the error paths do not reach
+    // for a context that may have gone.
+    final l = AppLocalizations.of(context);
     setState(() {
       _isLoading = true;
       _isError = false;
@@ -201,7 +206,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         mediaSourceForUri(track.source.uri, widget.audioInfo?.file),
       );
     } on MediaIntegrityException {
-      _showLoadError('የወረደው ድምፅ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
+      _showLoadError(
+          l?.audioDownloadCorrupt ?? 'የወረደው ድምፅ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -212,7 +218,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('ድምፅ መክፈት አልተቻለም: ${e.toString()}'),
+              content: Text(
+                l?.audioOpenFailed(e.toString()) ??
+                    'ድምፅ መክፈት አልተቻለም: ${e.toString()}',
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -256,27 +265,28 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     }
 
     if (!mounted) return;
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'የመዝሙሩ ድምፅ ይውረድ?',
+          l?.audioDownloadTitle ?? 'የመዝሙሩ ድምፅ ይውረድ?',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
-          'ይህ የድምፅ መዝሙር በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ያለ ኢንተርኔት ማጫወት ይችላሉ።'
-          '${source.sizeBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(source.sizeBytes!)}'}',
+          '${l?.audioDownloadBody ?? 'ይህ የድምፅ መዝሙር በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ያለ ኢንተርኔት ማጫወት ይችላሉ።'}'
+          '${source.sizeBytes == null ? '' : '\n\n${l?.mediaSizeLine(formatMediaSize(source.sizeBytes!)) ?? 'መጠን፦ ${formatMediaSize(source.sizeBytes!)}'}'}',
           style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('ይቅር'),
+            child: Text(l?.actionCancel ?? 'ይቅር'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('አውርድ'),
+            child: Text(l?.actionDownload ?? 'አውርድ'),
           ),
         ],
       ),
@@ -365,7 +375,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                 color: context.appColors.primaryText,
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'NotoSansEthiopic',
                                 height: 1.08,
                               ),
                               maxLines: 1,
@@ -377,10 +386,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                 Flexible(
                                   child: Text(
                                     subtitle,
+                                    // The hymn's English name, so the serif
+                                    // face, as in the lists.
                                     style: TextStyle(
                                       color: context.appColors.secondaryText,
                                       fontSize: 12,
                                       height: 1.0,
+                                      fontFamily: AppFonts.serif,
+                                      fontFamilyFallback:
+                                          AppFonts.ethiopicFallback,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -460,7 +474,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           size: iconSize,
         ),
         onPressed: () => _handlePlayButtonPressed(isThisHymnActive),
-        tooltip: _isPlaying ? 'አቁም' : 'አጫውት',
+        tooltip: _isPlaying
+            ? (AppLocalizations.of(context)?.stop ?? 'አቁም')
+            : (AppLocalizations.of(context)?.audioPlay ?? 'አጫውት'),
       ),
     );
   }
@@ -492,7 +508,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              _errorMessage ?? 'ድምፅ አልተገኘም',
+              _errorMessage ??
+                  (AppLocalizations.of(context)?.audioNotFound ?? 'ድምፅ አልተገኘም'),
               style: const TextStyle(
                 color: Colors.redAccent,
                 fontSize: 12,
@@ -514,7 +531,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   /// Marks a tune rendered from MIDI, which sounds like an organ rather than
   /// singers, so nobody mistakes it for a recording.
   Widget _buildInstrumentalBadge({bool compact = false}) {
-    const label = 'የሙዚቃ መሣሪያ ብቻ';
+    final label =
+        AppLocalizations.of(context)?.audioInstrumentalOnly ?? 'የሙዚቃ መሣሪያ ብቻ';
     final badge = Container(
       padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 2),
       decoration: BoxDecoration(
@@ -530,7 +548,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 fontSize: 10,
                 height: 1.1,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
     );
@@ -668,7 +685,10 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('የድምፅ ስህተት: ${e.toString()}'),
+            content: Text(
+              AppLocalizations.of(context)?.audioError(e.toString()) ??
+                  'የድምፅ ስህተት: ${e.toString()}',
+            ),
             backgroundColor: Colors.red,
           ),
         );

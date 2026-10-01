@@ -1,3 +1,5 @@
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+
 // lib/core/database/parsers/hagerigna_parser.dart
 /// Parser for Hagerigna JSON format
 class HagerignaParser {
@@ -38,7 +40,8 @@ class HagerignaParser {
 
     for (int i = 0; i < maxLength; i++) {
       hymns.add({
-        'id': 'hagerigna-$i',
+        // The hymnal API's ID for the same song.
+        'id': HymnalVersions.songId(HymnalVersions.hagerigna, i + 1),
         'language_code': 'am',
         'version': 'hagerigna',
         'number': i + 1, // Start from 1

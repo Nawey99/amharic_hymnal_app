@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/utils/index_section_utils.dart';
@@ -604,14 +605,6 @@ class _IndexPageState extends State<IndexPage> {
                   color: context.appColors.accent,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'NotoSansEthiopic',
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -695,7 +688,7 @@ class _IndexPageState extends State<IndexPage> {
       );
     }
     if (state is HymnsError) {
-      return ErrorStateWidget(message: state.message);
+      return ErrorStateWidget(message: hymnsErrorText(context, state));
     }
     if (state is! HymnsLoaded) return const SizedBox();
     if (state.hymns.isEmpty) {

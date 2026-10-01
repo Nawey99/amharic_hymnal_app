@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
@@ -31,13 +32,12 @@ void main() {
       'sda_old': sampleHymns(count: 5, prefix: 'am-sda-1975'),
     });
     final settings = di.sl<SettingsRepository>();
-    await settings.setSelectedVersion('sda_old');
     for (final n in oldFavorites) {
-      await settings.toggleFavorite(n);
+      await settings.toggleFavoriteSong(HymnalVersions.songId('sda_old', n));
     }
     await settings.setSelectedVersion('sda_new');
     for (final n in favorites) {
-      await settings.toggleFavorite(n);
+      await settings.toggleFavoriteSong(HymnalVersions.songId('sda_new', n));
     }
 
     opened = [];
@@ -76,18 +76,19 @@ void main() {
     final bloc = await pumpFavorites(tester, favorites: [2]);
     expect(find.text('መዝሙር 2'), findsOneWidget);
 
-    bloc.add(ToggleFavorite(2));
+    bloc.add(ToggleFavorite('am-sda-2004-0002'));
     await tester.pumpAndSettle();
 
     expect(find.text('መዝሙር 2'), findsNothing);
     expect(find.text(_noFavoritesYet), findsOneWidget);
-    expect(di.sl<SettingsRepository>().isFavorite(2), isFalse);
+    expect(di.sl<SettingsRepository>().isFavoriteSong('am-sda-2004-0002'),
+        isFalse);
   });
 
   testWidgets('adding a favourite shows it straight away', (tester) async {
     final bloc = await pumpFavorites(tester, favorites: [2]);
 
-    bloc.add(ToggleFavorite(5));
+    bloc.add(ToggleFavorite('am-sda-2004-0005'));
     await tester.pumpAndSettle();
 
     expect(find.text('መዝሙር 5'), findsOneWidget);

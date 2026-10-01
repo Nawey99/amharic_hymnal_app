@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
@@ -89,13 +91,19 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
 
   /// e.g. "ይህ ኖታ ከ2004 ውዳሴ (ቁ. 132) የተወሰደ ነው።" The printed number on a
   /// borrowed page is the other book's, so say which book it is.
-  String? get _borrowedCaption {
+  String? _borrowedCaption(BuildContext context) {
     final code = _borrowedFromVersionCode;
     if (code == null) return null;
+    final l = AppLocalizations.of(context);
     final id = HymnalVersions.fromApiCode(code);
-    final edition = id == null ? code : HymnalVersions.byId(id).shortLabel;
-    final number = _borrowedNumber == null ? '' : ' (ቁ. $_borrowedNumber)';
-    return 'ይህ ኖታ ከ$edition$number የተወሰደ ነው።';
+    final edition =
+        id == null ? code : HymnalVersions.byId(id).shortLabelFor(l?.locale);
+    final number = _borrowedNumber == null
+        ? ''
+        : (l?.sheetBorrowedNumber(_borrowedNumber!) ??
+            ' (ቁ. $_borrowedNumber)');
+    return l?.sheetBorrowedFrom(edition, number) ??
+        'ይህ ኖታ ከ$edition$number የተወሰደ ነው።';
   }
 
   @override
@@ -232,7 +240,8 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
       ..showSnackBar(
         SnackBar(
           content: Text(
-            'የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።',
+            AppLocalizations.of(context)?.sheetScreenshotBlocked ??
+                'የኖታ ምስል ማንሳት (ስክሪንሽት) አይፈቀድም።',
             style: TextStyle(color: context.appColors.primaryText),
           ),
           backgroundColor: Theme.of(context).colorScheme.error,
@@ -264,7 +273,8 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                     child: Row(
                       children: [
                         IconButton(
-                          tooltip: 'ዝጋ',
+                          tooltip:
+                              AppLocalizations.of(context)?.sheetClose ?? 'ዝጋ',
                           icon: Icon(
                             Icons.close,
                             color: context.appColors.primaryText,
@@ -280,7 +290,6 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: context.appColors.primaryText,
-                              fontFamily: 'NotoSansEthiopic',
                               fontSize: 17,
                               fontWeight: FontWeight.w800,
                             ),
@@ -289,7 +298,7 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                       ],
                     ),
                   ),
-                  if (_borrowedCaption != null)
+                  if (_borrowedCaption(context) != null)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                       child: Row(
@@ -302,11 +311,10 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              _borrowedCaption!,
+                              _borrowedCaption(context)!,
                               key: const ValueKey('borrowed-sheet-caption'),
                               style: TextStyle(
                                 color: context.appColors.secondaryText,
-                                fontFamily: 'NotoSansEthiopic',
                                 fontSize: 13,
                               ),
                             ),

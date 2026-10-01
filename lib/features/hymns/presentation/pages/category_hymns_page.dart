@@ -1,10 +1,13 @@
 // lib/features/hymns/presentation/pages/category_hymns_page.dart
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
@@ -71,7 +74,6 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
             widget.author ?? widget.category,
             style: TextStyle(
               color: context.appColors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -107,11 +109,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'በቁጥር',
-                              style: TextStyle(
-                                fontFamily: 'NotoSansEthiopic',
-                              ),
+                            Text(
+                              AppLocalizations.of(context)?.sortByNumber ??
+                                  'በቁጥር',
+                              style: const TextStyle(),
                             ),
                           ],
                         ),
@@ -130,11 +131,9 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'በስም',
-                              style: TextStyle(
-                                fontFamily: 'NotoSansEthiopic',
-                              ),
+                            Text(
+                              AppLocalizations.of(context)?.sortByName ?? 'በስም',
+                              style: const TextStyle(),
                             ),
                           ],
                         ),
@@ -161,11 +160,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: Text(
-                      state.message,
+                      hymnsErrorText(context, state),
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,
-                        fontFamily: 'NotoSansEthiopic',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -207,8 +205,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
                     title: widget.author != null
-                        ? 'ለዚህ ዘማሪ መዝሙር አልተገኘም'
-                        : 'በዚህ ምድብ መዝሙር አልተገኘም',
+                        ? (AppLocalizations.of(context)?.noHymnsForSinger ??
+                            'ለዚህ ዘማሪ መዝሙር አልተገኘም')
+                        : (AppLocalizations.of(context)?.noHymnsInCategory ??
+                            'በዚህ ምድብ መዝሙር አልተገኘም'),
                   );
                 }
 

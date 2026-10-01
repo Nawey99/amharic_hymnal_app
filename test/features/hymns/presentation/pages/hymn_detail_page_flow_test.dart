@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
@@ -13,12 +14,14 @@ import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_b
 
 import '../../../../helpers/test_app.dart';
 
-/// IDs deliberately not in the API's `am-...` form, so the page never looks
-/// up other editions over the network.
+/// The bundled copy of the book, as the app ships it: the API's song IDs,
+/// marked bundled, so the page never looks up other editions over the
+/// network.
 List<HymnModel> _book() => [
       for (var n = 1; n <= 5; n++)
         HymnModel(
-          id: 'sda_new-sda-$n',
+          id: 'am-sda-2004-${n.toString().padLeft(4, '0')}',
+          isBundled: true,
           number: n,
           title: 'መዝሙር $n',
           lyrics: 'የመዝሙር $n ግጥም',
@@ -225,7 +228,8 @@ void main() {
 
   group('the end of the lyrics clears the bottom bar', () {
     final longHymn = Hymn(
-      id: 'sda_new-sda-99',
+      id: 'am-sda-2004-0099',
+      isBundled: true,
       number: 99,
       title: 'ረጅም መዝሙር',
       lyrics: [for (var line = 1; line <= 40; line++) 'መስመር $line']
@@ -252,7 +256,12 @@ void main() {
       return bar.top - lyrics.bottom;
     }
 
-    for (final fontSize in [12.0, 30.0]) {
+    // The two ends of what a reader can choose, so raising the maximum
+    // is checked for overflow rather than assumed safe.
+    for (final fontSize in [
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
+    ]) {
       testWidgets('at size ${fontSize.toInt()} on a small screen',
           (tester) async {
         await setUpTestApp(content: {'sda_new': _book()});
@@ -272,7 +281,7 @@ void main() {
 
     testWidgets('and with the phone text size raised too', (tester) async {
       await setUpTestApp(content: {'sda_new': _book()});
-      FontSizeService().initialize(30);
+      FontSizeService().initialize(AppConstants.maxFontSize);
       changedTo = [];
       bloc = await pumpInApp(
         tester,
@@ -292,8 +301,8 @@ void main() {
     await openHymn(tester, 4);
 
     final entries = HistoryService.getHistoryEntries();
-    expect(entries.first.hymnNumber, 4);
-    expect(entries.first.version, 'sda_new');
+    // Kept by song ID, which names the book.
+    expect(entries.first.songId, 'am-sda-2004-0004');
   });
 
   group('report a problem', () {

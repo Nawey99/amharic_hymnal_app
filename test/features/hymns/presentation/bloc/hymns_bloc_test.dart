@@ -347,7 +347,7 @@ void main() {
       'marks only that hymn and keeps its media details',
       build: buildBloc,
       seed: () => HymnsLoaded(_book2004(), 'number'),
-      act: (bloc) => bloc.add(ToggleFavorite(4)),
+      act: (bloc) => bloc.add(ToggleFavorite('am-sda-2004-0004')),
       expect: () => [
         isA<HymnsLoaded>().having(
           (s) => [for (final h in s.hymns) h.isFavorite],
@@ -362,7 +362,8 @@ void main() {
                   (h) => h.id, 'id', 'am-sda-2004-0004'),
         ),
       ],
-      verify: (_) => expect(settings.isFavorite(4), isTrue),
+      verify: (_) =>
+          expect(settings.isFavoriteSong('am-sda-2004-0004'), isTrue),
     );
 
     blocTest<HymnsBloc, HymnsState>(
@@ -370,41 +371,40 @@ void main() {
       build: buildBloc,
       seed: () => HymnsLoaded(_book2004(), 'number'),
       act: (bloc) async {
-        bloc.add(ToggleFavorite(2));
+        bloc.add(ToggleFavorite('am-sda-2004-0002'));
         await Future<void>.delayed(Duration.zero);
-        bloc.add(ToggleFavorite(2));
+        bloc.add(ToggleFavorite('am-sda-2004-0002'));
       },
       skip: 1,
       expect: () => [
         isA<HymnsLoaded>().having(
             (s) => s.hymns.any((h) => h.isFavorite), 'any favorite', isFalse),
       ],
-      verify: (_) => expect(settings.isFavorite(2), isFalse),
+      verify: (_) =>
+          expect(settings.isFavoriteSong('am-sda-2004-0002'), isFalse),
     );
 
-    test('favorites are kept per edition', () async {
+    test('the same number in another book is another favourite', () async {
       final bloc = buildBloc();
       addTearDown(bloc.close);
 
-      bloc.add(ToggleFavorite(1));
+      bloc.add(ToggleFavorite('am-sda-2004-0001'));
       await Future<void>.delayed(Duration.zero);
-      expect(settings.isFavorite(1, version: 'sda_new'), isTrue);
-
-      await settings.setSelectedVersion('sda_old');
-      expect(settings.isFavorite(1), isFalse);
-      bloc.add(ToggleFavorite(1));
+      expect(settings.isFavoriteSong('am-sda-1975-0001'), isFalse);
+      bloc.add(ToggleFavorite('am-sda-1975-0001'));
       await Future<void>.delayed(Duration.zero);
 
-      expect(settings.isFavorite(1, version: 'sda_old'), isTrue);
-      expect(settings.isFavorite(1, version: 'sda_new'), isTrue);
+      expect(settings.getFavoriteSongIds(),
+          ['am-sda-1975-0001', 'am-sda-2004-0001']);
     });
 
     blocTest<HymnsBloc, HymnsState>(
       'is saved even before hymns are loaded',
       build: buildBloc,
-      act: (bloc) => bloc.add(ToggleFavorite(3)),
+      act: (bloc) => bloc.add(ToggleFavorite('am-sda-2004-0003')),
       expect: () => const <HymnsState>[],
-      verify: (_) => expect(settings.isFavorite(3), isTrue),
+      verify: (_) =>
+          expect(settings.isFavoriteSong('am-sda-2004-0003'), isTrue),
     );
   });
 
@@ -433,7 +433,7 @@ void main() {
     );
 
     blocTest<HymnsBloc, HymnsState>(
-      'says not found when the edition cannot load',
+      'does not call it "not found" when the edition cannot load',
       build: () {
         source.error = Exception('offline');
         return buildBloc();
@@ -442,7 +442,8 @@ void main() {
       expect: () => [
         isA<HymnsLoading>(),
         isA<HymnsError>()
-            .having((s) => s.message, 'message', 'Hymn #1 not found.'),
+            .having((s) => s.kind, 'kind', HymnsErrorKind.lookupFailed)
+            .having((s) => s.number, 'number', 1),
       ],
     );
   });

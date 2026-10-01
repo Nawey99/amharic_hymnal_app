@@ -1,5 +1,6 @@
 import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
+import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_client.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
@@ -46,6 +47,7 @@ class HymnRemoteDataSource {
   static const _checkTimeout = Duration(seconds: 5);
   static const _syncTimeout = Duration(seconds: 15);
   static const _syncPageSize = 500;
+  static const _maxSyncPages = 200;
   static const _syncFromStart = '1970-01-01T00:00:00.000Z';
 
   final HymnalApiClient _api;
@@ -121,8 +123,10 @@ class HymnRemoteDataSource {
     }
 
     if (!result.isActive) {
+      // Withdrawn: forget the stored copy and say so, rather than showing
+      // an empty book as if it had no hymns.
       await _forget(key);
-      return const [];
+      throw EditionUnavailableException(code);
     }
 
     final edition = _CachedEdition.fromSongs(
@@ -267,8 +271,14 @@ class HymnRemoteDataSource {
     final changedPageSongIds = <String>{};
     String? cursor;
     var serverTime = since;
+    var pages = 0;
 
     do {
+      // The largest edition is two pages. A server that never stops saying
+      // "more" must not keep the app requesting for ever.
+      if (++pages > _maxSyncPages) {
+        throw const FormatException('Sync did not finish.');
+      }
       final uri = Uri.parse('$_baseUrl/sync').replace(queryParameters: {
         'language': languageCode,
         'version': code,

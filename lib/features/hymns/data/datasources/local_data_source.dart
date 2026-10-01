@@ -6,6 +6,7 @@ import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
 import 'package:amharic_hymnal_app/core/models/database_config.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/error/exceptions.dart';
+import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_local_data_source.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
@@ -34,6 +35,16 @@ class LocalDataSource implements HymnLocalDataSource {
         languageCode,
         normalizedVersion,
       );
+    } on EditionUnavailableException {
+      // Withdrawn on the server: a bundled copy must not bring it back.
+      rethrow;
+    } on HymnalApiException catch (e) {
+      if (e.code == 'HYMN_VERSION_NOT_FOUND') {
+        throw EditionUnavailableException(e.code);
+      }
+      if (kDebugMode) {
+        debugPrint('⚠️ Content API unavailable, using local data: $e');
+      }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('⚠️ Content API unavailable, using local data: $e');
@@ -154,6 +165,7 @@ class LocalDataSource implements HymnLocalDataSource {
       oldHymnalNumber: oldHymnalNumber,
       isFavorite: (jsonData['is_favorite'] as int?) == 1 ||
           (jsonData['is_favorite'] as bool?) == true,
+      isBundled: true,
     );
   }
 

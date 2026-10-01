@@ -227,7 +227,8 @@ void main() {
     await tester.enterText(_field(2), 'ገጹ የሌላ መዝሙር ነው ብዬ አስባለሁ።');
     await send(tester);
 
-    expect(find.text('ተልኳል'), findsOneWidget);
+    // The page chooses the wording now, from the result's flags.
+    expect(find.text('የስህተት ሪፖርት ተልኳል!'), findsOneWidget);
     expect(repository.sent.single.title, 'የተሳሳተ ገጽ');
     expect(repository.sent.single.screen, 'settings');
     expect(tester.widget<TextFormField>(_field(0)).controller?.text ?? '',
@@ -242,10 +243,6 @@ class _AcceptingRepository implements BugReportRepository {
   @override
   Future<BugReportSubmissionResult> submit(BugReportPayload payload) async {
     sent.add(payload);
-    return const BugReportSubmissionResult(
-      submitted: true,
-      queued: false,
-      message: 'ተልኳል',
-    );
+    return const BugReportSubmissionResult(submitted: true, queued: false);
   }
 }

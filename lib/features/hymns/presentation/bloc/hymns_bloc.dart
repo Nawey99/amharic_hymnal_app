@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
-import 'package:intl/intl.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/usecases/get_hymns.dart';
@@ -35,6 +34,14 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
 
   String? _activeLoadKey;
 
+  /// Bumped by every request that replaces the hymns on screen. Events run
+  /// concurrently, so a slow answer (an edition's first sync) can arrive
+  /// after a newer one; it is dropped instead of overwriting it.
+  int _generation = 0;
+
+  /// Whether a request started at [generation] has been overtaken.
+  bool _isStale(int generation) => generation != _generation || isClosed;
+
   HymnsBloc({
     required this.getHymns,
     required this.searchHymns,
@@ -53,10 +60,12 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   /// Handle failure and return appropriate error state
   HymnsState _handleFailure(Failure failure) {
     if (failure is NetworkFailure) {
-      return HymnsError(
-          'This hymnal needs an internet connection to load. Please connect and try again.');
+      return HymnsError(HymnsErrorKind.needsConnection);
     }
-    return HymnsError('Hymns could not be loaded. Please try again.');
+    if (failure is EditionUnavailableFailure) {
+      return HymnsError(HymnsErrorKind.editionUnavailable);
+    }
+    return HymnsError(HymnsErrorKind.loadFailed);
   }
 
   @override
@@ -80,6 +89,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
     }
 
     _activeLoadKey = loadKey;
+    final generation = ++_generation;
     if (!event.forceRefresh || currentState is! HymnsLoaded) {
       emit(HymnsLoading());
     }
@@ -87,6 +97,10 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       languageCode: event.languageCode,
       version: event.version,
     ));
+    if (_isStale(generation)) {
+      if (_activeLoadKey == loadKey) _activeLoadKey = null;
+      return;
+    }
     result.fold(
       (failure) {
         if (event.forceRefresh && currentState is HymnsLoaded) {
@@ -122,7 +136,10 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       return;
     }
 
-    emit(HymnsLoading());
+    final generation = ++_generation;
+    // Results replace the list in place. A spinner here would flash across
+    // every tab on every keystroke, since they all read this state.
+    if (state is! HymnsLoaded) emit(HymnsLoading());
     final result = await searchHymns(
       usecases.SearchHymnsParams(
         languageCode: event.languageCode,
@@ -130,8 +147,9 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
         query: event.query,
       ),
     );
+    if (_isStale(generation)) return;
     result.fold(
-      (failure) => emit(HymnsError('Failed to search hymns.')),
+      (failure) => emit(HymnsError(HymnsErrorKind.searchFailed)),
       (hymns) {
         emit(HymnsLoaded(
           hymns,
@@ -145,6 +163,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
 
   Future<void> _onChangeLanguage(
       ChangeLanguage event, Emitter<HymnsState> emit) async {
+    final generation = ++_generation;
     emit(HymnsLoading());
     await settingsRepository.setSelectedLanguage(event.languageCode);
     await settingsRepository.setSelectedVersion(event.version);
@@ -152,6 +171,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       languageCode: event.languageCode,
       version: event.version,
     ));
+    if (_isStale(generation)) return;
     result.fold(
       (failure) => emit(_handleFailure(failure)),
       (hymns) {
@@ -167,12 +187,14 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
 
   Future<void> _onChangeVersion(
       ChangeVersion event, Emitter<HymnsState> emit) async {
+    final generation = ++_generation;
     emit(HymnsLoading());
     await settingsRepository.setSelectedVersion(event.version);
     final result = await getHymns(GetHymnsParams(
       languageCode: event.languageCode,
       version: event.version,
     ));
+    if (_isStale(generation)) return;
     result.fold(
       (failure) => emit(_handleFailure(failure)),
       (hymns) {
@@ -194,12 +216,15 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
       }
 
       await settingsRepository.setSortType(event.sortType);
+      // Another request may have replaced the list while the sort was saved.
+      final latest = state;
+      if (latest is! HymnsLoaded) return;
       emit(HymnsLoaded(
-        currentState.hymns,
+        latest.hymns,
         event.sortType,
-        languageCode: currentState.languageCode,
-        version: currentState.version,
-        favoritesRevision: currentState.favoritesRevision,
+        languageCode: latest.languageCode,
+        version: latest.version,
+        favoritesRevision: latest.favoritesRevision,
       ));
     }
   }
@@ -207,16 +232,16 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
   Future<void> _onToggleFavorite(
       ToggleFavorite event, Emitter<HymnsState> emit) async {
     try {
-      // Favorites live in SharedPreferences, per edition.
-      await settingsRepository.toggleFavorite(event.hymnNumber);
-      final newFavoriteStatus = settingsRepository.isFavorite(event.hymnNumber);
+      // Favourites live in SharedPreferences by song ID, which already names
+      // the edition the hymn belongs to.
+      await settingsRepository.toggleFavoriteSong(event.songId);
+      final newFavoriteStatus = settingsRepository.isFavoriteSong(event.songId);
 
-      if (state is HymnsLoaded) {
-        final currentState = state as HymnsLoaded;
-
+      final currentState = state;
+      if (currentState is HymnsLoaded) {
         // Update the specific hymn's favorite status in the existing list
         final updatedHymns = currentState.hymns.map((hymn) {
-          if (hymn.displayNumber == event.hymnNumber) {
+          if (hymn.songIdIn(currentState.version) == event.songId) {
             return Hymn(
               id: hymn.id,
               number: hymn.number,
@@ -237,6 +262,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
               newHymnalNumber: hymn.newHymnalNumber,
               oldHymnalNumber: hymn.oldHymnalNumber,
               isFavorite: newFavoriteStatus,
+              isBundled: hymn.isBundled,
             );
           }
           return hymn;
@@ -260,14 +286,21 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
 
   Future<void> _onGetHymnByNumber(
       GetHymnByNumberEvent event, Emitter<HymnsState> emit) async {
+    final generation = ++_generation;
     emit(HymnsLoading());
     final result = await getHymnByNumber(GetHymnByNumberParams(
       languageCode: event.languageCode,
       version: event.version,
       number: event.number,
     ));
+    if (_isStale(generation)) return;
     result.fold(
-      (failure) => emit(HymnsError('Hymn #${event.number} not found.')),
+      (failure) => emit(HymnsError(
+        failure is NotFoundFailure
+            ? HymnsErrorKind.notFound
+            : HymnsErrorKind.lookupFailed,
+        number: event.number,
+      )),
       (hymn) {
         if (hymn != null) {
           emit(HymnsLoaded(
@@ -277,7 +310,7 @@ class HymnsBloc extends Bloc<HymnsEvent, HymnsState> {
             version: event.version,
           ));
         } else {
-          emit(HymnsError('Hymn #${event.number} not found.'));
+          emit(HymnsError(HymnsErrorKind.notFound, number: event.number));
         }
       },
     );

@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale;
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -101,10 +103,24 @@ class HymnalVersionService extends ChangeNotifier {
     final known = HymnalVersions.all.where((item) => item.id == id).firstOrNull;
     final title = _nonEmptyString(json['title']);
     final year = _readInt(json['versionLabel']);
+    // A book the app has not been taught the name of is named from the
+    // year the server reports, in both languages, so switching language
+    // renames it too.
+    final amharic = AppLocalizations(const Locale('am'));
+    final english = AppLocalizations(const Locale('en'));
+
     final baseLabel = known?.label ??
-        (isSda && year != null ? 'የ$year ውዳሴ መዝሙር' : title ?? id);
-    final baseShortLabel =
-        known?.shortLabel ?? (isSda && year != null ? '$year ውዳሴ' : baseLabel);
+        (isSda && year != null ? amharic.hymnalYearLabel(year) : title ?? id);
+    final baseShortLabel = known?.shortLabel ??
+        (isSda && year != null
+            ? amharic.hymnalYearShortLabel(year)
+            : baseLabel);
+    final baseEnglishLabel = known?.englishLabel ??
+        (isSda && year != null ? english.hymnalYearLabel(year) : title ?? id);
+    final baseEnglishShortLabel = known?.englishShortLabel ??
+        (isSda && year != null
+            ? english.hymnalYearShortLabel(year)
+            : baseEnglishLabel);
     // Shown where space is tight, e.g. "1961: 165"; never marked "being
     // prepared", as a book with no songs has no hymn to point at.
     final briefLabel =
@@ -113,13 +129,20 @@ class HymnalVersionService extends ChangeNotifier {
     // than as an empty book.
     final capabilities = json['capabilities'];
     final ready = capabilities is! Map || capabilities['songs'] != false;
-    const notReady = ' (በዝግጅት ላይ)';
+    final notReady = amharic.hymnalBeingPrepared;
+    final notReadyEnglish = english.hymnalBeingPrepared;
 
     return HymnalVersion(
       id: id,
       label: ready ? baseLabel : '$baseLabel$notReady',
       shortLabel: ready ? baseShortLabel : '$baseShortLabel$notReady',
       briefLabel: briefLabel,
+      englishLabel:
+          ready ? baseEnglishLabel : '$baseEnglishLabel$notReadyEnglish',
+      englishShortLabel: ready
+          ? baseEnglishShortLabel
+          : '$baseEnglishShortLabel$notReadyEnglish',
+      englishBriefLabel: known?.englishBriefLabel ?? briefLabel,
       isSda: isSda,
       hasCategories: isSda,
       fallbackDatabaseVersion: known?.fallbackDatabaseVersion ?? id,

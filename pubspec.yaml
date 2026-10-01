@@ -35,7 +35,6 @@ dependencies:
   dartz: ^0.10.1
   shared_preferences: ^2.3.2
   flutter_secure_storage: ^9.2.4
-  cupertino_icons: ^1.0.8
   flutter_localizations:
     sdk: flutter
   intl: ^0.19.0
@@ -54,6 +53,7 @@ dependencies:
   http: ^1.2.2
   package_info_plus: ^8.0.2
   sentry_flutter: ^9.30.0
+  background_downloader: 9.5.5
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +70,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   mocktail: ^1.0.5
+  # A fake audio platform for HymnalAudioHandler tests (already resolved
+  # transitively through just_audio; listed so tests may import them).
+  just_audio_platform_interface: ^4.6.0
+  plugin_platform_interface: ^2.1.8
   bloc_test: ^10.0.0
   fake_async: ^1.3.1
   json_schema: ^5.2.2
@@ -111,10 +115,29 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  # Both families are Noto, SIL Open Font License, taken from Google Fonts
+  # (fonts.gstatic.com). Every weight the app asks for is shipped as its own
+  # file: with only one file the engine fakes the heavier weights by smearing
+  # the outlines, which on Ethiopic script reads as blur.
   fonts:
   - family: NotoSansEthiopic
     fonts:
       - asset: assets/fonts/NotoSansEthiopic-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/NotoSansEthiopic-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/NotoSansEthiopic-Bold.ttf
+        weight: 700
+  # Carries no Ethiopic glyphs at all, so anything set in it names
+  # NotoSansEthiopic as its fallback or Amharic comes out as empty boxes.
+  - family: NotoSerif
+    fonts:
+      - asset: assets/fonts/NotoSerif-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/NotoSerif-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/NotoSerif-Bold.ttf
+        weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -9,7 +9,10 @@ class AppConstants {
   static const String keyKeepScreenOn = 'keep_screen_on';
   static const String keyBackgroundImageEnabled = 'background_image_enabled';
   static const String keyFavoriteHymns = 'favorite_hymns';
+  // The two older favourite formats, read once to migrate them.
   static const String keyFavoriteHymnsVersioned = 'favorite_hymns_by_version';
+  static const String keyFavoriteSongIds = 'favorite_song_ids';
+  static const String keyUnfinishedDownloads = 'unfinished_downloads';
   static const String keyHistory = 'hymn_history';
   static const String keyOnboardingCompleted = 'onboarding_completed';
   static const String keyMediaKeptOffline = 'media_kept_offline';
@@ -42,9 +45,18 @@ class AppConstants {
   static const Duration animationDurationOnRelease =
       Duration(milliseconds: 200);
 
-  // Font size limits for zoom calculations
+  /// The sizes a reader may choose the hymn's words to be.
+  ///
+  /// Nothing may hardcode these numbers: the slider's divisions and the
+  /// height of the settings preview are both derived from them, and a
+  /// literal left behind somewhere would silently clamp a reader's choice
+  /// back to an older maximum.
   static const double minFontSize = 12.0;
-  static const double maxFontSize = 30.0;
+  static const double maxFontSize = 40.0;
+
+  /// One division per whole point, so two readers on "17" have the same
+  /// text.
+  static int get fontSizeDivisions => (maxFontSize - minFontSize).round();
 
   // Sheet music path
   static const String sheetMusicPath = 'D:\\Church\\App\\Amharic_Hymnal_Songs';

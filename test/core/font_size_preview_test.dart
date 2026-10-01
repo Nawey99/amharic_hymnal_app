@@ -52,15 +52,33 @@ void main() {
     );
   });
 
-  testWidgets('the box is the same height at every size', (tester) async {
+  /// The box used to be fixed at the height of the largest setting, which
+  /// left forty-five points of nothing under a twelve point line. The
+  /// reason given was that a growing box would carry the slider out from
+  /// under the dragging finger; the last test here shows it does not.
+  testWidgets('the box follows the words', (tester) async {
     await pumpPreview(tester, 12);
     final small = tester.getSize(find.byType(FontSizePreview));
-    await pumpPreview(tester, 30);
+    await pumpPreview(tester, 40);
     final large = tester.getSize(find.byType(FontSizePreview));
 
-    // A box that grows would carry the slider out from under the finger
-    // that is dragging it.
-    expect(small.height, large.height);
+    expect(large.height, greaterThan(small.height),
+        reason: 'a bigger choice should look bigger');
+    // Not so tight that the smallest setting reads as a scrap.
+    expect(small.height, greaterThanOrEqualTo(44));
+  });
+
+  testWidgets('the line sits in the middle, not against the top',
+      (tester) async {
+    await pumpPreview(tester, 12);
+
+    final box = tester.getRect(find.byType(FontSizePreview));
+    final line = tester.getRect(find.text('አምላካችን አመስግኑ'));
+    final above = line.top - box.top;
+    final below = box.bottom - line.bottom;
+
+    expect(above, closeTo(below, 1.0),
+        reason: 'the room left over is shared, not pooled underneath');
   });
 
   testWidgets('one line of the hymn, whichever way the phone is held',
@@ -68,6 +86,36 @@ void main() {
     await pumpPreview(tester, 20);
     expect(tester.widget<Text>(find.byType(Text).first).maxLines, 1);
     expect(find.text('አምላካችን አመስግኑ'), findsOneWidget);
+  });
+
+  /// What the fixed height was really there to protect, tested directly.
+  testWidgets('growing the box does not move the slider', (tester) async {
+    Future<double> sliderYAt(double size) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.darkTheme,
+          home: Scaffold(
+            body: SettingsSliderTile(
+              title: 'Font Size',
+              value: size,
+              min: 12,
+              max: 40,
+              divisions: 28,
+              highlight: size.toStringAsFixed(0),
+              previewBuilder: (context, value) =>
+                  FontSizePreview(fontSize: value),
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return tester.getTopLeft(find.byType(Slider)).dy;
+    }
+
+    // The preview is laid out below the slider, so nothing it does can
+    // reach back up and move it.
+    expect(await sliderYAt(12), await sliderYAt(40));
   });
 
   group('the slider it sits under', () {

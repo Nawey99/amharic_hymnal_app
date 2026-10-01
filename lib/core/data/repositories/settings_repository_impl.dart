@@ -1,4 +1,5 @@
 // lib/core/data/repositories/settings_repository_impl.dart
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
@@ -42,13 +43,15 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   double getFontSize() {
     // SettingsService.getFontSize() already clamps, but add extra safety
-    return SettingsService.getFontSize().clamp(12.0, 30.0);
+    return SettingsService.getFontSize()
+        .clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
   }
 
   @override
   Future<bool> setFontSize(double fontSize) async {
     // Clamp font size before passing to services to prevent slider assertion errors
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     // SettingsService.setFontSize() also clamps, but we clamp here for extra safety
     final result = await SettingsService.setFontSize(clampedFontSize);
     // Also update FontSizeService for real-time updates (it also clamps internally)
@@ -77,29 +80,18 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
-  List<int> getFavoriteHymns() {
-    return SettingsService.getFavoriteHymns();
-  }
+  List<String> getFavoriteSongIds() => SettingsService.getFavoriteSongIds();
 
   @override
-  List<String> getFavoriteHymnKeys() {
-    return SettingsService.getFavoriteHymnKeys();
-  }
+  Future<bool> setFavoriteSongIds(Iterable<String> songIds) =>
+      SettingsService.setFavoriteSongIds(songIds);
 
   @override
-  Future<bool> setFavoriteHymns(List<int> hymnNumbers) async {
-    return await SettingsService.setFavoriteHymns(hymnNumbers);
-  }
+  Future<bool> toggleFavoriteSong(String songId) =>
+      SettingsService.toggleFavoriteSong(songId);
 
   @override
-  Future<bool> toggleFavorite(int hymnNumber, {String? version}) async {
-    return await SettingsService.toggleFavorite(hymnNumber, version: version);
-  }
-
-  @override
-  bool isFavorite(int hymnNumber, {String? version}) {
-    return SettingsService.isFavorite(hymnNumber, version: version);
-  }
+  bool isFavoriteSong(String songId) => SettingsService.isFavoriteSong(songId);
 
   @override
   bool isOnboardingCompleted() {
@@ -144,4 +136,23 @@ class SettingsRepositoryImpl implements SettingsRepository {
   ) async {
     return await SettingsService.setMediaKeptOffline(version, mediaType, value);
   }
+
+  @override
+  bool isDataCollectionEnabled() => SettingsService.isDataCollectionEnabled();
+
+  @override
+  Future<bool> setDataCollectionEnabled(bool value) =>
+      SettingsService.setDataCollectionEnabled(value);
+
+  @override
+  List<(String, String)> getUnfinishedDownloads() =>
+      SettingsService.getUnfinishedDownloads();
+
+  @override
+  Future<bool> setDownloadUnfinished(
+    String version,
+    String mediaType,
+    bool value,
+  ) =>
+      SettingsService.setDownloadUnfinished(version, mediaType, value);
 }

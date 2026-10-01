@@ -22,27 +22,14 @@ class BugReportRepositoryImpl implements BugReportRepository {
         return const BugReportSubmissionResult(
           submitted: true,
           queued: false,
-          message: 'የስህተት ሪፖርት ተልኳል!',
         );
       }
 
       final queued = await _queuer(payload);
-      return BugReportSubmissionResult(
-        submitted: false,
-        queued: queued,
-        message: queued
-            ? 'ሪፖርቱ ተቀምጧል። ኢንተርኔት ሲኖር ይላካል።'
-            : 'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
-      );
+      return BugReportSubmissionResult(submitted: false, queued: queued);
     } catch (_) {
       final queued = await _queuer(payload);
-      return BugReportSubmissionResult(
-        submitted: false,
-        queued: queued,
-        message: queued
-            ? 'ሪፖርቱ ተቀምጧል። ኢንተርኔት ሲኖር ይላካል።'
-            : 'የስህተት ሪፖርት መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
-      );
+      return BugReportSubmissionResult(submitted: false, queued: queued);
     }
   }
 

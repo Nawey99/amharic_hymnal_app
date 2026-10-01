@@ -27,6 +27,7 @@ class HymnMapper {
       newHymnalNumber: model.newHymnalNumber,
       oldHymnalNumber: model.oldHymnalNumber,
       isFavorite: model.isFavorite,
+      isBundled: model.isBundled,
     );
   }
 

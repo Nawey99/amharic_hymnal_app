@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/services/background_media_transfer.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
 import 'package:amharic_hymnal_app/core/services/offline_media_download.dart';
@@ -33,6 +34,38 @@ Hymn _hymn(
     );
 
 const _done = MediaDownloadResult(downloaded: 1, failed: 0, cancelled: false);
+
+/// Downloads the system kept running while the app was closed.
+class _RunningTransfer implements MediaTransfer {
+  _RunningTransfer(this.running);
+
+  /// By media type: what [resume] finds, once [finish] completes.
+  final Map<String, RunningTransfer> running;
+  final finish = Completer<void>();
+
+  @override
+  Future<MediaDownloadResult> download(
+    MediaDownloadPlan plan, {
+    void Function(int doneBytes, int totalBytes)? onProgress,
+    bool Function()? isCancelled,
+  }) async =>
+      _done;
+
+  @override
+  Future<bool> hasRunning(String mediaType) async =>
+      running.containsKey(mediaType);
+
+  @override
+  Future<RunningTransfer?> resume(
+    String mediaType, {
+    void Function(int doneBytes, int totalBytes)? onProgress,
+    bool Function()? isCancelled,
+  }) async {
+    onProgress?.call(1, 4);
+    await finish.future;
+    return running[mediaType];
+  }
+}
 
 void main() {
   group('EditionMediaDownloader', () {
@@ -276,6 +309,129 @@ void main() {
             .map((source) => source.checksumSha256),
         unorderedEquals(['d' * 64, 'e' * 64]),
       );
+    });
+  });
+
+  group('downloads that ran while the app was closed', () {
+    test('are picked up, shown and followed to the end', () async {
+      final transfer = _RunningTransfer({
+        MediaType.audio:
+            const RunningTransfer(version: 'sda_old', result: _done),
+      });
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(
+          cache: MemoryMediaCache(),
+          transfer: transfer,
+        ),
+      );
+
+      await controller.resumeRunningDownloads();
+      await pumpEventQueue();
+
+      expect(controller.isActive(MediaType.audio), isTrue);
+      expect(controller.progressOf(MediaType.audio), 0.25);
+      expect(controller.isActive(MediaType.sheetMusic), isFalse);
+
+      transfer.finish.complete();
+      await pumpEventQueue();
+      expect(controller.isActive(MediaType.audio), isFalse);
+    });
+
+    test('one the reader stops is no longer kept for its edition', () async {
+      final transfer = _RunningTransfer({
+        MediaType.sheetMusic: const RunningTransfer(
+          version: 'sda_old',
+          result:
+              MediaDownloadResult(downloaded: 2, failed: 0, cancelled: true),
+        ),
+      });
+      final stopped = <(String, String)>[];
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(
+          cache: MemoryMediaCache(),
+          transfer: transfer,
+        ),
+      );
+
+      await controller.resumeRunningDownloads(
+        onStopped: (version, type) => stopped.add((version, type)),
+      );
+      transfer.finish.complete();
+      await pumpEventQueue();
+
+      expect(stopped, [('sda_old', MediaType.sheetMusic)]);
+    });
+
+    test('with nothing running, nothing starts', () async {
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(
+          cache: MemoryMediaCache(),
+          transfer: _RunningTransfer({}),
+        ),
+      );
+
+      await controller.resumeRunningDownloads();
+
+      expect(controller.isActive(MediaType.audio), isFalse);
+      expect(controller.isActive(MediaType.sheetMusic), isFalse);
+    });
+  });
+
+  group('a download the app was closed in the middle of', () {
+    test('is planned again and carries on with what is missing', () async {
+      final cache = MemoryMediaCache()..stored['a' * 64] = 1000;
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(cache: cache),
+      );
+      final ended = <(String, String)>[];
+
+      await controller.resumeRunningDownloads(
+        unfinished: const [('sda_new', MediaType.audio)],
+        loadHymns: (version) async =>
+            [_hymn(1, audio: 'a'), _hymn(2, audio: 'b')],
+        onEnded: (version, type) => ended.add((version, type)),
+      );
+      expect(controller.isActive(MediaType.audio), isTrue);
+      await pumpEventQueue();
+
+      // Only the file that never arrived is fetched.
+      expect(cache.downloads.map((d) => d.checksumSha256), ['b' * 64]);
+      expect(ended, [('sda_new', MediaType.audio)]);
+      expect(controller.isActive(MediaType.audio), isFalse);
+    });
+
+    test('with everything already here, it is simply marked ended', () async {
+      final cache = MemoryMediaCache()..stored['a' * 64] = 1000;
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(cache: cache),
+      );
+      final ended = <(String, String)>[];
+
+      await controller.resumeRunningDownloads(
+        unfinished: const [('sda_new', MediaType.audio)],
+        loadHymns: (version) async => [_hymn(1, audio: 'a')],
+        onEnded: (version, type) => ended.add((version, type)),
+      );
+
+      expect(controller.isActive(MediaType.audio), isFalse);
+      expect(cache.downloads, isEmpty);
+      expect(ended, [('sda_new', MediaType.audio)]);
+    });
+
+    test('an edition that cannot be read yet is left for next time', () async {
+      final controller = OfflineDownloadController(
+        downloader: EditionMediaDownloader(cache: MemoryMediaCache()),
+      );
+      final ended = <(String, String)>[];
+
+      await controller.resumeRunningDownloads(
+        unfinished: const [('sda_new', MediaType.audio)],
+        loadHymns: (version) async => throw StateError('not synced yet'),
+        onEnded: (version, type) => ended.add((version, type)),
+      );
+
+      expect(controller.isActive(MediaType.audio), isFalse);
+      expect(ended, isEmpty, reason: 'the entry must survive');
     });
   });
 }

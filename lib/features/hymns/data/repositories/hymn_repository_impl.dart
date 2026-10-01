@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/error/failures.dart';
+import 'package:amharic_hymnal_app/features/hymns/data/models/hymn_model.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/repositories/hymn_repository.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_local_data_source.dart';
@@ -16,13 +17,36 @@ class HymnRepositoryImpl implements HymnRepository {
 
   HymnRepositoryImpl(this.localDataSource);
 
+  /// The last mapped list per edition, reused while the data source hands
+  /// back the same models. Number lookups, search and categories all read
+  /// the whole edition, and mapping it again for each was wasted work.
+  final Map<String, (List<HymnModel>, List<Hymn>)> _mapped = {};
+
+  Future<List<Hymn>> _hymns(String languageCode, String version) async {
+    final models = await localDataSource.getHymns(languageCode, version);
+    final key = '$languageCode|$version';
+    final cached = _mapped[key];
+    if (cached != null && identical(cached.$1, models)) return cached.$2;
+    final hymns = List<Hymn>.unmodifiable(HymnMapper.toDomainList(models));
+    _mapped[key] = (models, hymns);
+    return hymns;
+  }
+
+  /// The failure a reader can act on for [error].
+  static Failure _failureFor(Object error) {
+    // An edition with no bundled copy can only be loaded online.
+    if (error is DatabaseNotFoundException) return const NetworkFailure();
+    if (error is EditionUnavailableException) {
+      return const EditionUnavailableFailure();
+    }
+    return CacheFailure(error.toString());
+  }
+
   @override
   Future<Either<Failure, List<Hymn>>> getHymns(
       String languageCode, String version) async {
     try {
-      final hymnModels = await localDataSource.getHymns(languageCode, version);
-      // Convert data models to domain entities
-      final hymns = HymnMapper.toDomainList(hymnModels);
+      final hymns = await _hymns(languageCode, version);
       if (kDebugMode) {
         debugPrint(
             '✅ Retrieved ${hymns.length} hymns for $languageCode/$version');
@@ -32,62 +56,36 @@ class HymnRepositoryImpl implements HymnRepository {
       if (kDebugMode) {
         debugPrint('❌ Error getting hymns for $languageCode/$version: $e');
       }
-      // An edition with no bundled copy can only be loaded online. This is
-      // final for now, not a database that is still starting up.
-      if (e is DatabaseNotFoundException) {
-        return const Left(NetworkFailure());
-      }
-      // Check if it's a database not ready error
-      if (e.toString().contains('not ready') ||
-          e.toString().contains('initialization')) {
-        return const Left(CacheFailure());
-      }
-      // Check if it's a cache issue
-      return const Left(CacheFailure());
+      return Left(_failureFor(e));
     }
   }
 
   @override
   Future<Either<Failure, Hymn?>> getHymnByNumber(
       String languageCode, String version, int number) async {
+    final List<Hymn> hymns;
     try {
-      final hymnModels = await localDataSource.getHymns(languageCode, version);
-      if (hymnModels.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No hymns available to search for hymn #$number');
-        }
-        return Left(ServerFailure('Hymn #$number not found'));
-      }
-      final hymns = HymnMapper.toDomainList(hymnModels);
-      try {
-        final hymn = hymns.firstWhere(
-          (h) => h.displayNumber == number,
-        );
-        return Right(hymn);
-      } catch (e) {
-        if (kDebugMode) {
-          debugPrint('⚠️ Hymn #$number not found in $languageCode/$version');
-        }
-        return Left(ServerFailure('Hymn #$number not found'));
-      }
+      hymns = await _hymns(languageCode, version);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Error getting hymn #$number: $e');
       }
-      if (e.toString().contains('not ready') ||
-          e.toString().contains('initialization')) {
-        return const Left(CacheFailure());
-      }
-      return Left(ServerFailure('Failed to retrieve hymn: $e'));
+      return Left(_failureFor(e));
     }
+    for (final hymn in hymns) {
+      if (hymn.displayNumber == number) return Right(hymn);
+    }
+    if (kDebugMode) {
+      debugPrint('⚠️ Hymn #$number not found in $languageCode/$version');
+    }
+    return Left(NotFoundFailure(number));
   }
 
   @override
   Future<Either<Failure, List<Hymn>>> searchHymns(
       String languageCode, String version, String query) async {
     try {
-      final hymnModels = await localDataSource.getHymns(languageCode, version);
-      final hymns = HymnMapper.toDomainList(hymnModels);
+      final hymns = await _hymns(languageCode, version);
 
       // Use SearchEngine for pure, testable search logic with ranking
       final searchResults = _searchEngine.search(
@@ -106,11 +104,7 @@ class HymnRepositoryImpl implements HymnRepository {
       if (kDebugMode) {
         debugPrint('❌ Error searching hymns: $e');
       }
-      if (e.toString().contains('not ready') ||
-          e.toString().contains('initialization')) {
-        return const Left(CacheFailure());
-      }
-      return Left(ServerFailure('Search failed: $e'));
+      return Left(_failureFor(e));
     }
   }
 
@@ -118,8 +112,7 @@ class HymnRepositoryImpl implements HymnRepository {
   Future<Either<Failure, List<Hymn>>> getHymnsByCategory(
       String languageCode, String version, String category) async {
     try {
-      final hymnModels = await localDataSource.getHymns(languageCode, version);
-      final hymns = HymnMapper.toDomainList(hymnModels);
+      final hymns = await _hymns(languageCode, version);
       final filtered = hymns.where((hymn) {
         return hymn.category != null &&
             hymn.category!.toLowerCase() == category.toLowerCase();
@@ -132,11 +125,7 @@ class HymnRepositoryImpl implements HymnRepository {
       if (kDebugMode) {
         debugPrint('❌ Error getting hymns by category: $e');
       }
-      if (e.toString().contains('not ready') ||
-          e.toString().contains('initialization')) {
-        return const Left(CacheFailure());
-      }
-      return Left(ServerFailure('Failed to get hymns by category: $e'));
+      return Left(_failureFor(e));
     }
   }
 }

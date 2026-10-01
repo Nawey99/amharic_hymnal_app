@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
@@ -14,7 +16,8 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 /// Loads every hymn of an edition, as stored on the device.
 typedef EditionHymnsLoader = Future<List<Hymn>> Function(String version);
 
-Future<List<Hymn>> _loadEditionHymns(String version) async {
+/// [version]'s hymns as the app has them (synced, stored or bundled).
+Future<List<Hymn>> loadEditionHymns(String version) async {
   final result = await sl<HymnRepository>().getHymns(
     sl<SettingsRepository>().getSelectedLanguage(),
     version,
@@ -26,7 +29,9 @@ Future<List<Hymn>> _loadEditionHymns(String version) async {
 /// sheet music and audio. Hymns bundled with the app have neither yet.
 bool hymnsAreFromServer(List<Hymn> hymns, String version) {
   final prefix = '${HymnalVersions.apiCode(version)}-';
-  return hymns.any((hymn) => hymn.id?.startsWith(prefix) ?? false);
+  // Bundled hymns share the API's IDs but carry no media details.
+  return hymns
+      .any((hymn) => !hymn.isBundled && (hymn.id?.startsWith(prefix) ?? false));
 }
 
 /// Changes to a kept edition are fetched without asking up to this size.
@@ -34,7 +39,7 @@ bool hymnsAreFromServer(List<Hymn> hymns, String version) {
 /// mobile data.
 const int automaticUpdateLimitBytes = 25 * 1024 * 1024;
 
-/// What the app says about one kind of download.
+/// What the app says about one kind of download, in the app's language.
 class _Words {
   final String tileTitle;
   final String tileDescription;
@@ -45,6 +50,7 @@ class _Words {
   final String allPresent;
   final String started;
   final String finished;
+  final AppLocalizations? _l;
 
   const _Words({
     required this.tileTitle,
@@ -56,50 +62,95 @@ class _Words {
     required this.allPresent,
     required this.started,
     required this.finished,
-  });
+    required AppLocalizations? l,
+  }) : _l = l;
 
-  String stopped(int saved) => 'ማውረድ ቆሟል። $saved $units ተቀምጠዋል።';
+  String stopped(int saved) =>
+      _l?.downloadStopped(saved, units) ?? 'ማውረድ ቆሟል። $saved $units ተቀምጠዋል።';
 
   String failed(int count) =>
+      _l?.downloadFailedSome(count, units) ??
       '$count $unitsን ማውረድ አልተቻለም። እንደገና ሲሞክሩ የቀሩት ብቻ ይወርዳሉ።';
 
-  String updated(int count) => '$count አዲስ $units ወርደዋል።';
+  String updated(int count) =>
+      _l?.downloadUpdated(count, units) ?? '$count አዲስ $units ወርደዋል።';
 
   String allDownloaded(MediaDownloadPlan plan) =>
+      _l?.downloadAllDone(
+        plan.itemCount,
+        units,
+        formatMediaSize(plan.totalBytes),
+      ) ??
       'ሁሉም ወርደዋል · ${plan.itemCount} $units · '
-      '${formatMediaSize(plan.totalBytes)}';
+          '${formatMediaSize(plan.totalBytes)}';
 
   String updatesAvailable(MediaDownloadPlan plan) =>
+      _l?.downloadUpdatesAvailable(
+        plan.missing.length,
+        units,
+        formatMediaSize(plan.missingBytes),
+      ) ??
       '${plan.missing.length} አዲስ $units ለማውረድ · '
-      '${formatMediaSize(plan.missingBytes)}';
+          '${formatMediaSize(plan.missingBytes)}';
 }
 
-const _sheetMusicWords = _Words(
-  tileTitle: 'ኖታዎችን በሙሉ አውርድ',
-  tileDescription: 'የተመረጠውን መጽሐፍ ኖታዎች ያለ ኢንተርኔት ለመክፈት',
-  confirmTitle: 'ሁሉም ኖታዎች ይውረዱ?',
-  units: 'ገጾች',
-  benefit: 'ከወረዱ በኋላ ኖታዎቹን ያለ ኢንተርኔት መክፈት ይችላሉ።',
-  none: 'ይህ የመዝሙር መጽሐፍ ኖታ የለውም።',
-  allPresent: 'ሁሉም ኖታዎች በመሣሪያዎ ላይ አሉ።',
-  started: 'ኖታዎች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
-  finished: 'ሁሉም ኖታዎች ወርደዋል።',
-);
+_Words _sheetMusicWords(AppLocalizations? l) => _Words(
+      l: l,
+      tileTitle: l?.downloadSheetsTitle ?? 'ኖታዎችን በሙሉ አውርድ',
+      tileDescription:
+          l?.downloadSheetsDescription ?? 'የተመረጠውን መጽሐፍ ኖታዎች ያለ ኢንተርኔት ለመክፈት',
+      confirmTitle: l?.downloadSheetsConfirmTitle ?? 'ሁሉም ኖታዎች ይውረዱ?',
+      units: l?.downloadSheetsUnits ?? 'ገጾች',
+      benefit:
+          l?.downloadSheetsBenefit ?? 'ከወረዱ በኋላ ኖታዎቹን ያለ ኢንተርኔት መክፈት ይችላሉ።',
+      none: l?.downloadSheetsNone ?? 'ይህ የመዝሙር መጽሐፍ ኖታ የለውም።',
+      allPresent: l?.downloadSheetsAllPresent ?? 'ሁሉም ኖታዎች በመሣሪያዎ ላይ አሉ።',
+      started:
+          l?.downloadSheetsStarted ?? 'ኖታዎች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
+      finished: l?.downloadSheetsFinished ?? 'ሁሉም ኖታዎች ወርደዋል።',
+    );
 
-const _audioWords = _Words(
-  tileTitle: 'ድምፆችን በሙሉ አውርድ',
-  tileDescription: 'የተመረጠውን መጽሐፍ መዝሙሮች ያለ ኢንተርኔት ለማዳመጥ',
-  confirmTitle: 'ሁሉም ድምፆች ይውረዱ?',
-  units: 'ድምፆች',
-  benefit: 'ከወረዱ በኋላ መዝሙሮቹን ያለ ኢንተርኔት ማዳመጥ ይችላሉ።',
-  none: 'ይህ የመዝሙር መጽሐፍ ድምፅ የለውም።',
-  allPresent: 'ሁሉም ድምፆች በመሣሪያዎ ላይ አሉ።',
-  started: 'ድምፆች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
-  finished: 'ሁሉም ድምፆች ወርደዋል።',
-);
+_Words _audioWords(AppLocalizations? l) => _Words(
+      l: l,
+      tileTitle: l?.downloadAudiosTitle ?? 'ድምፆችን በሙሉ አውርድ',
+      tileDescription:
+          l?.downloadAudiosDescription ?? 'የተመረጠውን መጽሐፍ መዝሙሮች ያለ ኢንተርኔት ለማዳመጥ',
+      confirmTitle: l?.downloadAudiosConfirmTitle ?? 'ሁሉም ድምፆች ይውረዱ?',
+      units: l?.downloadAudiosUnits ?? 'ድምፆች',
+      benefit:
+          l?.downloadAudiosBenefit ?? 'ከወረዱ በኋላ መዝሙሮቹን ያለ ኢንተርኔት ማዳመጥ ይችላሉ።',
+      none: l?.downloadAudiosNone ?? 'ይህ የመዝሙር መጽሐፍ ድምፅ የለውም።',
+      allPresent: l?.downloadAudiosAllPresent ?? 'ሁሉም ድምፆች በመሣሪያዎ ላይ አሉ።',
+      started:
+          l?.downloadAudiosStarted ?? 'ድምፆች በመውረድ ላይ ናቸው። መተግበሪያውን መጠቀም ይችላሉ።',
+      finished: l?.downloadAudiosFinished ?? 'ሁሉም ድምፆች ወርደዋል።',
+    );
 
-_Words _wordsFor(String mediaType) =>
-    mediaType == MediaType.audio ? _audioWords : _sheetMusicWords;
+_Words _wordsFor(AppLocalizations? l, String mediaType) =>
+    mediaType == MediaType.audio ? _audioWords(l) : _sheetMusicWords(l);
+
+/// Room kept free beyond a download, so the phone is not filled to the brim.
+const int _spareBytes = 50 * 1024 * 1024;
+
+/// Whether [bytes] more fit on the phone; says so when they do not. When the
+/// phone cannot report its free space, the download is let through.
+Future<bool> _hasRoomFor(
+  ScaffoldMessengerState messenger,
+  AppLocalizations? l,
+  OfflineDownloadController downloads,
+  int bytes,
+) async {
+  final free = await downloads.downloader.freeBytes();
+  if (free == null || bytes + _spareBytes <= free) return true;
+  final needed = formatMediaSize(bytes);
+  final available = formatMediaSize(free);
+  _say(
+    messenger,
+    l?.downloadNotEnoughSpace(needed, available) ??
+        'በቂ ቦታ የለም፦ $needed ያስፈልጋል፤ ስልኩ ላይ ያለው ነጻ ቦታ $available ብቻ ነው።',
+  );
+  return false;
+}
 
 void _say(ScaffoldMessengerState messenger, String message) {
   if (!messenger.mounted) return;
@@ -116,6 +167,7 @@ void _say(ScaffoldMessengerState messenger, String message) {
 /// and one at the end only if something arrived.
 void startOfflineDownload(
   ScaffoldMessengerState messenger,
+  AppLocalizations? l,
   String version,
   MediaDownloadPlan plan, {
   bool quiet = false,
@@ -124,7 +176,7 @@ void startOfflineDownload(
 }) {
   final downloads = controller ?? OfflineDownloadController.instance;
   final preferences = settings ?? sl<SettingsRepository>();
-  final words = _wordsFor(plan.mediaType);
+  final words = _wordsFor(l, plan.mediaType);
 
   final started = downloads.start(
     plan.mediaType,
@@ -132,8 +184,11 @@ void startOfflineDownload(
       plan,
       onProgress: onProgress,
       isCancelled: isCancelled,
+      version: version,
     ),
     onDone: (result) {
+      // Ended, however it ended: nothing to carry on at the next start-up.
+      preferences.setDownloadUnfinished(version, plan.mediaType, false);
       if (result.cancelled) {
         preferences.setMediaKeptOffline(version, plan.mediaType, false);
         _say(messenger, words.stopped(result.downloaded));
@@ -148,6 +203,8 @@ void startOfflineDownload(
   );
   if (!started) return;
   preferences.setMediaKeptOffline(version, plan.mediaType, true);
+  // Until it ends: if the app is closed first, start-up carries it on.
+  preferences.setDownloadUnfinished(version, plan.mediaType, true);
   if (!quiet) _say(messenger, words.started);
 }
 
@@ -165,17 +222,21 @@ Future<void> runEditionMediaDownload(
   final downloads = controller ?? OfflineDownloadController.instance;
   final preferences = settings ?? sl<SettingsRepository>();
   final messenger = ScaffoldMessenger.of(context);
-  final words = _wordsFor(mediaType);
+  final l = AppLocalizations.of(context);
+  final words = _wordsFor(l, mediaType);
 
   final List<Hymn> hymns;
   try {
-    hymns = await (loadHymns ?? _loadEditionHymns)(version);
+    hymns = await (loadHymns ?? loadEditionHymns)(version);
   } catch (_) {
-    _say(messenger, 'የመዝሙሮቹን ዝርዝር ማግኘት አልተቻለም።');
+    _say(messenger, l?.downloadListUnavailable ?? 'የመዝሙሮቹን ዝርዝር ማግኘት አልተቻለም።');
     return;
   }
   if (!hymnsAreFromServer(hymns, version)) {
-    _say(messenger, 'ለማውረድ መጀመሪያ የኢንተርኔት ግንኙነት ያስፈልጋል። እባክዎ ቆይተው እንደገና ይሞክሩ።');
+    _say(
+        messenger,
+        l?.downloadNeedInternet ??
+            'ለማውረድ መጀመሪያ የኢንተርኔት ግንኙነት ያስፈልጋል። እባክዎ ቆይተው እንደገና ይሞክሩ።');
     return;
   }
   final plan = await downloads.downloader.plan(hymns, mediaType);
@@ -189,6 +250,7 @@ Future<void> runEditionMediaDownload(
     _say(messenger, words.allPresent);
     return;
   }
+  if (!await _hasRoomFor(messenger, l, downloads, plan.missingBytes)) return;
   if (!context.mounted) return;
 
   final confirmed = await showDialog<bool>(
@@ -200,20 +262,27 @@ Future<void> runEditionMediaDownload(
         style: TextStyle(color: context.appColors.primaryText),
       ),
       content: Text(
-        '${HymnalVersions.displayLabel(version)}፦ '
-        '${plan.missing.length} ${words.units}፣ '
-        '${formatMediaSize(plan.missingBytes)}።\n\n'
-        '${words.benefit} Wi-Fi መጠቀም ይመከራል።',
+        l?.downloadConfirmBody(
+              HymnalVersions.displayLabel(version, l.locale),
+              plan.missing.length,
+              words.units,
+              formatMediaSize(plan.missingBytes),
+              words.benefit,
+            ) ??
+            '${HymnalVersions.displayLabel(version, l?.locale)}፦ '
+                '${plan.missing.length} ${words.units}፣ '
+                '${formatMediaSize(plan.missingBytes)}።\n\n'
+                '${words.benefit} Wi-Fi መጠቀም ይመከራል።',
         style: TextStyle(color: context.appColors.secondaryText),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('ይቅር'),
+          child: Text(l?.actionCancel ?? 'ይቅር'),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('አውርድ'),
+          child: Text(l?.actionDownload ?? 'አውርድ'),
         ),
       ],
     ),
@@ -222,6 +291,7 @@ Future<void> runEditionMediaDownload(
 
   startOfflineDownload(
     messenger,
+    l,
     version,
     plan,
     controller: downloads,
@@ -233,7 +303,8 @@ Future<void> runEditionMediaDownload(
 /// edition in [controller]'s state, up to [automaticUpdateLimitBytes] each.
 /// Larger changes wait on the tile for a tap.
 void downloadKeptMediaChanges(
-  ScaffoldMessengerState messenger, {
+  ScaffoldMessengerState messenger,
+  AppLocalizations? l, {
   OfflineDownloadController? controller,
   SettingsRepository? settings,
 }) {
@@ -253,6 +324,7 @@ void downloadKeptMediaChanges(
     }
     startOfflineDownload(
       messenger,
+      l,
       version,
       plan,
       quiet: true,
@@ -283,7 +355,7 @@ class OfflineDownloadTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final downloads = controller ?? OfflineDownloadController.instance;
     final preferences = settings ?? sl<SettingsRepository>();
-    final words = _wordsFor(mediaType);
+    final words = _wordsFor(AppLocalizations.of(context), mediaType);
 
     return ListenableBuilder(
       listenable: downloads,
@@ -320,7 +392,10 @@ class OfflineDownloadTile extends StatelessWidget {
           title: words.tileTitle,
           description: description,
           progress: downloads.progressOf(mediaType),
-          progressLabel: _progressLabel(downloads),
+          progressLabel: _progressLabel(
+            downloads,
+            AppLocalizations.of(context),
+          ),
           onStop: () => downloads.stop(mediaType),
           onTap: () => runEditionMediaDownload(
             context,
@@ -334,8 +409,13 @@ class OfflineDownloadTile extends StatelessWidget {
     );
   }
 
-  String? _progressLabel(OfflineDownloadController downloads) {
-    if (downloads.isQueued(mediaType)) return 'በመጠባበቅ ላይ';
+  String? _progressLabel(
+    OfflineDownloadController downloads,
+    AppLocalizations? l,
+  ) {
+    if (downloads.isQueued(mediaType)) {
+      return l?.downloadQueued ?? 'በመጠባበቅ ላይ';
+    }
     final bytes = downloads.bytesOf(mediaType);
     if (bytes == null || bytes.total == 0) return null;
     final percent = (bytes.done * 100 / bytes.total).floor();
@@ -378,6 +458,7 @@ Future<void> maybeOfferOfflineDownloads(
   if (!context.mounted) return;
 
   final messenger = ScaffoldMessenger.of(context);
+  final l = AppLocalizations.of(context);
   final chosen = await showDialog<Set<String>>(
     context: context,
     barrierDismissible: false,
@@ -388,10 +469,19 @@ Future<void> maybeOfferOfflineDownloads(
   );
   await preferences.setOfflineDownloadOfferPending(false);
 
-  for (final plan in offered) {
-    if (!(chosen?.contains(plan.mediaType) ?? false)) continue;
+  final wanted = offered
+      .where((plan) => chosen?.contains(plan.mediaType) ?? false)
+      .toList();
+  final wantedBytes = wanted.fold(0, (sum, plan) => sum + plan.missingBytes);
+  if (wanted.isEmpty ||
+      !await _hasRoomFor(messenger, l, downloads, wantedBytes)) {
+    return;
+  }
+
+  for (final plan in wanted) {
     startOfflineDownload(
       messenger,
+      l,
       version,
       plan,
       controller: downloads,
@@ -427,10 +517,11 @@ class _OfflineDownloadOfferDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AlertDialog(
       backgroundColor: context.appColors.surface,
       title: Text(
-        'ያለ ኢንተርኔት ለመጠቀም ማውረድ',
+        l?.downloadOfferTitle ?? 'ያለ ኢንተርኔት ለመጠቀም ማውረድ',
         style: TextStyle(color: context.appColors.primaryText),
       ),
       content: SingleChildScrollView(
@@ -439,15 +530,18 @@ class _OfflineDownloadOfferDialogState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${HymnalVersions.displayLabel(widget.version)}ን ያለ ኢንተርኔት '
-              'ለመጠቀም ምን ይውረድ?',
+              l?.downloadOfferBody(
+                      HymnalVersions.displayLabel(widget.version, l.locale)) ??
+                  '${HymnalVersions.displayLabel(widget.version, l?.locale)}ን ያለ ኢንተርኔት '
+                      'ለመጠቀም ምን ይውረድ?',
               style: TextStyle(color: context.appColors.secondaryText),
             ),
             const SizedBox(height: 8),
             for (final plan in widget.plans) _buildChoice(plan),
             const SizedBox(height: 8),
             Text(
-              'Wi-Fi መጠቀም ይመከራል። በኋላም ከቅንብሮች ማውረድ ይችላሉ።',
+              l?.downloadOfferHint ??
+                  'Wi-Fi መጠቀም ይመከራል። በኋላም ከቅንብሮች ማውረድ ይችላሉ።',
               style: TextStyle(
                   color: context.appColors.secondaryText, fontSize: 12),
             ),
@@ -457,19 +551,20 @@ class _OfflineDownloadOfferDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(<String>{}),
-          child: const Text('በኋላ'),
+          child: Text(l?.downloadLater ?? 'በኋላ'),
         ),
         FilledButton(
           onPressed: _chosen.isEmpty
               ? null
               : () => Navigator.of(context).pop(Set.of(_chosen)),
-          child: const Text('አውርድ'),
+          child: Text(l?.actionDownload ?? 'አውርድ'),
         ),
       ],
     );
   }
 
   Widget _buildChoice(MediaDownloadPlan plan) {
+    final l = AppLocalizations.of(context);
     final audio = plan.mediaType == MediaType.audio;
     final selected = _chosen.contains(plan.mediaType);
     void toggle(bool value) => setState(() {
@@ -498,7 +593,9 @@ class _OfflineDownloadOfferDialogState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      audio ? 'ድምፆች' : 'ኖታዎች',
+                      audio
+                          ? (l?.downloadAudiosLabel ?? 'ድምፆች')
+                          : (l?.downloadSheetsLabel ?? 'ኖታዎች'),
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,
@@ -506,7 +603,8 @@ class _OfflineDownloadOfferDialogState
                       ),
                     ),
                     Text(
-                      '${plan.missing.length} ${_wordsFor(plan.mediaType).units}'
+                      '${plan.missing.length} '
+                      '${_wordsFor(AppLocalizations.of(context), plan.mediaType).units}'
                       ' · ${formatMediaSize(plan.missingBytes)}',
                       style: TextStyle(
                         color: context.appColors.secondaryText,

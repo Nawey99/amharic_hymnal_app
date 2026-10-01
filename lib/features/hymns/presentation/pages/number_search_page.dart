@@ -16,6 +16,7 @@ import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
@@ -24,7 +25,16 @@ import 'package:amharic_hymnal_app/features/hymns/presentation/pages/history_pag
 class NumberSearchPage extends StatefulWidget {
   final HymnOpenCallback? onOpenHymn;
 
-  const NumberSearchPage({super.key, this.onOpenHymn});
+  /// Bumped by the shell each time tapping the Number destination lands the
+  /// reader on this page.
+  ///
+  /// The tab stays alive in an IndexedStack, so nothing else tells the page
+  /// it has been come back to. It is deliberately *not* bumped when the tap
+  /// reopens the hymn the tab still holds, which would raise the keyboard
+  /// behind the hymn.
+  final Listenable? revealRequests;
+
+  const NumberSearchPage({super.key, this.onOpenHymn, this.revealRequests});
 
   @override
   State<NumberSearchPage> createState() => _NumberSearchPageState();
@@ -39,6 +49,11 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   bool _isSearchVisible = false;
   String? _numberErrorMessage;
   StreamSubscription<String>? _searchSubscription;
+
+  /// Whether the field held focus the last time the node reported in, so that
+  /// gaining focus can be told apart from any other notification.
+  bool _hadNumberFocus = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,10 +62,23 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
       if (!mounted) return;
       _handleSearchQuery(query);
     });
+    _numberFocusNode.addListener(_handleNumberFocusChange);
+    widget.revealRequests?.addListener(_handleReveal);
+  }
+
+  @override
+  void didUpdateWidget(NumberSearchPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.revealRequests != widget.revealRequests) {
+      oldWidget.revealRequests?.removeListener(_handleReveal);
+      widget.revealRequests?.addListener(_handleReveal);
+    }
   }
 
   @override
   void dispose() {
+    widget.revealRequests?.removeListener(_handleReveal);
+    _numberFocusNode.removeListener(_handleNumberFocusChange);
     _searchSubscription?.cancel();
     _numberController.dispose();
     _searchController.dispose();
@@ -124,6 +152,9 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
 
     // Navigate to hymn detail page with number
     _dismissInputFocus();
+    // The number has done its work. Leaving it behind is what made the reader
+    // delete it by hand next time.
+    _clearNumber();
     final onOpenHymn = widget.onOpenHymn;
     if (loadedHymn != null && onOpenHymn != null) {
       onOpenHymn(loadedHymn);
@@ -153,6 +184,56 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
   void _clearNumberError() {
     if (_numberErrorMessage == null) return;
     setState(() => _numberErrorMessage = null);
+  }
+
+  /// Empties the field.
+  ///
+  /// A programmatic change does not reach [TextField.onChanged], so any error
+  /// under the field has to be taken down here as well.
+  void _clearNumber() {
+    if (_numberController.text.isEmpty) {
+      _clearNumberError();
+      return;
+    }
+    _numberController.clear();
+    _clearNumberError();
+  }
+
+  /// The field is empty whenever the reader arrives at it.
+  ///
+  /// The number that opened the last hymn is not the number they have come
+  /// back to type, and clearing it by hand costs two taps on a keyboard that
+  /// is already covering half the screen.
+  void _handleNumberFocusChange() {
+    final hasFocus = _numberFocusNode.hasFocus;
+    if (!hasFocus) {
+      _hadNumberFocus = false;
+      return;
+    }
+    // Only on gaining focus: a tap that moves the caret through a number
+    // being typed must leave what is there alone.
+    if (_hadNumberFocus) return;
+    _hadNumberFocus = true;
+    _clearNumber();
+  }
+
+  /// The reader has come to the Number page to type a number, so meet them
+  /// with an empty field and an open keyboard.
+  void _handleReveal() {
+    if (!mounted) return;
+    // The number input is not on screen at all while search results are.
+    if (_isSearchVisible && _searchController.currentQuery.isNotEmpty) return;
+
+    _clearNumber();
+    // The tab's FocusScope only begins allowing focus in the frame that makes
+    // it active, and the shell unfocuses on every tab change, so asking any
+    // sooner asks into the void. Registering a callback does not itself ask
+    // for a frame, hence ensureVisualUpdate.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _numberFocusNode.requestFocus();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   void _dismissInputFocus() {
@@ -189,6 +270,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return MainPageTitleBar(
       // verbatim: the app's own name, which is not translated
       title: 'ውዳሴ',
+      // Wide enough for "History" set in the serif face, which needs 137
+      // where the Amharic "ታሪክ" needed well under 96. The title is a
+      // FittedBox, so the room this takes is borrowed gracefully.
+      sideWidth: 140,
       leading: _buildHistoryButton(context),
       actions: [
         IconButton(
@@ -234,13 +319,20 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 size: 19,
               ),
               const SizedBox(width: 5),
-              Text(
-                AppLocalizations.of(context)?.history ?? 'ታሪክ',
-                style: TextStyle(
-                  color: context.appColors.primaryText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'NotoSansEthiopic',
+              // The title bar gives each side a fixed width so the title
+              // stays centred, so the label is what gives: "History" set in
+              // the serif face is wider than the Amharic it replaces, and
+              // ran over the end by a hair.
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)?.history ?? 'ታሪክ',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: context.appColors.primaryText,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],
@@ -322,7 +414,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           );
         }
         if (state is HymnsError) {
-          return _buildErrorMessage(state.message);
+          return _buildErrorMessage(hymnsErrorText(context, state));
         }
         if (state is HymnsLoaded) {
           if (state.hymns.isEmpty) {
@@ -358,7 +450,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 style: TextStyle(
                   color: context.appColors.primaryText,
                   fontSize: FontSizeScope.of(context),
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -383,7 +474,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
             style: TextStyle(
               color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
-              fontFamily: 'NotoSansEthiopic',
             ),
             textAlign: TextAlign.center,
           ),
@@ -486,7 +576,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         style: TextStyle(
           color: context.appColors.primaryText,
           fontSize: FontSizeScope.of(context) * 1.08,
-          fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
@@ -501,7 +590,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontSize: FontSizeScope.of(context) * 1.08,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
@@ -533,7 +621,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                   color: Colors.red,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -559,7 +646,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'NotoSansEthiopic',
                 color: context.appColors.primaryText,
               ),
             ),

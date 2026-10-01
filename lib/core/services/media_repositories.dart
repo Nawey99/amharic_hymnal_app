@@ -1,4 +1,9 @@
+import 'dart:ui' show Locale;
+
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/core/services/language_service.dart';
 
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_reference.dart';
@@ -89,7 +94,9 @@ class AudioRepository implements AudioMediaRepository {
       hymnNumber: hymnNumber,
       title: title?.trim().isNotEmpty == true
           ? title!.trim()
-          : 'Hymn #$hymnNumber',
+          // No BuildContext here: the language service knows the locale.
+          : AppLocalizations(LanguageService().locale ?? const Locale('am'))
+              .hymnNumber(hymnNumber),
       source: reference,
     );
   }

@@ -62,10 +62,6 @@ class _FakeSettingsRepository implements SettingsRepository {
   @override
   bool getBackgroundImageEnabled() => true;
   @override
-  List<int> getFavoriteHymns() => const [];
-  @override
-  List<String> getFavoriteHymnKeys() => const [];
-  @override
   double getFontSize() => 20;
   @override
   bool getKeepScreenOn() => false;
@@ -76,13 +72,9 @@ class _FakeSettingsRepository implements SettingsRepository {
   @override
   String getSortType() => sortType;
   @override
-  bool isFavorite(int hymnNumber, {String? version}) => false;
-  @override
   bool isOnboardingCompleted() => true;
   @override
   Future<bool> setBackgroundImageEnabled(bool value) async => true;
-  @override
-  Future<bool> setFavoriteHymns(List<int> hymnNumbers) async => true;
   @override
   Future<bool> setFontSize(double fontSize) async => true;
   @override
@@ -125,7 +117,26 @@ class _FakeSettingsRepository implements SettingsRepository {
   }
 
   @override
-  Future<bool> toggleFavorite(int hymnNumber, {String? version}) async => true;
+  List<String> getFavoriteSongIds() => const [];
+  @override
+  bool isFavoriteSong(String songId) => false;
+  @override
+  Future<bool> setFavoriteSongIds(Iterable<String> songIds) async => true;
+  @override
+  Future<bool> toggleFavoriteSong(String songId) async => true;
+  @override
+  List<(String, String)> getUnfinishedDownloads() => const [];
+  @override
+  Future<bool> setDownloadUnfinished(
+    String version,
+    String mediaType,
+    bool value,
+  ) async =>
+      true;
+  @override
+  bool isDataCollectionEnabled() => true;
+  @override
+  Future<bool> setDataCollectionEnabled(bool value) async => true;
 }
 
 void main() {

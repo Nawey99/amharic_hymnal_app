@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale;
+
 import 'package:flutter/foundation.dart';
 
 @immutable
@@ -9,6 +11,14 @@ class HymnalVersion {
   /// The shortest form that still identifies the book, for tight places
   /// such as "1961: 165" on a hymn page.
   final String briefLabel;
+
+  /// The same three names in English.
+  ///
+  /// A book's name is a thing to read, so it is carried in both languages
+  /// and chosen where there is a reader, exactly as a theme's name is.
+  final String englishLabel;
+  final String englishShortLabel;
+  final String englishBriefLabel;
 
   final bool isSda;
   final bool hasCategories;
@@ -22,7 +32,23 @@ class HymnalVersion {
     required this.isSda,
     required this.hasCategories,
     required this.fallbackDatabaseVersion,
-  });
+    String? englishLabel,
+    String? englishShortLabel,
+    String? englishBriefLabel,
+  })  : englishLabel = englishLabel ?? label,
+        englishShortLabel = englishShortLabel ?? shortLabel,
+        englishBriefLabel = englishBriefLabel ?? briefLabel;
+
+  /// This book's full name, in the language the app is being read in.
+  String labelFor(Locale? locale) => _english(locale) ? englishLabel : label;
+
+  String shortLabelFor(Locale? locale) =>
+      _english(locale) ? englishShortLabel : shortLabel;
+
+  String briefLabelFor(Locale? locale) =>
+      _english(locale) ? englishBriefLabel : briefLabel;
+
+  static bool _english(Locale? locale) => locale?.languageCode == 'en';
 
   @override
   bool operator ==(Object other) =>
@@ -67,6 +93,9 @@ class HymnalVersions {
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
+    englishLabel: '2004 Wudase Hymnal',
+    englishShortLabel: '2004 Wudase',
+    englishBriefLabel: '2004',
   );
 
   static const HymnalVersion hymnal1975 = HymnalVersion(
@@ -77,6 +106,9 @@ class HymnalVersions {
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: legacyHymnal,
+    englishLabel: '1975 Wudase Hymnal',
+    englishShortLabel: '1975 Wudase',
+    englishBriefLabel: '1975',
   );
 
   static const HymnalVersion hymnal1961 = HymnalVersion(
@@ -87,6 +119,9 @@ class HymnalVersions {
     isSda: true,
     hasCategories: true,
     fallbackDatabaseVersion: sda1961,
+    englishLabel: '1961 Wudase Hymnal',
+    englishShortLabel: '1961 Wudase',
+    englishBriefLabel: '1961',
   );
 
   static const HymnalVersion hagerignaSongs = HymnalVersion(
@@ -97,6 +132,9 @@ class HymnalVersions {
     isSda: false,
     hasCategories: false,
     fallbackDatabaseVersion: hagerigna,
+    englishLabel: 'Hagerigna Songs',
+    englishShortLabel: 'Hagerigna',
+    englishBriefLabel: 'Hagerigna',
   );
 
   static const List<HymnalVersion> all = [
@@ -167,9 +205,23 @@ class HymnalVersions {
     return _versionIdPattern.hasMatch(id) ? id : null;
   }
 
+  /// The hymnal API's ID for hymn [number] in [version]: the edition code
+  /// and the number in four digits, `am-sda-2004-0132`. Every song in the
+  /// API was created under this ID (checked for all four editions on
+  /// 2026-10-01); a song keeps its ID if it is later renumbered.
+  static String songId(
+    String version,
+    int number, {
+    String languageCode = 'am',
+  }) =>
+      '${apiCode(version, languageCode: languageCode)}-'
+      '${number.toString().padLeft(4, '0')}';
+
   static bool isSda(String version) => byId(version).isSda;
 
   static bool hasCategories(String version) => byId(version).hasCategories;
 
-  static String displayLabel(String version) => byId(version).label;
+  /// The book's name for the app's language.
+  static String displayLabel(String version, [Locale? locale]) =>
+      byId(version).labelFor(locale);
 }
