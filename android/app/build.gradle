@@ -20,8 +20,8 @@ android {
     // Google Play requires new apps and updates to target API 36 from
     // 31 August 2026. Flutter 3.27 defaults to 35, so both are set here.
     compileSdk = 36
-    // The plugins are built against NDK 27; NDKs are backward compatible.
-    ndkVersion = "27.0.12077973"
+    // The plugins are built against NDK 28; NDKs are backward compatible.
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

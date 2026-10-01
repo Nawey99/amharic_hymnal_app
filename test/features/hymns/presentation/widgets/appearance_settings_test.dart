@@ -1,6 +1,7 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,7 +98,7 @@ void main() {
     final semantics = tester.getSemantics(
       find.byKey(const ValueKey('theme-mode-light')),
     );
-    expect(semantics.hasFlag(SemanticsFlag.isSelected), isTrue);
+    expect(semantics.flagsCollection.isSelected, Tristate.isTrue);
   });
 
   testWidgets('the chosen theme is the centred one, and it is named',
@@ -107,8 +108,8 @@ void main() {
     final emerald = find.byKey(const ValueKey('theme-palette-emerald'));
     expect(emerald, findsOneWidget);
     expect(
-      tester.getSemantics(emerald).hasFlag(SemanticsFlag.isSelected),
-      isTrue,
+      tester.getSemantics(emerald).flagsCollection.isSelected,
+      Tristate.isTrue,
     );
     // One name under the row, not one under every circle.
     expect(find.text('አረንጓዴ'), findsOneWidget);

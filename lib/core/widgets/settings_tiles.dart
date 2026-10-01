@@ -284,6 +284,9 @@ class SettingsDropdownTile extends StatelessWidget {
         final dropdown = SizedBox(
           width: dropdownWidth,
           child: DropdownButtonFormField<String>(
+            // `initialValue`, its replacement, is read once: the field would
+            // stop following a selection changed from outside it.
+            // ignore: deprecated_member_use
             value: selectedValue,
             isExpanded: true,
             dropdownColor: context.appColors.surface,
