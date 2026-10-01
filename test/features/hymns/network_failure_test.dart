@@ -272,7 +272,7 @@ void main() {
       final hymns = await local.getHymns('am', HymnalVersions.sdaNew);
 
       expect(hymns, isNotEmpty);
-      expect(hymns.first.id, isNot(startsWith('am-sda-')),
+      expect(hymns.first.isBundled, isTrue,
           reason: 'bundled hymns, not API ones');
     });
   });

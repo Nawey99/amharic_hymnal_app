@@ -76,14 +76,17 @@ void main() {
       expect(hymns2004.last['title'], newTitles[324]);
     });
 
-    test('IDs are unique within an edition and name it', () {
+    test("IDs are the hymnal API's IDs for the same songs", () {
       for (final version in [HymnalVersions.sdaNew, HymnalVersions.sdaOld]) {
-        final ids = SdaParser.parse(sda, version: version)
-            .map((h) => h['id'] as String)
-            .toList();
+        final hymns = SdaParser.parse(sda, version: version);
+        final ids = hymns.map((h) => h['id'] as String).toList();
         expect(ids.toSet(), hasLength(ids.length));
-        expect(ids.every((id) => id.startsWith('$version-')), isTrue);
+        for (final hymn in hymns) {
+          expect(hymn['id'],
+              HymnalVersions.songId(version, hymn['number'] as int));
+        }
       }
+      expect(SdaParser.parse(sda).first['id'], 'am-sda-2004-0001');
     });
 
     test('an empty file yields no hymns rather than throwing', () {
@@ -97,17 +100,33 @@ void main() {
   });
 
   group('HagerignaParser on the bundled file', () {
-    test('121 songs numbered 1..121 with title, lyrics and artist', () {
+    test('120 songs numbered 1..120 with title, lyrics and artist', () {
       final songs = HagerignaParser.parse(hagerigna);
 
-      expect(songs, hasLength(121));
-      _expectNumbersWithoutGaps(songs, 121);
+      expect(songs, hasLength(120));
+      _expectNumbersWithoutGaps(songs, 120);
       final titles = _array(hagerigna, 'song_title_text');
       for (var i = 0; i < songs.length; i++) {
         expect(songs[i]['title'], titles[i]);
         expect((songs[i]['lyrics'] as String).trim(), isNotEmpty);
         expect((songs[i]['artist'] as String).trim(), isNotEmpty);
-        expect(songs[i]['id'], 'hagerigna-$i');
+        expect(songs[i]['id'],
+            'am-hagerigna-${(i + 1).toString().padLeft(4, '0')}');
+      }
+    });
+
+    // Song 121 was a template entry ("test song", "song title", lyrics
+    // "song 1 song 2") shipped as content. It is withdrawn on the API, but
+    // the bundled copy is what a phone with no connection shows.
+    test('no bundled song is a template placeholder', () {
+      final placeholders = {'ሙከራ መዝሙር', 'የመዝሙር ርዕስ'};
+      for (final song in HagerignaParser.parse(hagerigna)) {
+        expect(placeholders.contains(song['title']), isFalse,
+            reason: 'song ${song['number']} title');
+        expect(placeholders.contains(song['artist']), isFalse,
+            reason: 'song ${song['number']} artist');
+        expect((song['lyrics'] as String).startsWith('መዝሙር 1 መዝሙር 2'), isFalse,
+            reason: 'song ${song['number']} lyrics');
       }
     });
 
@@ -156,7 +175,7 @@ void main() {
       expect(
           await source.getHymns('am', HymnalVersions.sdaOld), hasLength(294));
       expect(await source.getHymns('am', HymnalVersions.hagerigna),
-          hasLength(121));
+          hasLength(120));
     });
 
     test('the legacy "hymnal" ID reads the 2004 book', () async {
@@ -182,7 +201,7 @@ void main() {
       ]);
 
       expect(results[0], hasLength(325));
-      expect(results[1], hasLength(121));
+      expect(results[1], hasLength(120));
     });
   });
 }

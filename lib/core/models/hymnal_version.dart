@@ -205,6 +205,18 @@ class HymnalVersions {
     return _versionIdPattern.hasMatch(id) ? id : null;
   }
 
+  /// The hymnal API's ID for hymn [number] in [version]: the edition code
+  /// and the number in four digits, `am-sda-2004-0132`. Every song in the
+  /// API was created under this ID (checked for all four editions on
+  /// 2026-10-01); a song keeps its ID if it is later renumbered.
+  static String songId(
+    String version,
+    int number, {
+    String languageCode = 'am',
+  }) =>
+      '${apiCode(version, languageCode: languageCode)}-'
+      '${number.toString().padLeft(4, '0')}';
+
   static bool isSda(String version) => byId(version).isSda;
 
   static bool hasCategories(String version) => byId(version).hasCategories;

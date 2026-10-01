@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
+import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
 import 'package:amharic_hymnal_app/features/hymns/data/datasources/hymn_remote_data_source.dart';
 
@@ -313,7 +314,7 @@ void main() {
     );
   });
 
-  test('treats a withdrawn edition as empty', () async {
+  test('reports a withdrawn edition as unavailable, not as empty', () async {
     final source = HymnRemoteDataSource(
       baseUrl: _base,
       client: MockClient((request) async {
@@ -324,6 +325,9 @@ void main() {
       }),
     );
 
-    expect(await source.getHymns('am', 'sda_1960'), isEmpty);
+    await expectLater(
+      source.getHymns('am', 'sda_1960'),
+      throwsA(isA<EditionUnavailableException>()),
+    );
   });
 }

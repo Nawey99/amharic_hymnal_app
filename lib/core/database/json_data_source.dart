@@ -15,12 +15,17 @@ class JsonDataSource {
 
   // In-memory cache for parsed hymns
   final Map<String, List<Map<String, dynamic>>> _cache = {};
-  bool _isLoading = false;
+
+  /// Loads in progress, so callers asking at the same time share one read.
+  final Map<String, Future<List<Map<String, dynamic>>>> _inFlight = {};
 
   JsonDataSource._init();
 
   /// Get hymns from JSON assets (very fast, no database needed)
-  /// Returns cached data if available, otherwise loads and caches
+  /// Returns cached data if available, otherwise loads and caches.
+  ///
+  /// An edition with no bundled copy returns an empty list. A bundled copy
+  /// that cannot be read throws: an empty hymnal would hide the fault.
   Future<List<Map<String, dynamic>>> getHymns(
     String languageCode,
     String version,
@@ -28,75 +33,73 @@ class JsonDataSource {
     final normalizedVersion = HymnalVersions.normalizeId(version);
     final cacheKey = '${languageCode}_$normalizedVersion';
 
-    // Return cached data if available
-    if (_cache.containsKey(cacheKey)) {
+    final cached = _cache[cacheKey];
+    if (cached != null) {
       if (kDebugMode) {
         debugPrint(
-            '📦 Returning cached JSON data for $languageCode/$version (${_cache[cacheKey]!.length} hymns)');
+            '📦 Returning cached JSON data for $languageCode/$version (${cached.length} hymns)');
       }
-      return _cache[cacheKey]!;
+      return cached;
     }
 
-    // Prevent concurrent loading
-    if (_isLoading) {
-      // Wait a bit and retry
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (_cache.containsKey(cacheKey)) {
-        return _cache[cacheKey]!;
-      }
-    }
-
-    try {
-      _isLoading = true;
-
-      // Get database config to find the JSON file path
-      final dbConfig =
-          DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
-      if (dbConfig == null) {
-        if (kDebugMode) {
-          debugPrint('⚠️ No database config found for $languageCode/$version');
-        }
-        return [];
-      }
-
+    final dbConfig =
+        DatabaseRegistry.getDatabase(languageCode, normalizedVersion);
+    if (dbConfig == null) {
       if (kDebugMode) {
-        debugPrint('⚡ Loading hymns from JSON: ${dbConfig.filePath}');
-      }
-
-      // Load JSON file
-      final String jsonString = await rootBundle.loadString(dbConfig.filePath);
-      final dynamic jsonData = json.decode(jsonString);
-
-      // Parse based on version
-      List<Map<String, dynamic>> hymns;
-      if (normalizedVersion == HymnalVersions.hagerigna) {
-        hymns = HagerignaParser.parse(jsonData);
-      } else if (HymnalVersions.isSda(normalizedVersion)) {
-        hymns = SdaParser.parse(jsonData, version: normalizedVersion);
-      } else {
-        if (kDebugMode) {
-          debugPrint('⚠️ Unknown version: $normalizedVersion');
-        }
-        return [];
-      }
-
-      // Cache the parsed data
-      _cache[cacheKey] = hymns;
-
-      if (kDebugMode) {
-        debugPrint(
-            '✅ Loaded ${hymns.length} hymns from JSON for $languageCode/$normalizedVersion');
-      }
-
-      return hymns;
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Failed to load JSON data for $languageCode/$version: $e');
+        debugPrint('⚠️ No database config found for $languageCode/$version');
       }
       return [];
-    } finally {
-      _isLoading = false;
     }
+
+    // A block body: returning the removed future would make whenComplete
+    // wait on itself.
+    return _inFlight[cacheKey] ??= _load(
+      dbConfig,
+      languageCode,
+      normalizedVersion,
+      cacheKey,
+    ).whenComplete(() {
+      _inFlight.remove(cacheKey);
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> _load(
+    DatabaseConfig dbConfig,
+    String languageCode,
+    String normalizedVersion,
+    String cacheKey,
+  ) async {
+    if (kDebugMode) {
+      debugPrint('⚡ Loading hymns from JSON: ${dbConfig.filePath}');
+    }
+
+    final String jsonString = await rootBundle.loadString(dbConfig.filePath);
+    final dynamic jsonData = json.decode(jsonString);
+    if (jsonData is! Map<String, dynamic>) {
+      throw FormatException('${dbConfig.filePath} is not a JSON object.');
+    }
+
+    // Parse based on version
+    final List<Map<String, dynamic>> hymns;
+    if (normalizedVersion == HymnalVersions.hagerigna) {
+      hymns = HagerignaParser.parse(jsonData);
+    } else if (HymnalVersions.isSda(normalizedVersion)) {
+      hymns = SdaParser.parse(jsonData, version: normalizedVersion);
+    } else {
+      if (kDebugMode) {
+        debugPrint('⚠️ Unknown version: $normalizedVersion');
+      }
+      return [];
+    }
+
+    _cache[cacheKey] = hymns;
+
+    if (kDebugMode) {
+      debugPrint(
+          '✅ Loaded ${hymns.length} hymns from JSON for $languageCode/$normalizedVersion');
+    }
+
+    return hymns;
   }
 
   /// Clear cache (useful for testing or memory management)

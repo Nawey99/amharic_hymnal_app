@@ -1,6 +1,7 @@
 // lib/features/hymns/domain/entities/hymn.dart
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/utils/title_cleaner.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dart';
 
@@ -9,7 +10,10 @@ import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn_media.dar
 @immutable
 class Hymn extends Equatable {
   // Common fields
-  final String? id; // ID format: "hagerigna-0" or "sda-0"
+  /// The song's ID in the hymnal API, e.g. `am-sda-2004-0132`. Bundled
+  /// hymns carry the same IDs, so favourites and history kept under them
+  /// survive a hymn being renumbered and match online and offline alike.
+  final String? id;
   final int? number; // Hymn number (for backward compatibility)
   final String? title; // Title (for backward compatibility)
   final String? lyrics; // Lyrics (for backward compatibility)
@@ -36,6 +40,10 @@ class Hymn extends Equatable {
   final int? oldHymnalNumber;
   final bool isFavorite;
 
+  /// From the copy bundled with the app rather than synced from the API:
+  /// same IDs and words, but no audio or sheet music.
+  final bool isBundled;
+
   const Hymn({
     this.id,
     this.number,
@@ -58,7 +66,13 @@ class Hymn extends Equatable {
     this.newHymnalNumber,
     this.oldHymnalNumber,
     this.isFavorite = false,
+    this.isBundled = false,
   });
+
+  /// The key favourites and history are kept under. Every hymn has an [id];
+  /// [version] and the number only rebuild it for one that somehow has none.
+  String songIdIn(String version) =>
+      id ?? HymnalVersions.songId(version, displayNumber);
 
   /// Get display title with proper fallback logic
   ///
@@ -107,11 +121,8 @@ class Hymn extends Equatable {
   int get displayNumber {
     if (number != null) return number!;
     if (id != null) {
-      // Extract number from id like "hagerigna-0" or "sda-0"
-      final parts = id!.split('-');
-      if (parts.length > 1) {
-        return int.tryParse(parts[1]) ?? 0;
-      }
+      // The number ends the ID: `am-sda-2004-0132`.
+      return int.tryParse(id!.split('-').last) ?? 0;
     }
     return 0;
   }
@@ -150,5 +161,6 @@ class Hymn extends Equatable {
         newHymnalNumber,
         oldHymnalNumber,
         isFavorite,
+        isBundled,
       ];
 }

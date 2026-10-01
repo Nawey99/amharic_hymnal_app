@@ -17,3 +17,13 @@ class DatabaseNotReadyException implements Exception {
   @override
   String toString() => 'DatabaseNotReadyException: $message';
 }
+
+/// The hymnal API says the edition is retired or does not exist. Callers
+/// must not substitute a stored or bundled copy for it.
+class EditionUnavailableException implements Exception {
+  final String code;
+  EditionUnavailableException(this.code);
+
+  @override
+  String toString() => 'EditionUnavailableException: $code';
+}

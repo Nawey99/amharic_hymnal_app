@@ -68,7 +68,9 @@ class SdaParser {
       final lyrics = isOld ? at(oldLyricsArray, i) : at(newLyricsArray, i);
 
       hymns.add({
-        'id': '$normalizedVersion-sda-$i',
+        // The hymnal API's ID for the same song, so favourites and history
+        // match whichever copy is on screen.
+        'id': HymnalVersions.songId(normalizedVersion, number),
         'language_code': 'am',
         'version': normalizedVersion,
         'number': number,

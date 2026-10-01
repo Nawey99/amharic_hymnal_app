@@ -1,5 +1,6 @@
 import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/constants/hymn_categories.dart';
+import 'package:amharic_hymnal_app/core/error/exceptions.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_client.dart';
 import 'package:amharic_hymnal_app/core/services/hymnal_api_response.dart';
@@ -122,8 +123,10 @@ class HymnRemoteDataSource {
     }
 
     if (!result.isActive) {
+      // Withdrawn: forget the stored copy and say so, rather than showing
+      // an empty book as if it had no hymns.
       await _forget(key);
-      return const [];
+      throw EditionUnavailableException(code);
     }
 
     final edition = _CachedEdition.fromSongs(
