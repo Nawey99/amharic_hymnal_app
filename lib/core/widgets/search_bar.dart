@@ -60,14 +60,12 @@ class AppSearchBar extends StatelessWidget {
             style: TextStyle(
               color: context.appColors.primaryText,
               fontSize: 16,
-              fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(
                 color: context.appColors.tertiaryText,
                 fontSize: 14,
-                fontFamily: 'NotoSansEthiopic',
               ),
               prefixIcon: Icon(
                 Icons.search,

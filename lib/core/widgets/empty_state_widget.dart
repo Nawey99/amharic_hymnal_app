@@ -51,7 +51,6 @@ class EmptyStateWidget extends StatelessWidget {
                   color: context.appColors.primaryText,
                   fontSize: fontSize * 1.1,
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -62,7 +61,6 @@ class EmptyStateWidget extends StatelessWidget {
                   style: TextStyle(
                     color: context.appColors.secondaryText,
                     fontSize: fontSize * 0.9,
-                    fontFamily: 'NotoSansEthiopic',
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -112,7 +110,6 @@ class ErrorStateWidget extends StatelessWidget {
                 style: TextStyle(
                   color: context.appColors.primaryText,
                   fontSize: fontSize,
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),

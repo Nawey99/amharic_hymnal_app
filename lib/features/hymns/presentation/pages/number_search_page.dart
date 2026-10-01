@@ -269,6 +269,10 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     return MainPageTitleBar(
       // verbatim: the app's own name, which is not translated
       title: 'ውዳሴ',
+      // Wide enough for "History" set in the serif face, which needs 137
+      // where the Amharic "ታሪክ" needed well under 96. The title is a
+      // FittedBox, so the room this takes is borrowed gracefully.
+      sideWidth: 140,
       leading: _buildHistoryButton(context),
       actions: [
         IconButton(
@@ -438,7 +442,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 style: TextStyle(
                   color: context.appColors.primaryText,
                   fontSize: FontSizeScope.of(context),
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -463,7 +466,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
             style: TextStyle(
               color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
-              fontFamily: 'NotoSansEthiopic',
             ),
             textAlign: TextAlign.center,
           ),
@@ -566,7 +568,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
         style: TextStyle(
           color: context.appColors.primaryText,
           fontSize: FontSizeScope.of(context) * 1.08,
-          fontFamily: 'NotoSansEthiopic',
         ),
         decoration: InputDecoration(
           hintText: '....',
@@ -581,7 +582,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontSize: FontSizeScope.of(context) * 1.08,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
@@ -613,7 +613,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                   color: Colors.red,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSansEthiopic',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -639,7 +638,6 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'NotoSansEthiopic',
                 color: context.appColors.primaryText,
               ),
             ),

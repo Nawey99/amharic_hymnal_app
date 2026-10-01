@@ -228,7 +228,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,
-                        fontFamily: 'NotoSansEthiopic',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -471,7 +470,6 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       title: Text(
         '- ${hymn.displayNumber} -',
         style: TextStyle(
-          fontFamily: 'NotoSansEthiopic',
           fontWeight: FontWeight.bold,
           color: context.appColors.primaryText,
         ),

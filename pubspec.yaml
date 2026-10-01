@@ -111,10 +111,29 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  # Both families are Noto, SIL Open Font License, taken from Google Fonts
+  # (fonts.gstatic.com). Every weight the app asks for is shipped as its own
+  # file: with only one file the engine fakes the heavier weights by smearing
+  # the outlines, which on Ethiopic script reads as blur.
   fonts:
   - family: NotoSansEthiopic
     fonts:
       - asset: assets/fonts/NotoSansEthiopic-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/NotoSansEthiopic-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/NotoSansEthiopic-Bold.ttf
+        weight: 700
+  # Carries no Ethiopic glyphs at all, so anything set in it names
+  # NotoSansEthiopic as its fallback or Amharic comes out as empty boxes.
+  - family: NotoSerif
+    fonts:
+      - asset: assets/fonts/NotoSerif-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/NotoSerif-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/NotoSerif-Bold.ttf
+        weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

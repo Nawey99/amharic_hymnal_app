@@ -34,11 +34,11 @@ void main() {
     test('stays within the range the slider offers', () async {
       SharedPreferences.setMockInitialValues({});
       await SettingsService.init(systemTextScale: 2.5);
-      expect(SettingsService.getFontSize(), 30);
+      expect(SettingsService.getFontSize(), AppConstants.maxFontSize);
 
       SharedPreferences.setMockInitialValues({});
       await SettingsService.init(systemTextScale: 0.1);
-      expect(SettingsService.getFontSize(), 12);
+      expect(SettingsService.getFontSize(), AppConstants.minFontSize);
     });
 
     test('a reader who has chosen a size keeps it', () async {

@@ -1,4 +1,5 @@
 // lib/core/data/repositories/settings_repository_impl.dart
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
@@ -42,13 +43,15 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   double getFontSize() {
     // SettingsService.getFontSize() already clamps, but add extra safety
-    return SettingsService.getFontSize().clamp(12.0, 30.0);
+    return SettingsService.getFontSize()
+        .clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
   }
 
   @override
   Future<bool> setFontSize(double fontSize) async {
     // Clamp font size before passing to services to prevent slider assertion errors
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     // SettingsService.setFontSize() also clamps, but we clamp here for extra safety
     final result = await SettingsService.setFontSize(clampedFontSize);
     // Also update FontSizeService for real-time updates (it also clamps internally)

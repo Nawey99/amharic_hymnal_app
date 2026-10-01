@@ -71,7 +71,6 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
             widget.author ?? widget.category,
             style: TextStyle(
               color: context.appColors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -165,7 +164,6 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,
-                        fontFamily: 'NotoSansEthiopic',
                       ),
                       textAlign: TextAlign.center,
                     ),

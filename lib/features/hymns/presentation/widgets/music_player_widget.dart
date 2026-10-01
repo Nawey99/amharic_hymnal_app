@@ -1,7 +1,9 @@
 // lib/features/hymns/presentation/widgets/music_player_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
@@ -365,7 +367,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                 color: context.appColors.primaryText,
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'NotoSansEthiopic',
                                 height: 1.08,
                               ),
                               maxLines: 1,
@@ -377,10 +378,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                 Flexible(
                                   child: Text(
                                     subtitle,
+                                    // The hymn's English name, so the serif
+                                    // face, as in the lists.
                                     style: TextStyle(
                                       color: context.appColors.secondaryText,
                                       fontSize: 12,
                                       height: 1.0,
+                                      fontFamily: AppFonts.serif,
+                                      fontFamilyFallback:
+                                          AppFonts.ethiopicFallback,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -530,7 +536,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                 fontSize: 10,
                 height: 1.1,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
     );

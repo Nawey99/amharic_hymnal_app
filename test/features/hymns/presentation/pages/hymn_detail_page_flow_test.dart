@@ -252,7 +252,12 @@ void main() {
       return bar.top - lyrics.bottom;
     }
 
-    for (final fontSize in [12.0, 30.0]) {
+    // The two ends of what a reader can choose, so raising the maximum
+    // is checked for overflow rather than assumed safe.
+    for (final fontSize in [
+      AppConstants.minFontSize,
+      AppConstants.maxFontSize,
+    ]) {
       testWidgets('at size ${fontSize.toInt()} on a small screen',
           (tester) async {
         await setUpTestApp(content: {'sda_new': _book()});
@@ -272,7 +277,7 @@ void main() {
 
     testWidgets('and with the phone text size raised too', (tester) async {
       await setUpTestApp(content: {'sda_new': _book()});
-      FontSizeService().initialize(30);
+      FontSizeService().initialize(AppConstants.maxFontSize);
       changedTo = [];
       bloc = await pumpInApp(
         tester,

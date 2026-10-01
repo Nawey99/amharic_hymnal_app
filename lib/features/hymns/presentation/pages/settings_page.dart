@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
@@ -87,14 +88,16 @@ class _SettingsPageState extends State<SettingsPage> {
     // Get font size - SettingsService.getFontSize() now clamps automatically
     // But add extra safety by clamping again here
     var fontSize = settingsRepository.getFontSize();
-    var clampedFontSize = fontSize.clamp(12.0, 30.0);
+    var clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
 
     // CRITICAL: If font size was out of range, fix it IMMEDIATELY before setting state
     if ((fontSize - clampedFontSize).abs() > 0.01 ||
         fontSize > 30.0 ||
         fontSize < 12.0) {
       // Fix the stored value synchronously if possible, or asynchronously
-      clampedFontSize = fontSize.clamp(12.0, 30.0);
+      clampedFontSize =
+          fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
       // Update stored value immediately to fix the corruption
       await settingsRepository.setFontSize(clampedFontSize);
       await FontSizeService().setFontSize(clampedFontSize);
@@ -106,7 +109,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     // Final safety check - ensure clampedFontSize is definitely in range
-    clampedFontSize = fontSize.clamp(12.0, 30.0);
+    clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
 
     if (mounted) {
       setState(() {
@@ -134,15 +138,17 @@ class _SettingsPageState extends State<SettingsPage> {
             // Sync font size from service to ensure it's always in valid range
             final fontSizeService = FontSizeService();
             // FontSizeService.getFontSize() already clamps, but add extra safety
-            final currentFontSize =
-                fontSizeService.getFontSize().clamp(12.0, 30.0);
+            final currentFontSize = fontSizeService
+                .getFontSize()
+                .clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
             // Update state if font size changed (will be clamped)
             if ((currentFontSize - _fontSize).abs() > 0.01) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
                   setState(() {
                     // Always clamp to prevent any possibility of out-of-range value
-                    _fontSize = currentFontSize.clamp(12.0, 30.0);
+                    _fontSize = currentFontSize.clamp(
+                        AppConstants.minFontSize, AppConstants.maxFontSize);
                   });
                 }
               });
@@ -283,19 +289,24 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: AppLocalizations.of(context)?.fontSizeLabel ??
                             'Font Size',
                         // Ensure value is clamped before passing - SettingsSliderTile also clamps as extra safety
-                        value: _fontSize.clamp(12.0, 30.0),
-                        min: 12,
-                        max: 30,
+                        value: _fontSize.clamp(
+                            AppConstants.minFontSize, AppConstants.maxFontSize),
+                        min: AppConstants.minFontSize,
+                        max: AppConstants.maxFontSize,
                         // Whole points: two readers on "17" should have
                         // the same text.
-                        divisions: 18,
-                        highlight:
-                            _fontSize.clamp(12.0, 30.0).toStringAsFixed(0),
+                        divisions: AppConstants.fontSizeDivisions,
+                        highlight: _fontSize
+                            .clamp(AppConstants.minFontSize,
+                                AppConstants.maxFontSize)
+                            .toStringAsFixed(0),
                         previewBuilder: (context, value) =>
                             FontSizePreview(fontSize: value),
                         onChanged: (value) async {
                           // Clamp value to valid range before any operations
-                          final clampedValue = value.clamp(12.0, 30.0);
+                          final clampedValue = value.clamp(
+                              AppConstants.minFontSize,
+                              AppConstants.maxFontSize);
                           // Update repository first (it also clamps internally)
                           final repo = sl<SettingsRepository>();
                           await repo.setFontSize(clampedValue);
@@ -304,7 +315,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           // Update state with clamped value
                           if (mounted) {
                             setState(() {
-                              _fontSize = clampedValue.clamp(12.0, 30.0);
+                              _fontSize = clampedValue.clamp(
+                                  AppConstants.minFontSize,
+                                  AppConstants.maxFontSize);
                             });
                           }
                         },

@@ -315,7 +315,6 @@ class _SheetMusicPreviewBox extends StatelessWidget {
                     fontSize: 11,
                     height: 1,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'NotoSansEthiopic',
                   ),
                 ),
               ],

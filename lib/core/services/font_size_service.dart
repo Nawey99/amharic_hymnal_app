@@ -1,5 +1,6 @@
 // lib/core/services/font_size_service.dart
 import 'package:flutter/foundation.dart';
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 
 /// Service to manage font size state reactively
@@ -9,7 +10,8 @@ class FontSizeService extends ChangeNotifier {
   factory FontSizeService() => _instance;
   FontSizeService._internal() {
     // Initialize from SettingsService and clamp to valid range
-    _fontSize = SettingsService.getFontSize().clamp(12.0, 30.0);
+    _fontSize = SettingsService.getFontSize()
+        .clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
   }
 
   double _fontSize = 20.0;
@@ -20,7 +22,8 @@ class FontSizeService extends ChangeNotifier {
   /// Always clamps to valid range (12.0-30.0)
   void initialize(double initialFontSize) {
     // Clamp to valid range to prevent slider assertion errors
-    final clampedFontSize = initialFontSize.clamp(12.0, 30.0);
+    final clampedFontSize = initialFontSize.clamp(
+        AppConstants.minFontSize, AppConstants.maxFontSize);
     if (_fontSize != clampedFontSize) {
       _fontSize = clampedFontSize;
       notifyListeners();
@@ -31,7 +34,8 @@ class FontSizeService extends ChangeNotifier {
   /// Always clamps to valid range (12.0-30.0) before setting
   Future<void> setFontSize(double fontSize) async {
     // Clamp to valid range to prevent slider assertion errors
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
 
     if (_fontSize != clampedFontSize) {
       _fontSize = clampedFontSize;
@@ -43,5 +47,6 @@ class FontSizeService extends ChangeNotifier {
 
   /// Get current font size (synchronous)
   /// Returns clamped value to ensure it's always in valid range
-  double getFontSize() => _fontSize.clamp(12.0, 30.0);
+  double getFontSize() =>
+      _fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
 }

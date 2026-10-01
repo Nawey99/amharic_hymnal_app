@@ -271,7 +271,6 @@ class _ReportBugPageState extends State<ReportBugPage> {
                         style: TextStyle(
                           color: context.appColors.primaryText,
                           fontSize: FontSizeScope.of(context),
-                          fontFamily: 'NotoSansEthiopic',
                         ),
                         decoration: InputDecoration(
                           hintText: 'you@example.com',

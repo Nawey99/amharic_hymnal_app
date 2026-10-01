@@ -102,14 +102,12 @@ class _SearchTextFieldState extends State<SearchTextField> {
             style: TextStyle(
               color: context.appColors.primaryText,
               fontSize: FontSizeScope.of(context),
-              fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
                 color: context.appColors.tertiaryText,
                 fontSize: FontSizeScope.of(context) * 0.9,
-                fontFamily: 'NotoSansEthiopic',
               ),
               prefixIcon:
                   Icon(Icons.search, color: context.appColors.primaryText),

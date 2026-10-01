@@ -280,7 +280,6 @@ class _SheetMusicViewerPageState extends State<SheetMusicViewerPage>
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: context.appColors.primaryText,
-                              fontFamily: 'NotoSansEthiopic',
                               fontSize: 17,
                               fontWeight: FontWeight.w800,
                             ),

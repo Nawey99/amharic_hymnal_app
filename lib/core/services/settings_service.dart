@@ -21,7 +21,8 @@ class SettingsService {
       );
       return;
     }
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     if ((fontSize - clampedFontSize).abs() > 0.01) {
       // Value was out of range, fix it immediately
       await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize);
@@ -36,7 +37,8 @@ class SettingsService {
         systemTextScale.isFinite && systemTextScale > 0 ? systemTextScale : 1.0;
     await _prefs?.setDouble(
       AppConstants.keyFontSize,
-      (AppConstants.defaultFontSize * scale).clamp(12.0, 30.0),
+      (AppConstants.defaultFontSize * scale)
+          .clamp(AppConstants.minFontSize, AppConstants.maxFontSize),
     );
   }
 
@@ -83,12 +85,13 @@ class SettingsService {
     final fontSize = _prefs?.getDouble(AppConstants.keyFontSize) ??
         AppConstants.defaultFontSize;
     // Clamp to valid range to fix any existing out-of-range values
-    return fontSize.clamp(12.0, 30.0);
+    return fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
   }
 
   static Future<bool> setFontSize(double fontSize) async {
     // Clamp to valid range before saving to prevent slider assertion errors
-    final clampedFontSize = fontSize.clamp(12.0, 30.0);
+    final clampedFontSize =
+        fontSize.clamp(AppConstants.minFontSize, AppConstants.maxFontSize);
     return await _prefs?.setDouble(AppConstants.keyFontSize, clampedFontSize) ??
         false;
   }

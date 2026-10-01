@@ -116,7 +116,6 @@ class _TitleText extends StatelessWidget {
             color: context.appColors.primaryText,
             fontSize: compact ? 21 : 23,
             fontWeight: FontWeight.bold,
-            fontFamily: 'NotoSansEthiopic',
           ),
           maxLines: 1,
         ),

@@ -16,6 +16,7 @@ import 'package:amharic_hymnal_app/core/theme/app_colors.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/language_service.dart';
 import 'package:amharic_hymnal_app/core/services/theme_service.dart';
+import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -234,7 +235,23 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: _getInitialPage(settingsRepository),
-      builder: (context, child) => AppTextScope(child: child!),
+      // The face follows the language the interface ends up in, which is
+      // only known here: "follow the phone" resolves below Localizations,
+      // not at the point the themes above are handed over.
+      builder: (context, child) {
+        final base = Theme.of(context);
+        final locale = Localizations.localeOf(context);
+        return Theme(
+          data: AppFonts.isEnglish(locale)
+              ? AppTheme.forPalette(
+                  theme.palette,
+                  base.brightness,
+                  uiLocale: locale,
+                )
+              : base,
+          child: AppTextScope(child: child!),
+        );
+      },
     );
   }
 }

@@ -132,7 +132,6 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: context.appColors.secondaryText,
-                    fontFamily: 'NotoSansEthiopic',
                     fontSize: 12,
                   ),
                 ),

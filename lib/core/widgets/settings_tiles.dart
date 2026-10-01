@@ -297,7 +297,6 @@ class SettingsDropdownTile extends StatelessWidget {
               fontSize: 15,
               fontWeight: FontWeight.w600,
               color: context.appColors.primaryText,
-              fontFamily: 'NotoSansEthiopic',
             ),
             decoration: InputDecoration(
               isDense: true,
@@ -333,7 +332,6 @@ class SettingsDropdownTile extends StatelessWidget {
                       color: context.appColors.primaryText,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      fontFamily: 'NotoSansEthiopic',
                     ),
                   ),
                 );
@@ -353,7 +351,6 @@ class SettingsDropdownTile extends StatelessWidget {
                         : context.appColors.primaryText,
                     fontSize: 15,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    fontFamily: 'NotoSansEthiopic',
                   ),
                 ),
               );

@@ -54,7 +54,6 @@ class AppErrorWidget extends StatelessWidget {
                         style: TextStyle(
                           color: context.appColors.secondaryText,
                           fontSize: 16,
-                          fontFamily: 'NotoSansEthiopic',
                         ),
                         textAlign: TextAlign.center,
                       ),

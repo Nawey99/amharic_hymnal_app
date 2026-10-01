@@ -742,7 +742,6 @@ class _MainNavigationPageState extends State<MainNavigationPage>
                                     fontWeight: selected
                                         ? FontWeight.w800
                                         : FontWeight.w500,
-                                    fontFamily: 'NotoSansEthiopic',
                                   ),
                                 ),
                               ),

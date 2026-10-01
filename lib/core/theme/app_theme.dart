@@ -3,15 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/theme/app_palette.dart';
 import 'package:amharic_hymnal_app/core/theme/app_theme_spec.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 
 class AppTheme {
+  /// Ordinary text is set in the SemiBold cut, not a Regular the engine has
+  /// smeared into looking heavier.
+  static const FontWeight _bodyWeight = FontWeight.w600;
+
   /// The theme for a palette in one brightness, carrying the colours the
   /// screens read through `context.appColors`.
-  static ThemeData forPalette(AppPalette palette, Brightness brightness) {
-    return _build(AppThemeCatalog.colorsFor(palette, brightness), brightness);
+  ///
+  /// [uiLocale] chooses the face the interface is set in: Noto Serif when
+  /// the app is being read in English, Noto Sans Ethiopic otherwise. No
+  /// screen names a font itself, so this is the only place it is decided.
+  static ThemeData forPalette(
+    AppPalette palette,
+    Brightness brightness, {
+    Locale? uiLocale,
+  }) {
+    return _build(
+      AppThemeCatalog.colorsFor(palette, brightness),
+      brightness,
+      uiLocale,
+    );
   }
 
   /// The app's own dark look, kept for code and tests that ask for it by
@@ -19,9 +36,15 @@ class AppTheme {
   static ThemeData get darkTheme =>
       forPalette(AppPalette.emerald, Brightness.dark);
 
-  static ThemeData _build(AppColorsExtension colors, Brightness brightness) {
+  static ThemeData _build(
+    AppColorsExtension colors,
+    Brightness brightness,
+    Locale? uiLocale,
+  ) {
     final isDark = brightness == Brightness.dark;
     final base = isDark ? ThemeData.dark() : ThemeData.light();
+    final family = AppFonts.uiFamily(uiLocale);
+    final fallback = AppFonts.uiFallback(uiLocale);
     return base.copyWith(
       extensions: <ThemeExtension<dynamic>>[colors],
       scaffoldBackgroundColor: colors.primaryBackground,
@@ -40,99 +63,92 @@ class AppTheme {
       textTheme: TextTheme(
         displayLarge: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 32,
           fontWeight: FontWeight.bold,
         ),
         displayMedium: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 28,
           fontWeight: FontWeight.bold,
         ),
         displaySmall: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
         headlineLarge: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
         headlineMedium: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
         headlineSmall: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
         titleLarge: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
         titleMedium: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         titleSmall: TextStyle(
           color: colors.secondaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         bodyLarge: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 16,
+          fontWeight: _bodyWeight,
         ),
         bodyMedium: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
+          fontWeight: _bodyWeight,
         ),
         bodySmall: TextStyle(
           color: colors.secondaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
+          fontWeight: _bodyWeight,
         ),
         labelLarge: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         labelMedium: TextStyle(
           color: colors.secondaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 12,
+          fontWeight: _bodyWeight,
         ),
         labelSmall: TextStyle(
           color: colors.tertiaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 10,
+          fontWeight: _bodyWeight,
         ),
-      ),
+        // The face is decided once, here, for every style at once. No screen
+        // names a font of its own.
+      ).apply(fontFamily: family, fontFamilyFallback: fallback),
       appBarTheme: AppBarTheme(
         backgroundColor: colors.primaryBackground,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
           color: colors.primaryText,
-          fontFamily: 'NotoSansEthiopic',
           fontSize: 20,
           fontWeight: FontWeight.bold,
+          fontFamily: family,
+          fontFamilyFallback: fallback,
         ),
         iconTheme: IconThemeData(color: colors.primaryText),
         systemOverlayStyle:
@@ -163,7 +179,6 @@ class AppTheme {
         ),
         hintStyle: TextStyle(
           color: colors.tertiaryText,
-          fontFamily: 'NotoSansEthiopic',
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -181,13 +196,17 @@ class AppTheme {
         backgroundColor: colors.primaryBackground,
         selectedItemColor: colors.accent,
         unselectedItemColor: colors.secondaryText,
-        selectedLabelStyle: const TextStyle(
-          fontFamily: 'NotoSansEthiopic',
+        selectedLabelStyle: TextStyle(
           fontSize: 12,
+          fontWeight: _bodyWeight,
+          fontFamily: family,
+          fontFamilyFallback: fallback,
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontFamily: 'NotoSansEthiopic',
+        unselectedLabelStyle: TextStyle(
           fontSize: 12,
+          fontWeight: _bodyWeight,
+          fontFamily: family,
+          fontFamilyFallback: fallback,
         ),
       ),
       // Messages float as a card, so they never become a strip across the
@@ -198,7 +217,9 @@ class AppTheme {
         contentTextStyle: TextStyle(
           color: colors.primaryText,
           fontSize: 14,
-          fontFamily: 'NotoSansEthiopic',
+          fontWeight: _bodyWeight,
+          fontFamily: family,
+          fontFamilyFallback: fallback,
         ),
         actionTextColor: colors.accent,
         elevation: 6,
@@ -216,6 +237,10 @@ class AppTheme {
   /// what appears on the hymn page: the line height and letter spacing
   /// both move with the size, and they are most of what "bigger" feels
   /// like.
+  /// The hymns are in Amharic whichever language the interface is set to,
+  /// so their words name the Ethiopic face rather than inheriting the
+  /// interface's. An English hymnal would otherwise be set in a face that
+  /// has to reach its fallback for every glyph.
   static TextStyle lyricsTextStyle({
     required Color color,
     required double fontSize,

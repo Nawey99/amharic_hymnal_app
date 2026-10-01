@@ -42,9 +42,18 @@ class AppConstants {
   static const Duration animationDurationOnRelease =
       Duration(milliseconds: 200);
 
-  // Font size limits for zoom calculations
+  /// The sizes a reader may choose the hymn's words to be.
+  ///
+  /// Nothing may hardcode these numbers: the slider's divisions and the
+  /// height of the settings preview are both derived from them, and a
+  /// literal left behind somewhere would silently clamp a reader's choice
+  /// back to an older maximum.
   static const double minFontSize = 12.0;
-  static const double maxFontSize = 30.0;
+  static const double maxFontSize = 40.0;
+
+  /// One division per whole point, so two readers on "17" have the same
+  /// text.
+  static int get fontSizeDivisions => (maxFontSize - minFontSize).round();
 
   // Sheet music path
   static const String sheetMusicPath = 'D:\\Church\\App\\Amharic_Hymnal_Songs';

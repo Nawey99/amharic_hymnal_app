@@ -1,7 +1,10 @@
 // lib/features/hymns/presentation/widgets/hymn_list_item.dart
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
+import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -107,7 +110,6 @@ class HymnListItem extends StatelessWidget {
             color: context.appColors.accent,
             fontSize: (fontSize * 0.72 * textScaleFactor.clamp(0.8, 1.25)),
             fontWeight: FontWeight.w800,
-            fontFamily: 'NotoSansEthiopic',
           ),
         ),
       ),
@@ -166,12 +168,17 @@ class HymnListItem extends StatelessWidget {
             SizedBox(height: compactLandscape ? 1 : 3),
             Text(
               englishTitle,
+              // English reads in the serif face whichever language the
+              // interface is set to: it is the hymn's English name, not a
+              // piece of the interface.
               style: TextStyle(
                 color: context.appColors.secondaryText,
                 fontSize: 12.0 * textScaleFactor.clamp(0.8, 1.2),
                 fontWeight: FontWeight.w400,
                 height: 1.1,
                 letterSpacing: 0,
+                fontFamily: AppFonts.serif,
+                fontFamilyFallback: AppFonts.ethiopicFallback,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

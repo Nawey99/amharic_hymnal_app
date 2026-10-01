@@ -100,19 +100,20 @@ void main() {
   group('font size', () {
     setUp(() => start());
 
-    test('is clamped to 12..30 when saved', () async {
+    test('is clamped to the range the slider offers, when saved', () async {
       await repository.setFontSize(99);
-      expect(repository.getFontSize(), 30);
+      expect(repository.getFontSize(), AppConstants.maxFontSize);
       await repository.setFontSize(1);
-      expect(repository.getFontSize(), 12);
+      expect(repository.getFontSize(), AppConstants.minFontSize);
     });
 
     test('an out-of-range saved value is repaired on start', () async {
-      await start({AppConstants.keyFontSize: 55.0});
+      await start({AppConstants.keyFontSize: 99.0});
 
-      expect(repository.getFontSize(), 30);
+      expect(repository.getFontSize(), AppConstants.maxFontSize);
       final saved = await SharedPreferences.getInstance();
-      expect(saved.getDouble(AppConstants.keyFontSize), 30);
+      expect(
+          saved.getDouble(AppConstants.keyFontSize), AppConstants.maxFontSize);
     });
   });
 

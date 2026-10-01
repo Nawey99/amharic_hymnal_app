@@ -93,7 +93,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             style: TextStyle(
                               color: context.appColors.primaryText,
                               fontSize: 16,
-                              fontFamily: 'NotoSansEthiopic',
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -282,7 +281,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         color: context.appColors.primaryText,
                         fontSize: compactLandscape ? 16 : 17,
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'NotoSansEthiopic',
                         height: 1.25,
                       ),
                     ),
@@ -390,7 +388,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     color: context.appColors.primaryText,
                     fontSize: compactLandscape ? 16 : 17,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'NotoSansEthiopic',
                     height: 1.25,
                   ),
                 ),
