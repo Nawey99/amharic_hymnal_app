@@ -1,6 +1,8 @@
 // lib/core/widgets/empty_state_widget.dart
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -121,7 +123,8 @@ class ErrorStateWidget extends StatelessWidget {
                     backgroundColor: context.appColors.accent,
                     foregroundColor: context.appColors.primaryText,
                   ),
-                  child: const Text('እንደገና ይሞክሩ'),
+                  child: Text(
+                      AppLocalizations.of(context)?.tryAgain ?? 'እንደገና ይሞክሩ'),
                 ),
               ],
             ],

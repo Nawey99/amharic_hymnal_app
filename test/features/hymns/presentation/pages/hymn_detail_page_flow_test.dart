@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/services/font_size_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';

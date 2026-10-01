@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:ui' show Locale;
 
 import 'package:audio_service/audio_service.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/core/services/language_service.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kDebugMode, kIsWeb, debugPrint;
 
@@ -27,6 +31,7 @@ class GlobalAudioService {
   static const String notificationChannelId =
       'com.example.amharic_hymnal_app.audio';
   static const String notificationChannelName = 'Audio Playback';
+  // verbatim: the app's own name, which is not translated
   static const String appAlbumName = 'ውዳሴ';
 
   final StreamController<Duration> _positionController =
@@ -326,7 +331,10 @@ MediaItem buildHymnMediaItem({
   return MediaItem(
     id: mediaId,
     title: normalizedTitle == null || normalizedTitle.isEmpty
-        ? 'መዝሙር $hymnNumber'
+        // The lock screen has no BuildContext to look words up with, so
+        // it asks the language service for the locale directly.
+        ? AppLocalizations(LanguageService().locale ?? const Locale('am'))
+            .hymnNumber(hymnNumber)
         : normalizedTitle,
     album: GlobalAudioService.appAlbumName,
     artist: normalizedArtist == null || normalizedArtist.isEmpty

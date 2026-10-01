@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 import 'package:amharic_hymnal_app/core/services/song_editions_service.dart';
@@ -51,22 +53,32 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
   }
 
   /// "1961: 165 · 2004: 132".
-  static String _numbers(List<OtherEdition> editions) => editions
-      .map((edition) =>
-          '${_edition(edition.versionCode)?.briefLabel ?? edition.versionCode}'
-          ': ${edition.number}')
-      .join(' · ');
+  static String _numbers(BuildContext context, List<OtherEdition> editions) {
+    final locale = AppLocalizations.of(context)?.locale;
+    return editions
+        .map((edition) =>
+            '${_edition(edition.versionCode)?.briefLabelFor(locale) ?? edition.versionCode}'
+            ': ${edition.number}')
+        .join(' · ');
+  }
 
   /// The same, spelled out for a screen reader and a long press.
-  static String _spokenNumbers(List<OtherEdition> editions) => editions
-      .map((edition) =>
-          '${_edition(edition.versionCode)?.label ?? edition.versionCode}'
-          ' ቁጥር ${edition.number}')
-      .join('፣ ');
+  static String _spokenNumbers(
+    BuildContext context,
+    List<OtherEdition> editions,
+  ) {
+    final l = AppLocalizations.of(context);
+    return editions
+        .map((edition) =>
+            '${_edition(edition.versionCode)?.labelFor(l?.locale) ?? edition.versionCode}'
+            '${l?.editionNumber(edition.number) ?? ' ቁጥር ${edition.number}'}')
+        .join(l?.listSeparator ?? '፣ ');
+  }
 
   @override
   Widget build(BuildContext context) {
     final links = _links;
+    final l = AppLocalizations.of(context);
     if (links == null) return const SizedBox.shrink();
 
     return FutureBuilder<SongEditionLinks>(
@@ -84,8 +96,10 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
               if (same.isNotEmpty)
                 _line(
                   icon: Icons.menu_book_outlined,
-                  text: _numbers(same),
-                  spoken: 'በሌሎች መጻሕፍት፦ ${_spokenNumbers(same)}',
+                  text: _numbers(context, same),
+                  spoken:
+                      l?.otherEditionsSpoken(_spokenNumbers(context, same)) ??
+                          'በሌሎች መጻሕፍት፦ ${_spokenNumbers(context, same)}',
                   key: const ValueKey('other-editions-line'),
                 ),
               // Related but different hymns (another translation, other
@@ -93,8 +107,10 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
               if (similar.isNotEmpty)
                 _line(
                   icon: Icons.compare_arrows,
-                  text: _numbers(similar),
-                  spoken: 'ተመሳሳይ መዝሙሮች፦ ${_spokenNumbers(similar)}',
+                  text: _numbers(context, similar),
+                  spoken:
+                      l?.similarHymnsSpoken(_spokenNumbers(context, similar)) ??
+                          'ተመሳሳይ መዝሙሮች፦ ${_spokenNumbers(context, similar)}',
                   key: const ValueKey('similar-editions-line'),
                 ),
             ],

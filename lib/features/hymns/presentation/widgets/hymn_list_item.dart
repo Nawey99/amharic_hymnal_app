@@ -124,8 +124,10 @@ class HymnListItem extends StatelessWidget {
   ) {
     String amharicTitle = hymn.displayTitle.trim();
     if (amharicTitle.isEmpty) {
-      amharicTitle =
-          hymn.displayNumber > 0 ? 'መዝሙር ${hymn.displayNumber}' : 'No Title';
+      amharicTitle = hymn.displayNumber > 0
+          ? (AppLocalizations.of(context)?.hymnNumber(hymn.displayNumber) ??
+              'መዝሙር ${hymn.displayNumber}')
+          : (AppLocalizations.of(context)?.noTitle ?? 'ርዕስ የለም');
     }
 
     final textScaler = MediaQuery.of(context).textScaler;

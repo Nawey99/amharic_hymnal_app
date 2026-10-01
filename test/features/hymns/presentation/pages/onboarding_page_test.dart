@@ -53,7 +53,7 @@ void main() {
   testWidgets('"next" walks every step, and the last one starts the app',
       (tester) async {
     await pumpOnboarding(tester);
-    final steps = OnboardingContent.steps.length;
+    final steps = OnboardingContent.stepsFor(null).length;
 
     for (var step = 1; step < steps; step++) {
       expect(find.text('ቀጣይ'), findsOneWidget, reason: 'step $step');

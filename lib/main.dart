@@ -116,7 +116,9 @@ class _AppInitializerState extends State<AppInitializer> {
           setState(() {
             _isInitializing = false;
             _hasError = true;
-            _errorMessage = 'መተግበሪያውን ማስጀመር አልተቻለም: ${e2.toString()}';
+            _errorMessage = AppLocalizations(
+              LanguageService().locale ?? const Locale('am'),
+            ).startupFailed(e2.toString());
           });
         }
         return;
@@ -221,6 +223,7 @@ class MyApp extends StatelessWidget {
   Widget _buildApp(SettingsRepository settingsRepository) {
     final theme = ThemeService();
     return MaterialApp(
+      // verbatim: the app's own name, which is not translated
       title: 'ውዳሴ',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.forPalette(theme.palette, Brightness.light),

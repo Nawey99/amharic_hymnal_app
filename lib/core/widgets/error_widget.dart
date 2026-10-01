@@ -1,5 +1,7 @@
 // lib/core/widgets/error_widget.dart
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -39,12 +41,12 @@ class AppErrorWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'ይቅርታ! የሆነ ችግር ተከስቷል',
+                        AppLocalizations.of(context)?.somethingWentWrong ??
+                            'ይቅርታ! የሆነ ችግር ተከስቷል',
                         style: TextStyle(
                           color: context.appColors.primaryText,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'NotoSansEthiopic',
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -69,10 +71,10 @@ class AppErrorWidget extends StatelessWidget {
                               vertical: 16,
                             ),
                           ),
-                          child: const Text(
-                            'እንደገና ይሞክሩ',
-                            style: TextStyle(
-                              fontFamily: 'NotoSansEthiopic',
+                          child: Text(
+                            AppLocalizations.of(context)?.tryAgain ??
+                                'እንደገና ይሞክሩ',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),

@@ -1,5 +1,7 @@
 // lib/core/widgets/search_bar.dart
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
@@ -115,7 +117,7 @@ class AppSearchBar extends StatelessWidget {
               controller.clear();
               onClear?.call();
             },
-            tooltip: 'ፍለጋውን አጽዳ',
+            tooltip: AppLocalizations.of(context)?.clearSearch ?? 'ፍለጋውን አጽዳ',
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(
               minWidth: 48,

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
@@ -39,6 +41,9 @@ class AppVersionFooter extends StatefulWidget {
 }
 
 class _AppVersionFooterState extends State<AppVersionFooter> {
+  /// The words this footer says, in whichever language the app is set to.
+  AppLocalizations? get l => AppLocalizations.of(context);
+
   String? _version;
   int _taps = 0;
   Timer? _tapWindow;
@@ -86,7 +91,7 @@ class _AppVersionFooterState extends State<AppVersionFooter> {
     if (widget.unlocked) {
       if (_taps == AppVersionFooter.unlockTaps) {
         _taps = 0;
-        _say('የልማት ክፍሉ አስቀድሞ ይታያል።');
+        _say(l?.devSectionAlreadyShown ?? 'የልማት ክፍሉ አስቀድሞ ይታያል።');
       }
       return;
     }
@@ -96,16 +101,16 @@ class _AppVersionFooterState extends State<AppVersionFooter> {
       _taps = 0;
       _tapWindow?.cancel();
       widget.onUnlock();
-      _say('የልማት ክፍሉ አሁን ይታያል።');
+      _say(l?.devSectionShown ?? 'የልማት ክፍሉ አሁን ይታያል።');
     } else if (_taps > AppVersionFooter.silentTaps) {
-      _say('ለማሳየት $remaining ጊዜ ይንኩ።');
+      _say(l?.devSectionTapsLeft(remaining) ?? 'ለማሳየት $remaining ጊዜ ይንኩ።');
     }
   }
 
   void _handleLongPress() {
     if (!widget.unlocked) return;
     widget.onHide();
-    _say('የልማት ክፍሉ ተደብቋል።');
+    _say(l?.devSectionHidden ?? 'የልማት ክፍሉ ተደብቋል።');
   }
 
   @override
@@ -114,7 +119,10 @@ class _AppVersionFooterState extends State<AppVersionFooter> {
     return Semantics(
       // Read as plain information; the unlock is not an everyday control.
       excludeSemantics: true,
-      label: version == null ? 'ውዳሴ' : 'ውዳሴ $version',
+      label: version == null
+          // verbatim: the app's own name, which is not translated
+          ? 'ውዳሴ'
+          : (l?.appNameWithVersion(version) ?? 'ውዳሴ $version'),
       child: GestureDetector(
         key: const ValueKey('app-version-footer'),
         behavior: HitTestBehavior.opaque,
@@ -124,11 +132,14 @@ class _AppVersionFooterState extends State<AppVersionFooter> {
           constraints: const BoxConstraints(minHeight: 48),
           child: Center(
             child: Text(
-              version == null ? 'ውዳሴ' : 'ውዳሴ · ስሪት $version',
+              version == null
+                  // verbatim: the app's own name, which is not translated
+                  ? 'ውዳሴ'
+                  : (l?.appNameWithVersionLong(version) ??
+                      'ውዳሴ · ስሪት $version'),
               style: TextStyle(
                 color: context.appColors.secondaryText.withValues(alpha: 0.8),
                 fontSize: 12,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),

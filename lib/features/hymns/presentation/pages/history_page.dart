@@ -59,7 +59,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   icon: const Icon(Icons.delete_outline),
                   color: context.appColors.primaryText,
                   onPressed: () => _showClearHistoryDialog(context),
-                  tooltip: 'ታሪክን አጽዳ',
+                  tooltip: AppLocalizations.of(context)?.historyClear ??
+                      AppLocalizations.of(context)?.historyClear ??
+                      'ታሪክን አጽዳ',
                 ),
               ],
             ),
@@ -93,10 +95,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   }
 
                   if (history.isEmpty) {
-                    return const EmptyStateWidget(
+                    return EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'እስካሁን ታሪክ የለም',
-                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
+                      title: AppLocalizations.of(context)?.historyEmptyTitle ??
+                          'እስካሁን ታሪክ የለም',
+                      message:
+                          AppLocalizations.of(context)?.historyEmptyMessage ??
+                              'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -116,10 +121,14 @@ class _HistoryPageState extends State<HistoryPage> {
                   }
 
                   if (historyHymns.isEmpty) {
-                    return const EmptyStateWidget(
+                    return EmptyStateWidget(
                       icon: Icons.history,
-                      title: 'በዚህ የመዝሙር ስብስብ ውስጥ ታሪክ የለም',
-                      message: 'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
+                      title:
+                          AppLocalizations.of(context)?.historyEmptyForBook ??
+                              'በዚህ የመዝሙር ስብስብ ውስጥ ታሪክ የለም',
+                      message:
+                          AppLocalizations.of(context)?.historyEmptyMessage ??
+                              'የከፈቷቸው መዝሙሮች እዚህ ይታያሉ',
                     );
                   }
 
@@ -193,18 +202,19 @@ class _HistoryPageState extends State<HistoryPage> {
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'ታሪክን አጽዳ',
+          AppLocalizations.of(context)?.historyClear ?? 'ታሪክን አጽዳ',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
-          'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጥፋ?',
+          AppLocalizations.of(context)?.historyClearConfirm ??
+              'የተከፈቱ መዝሙሮች ታሪክ በሙሉ ይጥፋ?',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'ይቅር',
+              AppLocalizations.of(context)?.actionCancel ?? 'ይቅር',
               style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
@@ -217,7 +227,7 @@ class _HistoryPageState extends State<HistoryPage> {
               }
             },
             child: Text(
-              'አጽዳ',
+              AppLocalizations.of(context)?.actionClear ?? 'አጽዳ',
               style: TextStyle(color: context.appColors.accent),
             ),
           ),

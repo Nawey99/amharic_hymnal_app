@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 

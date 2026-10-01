@@ -1,5 +1,7 @@
 // lib/features/hymns/presentation/pages/category_hymns_page.dart
 import 'package:flutter/material.dart';
+
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
@@ -106,11 +108,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'በቁጥር',
-                              style: TextStyle(
-                                fontFamily: 'NotoSansEthiopic',
-                              ),
+                            Text(
+                              AppLocalizations.of(context)?.sortByNumber ??
+                                  'በቁጥር',
+                              style: const TextStyle(),
                             ),
                           ],
                         ),
@@ -129,11 +130,9 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                                   : context.appColors.secondaryText,
                             ),
                             const SizedBox(width: 8),
-                            const Text(
-                              'በስም',
-                              style: TextStyle(
-                                fontFamily: 'NotoSansEthiopic',
-                              ),
+                            Text(
+                              AppLocalizations.of(context)?.sortByName ?? 'በስም',
+                              style: const TextStyle(),
                             ),
                           ],
                         ),
@@ -205,8 +204,10 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   return EmptyStateWidget(
                     icon: Icons.music_note,
                     title: widget.author != null
-                        ? 'ለዚህ ዘማሪ መዝሙር አልተገኘም'
-                        : 'በዚህ ምድብ መዝሙር አልተገኘም',
+                        ? (AppLocalizations.of(context)?.noHymnsForSinger ??
+                            'ለዚህ ዘማሪ መዝሙር አልተገኘም')
+                        : (AppLocalizations.of(context)?.noHymnsInCategory ??
+                            'በዚህ ምድብ መዝሙር አልተገኘም'),
                   );
                 }
 

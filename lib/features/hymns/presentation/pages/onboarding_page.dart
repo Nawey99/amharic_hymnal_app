@@ -22,7 +22,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  static const List<OnboardingStep> _steps = OnboardingContent.steps;
+  /// Rebuilt with the page, so switching language switches these too.
+  List<OnboardingStep> get _steps =>
+      OnboardingContent.stepsFor(AppLocalizations.of(context));
 
   @override
   void dispose() {
@@ -100,12 +102,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
         children: [
           Expanded(
             child: Text(
+              // verbatim: the app's own name, which is not translated
               'ውዳሴ',
               style: TextStyle(
                 color: context.appColors.primaryText,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
-                fontFamily: 'NotoSansEthiopic',
               ),
             ),
           ),
@@ -118,10 +120,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
-            child: const Text(
-              'ዝለል',
-              style: TextStyle(
-                fontFamily: 'NotoSansEthiopic',
+            child: Text(
+              AppLocalizations.of(context)?.onboardSkip ?? 'ዝለል',
+              style: const TextStyle(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -266,12 +267,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 160),
                 child: Text(
-                  _currentPage < _steps.length - 1 ? 'ቀጣይ' : 'ጀምር',
+                  _currentPage < _steps.length - 1
+                      ? (AppLocalizations.of(context)?.onboardNext ?? 'ቀጣይ')
+                      : (AppLocalizations.of(context)?.onboardStart ?? 'ጀምር'),
                   key: ValueKey(_currentPage == _steps.length - 1),
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
-                    fontFamily: 'NotoSansEthiopic',
                   ),
                 ),
               ),
@@ -390,23 +392,23 @@ class _PreviewScaffold extends StatelessWidget {
           children: [
             _NavHint(
                 icon: Icons.category_rounded,
-                label: 'ምድብ',
+                label: AppLocalizations.of(context)?.navCategory ?? 'ምድብ',
                 active: selectedTab == 'ምድብ'),
             _NavHint(
                 icon: Icons.list_alt_rounded,
-                label: 'ማውጫ',
+                label: AppLocalizations.of(context)?.navIndex ?? 'ማውጫ',
                 active: selectedTab == 'ማውጫ'),
             _NavHint(
                 icon: Icons.numbers_rounded,
-                label: 'ቁጥር',
+                label: AppLocalizations.of(context)?.navNumber ?? 'ቁጥር',
                 active: selectedTab == 'ቁጥር'),
             _NavHint(
                 icon: Icons.favorite_rounded,
-                label: 'ተወዳጅ',
+                label: AppLocalizations.of(context)?.navFavorites ?? 'ተወዳጅ',
                 active: selectedTab == 'ተወዳጅ'),
             _NavHint(
                 icon: Icons.settings_rounded,
-                label: 'ቅንብሮች',
+                label: AppLocalizations.of(context)?.navSettings ?? 'ቅንብሮች',
                 active: selectedTab == 'ቅንብሮች'),
           ],
         ),
@@ -423,24 +425,30 @@ class _LibraryPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
+      // verbatim: the app's own name, shown in the little mock screen
       title: 'ውዳሴ',
       actionIcon: Icons.search_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: AppLocalizations.of(context)?.navNumber ?? 'ቁጥር',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _MiniCard(
             icon: Icons.numbers_rounded,
-            title: 'በቁጥር መክፈት',
-            subtitle: 'ቁጥሩን አስገብተው “ክፈት”ን ይንኩ',
+            title: AppLocalizations.of(context)?.onboardPreviewByNumber ??
+                'በቁጥር መክፈት',
+            subtitle:
+                AppLocalizations.of(context)?.onboardPreviewByNumberHint ??
+                    'ቁጥሩን አስገብተው “ክፈት”ን ይንኩ',
             compact: compact,
           ),
           SizedBox(height: compact ? 6 : 8),
           _MiniCard(
             icon: Icons.search_rounded,
-            title: 'በማውጫ መፈለግ',
-            subtitle: 'በርዕስ ወይም በግጥም ቃላት',
+            title: AppLocalizations.of(context)?.onboardPreviewSearch ??
+                'በማውጫ መፈለግ',
+            subtitle: AppLocalizations.of(context)?.onboardPreviewSearchHint ??
+                'በርዕስ ወይም በግጥም ቃላት',
             compact: compact,
           ),
         ],
@@ -457,9 +465,10 @@ class _NumberPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
+      // verbatim: the app's own name, shown in the little mock screen
       title: 'ውዳሴ',
       actionIcon: Icons.history_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: AppLocalizations.of(context)?.navNumber ?? 'ቁጥር',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -497,10 +506,9 @@ class _NumberPreview extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              'ክፈት',
+              AppLocalizations.of(context)?.open ?? 'ክፈት',
               style: TextStyle(
                 color: context.appColors.primaryText,
-                fontFamily: 'NotoSansEthiopic',
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -519,9 +527,9 @@ class _IndexPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
-      title: 'ማውጫ',
+      title: AppLocalizations.of(context)?.navIndex ?? 'ማውጫ',
       actionIcon: Icons.sort_rounded,
-      selectedTab: 'ማውጫ',
+      selectedTab: AppLocalizations.of(context)?.navIndex ?? 'ማውጫ',
       compact: compact,
       child: Row(
         children: [
@@ -531,6 +539,7 @@ class _IndexPreview extends StatelessWidget {
               children: [
                 _SongRow(
                   number: '1',
+                  // verbatim: a hymn title, shown as the book prints it
                   title: 'አምላካችን',
                   subtitle: 'Praise God',
                   compact: compact,
@@ -538,6 +547,7 @@ class _IndexPreview extends StatelessWidget {
                 SizedBox(height: compact ? 5 : 7),
                 _SongRow(
                   number: '40',
+                  // verbatim: a hymn title, shown as the book prints it
                   title: 'እንኳን ላምልክ',
                   subtitle: 'O Worship the King',
                   compact: compact,
@@ -567,28 +577,31 @@ class _CategoriesPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
-      title: 'ምድቦች',
+      title: AppLocalizations.of(context)?.categoriesTitle ?? 'ምድቦች',
       actionIcon: Icons.category_rounded,
-      selectedTab: 'ምድብ',
+      selectedTab: AppLocalizations.of(context)?.navCategory ?? 'ምድብ',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _CategoryRow(
             icon: Icons.volunteer_activism,
-            label: 'ምስጋና',
+            label:
+                AppLocalizations.of(context)?.onboardCategoryBullet1 ?? 'ምስጋና',
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _CategoryRow(
             icon: Icons.self_improvement,
-            label: 'ጸሎት',
+            label:
+                AppLocalizations.of(context)?.onboardCategoryBullet2 ?? 'ጸሎት',
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _CategoryRow(
             icon: Icons.favorite,
-            label: 'ጋብቻ',
+            label:
+                AppLocalizations.of(context)?.onboardCategoryBullet3 ?? 'ጋብቻ',
             compact: compact,
           ),
         ],
@@ -607,7 +620,7 @@ class _LyricsPreview extends StatelessWidget {
     return _PreviewScaffold(
       title: '- 1 -',
       actionIcon: Icons.favorite_border_rounded,
-      selectedTab: 'ቁጥር',
+      selectedTab: AppLocalizations.of(context)?.navNumber ?? 'ቁጥር',
       compact: compact,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -630,13 +643,17 @@ class _LyricsPreview extends StatelessWidget {
                 TextStyle(color: context.appColors.secondaryText, fontSize: 10),
           ),
           const SizedBox(height: 8),
-          const Row(
+          Row(
             children: [
               Expanded(
-                  child:
-                      _MediaBox(icon: Icons.play_arrow_rounded, label: 'ድምፅ')),
-              SizedBox(width: 8),
-              _MediaBox(icon: Icons.library_music_rounded, label: 'ኖታ'),
+                  child: _MediaBox(
+                      icon: Icons.play_arrow_rounded,
+                      label:
+                          AppLocalizations.of(context)?.audioShort ?? 'ድምፅ')),
+              const SizedBox(width: 8),
+              _MediaBox(
+                  icon: Icons.library_music_rounded,
+                  label: AppLocalizations.of(context)?.sheetShort ?? 'ኖታ'),
             ],
           ),
           const SizedBox(height: 8),
@@ -649,11 +666,11 @@ class _LyricsPreview extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
+                  // verbatim: a hymn's opening lines, shown as the book prints them
                   'አምላካችን አመስግኑ\nምስጋና ለእርሱ ይሁን\n...',
                   style: TextStyle(
                     color: context.appColors.primaryText,
                     fontSize: 12,
-                    fontFamily: 'NotoSansEthiopic',
                     height: 1.4,
                   ),
                 ),
@@ -674,28 +691,30 @@ class _SettingsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PreviewScaffold(
-      title: 'ቅንብሮች',
+      title: AppLocalizations.of(context)?.navSettings ?? 'ቅንብሮች',
       actionIcon: Icons.settings_rounded,
-      selectedTab: 'ቅንብሮች',
+      selectedTab: AppLocalizations.of(context)?.navSettings ?? 'ቅንብሮች',
       compact: compact,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _SettingRow(
             icon: Icons.library_books_rounded,
-            label: 'የመዝሙር ስብስብ',
+            label: AppLocalizations.of(context)?.onboardSettingsBullet1 ??
+                'የመዝሙር ስብስብ',
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _SettingRow(
             icon: Icons.format_size_rounded,
-            label: 'የፊደል መጠን',
+            label: AppLocalizations.of(context)?.onboardSettingsBullet2 ??
+                'የፊደል መጠን',
             compact: compact,
           ),
           SizedBox(height: compact ? 5 : 7),
           _SettingRow(
             icon: Icons.bug_report_rounded,
-            label: 'የስህተት ጥቆማ',
+            label: AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
             compact: compact,
           ),
         ],

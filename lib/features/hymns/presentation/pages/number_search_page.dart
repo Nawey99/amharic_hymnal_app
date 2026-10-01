@@ -318,13 +318,20 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
                 size: 19,
               ),
               const SizedBox(width: 5),
-              Text(
-                AppLocalizations.of(context)?.history ?? 'ታሪክ',
-                style: TextStyle(
-                  color: context.appColors.primaryText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'NotoSansEthiopic',
+              // The title bar gives each side a fixed width so the title
+              // stays centred, so the label is what gives: "History" set in
+              // the serif face is wider than the Amharic it replaces, and
+              // ran over the end by a hair.
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)?.history ?? 'ታሪክ',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: context.appColors.primaryText,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],

@@ -1,18 +1,32 @@
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 /// What a report is about. The admin inbox filters and sorts by it, so
 /// the user picks one.
 enum ReportType {
-  lyrics('LYRICS', 'የግጥም ስህተት'),
-  sheetMusic('SHEET_MUSIC', 'የኖታ ስህተት'),
-  audio('AUDIO', 'የድምፅ ችግር'),
-  appBug('APP_BUG', 'የመተግበሪያ ችግር'),
-  suggestion('SUGGESTION', 'የማሻሻያ ሐሳብ'),
-  other('OTHER', 'ሌላ');
+  lyrics('LYRICS'),
+  sheetMusic('SHEET_MUSIC'),
+  audio('AUDIO'),
+  appBug('APP_BUG'),
+  suggestion('SUGGESTION'),
+  other('OTHER');
 
-  const ReportType(this.apiValue, this.label);
+  const ReportType(this.apiValue);
 
   /// The value `POST /reports` expects as `category`.
   final String apiValue;
-  final String label;
+
+  /// What to call this on screen, in the app's language.
+  ///
+  /// A name is a thing to read, so it is chosen where there is a reader
+  /// rather than stored on the enum in one language.
+  String labelFor(AppLocalizations? l) => switch (this) {
+        ReportType.lyrics => l?.reportTypeLyrics ?? 'የግጥም ስህተት',
+        ReportType.sheetMusic => l?.reportTypeSheet ?? 'የኖታ ስህተት',
+        ReportType.audio => l?.reportTypeAudio ?? 'የድምፅ ችግር',
+        ReportType.appBug => l?.reportTypeApp ?? 'የመተግበሪያ ችግር',
+        ReportType.suggestion => l?.reportTypeSuggestion ?? 'የማሻሻያ ሐሳብ',
+        ReportType.other => l?.reportTypeOther ?? 'ሌላ',
+      };
 }
 
 class BugReportPayload {
@@ -53,12 +67,13 @@ class BugReportPayload {
 class BugReportSubmissionResult {
   final bool submitted;
   final bool queued;
-  final String message;
 
+  /// No message: a repository does not choose words. [submitted] and
+  /// [queued] say what happened, and the page says it in the reader's
+  /// language.
   const BugReportSubmissionResult({
     required this.submitted,
     required this.queued,
-    required this.message,
   });
 
   bool get isSuccess => submitted || queued;

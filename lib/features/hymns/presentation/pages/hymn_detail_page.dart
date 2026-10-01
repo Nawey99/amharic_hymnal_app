@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
@@ -324,37 +325,38 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
 
   Widget _buildLyricsBottomNavigation(String version) {
     final showCategory = HymnalVersions.hasCategories(version);
+    final l = AppLocalizations.of(context);
     final items = <_LyricsNavItem>[
       if (showCategory)
-        const _LyricsNavItem(
+        _LyricsNavItem(
           id: 'category',
           icon: Icons.category_outlined,
           selectedIcon: Icons.category_rounded,
-          label: 'ምድብ',
+          label: l?.navCategory ?? 'ምድብ',
         ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'index',
         icon: Icons.list_alt_outlined,
         selectedIcon: Icons.list_alt_rounded,
-        label: 'ማውጫ',
+        label: l?.navIndex ?? 'ማውጫ',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'number',
         icon: Icons.numbers_rounded,
         selectedIcon: Icons.numbers_rounded,
-        label: 'ቁጥር',
+        label: l?.navNumber ?? 'ቁጥር',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'favorites',
         icon: Icons.favorite_outline_rounded,
         selectedIcon: Icons.favorite_rounded,
-        label: 'ተወዳጅ',
+        label: l?.navFavorites ?? 'ተወዳጅ',
       ),
-      const _LyricsNavItem(
+      _LyricsNavItem(
         id: 'settings',
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings_rounded,
-        label: 'ቅንብሮች',
+        label: l?.navSettings ?? 'ቅንብሮች',
       ),
     ];
     final selectedIndex = items.indexWhere(
@@ -500,7 +502,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildOverflowMenuButton(Hymn hymn) {
     return PopupMenuButton<_HymnAction>(
       icon: Icon(Icons.more_vert, color: context.appColors.primaryText),
-      tooltip: 'ተጨማሪ',
+      tooltip: AppLocalizations.of(context)?.hymnMore ?? 'ተጨማሪ',
       color: context.appColors.surface,
       onSelected: (action) {
         switch (action) {
@@ -516,7 +518,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           child: ListTile(
             leading: Icon(Icons.share, color: context.appColors.primaryText),
             title: Text(
-              'አጋራ',
+              AppLocalizations.of(context)?.hymnShare ?? 'አጋራ',
               style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
@@ -527,7 +529,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             leading:
                 Icon(Icons.flag_outlined, color: context.appColors.primaryText),
             title: Text(
-              'የስህተት ጥቆማ',
+              AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
               style: TextStyle(color: context.appColors.primaryText),
             ),
           ),
@@ -545,7 +547,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
             ? context.appColors.accent
             : context.appColors.primaryText,
       ),
-      tooltip: isFavorite ? 'ከተወዳጅ አስወግድ' : 'ወደ ተወዳጅ ጨምር',
+      tooltip: isFavorite
+          ? (AppLocalizations.of(context)?.hymnRemoveFavorite ?? 'ከተወዳጅ አስወግድ')
+          : (AppLocalizations.of(context)?.hymnAddFavorite ?? 'ወደ ተወዳጅ ጨምር'),
       onPressed: () {
         setState(() {
           _favoriteOverrides[hymn.displayNumber] = !isFavorite;
@@ -563,7 +567,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: Icon(Icons.share, color: context.appColors.primaryText),
-        tooltip: 'አጋራ',
+        tooltip: AppLocalizations.of(context)?.hymnShare ?? 'አጋራ',
         onPressed: () => _shareHymn(hymn),
       ),
     );
@@ -718,7 +722,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       // system's text size on a fresh install, so the system scale is not
       // applied to it a second time.
       child: SelectableText(
-        hymn.displayLyrics.isNotEmpty ? hymn.displayLyrics : 'ግጥም አልተገኘም',
+        hymn.displayLyrics.isNotEmpty
+            ? hymn.displayLyrics
+            : (AppLocalizations.of(context)?.hymnNoLyrics ?? 'ግጥም አልተገኘም'),
         textScaler: TextScaler.noScaling,
         style: AppTheme.lyricsTextStyle(
           color: context.appColors.primaryText,
@@ -736,7 +742,7 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       height: 48,
       child: IconButton(
         icon: Icon(Icons.flag_outlined, color: context.appColors.primaryText),
-        tooltip: 'የስህተት ጥቆማ',
+        tooltip: AppLocalizations.of(context)?.reportBug ?? 'የስህተት ጥቆማ',
         onPressed: () => _reportProblem(hymn),
       ),
     );
@@ -760,7 +766,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('በማጋራት ላይ ስህተት ተከስቷል: $e'),
+            content: Text(
+              AppLocalizations.of(context)?.shareFailed(e.toString()) ??
+                  'በማጋራት ላይ ስህተት ተከስቷል: $e',
+            ),
             duration: const Duration(seconds: 2),
           ),
         );

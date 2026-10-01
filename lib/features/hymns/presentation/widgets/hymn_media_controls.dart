@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/services/local_media_cache_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
@@ -99,7 +101,8 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       hymnNumber: hymn.displayNumber,
       hymnTitle: hymn.displayTitle.isNotEmpty
           ? hymn.displayTitle
-          : 'መዝሙር ${hymn.displayNumber}',
+          : (AppLocalizations.of(context)?.hymnNumber(hymn.displayNumber) ??
+              'መዝሙር ${hymn.displayNumber}'),
       englishTitle: hymn.displayEnglishTitle,
       audioSource: hymn.audioUrl,
       audioInfo: hymn.audioInfo,
@@ -109,6 +112,9 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
   }
 
   Future<void> _openSheetMusic() async {
+    // Captured before the first await, so nothing reaches for a context
+    // that has since gone away.
+    final l = AppLocalizations.of(context);
     final resolved =
         await _sheetMusicRepository.resolveFilesForHymn(widget.hymn);
     if (!mounted) return;
@@ -125,7 +131,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       );
       if (!mounted) return;
       if (!canDownload) {
-        _showMessage('በዚህ መሣሪያ ላይ ኖታ ማውረድ አይቻልም');
+        _showMessage(l?.sheetCannotDownloadHere ?? 'በዚህ መሣሪያ ላይ ኖታ ማውረድ አይቻልም');
         return;
       }
 
@@ -140,7 +146,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
     ];
 
     if (files.isEmpty) {
-      _showMessage('ለዚህ መዝሙር ኖታ አልተገኘም');
+      _showMessage(l?.sheetNoneForHymn ?? 'ለዚህ መዝሙር ኖታ አልተገኘም');
       return;
     }
 
@@ -158,6 +164,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
   Future<List<String>> _confirmAndDownloadSheetMusic(
     List<MediaSource> sources,
   ) async {
+    final l = AppLocalizations.of(context);
     final sizes = sources.map((source) => source.sizeBytes).toList();
     final totalBytes = sizes.contains(null)
         ? null
@@ -167,22 +174,22 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'ኖታ ይውረድ?',
+          l?.sheetDownloadTitle ?? 'ኖታ ይውረድ?',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Text(
-          'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።'
-          '${totalBytes == null ? '' : '\n\nመጠን፦ ${formatMediaSize(totalBytes)}'}',
+          '${l?.sheetDownloadBody ?? 'ይህ ኖታ በመሣሪያዎ ላይ አልተቀመጠም። አሁን ካወረዱት በኋላ ከመስመር ውጭም መክፈት ይችላሉ።'}'
+          '${totalBytes == null ? '' : '\n\n${l?.mediaSizeLine(formatMediaSize(totalBytes)) ?? 'መጠን፦ ${formatMediaSize(totalBytes)}'}'}',
           style: TextStyle(color: context.appColors.secondaryText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('ይቅር'),
+            child: Text(l?.actionCancel ?? 'ይቅር'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('አውርድ'),
+            child: Text(l?.actionDownload ?? 'አውርድ'),
           ),
         ],
       ),
@@ -197,7 +204,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.surface,
         title: Text(
-          'ኖታ በማውረድ ላይ',
+          l?.sheetDownloading ?? 'ኖታ በማውረድ ላይ',
           style: TextStyle(color: context.appColors.primaryText),
         ),
         content: Column(
@@ -212,7 +219,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
             ),
             const SizedBox(height: 12),
             Text(
-              'እባክዎ ይጠብቁ...',
+              l?.pleaseWait ?? 'እባክዎ ይጠብቁ...',
               style: TextStyle(color: context.appColors.secondaryText),
             ),
           ],
@@ -238,12 +245,14 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
     } on MediaIntegrityException {
       downloaded.clear();
       if (mounted) {
-        _showMessage('የወረደው ኖታ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
+        _showMessage(
+            l?.sheetDownloadCorrupt ?? 'የወረደው ኖታ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
       }
     } catch (_) {
       downloaded.clear();
       if (mounted) {
-        _showMessage('ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
+        _showMessage(
+            l?.sheetDownloadFailed ?? 'ኖታውን ማውረድ አልተቻለም። ኢንተርኔትዎን ያረጋግጡ።');
       }
     } finally {
       if (rootNavigator.mounted) rootNavigator.pop();
@@ -278,7 +287,7 @@ class _SheetMusicPreviewBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'ኖታ ክፈት',
+      label: AppLocalizations.of(context)?.sheetOpen ?? 'ኖታ ክፈት',
       button: enabled,
       child: InkWell(
         onTap: onTap,
@@ -305,7 +314,9 @@ class _SheetMusicPreviewBox extends StatelessWidget {
               if (!condensed) ...[
                 const SizedBox(height: 2),
                 Text(
-                  enabled ? 'ኖታ' : 'የለም',
+                  enabled
+                      ? (AppLocalizations.of(context)?.sheetShort ?? 'ኖታ')
+                      : (AppLocalizations.of(context)?.sheetNone ?? 'የለም'),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

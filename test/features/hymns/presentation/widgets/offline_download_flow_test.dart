@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/media_repositories.dart';
 import 'package:amharic_hymnal_app/core/services/offline_download_controller.dart';
@@ -417,6 +418,7 @@ void main() {
       await tapToRun(tester, (context) async {
         downloadKeptMediaChanges(
           ScaffoldMessenger.of(context),
+          AppLocalizations.of(context),
           controller: controller,
         );
       });
@@ -465,6 +467,7 @@ void main() {
             await controller.downloader.plan(_syncedHymns(), MediaType.audio);
         startOfflineDownload(
           messenger,
+          null,
           'sda_new',
           plan,
           controller: controller,
