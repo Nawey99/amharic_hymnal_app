@@ -159,126 +159,82 @@ class SearchEngine {
   /// Match a single hymn against the query
   ///
   /// Returns SearchResult with match type and rank
-  /// Ranking priority:
-  /// 1. Exact Amharic title match
-  /// 2. Exact English title match
-  /// 3. Partial Amharic title match (starts with)
-  /// 4. Partial Amharic title match (contains)
-  /// 5. Partial English title match (starts with)
-  /// 6. Partial English title match (contains)
-  /// 7. Lyrics match
+  /// Ranking priority, checked in this order so each hymn takes its best
+  /// match:
+  /// 0. Hymn number
+  /// 1. Exact Amharic title
+  /// 2. Amharic title starts with the query
+  /// 3. Amharic title contains the query
+  /// 4. Exact English title
+  /// 5. English title starts with the query
+  /// 6. English title contains the query
+  /// 8. Lyrics
   SearchResult _matchHymn({
     required Hymn hymn,
     required String query,
     required List<String> queryTokens,
     required bool isAmharicQuery,
   }) {
-    // Priority 1: Exact Amharic title match
-    final exactAmharicMatch = _matchExactAmharicTitle(
+    SearchResult result(int rank, int score, MatchType type) =>
+        SearchResult(hymn: hymn, rank: rank, score: score, matchType: type);
+
+    if (_matchNumber(hymn: hymn, query: query)) {
+      return result(0, 1100, MatchType.number);
+    }
+
+    if (_matchExactAmharicTitle(
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
-    );
-    if (exactAmharicMatch) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 1,
-        score: 1000,
-        matchType: MatchType.exactTitle,
-      );
+    )) {
+      return result(1, 1000, MatchType.exactTitle);
     }
 
-    // Priority 2: Exact English title match
-    final exactEnglishMatch = _matchExactEnglishTitle(
-      hymn: hymn,
-      query: query,
-      queryTokens: queryTokens,
-      isAmharicQuery: isAmharicQuery,
-    );
-    if (exactEnglishMatch) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 2,
-        score: 1000,
-        matchType: MatchType.exactTitle,
-      );
-    }
-
-    // Priority 3: Exact hymn number match
-    final numberMatch = _matchNumber(hymn: hymn, query: query);
-    if (numberMatch) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 0,
-        score: 1100,
-        matchType: MatchType.number,
-      );
-    }
-
-    // Priority 4: Partial Amharic title match (starts with)
-    final partialAmharicStartsWith = _matchPartialAmharicTitle(
+    if (_matchPartialAmharicTitle(
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
       startsWith: true,
-    );
-    if (partialAmharicStartsWith) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 3,
-        score: 900,
-        matchType: MatchType.partialTitle,
-      );
+    )) {
+      return result(2, 900, MatchType.partialTitle);
     }
 
-    // Priority 5: Partial Amharic title match (contains)
-    final partialAmharicContains = _matchPartialAmharicTitle(
+    if (_matchPartialAmharicTitle(
       hymn: hymn,
       query: query,
       isAmharicQuery: isAmharicQuery,
       startsWith: false,
-    );
-    if (partialAmharicContains) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 4,
-        score: 800,
-        matchType: MatchType.partialTitle,
-      );
+    )) {
+      return result(3, 800, MatchType.partialTitle);
     }
 
-    // Priority 6: Partial English title match (starts with)
-    final partialEnglishStartsWith = _matchPartialEnglishTitle(
+    if (_matchExactEnglishTitle(
+      hymn: hymn,
+      query: query,
+      queryTokens: queryTokens,
+      isAmharicQuery: isAmharicQuery,
+    )) {
+      return result(4, 700, MatchType.exactTitle);
+    }
+
+    if (_matchPartialEnglishTitle(
       hymn: hymn,
       query: query,
       queryTokens: queryTokens,
       isAmharicQuery: isAmharicQuery,
       startsWith: true,
-    );
-    if (partialEnglishStartsWith) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 3,
-        score: 900,
-        matchType: MatchType.partialTitle,
-      );
+    )) {
+      return result(5, 650, MatchType.partialTitle);
     }
 
-    // Priority 7: Partial English title match (contains)
-    final partialEnglishContains = _matchPartialEnglishTitle(
+    if (_matchPartialEnglishTitle(
       hymn: hymn,
       query: query,
       queryTokens: queryTokens,
       isAmharicQuery: isAmharicQuery,
       startsWith: false,
-    );
-    if (partialEnglishContains) {
-      return SearchResult(
-        hymn: hymn,
-        rank: 4,
-        score: 800,
-        matchType: MatchType.partialTitle,
-      );
+    )) {
+      return result(6, 600, MatchType.partialTitle);
     }
 
     // Priority 8: Lyrics match
@@ -326,7 +282,7 @@ class SearchEngine {
   }) {
     if (!isAmharicQuery) return false;
 
-    return _titleFields(hymn).any((title) => _normalizeAmharic(title) == query);
+    return _amharicTitles(hymn).any((title) => title == query);
   }
 
   /// Check for exact English title match
@@ -338,8 +294,7 @@ class SearchEngine {
   }) {
     if (isAmharicQuery) return false;
 
-    return _titleFields(hymn).any((title) {
-      final titleLower = _normalizeEnglish(title);
+    return _englishTitles(hymn).any((titleLower) {
       if (titleLower == query) return true;
 
       final titleTokens = titleLower
@@ -360,8 +315,7 @@ class SearchEngine {
   }) {
     if (!isAmharicQuery) return false;
 
-    return _titleFields(hymn).any((title) {
-      final normalizedText = _normalizeAmharic(title);
+    return _amharicTitles(hymn).any((normalizedText) {
       if (startsWith) {
         return normalizedText.startsWith(query);
       }
@@ -379,8 +333,7 @@ class SearchEngine {
   }) {
     if (isAmharicQuery) return false;
 
-    return _titleFields(hymn).any((title) {
-      final titleLower = _normalizeEnglish(title);
+    return _englishTitles(hymn).any((titleLower) {
       final significantTokens =
           queryTokens.where((token) => token.length >= 3).toList();
       if (startsWith) {
@@ -409,8 +362,7 @@ class SearchEngine {
     required List<String> queryTokens,
     required bool isAmharicQuery,
   }) {
-    final searchableFields = _bodyFields(hymn);
-    if (searchableFields.isEmpty) {
+    if (_bodyFields(hymn).isEmpty) {
       return 0;
     }
 
@@ -421,16 +373,15 @@ class SearchEngine {
     }
 
     if (isAmharicQuery) {
-      return searchableFields.fold<int>(0, (count, field) {
-        return count + _countOccurrences(_normalizeAmharic(field), query);
+      return _amharicBodies(hymn).fold<int>(0, (count, field) {
+        return count + _countOccurrences(field, query);
       });
     }
 
     var count = 0;
     final significantTokens =
         queryTokens.where((token) => token.length >= 4).toSet();
-    for (final field in searchableFields) {
-      final fieldLower = _normalizeEnglish(field);
+    for (final fieldLower in _englishBodies(hymn)) {
       count += _countOccurrences(fieldLower, query) * 2;
       for (final token in significantTokens) {
         count += _countOccurrences(fieldLower, token);
@@ -439,6 +390,26 @@ class SearchEngine {
 
     return count;
   }
+
+  // Normalised fields per hymn, kept for as long as the hymn object lives.
+  // The repository hands back the same objects for an edition, so each
+  // title and lyric is normalised once rather than on every keystroke.
+  static final Expando<List<String>> _amharicTitleCache = Expando();
+  static final Expando<List<String>> _englishTitleCache = Expando();
+  static final Expando<List<String>> _amharicBodyCache = Expando();
+  static final Expando<List<String>> _englishBodyCache = Expando();
+
+  List<String> _amharicTitles(Hymn hymn) => _amharicTitleCache[hymn] ??=
+      _titleFields(hymn).map(_normalizeAmharic).toList(growable: false);
+
+  List<String> _englishTitles(Hymn hymn) => _englishTitleCache[hymn] ??=
+      _titleFields(hymn).map(_normalizeEnglish).toList(growable: false);
+
+  List<String> _amharicBodies(Hymn hymn) => _amharicBodyCache[hymn] ??=
+      _bodyFields(hymn).map(_normalizeAmharic).toList(growable: false);
+
+  List<String> _englishBodies(Hymn hymn) => _englishBodyCache[hymn] ??=
+      _bodyFields(hymn).map(_normalizeEnglish).toList(growable: false);
 
   List<String> _titleFields(Hymn hymn) {
     return [
