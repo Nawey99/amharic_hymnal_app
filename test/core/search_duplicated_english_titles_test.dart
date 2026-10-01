@@ -81,7 +81,8 @@ void main() {
     );
   }
 
-  test('2004: "Holy Holy Holy" lists both hymns starting with the smaller '
+  test(
+      '2004: "Holy Holy Holy" lists both hymns starting with the smaller '
       'number', () {
     // 2004 hymns #2 and #3 share this English title.
     expectDeterministic(newBook, 'Holy Holy Holy', [2, 3]);
