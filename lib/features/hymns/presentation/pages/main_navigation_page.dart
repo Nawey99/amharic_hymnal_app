@@ -42,6 +42,10 @@ class MainNavigationPage extends StatefulWidget {
   final String? initialActiveDestination;
   final HymnDetailBuilder? hymnDetailBuilder;
 
+  /// Lets a test watch when the shell decides the reader has arrived at the
+  /// Number page, without having to build the real page to see the effect.
+  final ValueNotifier<int>? numberPageRevealsForTesting;
+
   const MainNavigationPage({
     super.key,
     this.loadInitialData = true,
@@ -50,6 +54,7 @@ class MainNavigationPage extends StatefulWidget {
     @visibleForTesting this.initialActiveHymn,
     @visibleForTesting this.initialActiveDestination,
     @visibleForTesting this.hymnDetailBuilder,
+    @visibleForTesting this.numberPageRevealsForTesting,
   });
 
   @override
@@ -66,6 +71,14 @@ class _MainNavigationPageState extends State<MainNavigationPage>
   };
   bool _isHymnDetailOpen = false;
   bool _isOfferingOfflineDownloads = false;
+
+  /// Bumped when tapping the Number destination lands the reader on the
+  /// Number page, so that page can clear its field and open the keyboard.
+  late final ValueNotifier<int> _numberPageReveals =
+      widget.numberPageRevealsForTesting ?? ValueNotifier<int>(0);
+
+  /// A reveal asked for while a hymn is still on screen, held until it closes.
+  bool _pendingNumberReveal = false;
 
   @override
   void initState() {
@@ -92,6 +105,10 @@ class _MainNavigationPageState extends State<MainNavigationPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _hymnSession.dispose();
+    // A test that passed its own notifier in still owns it.
+    if (widget.numberPageRevealsForTesting == null) {
+      _numberPageReveals.dispose();
+    }
     super.dispose();
   }
 
@@ -231,6 +248,12 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     final activeHymnIsCurrent = ownsActiveHymn &&
         _hymnSession.isCurrentFor(destination.id, _currentVersion());
 
+    // Not when the tap is about to reopen the hymn this tab holds: that lands
+    // the reader on the hymn, and a keyboard behind it is nobody's intention.
+    if (destination == _NavDestination.number && !activeHymnIsCurrent) {
+      _revealNumberPage();
+    }
+
     if (destination == _selectedDestination && !ownsActiveHymn) {
       final navigator = _tabNavigatorKeys[destination]?.currentState;
       if (navigator?.canPop() ?? false) {
@@ -253,6 +276,19 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     if (activeHymnIsCurrent) {
       _pushHymnDetail(activeHymn, destination);
     }
+  }
+
+  /// Tells the Number page it is being arrived at.
+  ///
+  /// While a hymn is still on screen the request waits: the Number page sits
+  /// under that route, and focusing its field there would raise the keyboard
+  /// behind the hymn the reader is reading.
+  void _revealNumberPage() {
+    if (_isHymnDetailOpen) {
+      _pendingNumberReveal = true;
+      return;
+    }
+    _numberPageReveals.value++;
   }
 
   String _currentVersion() {
@@ -314,6 +350,14 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     } finally {
       if (mounted) {
         setState(() => _isHymnDetailOpen = false);
+        // The hymn is off the screen now, so a reveal held back while it was
+        // up can go ahead -- as long as Number is still where we landed.
+        if (_pendingNumberReveal) {
+          _pendingNumberReveal = false;
+          if (_selectedDestination == _NavDestination.number) {
+            _numberPageReveals.value++;
+          }
+        }
       }
     }
   }
@@ -324,6 +368,13 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     final destination = _NavDestination.fromId(destinationId);
     final closesOwningTab = _hymnSession.owns(destination.id);
     final shellRoute = ModalRoute.of(context);
+
+    // This always pops back to the shell, so the Number page is what the
+    // reader ends up looking at. It is the second tap on the Number
+    // destination -- the one that leaves the hymn and shows the page.
+    if (destination == _NavDestination.number) {
+      _revealNumberPage();
+    }
 
     setState(() {
       _selectedDestination = destination;
@@ -541,6 +592,7 @@ class _MainNavigationPageState extends State<MainNavigationPage>
         page: _pageFor(
           NumberSearchPage(
             onOpenHymn: (hymn) => _openHymnFrom(_NavDestination.number, hymn),
+            revealRequests: _numberPageReveals,
           ),
         ),
         icon: Icons.numbers_rounded,

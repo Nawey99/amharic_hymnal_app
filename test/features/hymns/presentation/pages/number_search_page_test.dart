@@ -21,14 +21,36 @@ Future<void> _enterAndOpen(WidgetTester tester, String text) async {
 void main() {
   late List<Hymn> opened;
 
-  Future<void> pumpPage(WidgetTester tester, {int count = 5}) async {
+  Future<void> pumpPage(
+    WidgetTester tester, {
+    int count = 5,
+    Listenable? reveals,
+  }) async {
     await setUpTestApp(content: {'sda_new': sampleHymns(count: count)});
     opened = [];
     final bloc = await pumpInApp(
       tester,
-      Scaffold(body: NumberSearchPage(onOpenHymn: opened.add)),
+      Scaffold(
+        body: NumberSearchPage(
+          onOpenHymn: opened.add,
+          revealRequests: reveals,
+        ),
+      ),
     );
     await loadHymns(tester, bloc);
+  }
+
+  /// What the field is showing.
+  String numberText(WidgetTester tester) =>
+      tester.widget<TextField>(_numberField).controller!.text;
+
+  bool numberHasFocus(WidgetTester tester) =>
+      tester.widget<TextField>(_numberField).focusNode!.hasFocus;
+
+  /// Leaving the field, as tapping elsewhere on the page does.
+  Future<void> leaveTheField(WidgetTester tester) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
   }
 
   testWidgets('opens the hymn with the entered number', (tester) async {

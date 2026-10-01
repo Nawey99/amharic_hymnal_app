@@ -23,6 +23,7 @@ Future<HymnsBloc> _pumpShell(
   String? initialActiveDestination,
   HymnDetailBuilder? hymnDetailBuilder,
   bool usePlaceholderPagesForTesting = true,
+  ValueNotifier<int>? numberPageReveals,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -54,6 +55,7 @@ Future<HymnsBloc> _pumpShell(
             initialActiveHymn: initialActiveHymn,
             initialActiveDestination: initialActiveDestination,
             hymnDetailBuilder: hymnDetailBuilder,
+            numberPageRevealsForTesting: numberPageReveals,
           ),
         ),
       ),
@@ -554,6 +556,121 @@ void main() {
     await _pumpNavigation(tester);
     expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  /// Coming to the Number page means coming to type a number, so the shell
+  /// tells it so and it clears its field and opens the keyboard. Reopening
+  /// the hymn that tab still holds is not coming to the page: the reader ends
+  /// up on the hymn, and a keyboard behind it is nobody's intention.
+  ///
+  /// This is the shell's half -- *when* the page is arrived at. What arriving
+  /// does to the field is covered in number_search_page_test.dart.
+  group('telling the Number page it has been arrived at', () {
+    late ValueNotifier<int> reveals;
+
+    setUp(() => reveals = ValueNotifier<int>(0));
+    tearDown(() => reveals.dispose());
+
+    testWidgets('from another tab, with no hymn held', (tester) async {
+      final bloc = await _pumpShell(
+        tester,
+        initialDestination: 'index',
+        numberPageReveals: reveals,
+      );
+      addTearDown(bloc.close);
+      expect(reveals.value, 0);
+
+      await tester.tap(find.text('ቁጥር'));
+      await _pumpNavigation(tester);
+
+      expect(reveals.value, 1);
+    });
+
+    testWidgets('not on the tap that reopens the hymn it holds',
+        (tester) async {
+      const hymn = Hymn(
+        id: 'reveal-number-hymn',
+        number: 42,
+        title: 'Reveal hymn',
+        lyrics: 'Reveal lyrics',
+      );
+      final bloc = await _pumpShell(
+        tester,
+        initialDestination: 'index',
+        initialActiveHymn: hymn,
+        initialActiveDestination: 'number',
+        hymnDetailBuilder: _buildTestHymnDetail,
+        numberPageReveals: reveals,
+      );
+      addTearDown(bloc.close);
+
+      await tester.tap(find.text('ቁጥር'));
+      await _pumpNavigation(tester);
+
+      // The hymn, not the page.
+      expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+      expect(reveals.value, 0, reason: 'no keyboard behind the hymn');
+
+      // The second tap, from the bar on the hymn itself, leaves the hymn and
+      // shows the page -- and only now is the page arrived at.
+      await tester.tap(find.byKey(const ValueKey('detail-number')));
+      await _pumpNavigation(tester);
+
+      expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+      expect(reveals.value, 1);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('again when the tab is tapped a second time', (tester) async {
+      final bloc = await _pumpShell(
+        tester,
+        initialDestination: 'index',
+        numberPageReveals: reveals,
+      );
+      addTearDown(bloc.close);
+
+      await tester.tap(find.text('ቁጥር'));
+      await _pumpNavigation(tester);
+      // Already on Number: tapping it again is still arriving at it, and the
+      // shell returns early for that case, so the bump has to come first.
+      await tester.tap(find.text('ቁጥር'));
+      await _pumpNavigation(tester);
+
+      expect(reveals.value, 2);
+    });
+
+    testWidgets('not when a hymn is left by the back gesture', (tester) async {
+      const hymn = Hymn(
+        id: 'back-number-hymn',
+        number: 21,
+        title: 'Back hymn',
+        lyrics: 'Back lyrics',
+      );
+      final bloc = await _pumpShell(
+        tester,
+        initialDestination: 'number',
+        initialActiveHymn: hymn,
+        initialActiveDestination: 'number',
+        hymnDetailBuilder: _buildTestHymnDetail,
+        numberPageReveals: reveals,
+      );
+      addTearDown(bloc.close);
+
+      await tester.tap(find.text('ማውጫ'));
+      await _pumpNavigation(tester);
+      await tester.tap(find.text('ቁጥር'));
+      await _pumpNavigation(tester);
+      expect(find.byKey(const ValueKey('test-hymn-detail')), findsOneWidget);
+      final beforeBack = reveals.value;
+
+      await tester.binding.handlePopRoute();
+      await _pumpNavigation(tester);
+
+      // Back is not a tap on the Number destination. Throwing a keyboard at
+      // someone who just pressed back is the wrong instinct.
+      expect(find.byKey(const ValueKey('test-hymn-detail')), findsNothing);
+      expect(reveals.value, beforeBack);
+    });
   });
 
   testWidgets('onboarding renders without overflow on mobile constraints',
