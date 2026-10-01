@@ -1,0 +1,112 @@
+Static checks — Wudase pre-release QA, 2026-09-29
+==================================================
+
+Environment
+-----------
+Flutter 3.27.2 (fvm); Dart 3.6.1
+Host: macOS 27.0, Apple Silicon
+Baseline: main @ 37e2a25 (PR #19 merged)
+
+Analyzer
+--------
+$ fvm flutter analyze
+Analyzing amharic_hymnal_app...
+No issues found! (ran in 10.1s)
+
+Dart fix
+--------
+$ fvm dart fix --dry-run
+Computing fixes in amharic_hymnal_app (dry run)...
+Nothing to fix!
+
+Format
+------
+$ fvm dart format --set-exit-if-changed --output=none lib/ test/
+Formatted 201 files (0 changed) in 0.62 seconds.
+
+Full test suite
+---------------
+$ fvm flutter test
+00:44 +757 ~1: All tests passed!
+
+Coverage gate
+-------------
+$ fvm flutter test --coverage        (~45s)
+$ fvm dart tool/coverage_gate.dart 80
+Line coverage: 84.0% (7276 of 8664 lines)
+
+Security scan
+-------------
+$ node tool/security_scan.mjs
+No tracked, untracked candidate, or historical secrets matched the repository rules.
+
+TODO / FIXME scan
+-----------------
+$ grep -rn "TODO\|FIXME\|XXX\|HACK" lib/
+(no output)
+
+Guard tests — bite verification
+-------------------------------
+Each guard was broken locally by editing exactly one file; the test
+was run; the failure was observed; the file was restored to green.
+No commits.
+
+1. shell_is_translatable_test.dart
+   Break: inject  const _naughty = 'ማንም';  into language_settings.dart
+   Result: TEST FAILED at test/core/shell_is_translatable_test.dart:50
+   Message: "every Amharic word in the shell is behind a lookup"
+   Revert: pass restored.
+
+2. palette_sweep_test.dart
+   Break: inject  const _oops = AssetImage('assets/images/background.jpg');
+          into settings_page.dart
+   Result: TEST FAILED at test/core/palette_sweep_test.dart:29
+   Message: "only the shared backdrop reaches for the background photograph"
+   Revert: pass restored.
+
+3. palette_contrast_test.dart
+   Break: change emerald-light primaryText from 0xFF1A1C19 to 0xFF888888
+   Result: TEST FAILED at test/core/palette_contrast_test.dart:136
+   Message: "emerald light: the bar can be seen, and read, wherever it floats"
+   Revert: pass restored.
+
+Coverage — bottom 10 load-bearing files
+---------------------------------------
+    0.0%     0/  29  lib/core/services/frame_stats_probe.dart
+    0.0%     0/  26  lib/core/widgets/error_widget.dart
+    5.3%     8/ 150  lib/core/services/hymnal_audio_handler.dart   <-- PR #19 touched this
+   20.0%     6/  30  lib/core/models/database_config.dart
+   22.9%    27/ 118  lib/core/services/global_audio_service.dart
+   26.9%     7/  26  lib/features/hymns/presentation/bloc/hymns_event.dart
+   29.2%     7/  24  lib/core/models/hymn_category.dart
+   32.5%    25/  77  lib/main.dart
+   38.1%     8/  21  lib/core/services/crash_reporting.dart
+   52.3%    23/  44  lib/features/hymns/data/mappers/hymn_mapper.dart
+
+Zero-coverage files that ship in a release build (>= 5 lines):
+  lib/core/services/media_artwork_io.dart
+  lib/core/services/frame_stats_probe.dart
+  lib/core/widgets/error_widget.dart
+
+Manifest & Gradle
+-----------------
+applicationId              com.nawey99.wudase
+compileSdk                 36
+targetSdk                  36
+minSdk                     24
+ndkVersion                 27.0.12077973
+allowBackup                false
+usesCleartextTraffic       false
+enableOnBackInvokedCallback true
+AudioService.stopWithTask  true       (PR #19 in effect)
+AudioService.foregroundServiceType  mediaPlayback
+Permissions:  INTERNET, WAKE_LOCK, FOREGROUND_SERVICE, FOREGROUND_SERVICE_MEDIA_PLAYBACK
+
+R8:
+  minifyEnabled true
+  shrinkResources true
+  proguardFiles: proguard-android-optimize.txt + proguard-rules.pro (minimal - keeps annotations + native methods, relies on plugin consumer rules).
+
+android/key.properties: NOT present.
+  -> release build signs with debug key when file is missing; blocks Check 8
+     ("upgrade with same keystore both times").
