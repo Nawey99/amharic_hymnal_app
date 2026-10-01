@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' show Locale;
+import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:audio_service/audio_service.dart';
 
@@ -28,9 +28,7 @@ class GlobalAudioService {
 
   GlobalAudioService._internal();
 
-  static const String notificationChannelId =
-      'com.example.amharic_hymnal_app.audio';
-  static const String notificationChannelName = 'Audio Playback';
+  static const String notificationChannelId = 'com.nawey99.wudase.audio';
   // verbatim: the app's own name, which is not translated
   static const String appAlbumName = 'ውዳሴ';
 
@@ -70,13 +68,19 @@ class GlobalAudioService {
       return null;
     }
 
+    // The channel is listed in the phone's own notification settings, so it
+    // is named in the phone's language.
+    final words = AppLocalizations(
+      PlatformDispatcher.instance.locale.languageCode == 'en'
+          ? const Locale('en')
+          : const Locale('am'),
+    );
     final handler = await AudioService.init(
       builder: HymnalAudioHandler.new,
-      config: const AudioServiceConfig(
+      config: AudioServiceConfig(
         androidNotificationChannelId: notificationChannelId,
-        androidNotificationChannelName: notificationChannelName,
-        androidNotificationChannelDescription:
-            'Hymn accompaniment playback controls',
+        androidNotificationChannelName: words.audioChannelName,
+        androidNotificationChannelDescription: words.audioChannelDescription,
         // Paused audio lets go of the foreground, so the phone can
         // reclaim the app instead of holding it and its screen alive.
         androidStopForegroundOnPause: true,
