@@ -9,15 +9,15 @@ import 'package:amharic_hymnal_app/core/error/failures.dart';
 /// All use cases should extend this class to ensure consistent error handling
 /// using the Either pattern from dartz.
 ///
-/// [Type] The return type of the use case
+/// [T] The return type of the use case
 /// [Params] The parameters required by the use case
-abstract class UseCase<Type, Params> {
+abstract class UseCase<T, Params> {
   /// Execute the use case with the given parameters
   ///
   /// Returns Either with:
   /// - Left(Failure) if the operation fails
-  /// - Right(Type) if the operation succeeds
-  Future<Either<Failure, Type>> call(Params params);
+  /// - Right(T) if the operation succeeds
+  Future<Either<Failure, T>> call(Params params);
 }
 
 /// Empty parameters class for use cases that don't require parameters

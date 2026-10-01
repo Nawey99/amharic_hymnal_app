@@ -40,6 +40,7 @@ class CrashReporting {
         options.environment = _environment;
         options.sendDefaultPii = false;
         options.attachScreenshot = false;
+        // ignore: experimental_member_use
         options.attachViewHierarchy = false;
         options.beforeSend = scrub;
       },

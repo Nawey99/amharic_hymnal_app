@@ -333,9 +333,9 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
       final focal = focalPoint ?? Offset.zero;
       final scenePoint = controller.toScene(focal);
       controller.value = Matrix4.identity()
-        ..translate(focal.dx, focal.dy)
-        ..scale(2.0)
-        ..translate(-scenePoint.dx, -scenePoint.dy);
+        ..translateByDouble(focal.dx, focal.dy, 0, 1)
+        ..scaleByDouble(2.0, 2.0, 2.0, 1)
+        ..translateByDouble(-scenePoint.dx, -scenePoint.dy, 0, 1);
     }
     _setPageZoomed(index, !shouldReset);
     _doubleTapPosition = null;

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amharic_hymnal_app/core/theme/app_theme.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
@@ -43,6 +44,8 @@ Future<HymnsBloc> _pumpShell(
     BlocProvider<HymnsBloc>.value(
       value: bloc,
       child: MaterialApp(
+        // The app's theme, so pages move here as they do in the app.
+        theme: AppTheme.darkTheme,
         home: MediaQuery(
           data: MediaQueryData(
             size: size,

@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -754,7 +755,7 @@ class _IndexPageState extends State<IndexPage> {
       ),
       itemCount: hymnsToDisplay.length,
       // Performance: Cache items for smoother scrolling
-      cacheExtent: 250.0,
+      scrollCacheExtent: const ScrollCacheExtent.pixels(250.0),
       itemBuilder: (context, index) {
         if (index >= hymnsToDisplay.length) {
           if (kDebugMode) {
