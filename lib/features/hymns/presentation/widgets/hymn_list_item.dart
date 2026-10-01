@@ -149,16 +149,8 @@ class HymnListItem extends StatelessWidget {
               color: context.appColors.primaryText,
               fontSize: scaledFontSize,
               fontWeight: FontWeight.w700,
-              fontFamily: 'NotoSansEthiopic',
               height: 1.2,
               letterSpacing: 0,
-              shadows: [
-                Shadow(
-                  color: Colors.black.withValues(alpha: 0.55),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-              ],
             ),
             maxLines: hasEnglishTitle ? 1 : 2,
             overflow: TextOverflow.ellipsis,

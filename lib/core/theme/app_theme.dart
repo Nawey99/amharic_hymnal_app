@@ -249,15 +249,10 @@ class AppTheme {
       color: color,
       fontSize: fontSize,
       height: getLineHeight(fontSize),
-      fontFamily: 'NotoSansEthiopic',
       letterSpacing: getLetterSpacing(fontSize),
-      shadows: [
-        Shadow(
-          color: Colors.black.withValues(alpha: 0.5),
-          blurRadius: 2,
-          offset: const Offset(0, 1),
-        ),
-      ],
+      fontWeight: _bodyWeight,
+      fontFamily: AppFonts.ethiopic,
+      fontFamilyFallback: AppFonts.serifFallback,
     );
   }
 

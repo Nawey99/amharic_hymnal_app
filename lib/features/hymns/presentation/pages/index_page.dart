@@ -604,14 +604,6 @@ class _IndexPageState extends State<IndexPage> {
                   color: context.appColors.accent,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'NotoSansEthiopic',
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
                 ),
               ),
             ),
