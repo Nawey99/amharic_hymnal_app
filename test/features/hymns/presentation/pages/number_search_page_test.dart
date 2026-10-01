@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
+import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/number_search_page.dart';
 
 import '../../../../helpers/fakes.dart';
@@ -241,4 +242,27 @@ void main() {
       expect(numberHasFocus(tester), isFalse);
     });
   });
+
+  // The CI emulator's screen: the title bar is 264 wide. Its two sides were
+  // 140 each (room for "History" in the serif face), 16 more than fit, so
+  // every full-app test failed on the overflow.
+  for (final locale in const [Locale('en'), Locale('am')]) {
+    testWidgets('the title bar fits a 320-wide phone in ${locale.languageCode}',
+        (tester) async {
+      await setUpTestApp(content: {'sda_new': sampleHymns(count: 5)});
+      final bloc = await pumpInApp(
+        tester,
+        Scaffold(body: NumberSearchPage(onOpenHymn: (_) {})),
+        locale: locale,
+        size: const Size(320, 640),
+      );
+      await loadHymns(tester, bloc);
+
+      // The bar's row is the width CI's emulator gave it.
+      expect(tester.getSize(find.byType(MainPageTitleBar)).width, 320);
+      expect(tester.takeException(), isNull);
+      expect(find.byTooltip(locale.languageCode == 'en' ? 'History' : 'ታሪክ'),
+          findsOneWidget);
+    });
+  }
 }

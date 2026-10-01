@@ -32,7 +32,8 @@ void main() {
     return match.group(1)!;
   }
 
-  test('onTaskRemoved calls stop() so the player is not left running when '
+  test(
+      'onTaskRemoved calls stop() so the player is not left running when '
       'the app is swiped out of Recents', () {
     final body = bodyOf('onTaskRemoved');
     expect(
@@ -58,7 +59,8 @@ void main() {
     );
   });
 
-  test('onNotificationDeleted calls stop() so dismissing the notification '
+  test(
+      'onNotificationDeleted calls stop() so dismissing the notification '
       'stops playback instead of leaving it playing invisibly', () {
     final body = bodyOf('onNotificationDeleted');
     expect(
@@ -94,8 +96,7 @@ void main() {
     );
   });
 
-  test('the completion listener still stops the player when the hymn ends',
-      () {
+  test('the completion listener still stops the player when the hymn ends', () {
     // Behaviour that pre-dates PR #19 but is load-bearing for "one hymn is
     // open at a time" — if a completed hymn stayed in the notification the
     // notification's UX becomes wrong.

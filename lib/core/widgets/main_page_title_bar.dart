@@ -1,9 +1,16 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 
 class MainPageTitleBar extends StatelessWidget {
+  /// Room the title keeps before the sides give way. The title scales down
+  /// to fit (FittedBox); 24 is what it already had on a 360-wide phone, so
+  /// screens that size and up look as before and only narrower ones change.
+  static const double _minTitleWidth = 24;
+
   final String title;
   final Widget? leading;
   final List<Widget> actions;
@@ -67,33 +74,44 @@ class MainPageTitleBar extends StatelessWidget {
                   ...actions,
                 ],
               )
-            : Row(
-                children: [
-                  SizedBox(
-                    width: sideWidth,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: leading,
-                    ),
-                  ),
-                  Expanded(
-                    child: _TitleText(
-                      title,
-                      compact: compactLandscape,
-                    ),
-                  ),
-                  SizedBox(
-                    width: sideWidth,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: actions,
+            : LayoutBuilder(builder: (context, constraints) {
+                // Each side gets [sideWidth] when there is room, and the
+                // title always keeps [_minTitleWidth]. On a narrow phone two
+                // 140 dp sides are wider than the bar itself; there the
+                // sides give way (the History label ellipsizes) rather than
+                // the row overflowing.
+                final side = math.min(
+                  sideWidth,
+                  math.max(0.0, (constraints.maxWidth - _minTitleWidth) / 2),
+                );
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: side,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: leading,
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    Expanded(
+                      child: _TitleText(
+                        title,
+                        compact: compactLandscape,
+                      ),
+                    ),
+                    SizedBox(
+                      width: side,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: actions,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
       ),
     );
   }

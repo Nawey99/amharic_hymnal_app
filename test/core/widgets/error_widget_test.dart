@@ -38,7 +38,8 @@ void main() {
     expect(find.text('እንደገና ይሞክሩ'), findsNothing);
   });
 
-  testWidgets('shows the retry button when a callback is given and calls it '
+  testWidgets(
+      'shows the retry button when a callback is given and calls it '
       'exactly once when tapped', (tester) async {
     var calls = 0;
     await tester.pumpWidget(wrap(

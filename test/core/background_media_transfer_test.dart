@@ -68,20 +68,40 @@ class _FakePort implements DownloaderPort {
     }
   }
 
-  @override
-  Future<(BaseDirectory, String, String)> split(String filePath) async =>
-      (BaseDirectory.root, path.dirname(filePath), path.basename(filePath));
+  /// Where each file was asked to go, by file name. A Task keeps its
+  /// directory with any leading separator stripped (on Linux `/tmp/x`
+  /// becomes `tmp/x`), so the real path is remembered rather than rebuilt.
+  final Map<String, String> _paths = {};
 
   @override
-  Future<String> filePathOf(Task task) async =>
-      path.join(task.directory, task.filename);
+  Future<(BaseDirectory, String, String)> split(String filePath) async {
+    _paths[path.basename(filePath)] = filePath;
+    return (
+      BaseDirectory.root,
+      path.dirname(filePath),
+      path.basename(filePath)
+    );
+  }
+
+  @override
+  Future<String> filePathOf(Task task) async => pathOf(task);
+
+  /// [task]'s file: as split, or rebuilt with the separator a Task strips.
+  String pathOf(Task task) {
+    final known = _paths[task.filename];
+    if (known != null) return known;
+    final directory = path.isAbsolute(task.directory)
+        ? task.directory
+        : '${path.separator}${task.directory}';
+    return path.join(directory, task.filename);
+  }
 
   void progress(DownloadTask task, double fraction) =>
       _updates.add(TaskProgressUpdate(task, fraction));
 
   /// The system finishes [task], writing [bytes] where it was told to.
   Future<void> finish(DownloadTask task, List<int> bytes) async {
-    final file = File(path.join(task.directory, task.filename));
+    final file = File(pathOf(task));
     await file.parent.create(recursive: true);
     await file.writeAsBytes(bytes);
     running.remove(task.taskId);
@@ -333,7 +353,7 @@ void main() {
 
       // The file arrives and the system forgets the task, but the app was
       // suspended and missed the update.
-      final file = File(path.join(task.directory, task.filename));
+      final file = File(port.pathOf(task));
       await file.parent.create(recursive: true);
       await file.writeAsBytes(first);
       port.running.remove(task.taskId);

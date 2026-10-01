@@ -20,14 +20,11 @@ class HagerignaParser {
         // Trim source strings so trailing whitespace in the bundled
         // JSON does not leak into search or display.
         if (name == 'song_author_text' && items != null) {
-          artistArray =
-              items.map((e) => (e?.toString() ?? '').trim()).toList();
+          artistArray = items.map((e) => (e?.toString() ?? '').trim()).toList();
         } else if (name == 'song_text' && items != null) {
-          songArray =
-              items.map((e) => (e?.toString() ?? '').trim()).toList();
+          songArray = items.map((e) => (e?.toString() ?? '').trim()).toList();
         } else if (name == 'song_title_text' && items != null) {
-          titleArray =
-              items.map((e) => (e?.toString() ?? '').trim()).toList();
+          titleArray = items.map((e) => (e?.toString() ?? '').trim()).toList();
         }
       }
     }
