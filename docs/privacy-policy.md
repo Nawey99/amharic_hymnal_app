@@ -4,7 +4,7 @@
 > <https://nawey99.github.io/amharic_hymnal_app/privacy.html>; keep the two
 > in step. The policy is in English; the app itself is in Amharic.
 
-**Effective date:** 28 September 2026
+**Effective date:** 1 October 2026
 **Publisher:** Naol Yadete Wordofa
 **Contact:** Nawey99@gmail.com
 
@@ -94,6 +94,9 @@ checksum before the app uses them.
 - **Foreground service (media playback)** and **wake lock**: to keep playing
   a hymn when the screen is off, and to keep the screen on while you read if
   you turn that setting on.
+- **Network state** and **run at start-up**: so audio and sheet-music
+  downloads you start can carry on in the background, wait for a
+  connection, and resume after the phone restarts.
 
 The app blocks screenshots of sheet music to respect the rights of its
 publishers.
@@ -107,6 +110,8 @@ someone types them in.
 ## Your choices and rights
 
 - You can use the whole app without sending a report.
+- You can stop the anonymous usage counts at any time: Settings →
+  *Share anonymous usage counts*.
 - Uninstall the app, or clear its storage, to delete everything on your phone.
 - To see, correct or delete a report you sent, email Nawey99@gmail.com with
   roughly when you sent it and what it said. We will reply within
