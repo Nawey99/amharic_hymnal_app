@@ -9,6 +9,10 @@ def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+} else {
+    // CI builds release bundles only to check they compile. Say so loudly,
+    // so an unsigned bundle is never mistaken for one that can be uploaded.
+    logger.warn("android/key.properties not found: release builds will be UNSIGNED and cannot be uploaded to Google Play.")
 }
 
 android {

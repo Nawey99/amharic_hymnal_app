@@ -61,6 +61,42 @@ jobs:
           --no-verification
           --exclude-paths=/repo/.github/trufflehog-exclude.txt
 
+  # App Store Connect only accepts builds made with Xcode 26 (since
+  # 2026-04-28) targeting iOS 13 or later (since 2026-09-09). This compiles
+  # the iOS app the way an upload would be built, minus signing, so either
+  # requirement breaking shows up here rather than on the release Mac.
+  ios-build:
+    name: Build iOS (unsigned, Xcode 26)
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Select Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then
+            echo "::error::No Xcode 26 on this runner; App Store uploads require it."
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.27.2'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build iOS release without signing
+        run: flutter build ios --release --no-codesign
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
