@@ -120,6 +120,9 @@ class LocalMediaCacheService implements MediaCache {
   final http.Client _client;
   final MediaCacheDirectoryProvider _directoryProvider;
 
+  /// The most a download may be when the content API gave no size for it.
+  static const int maxBytesWithoutSize = 200 * 1024 * 1024;
+
   LocalMediaCacheService({
     http.Client? client,
     MediaCacheDirectoryProvider? directoryProvider,
@@ -190,8 +193,18 @@ class LocalMediaCacheService implements MediaCache {
       final hasher = sha256.startChunkedConversion(digestSink);
       sink = temporary.openWrite();
       var received = 0;
+      // The promised size when there is one; otherwise a ceiling no hymn
+      // file approaches, so a response that never ends cannot fill the
+      // device.
+      final ceiling = source.sizeBytes ?? maxBytesWithoutSize;
       await for (final chunk in response.stream) {
         received += chunk.length;
+        if (received > ceiling) {
+          throw MediaIntegrityException(
+            uri,
+            'Received more than the $ceiling bytes expected.',
+          );
+        }
         sink.add(chunk);
         hasher.add(chunk);
         onProgress?.call(received, total);

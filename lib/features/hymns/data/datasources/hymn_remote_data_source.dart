@@ -46,6 +46,7 @@ class HymnRemoteDataSource {
   static const _checkTimeout = Duration(seconds: 5);
   static const _syncTimeout = Duration(seconds: 15);
   static const _syncPageSize = 500;
+  static const _maxSyncPages = 200;
   static const _syncFromStart = '1970-01-01T00:00:00.000Z';
 
   final HymnalApiClient _api;
@@ -267,8 +268,14 @@ class HymnRemoteDataSource {
     final changedPageSongIds = <String>{};
     String? cursor;
     var serverTime = since;
+    var pages = 0;
 
     do {
+      // The largest edition is two pages. A server that never stops saying
+      // "more" must not keep the app requesting for ever.
+      if (++pages > _maxSyncPages) {
+        throw const FormatException('Sync did not finish.');
+      }
       final uri = Uri.parse('$_baseUrl/sync').replace(queryParameters: {
         'language': languageCode,
         'version': code,

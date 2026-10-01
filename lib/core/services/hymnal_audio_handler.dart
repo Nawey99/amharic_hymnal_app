@@ -129,7 +129,11 @@ class HymnalAudioHandler extends BaseAudioHandler
 
   Uri _validatedUri(String source) {
     final uri = Uri.tryParse(source);
-    if (uri == null || !uri.hasScheme) {
+    // Remote audio only: a downloaded file arrives as [sourceTypeFile], so
+    // any other scheme here came from content metadata and is not played.
+    if (uri == null ||
+        !uri.hasAuthority ||
+        (uri.scheme != 'https' && uri.scheme != 'http')) {
       throw ArgumentError('Audio URL is invalid: $source');
     }
     return uri;

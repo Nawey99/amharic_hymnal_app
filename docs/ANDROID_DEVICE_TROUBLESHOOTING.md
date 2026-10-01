@@ -49,7 +49,7 @@ adb devices
 **Expected output:**
 ```
 List of devices attached
-R5CT62VNMVK    device
+<device-serial>    device
 ```
 
 **If you see "unauthorized":**
@@ -79,7 +79,7 @@ flutter devices
 **Expected output:**
 ```
 Found 1 connected device:
-  SM S9080 (mobile) • R5CT62VNMVK • android-arm64 • Android 16 (API 36)
+  SM S9080 (mobile) • <device-serial> • android-arm64 • Android 16 (API 36)
 ```
 
 **If device doesn't appear:**

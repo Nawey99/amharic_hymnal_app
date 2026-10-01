@@ -1,0 +1,35 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Flutter links the plugins of dev dependencies into every build, so
+         patrol and integration_test bring androidx.test's manifest with
+         them: three exported activities, a permission and package queries
+         that only an instrumented test run uses. Tests run against the debug
+         build; the release build drops them. -->
+    <uses-permission
+        android:name="android.permission.REORDER_TASKS"
+        tools:node="remove"/>
+
+    <queries>
+        <package
+            android:name="androidx.test.orchestrator"
+            tools:node="remove"/>
+        <package
+            android:name="androidx.test.services"
+            tools:node="remove"/>
+        <package
+            android:name="com.google.android.apps.common.testing.services"
+            tools:node="remove"/>
+    </queries>
+
+    <application>
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            tools:node="remove"/>
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+            tools:node="remove"/>
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+            tools:node="remove"/>
+    </application>
+</manifest>

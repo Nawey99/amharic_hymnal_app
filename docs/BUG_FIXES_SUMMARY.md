@@ -7,7 +7,7 @@
 #### 1. **Device Connection Issue** ✅
 - **Problem**: Device showing as "unauthorized" or "offline"
 - **Solution**: Device now properly authorized. Device appears in `flutter devices` as:
-  - `SM S9080 (mobile) • R5CT62VNMVK • android-arm64 • Android 16 (API 36)`
+  - `SM S9080 (mobile) • <device-serial> • android-arm64 • Android 16 (API 36)`
 - **Status**: ✅ **FIXED** - Device connection working
 
 #### 2. **Null Safety Issue in TransformationController** ✅
@@ -57,7 +57,7 @@
 ### Device Status
 
 ✅ **Device Connected**:
-- Device ID: `R5CT62VNMVK`
+- Device ID: `<device-serial>`
 - Device Model: SM S9080
 - Android Version: 16 (API 36)
 - Status: `device` (authorized)
