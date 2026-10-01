@@ -9,6 +9,7 @@ import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/features/settings/presentation/pages/report_bug_page.dart';
 
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_swipe_route.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
@@ -427,14 +428,21 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     return _loadHymnByNumber(nextNumber).then((hymn) {
       if (!mounted) return;
       if (hymn == null) {
-        _showComingSoonMessage('መዝሙር ቁጥር $nextNumber አልተገኘም');
+        _showComingSoonMessage(
+          AppLocalizations.of(context)?.hymnNotFoundNumber(nextNumber) ??
+              'መዝሙር ቁጥር $nextNumber አልተገኘም',
+        );
         return;
       }
       widget.onHymnChanged?.call(hymn);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => HymnDetailPage(
+        hymnSwipeRoute(
+          // Swiping left goes on through the book; swiping right goes
+          // back. The page has to come from the side the hand came from,
+          // or turning back looks exactly like turning on.
+          forward: nextNumber > currentNumber,
+          page: HymnDetailPage(
             hymn: hymn,
             sourceDestination: widget.sourceDestination,
             onDestinationSelected: widget.onDestinationSelected,
