@@ -6,6 +6,11 @@
 //   patrol test --target integration_test/native/native_flows_test.dart
 //
 // See docs/test-plan.md → "Where each test runs".
+//
+// Patrol 4 deprecates `$.native` in favour of `$.platform`, whose selectors
+// differ. These flows are run by hand on a phone and pass as written, so
+// they move to the new API together with a device run, not in a package bump.
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
