@@ -17,12 +17,17 @@ class HagerignaParser {
         final name = array['_name'] as String?;
         final items = array['item'] as List<dynamic>?;
 
+        // Trim source strings so trailing whitespace in the bundled
+        // JSON does not leak into search or display.
         if (name == 'song_author_text' && items != null) {
-          artistArray = items.map((e) => e?.toString() ?? '').toList();
+          artistArray =
+              items.map((e) => (e?.toString() ?? '').trim()).toList();
         } else if (name == 'song_text' && items != null) {
-          songArray = items.map((e) => e?.toString() ?? '').toList();
+          songArray =
+              items.map((e) => (e?.toString() ?? '').trim()).toList();
         } else if (name == 'song_title_text' && items != null) {
-          titleArray = items.map((e) => e?.toString() ?? '').toList();
+          titleArray =
+              items.map((e) => (e?.toString() ?? '').trim()).toList();
         }
       }
     }
