@@ -305,7 +305,7 @@ Before committing:
 - **Documentation**: Check `docs/` directory
 - **Code Comments**: Review inline documentation
 - **Tests**: See `test/` for usage examples
-- **PR Summary**: See `PR_SUMMARY.md` for recent changes
+- **Recent changes**: `git log`; release steps in `docs/RELEASE.md`
 
 ## Important Notes
 
