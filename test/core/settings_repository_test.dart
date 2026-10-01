@@ -42,7 +42,7 @@ void main() {
 
     test('onboarding not yet done and no favorites', () {
       expect(repository.isOnboardingCompleted(), isFalse);
-      expect(repository.getFavoriteHymns(), isEmpty);
+      expect(repository.getFavoriteSongIds(), isEmpty);
     });
   });
 
@@ -120,57 +120,47 @@ void main() {
   group('favorites', () {
     setUp(() => start());
 
-    test('toggle on and off in the selected book', () async {
-      await repository.setSelectedVersion(HymnalVersions.sdaNew);
+    test('toggle on and off by song ID', () async {
+      await repository.toggleFavoriteSong('am-sda-2004-0012');
+      expect(repository.isFavoriteSong('am-sda-2004-0012'), isTrue);
+      expect(repository.getFavoriteSongIds(), ['am-sda-2004-0012']);
 
-      await repository.toggleFavorite(12);
-      expect(repository.isFavorite(12), isTrue);
-      expect(repository.getFavoriteHymns(), [12]);
-
-      await repository.toggleFavorite(12);
-      expect(repository.isFavorite(12), isFalse);
-      expect(repository.getFavoriteHymns(), isEmpty);
+      await repository.toggleFavoriteSong('am-sda-2004-0012');
+      expect(repository.isFavoriteSong('am-sda-2004-0012'), isFalse);
+      expect(repository.getFavoriteSongIds(), isEmpty);
     });
 
-    test('are kept separately for each book', () async {
+    test('the same number in two books is two songs', () async {
+      await repository.toggleFavoriteSong('am-sda-2004-0005');
+      await repository.toggleFavoriteSong('am-hagerigna-0007');
+
+      expect(repository.isFavoriteSong('am-hagerigna-0005'), isFalse);
+      expect(repository.getFavoriteSongIds(),
+          ['am-hagerigna-0007', 'am-sda-2004-0005']);
+    });
+
+    test('do not depend on the selected book', () async {
       await repository.setSelectedVersion(HymnalVersions.sdaNew);
-      await repository.toggleFavorite(5);
+      await repository.toggleFavoriteSong('am-sda-1975-0009');
       await repository.setSelectedVersion(HymnalVersions.hagerigna);
-      await repository.toggleFavorite(7);
 
-      expect(repository.getFavoriteHymns(), [7]);
-      expect(repository.isFavorite(5), isFalse);
-      expect(repository.isFavorite(5, version: HymnalVersions.sdaNew), isTrue);
-
-      await repository.setSelectedVersion(HymnalVersions.sdaNew);
-      expect(repository.getFavoriteHymns(), [5]);
-    });
-
-    test('can be toggled for a book other than the selected one', () async {
-      await repository.setSelectedVersion(HymnalVersions.sdaNew);
-      await repository.toggleFavorite(9, version: HymnalVersions.sdaOld);
-
-      expect(repository.isFavorite(9), isFalse);
-      expect(repository.isFavorite(9, version: HymnalVersions.sdaOld), isTrue);
-      expect(repository.getFavoriteHymnKeys(), contains('sda_old:9'));
+      expect(repository.isFavoriteSong('am-sda-1975-0009'), isTrue);
     });
 
     test('survive a restart', () async {
-      await repository.toggleFavorite(3);
+      await repository.toggleFavoriteSong('am-sda-2004-0003');
       await restart();
-      expect(repository.isFavorite(3), isTrue);
+      expect(repository.isFavoriteSong('am-sda-2004-0003'), isTrue);
     });
 
-    test('setting the list replaces only the selected book', () async {
-      await repository.setSelectedVersion(HymnalVersions.hagerigna);
-      await repository.toggleFavorite(1);
-      await repository.setSelectedVersion(HymnalVersions.sdaNew);
+    test('setting the list replaces it, dropping anything malformed', () async {
+      await repository.toggleFavoriteSong('am-sda-2004-0001');
 
-      await repository.setFavoriteHymns([2, 4]);
+      await repository.setFavoriteSongIds(
+          ['am-sda-2004-0002', 'am-sda-2004-0004', ' not an id ']);
 
-      expect(repository.getFavoriteHymns()..sort(), [2, 4]);
-      expect(
-          repository.isFavorite(1, version: HymnalVersions.hagerigna), isTrue);
+      expect(repository.getFavoriteSongIds(),
+          ['am-sda-2004-0002', 'am-sda-2004-0004']);
     });
   });
 }

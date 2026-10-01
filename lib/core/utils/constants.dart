@@ -9,7 +9,10 @@ class AppConstants {
   static const String keyKeepScreenOn = 'keep_screen_on';
   static const String keyBackgroundImageEnabled = 'background_image_enabled';
   static const String keyFavoriteHymns = 'favorite_hymns';
+  // The two older favourite formats, read once to migrate them.
   static const String keyFavoriteHymnsVersioned = 'favorite_hymns_by_version';
+  static const String keyFavoriteSongIds = 'favorite_song_ids';
+  static const String keyUnfinishedDownloads = 'unfinished_downloads';
   static const String keyHistory = 'hymn_history';
   static const String keyOnboardingCompleted = 'onboarding_completed';
   static const String keyMediaKeptOffline = 'media_kept_offline';

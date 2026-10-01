@@ -23,7 +23,7 @@ void main() {
     });
 
     setUp(() async {
-      await di.sl<SettingsRepository>().setFavoriteHymns([]);
+      await di.sl<SettingsRepository>().setFavoriteSongIds(const []);
       hymnsBloc = di.sl<HymnsBloc>();
     });
 
@@ -70,7 +70,7 @@ void main() {
 
     testWidgets('Favorite button has proper accessibility',
         (WidgetTester tester) async {
-      await di.sl<SettingsRepository>().setFavoriteHymns([2]);
+      await di.sl<SettingsRepository>().setFavoriteSongIds(const ['test-2']);
 
       final testHymn = const Hymn(
         id: 'test-2',

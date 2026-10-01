@@ -68,12 +68,13 @@ class ChangeSort extends HymnsEvent {
 }
 
 class ToggleFavorite extends HymnsEvent {
-  final int hymnNumber;
+  /// The song's ID, e.g. `am-sda-2004-0132`; it names the edition too.
+  final String songId;
 
-  ToggleFavorite(this.hymnNumber);
+  ToggleFavorite(this.songId);
 
   @override
-  List<Object> get props => [hymnNumber];
+  List<Object> get props => [songId];
 }
 
 class GetHymnByNumberEvent extends HymnsEvent {

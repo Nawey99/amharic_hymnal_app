@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/empty_state_widget.dart';
@@ -159,7 +160,7 @@ class _CategoryHymnsPageState extends State<CategoryHymnsPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: Text(
-                      state.message,
+                      hymnsErrorText(context, state),
                       style: TextStyle(
                         color: context.appColors.primaryText,
                         fontSize: 16,

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:amharic_hymnal_app/core/config/content_api_config.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
+import 'package:amharic_hymnal_app/core/services/settings_service.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 
 /// Where a hymn was opened from, as the analytics API names it.
@@ -19,12 +20,17 @@ enum HymnOpenSource { catalog, search, favorites }
 ///
 /// Debug builds send nothing unless built with
 /// `--dart-define=WUDASE_ANALYTICS=true`, so development and tests do not
-/// count as use.
+/// count as use. The reader can turn it off in Settings.
 class AnalyticsService {
-  AnalyticsService({http.Client? client, String? baseUrl, bool? enabled})
-      : _client = client,
+  AnalyticsService({
+    http.Client? client,
+    String? baseUrl,
+    bool? enabled,
+    bool Function()? isAllowed,
+  })  : _client = client,
         _baseUrl = baseUrl,
-        _enabled = enabled ?? (!kDebugMode || _enabledInDebug);
+        _enabled = enabled ?? (!kDebugMode || _enabledInDebug),
+        _isAllowed = isAllowed ?? SettingsService.isDataCollectionEnabled;
 
   static final AnalyticsService instance = AnalyticsService();
 
@@ -34,13 +40,16 @@ class AnalyticsService {
   final String? _baseUrl;
   final bool _enabled;
 
+  /// The reader's choice in Settings, asked at the moment of sending.
+  final bool Function() _isAllowed;
+
   /// The user opened [hymn] in [version]. Only hymns from the API have an
   /// ID the server knows; bundled hymns are not counted.
   /// Callers need not await it; the Future is for tests.
   Future<void> hymnOpened(Hymn hymn, String version, HymnOpenSource source) {
     final code = HymnalVersions.apiCode(version);
     final songId = hymn.id;
-    if (songId == null || !songId.startsWith('$code-')) {
+    if (hymn.isBundled || songId == null || !songId.startsWith('$code-')) {
       return Future.value();
     }
     return _send(code, {
@@ -60,7 +69,7 @@ class AnalyticsService {
   }
 
   Future<void> _send(String code, Map<String, Object?> event) {
-    if (!_enabled) return Future.value();
+    if (!_enabled || !_isAllowed()) return Future.value();
     return _post(code, event);
   }
 

@@ -26,12 +26,11 @@ abstract class SettingsRepository {
   bool getBackgroundImageEnabled();
   Future<bool> setBackgroundImageEnabled(bool value);
 
-  // Favorites
-  List<int> getFavoriteHymns();
-  List<String> getFavoriteHymnKeys();
-  Future<bool> setFavoriteHymns(List<int> hymnNumbers);
-  Future<bool> toggleFavorite(int hymnNumber, {String? version});
-  bool isFavorite(int hymnNumber, {String? version});
+  // Favourites, by song ID (`am-sda-2004-0132`): the ID names the edition.
+  List<String> getFavoriteSongIds();
+  Future<bool> setFavoriteSongIds(Iterable<String> songIds);
+  Future<bool> toggleFavoriteSong(String songId);
+  bool isFavoriteSong(String songId);
 
   // Onboarding
   bool isOnboardingCompleted();
@@ -48,6 +47,19 @@ abstract class SettingsRepository {
   // A whole edition's sheet music or audio kept on the phone
   bool isMediaKeptOffline(String version, String mediaType);
   Future<bool> setMediaKeptOffline(
+    String version,
+    String mediaType,
+    bool value,
+  );
+
+  /// Whether anonymous usage counts may be sent.
+  bool isDataCollectionEnabled();
+  Future<bool> setDataCollectionEnabled(bool value);
+
+  /// Whole-edition downloads started and not yet ended: (version, media
+  /// type). One still listed at start-up was cut off by the app closing.
+  List<(String, String)> getUnfinishedDownloads();
+  Future<bool> setDownloadUnfinished(
     String version,
     String mediaType,
     bool value,

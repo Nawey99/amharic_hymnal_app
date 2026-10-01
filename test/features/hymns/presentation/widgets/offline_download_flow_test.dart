@@ -49,7 +49,10 @@ List<Hymn> _syncedHymns() => [
       _hymn(3),
     ];
 
-const _bundledHymns = [Hymn(id: 'sda_new-sda-1', number: 1)];
+// Bundled hymns carry the API's IDs too; only the flag tells them apart.
+const _bundledHymns = [
+  Hymn(id: 'am-sda-2004-0001', number: 1, isBundled: true),
+];
 
 SettingsRepository get _settings => di.sl<SettingsRepository>();
 
@@ -142,6 +145,8 @@ void main() {
       );
       expect(_settings.isOfflineDownloadOfferPending(), isFalse);
       expect(_settings.isMediaKeptOffline('sda_new', MediaType.audio), isTrue);
+      // Both ended, so neither is carried on at the next start-up.
+      expect(_settings.getUnfinishedDownloads(), isEmpty);
       expect(
         _settings.isMediaKeptOffline('sda_new', MediaType.sheetMusic),
         isTrue,
@@ -251,6 +256,25 @@ void main() {
 
       expect(cache.stored.keys, containsAll(['a' * 64, 'b' * 64]));
       expect(find.text('ሁሉም ድምፆች ወርደዋል።'), findsOneWidget);
+    });
+
+    testWidgets('a phone without room says so instead of starting',
+        (tester) async {
+      // 4 MB of audio, 10 MB free: the 50 MB kept spare does not fit.
+      cache.free = 10 * 1024 * 1024;
+      await run(tester, MediaType.audio);
+
+      expect(find.text('ሁሉም ድምፆች ይውረዱ?'), findsNothing);
+      expect(find.textContaining('በቂ ቦታ የለም'), findsOneWidget);
+      expect(cache.stored, isEmpty);
+      expect(controller.isActive(MediaType.audio), isFalse);
+    });
+
+    testWidgets('a phone with room is asked as before', (tester) async {
+      cache.free = 2 * 1024 * 1024 * 1024;
+      await run(tester, MediaType.audio);
+
+      expect(find.text('ሁሉም ድምፆች ይውረዱ?'), findsOneWidget);
     });
 
     testWidgets('after a sync, only what changed is offered', (tester) async {

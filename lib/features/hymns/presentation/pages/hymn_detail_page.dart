@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
@@ -83,7 +84,9 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   List<int>? _lyricsPinchPointerIds;
   double _lyricsPinchStartDistance = 0;
   bool _isLyricsPinching = false;
-  final Map<int, bool> _favoriteOverrides = {};
+
+  /// Favourite state shown before the bloc confirms it, by song ID.
+  final Map<String, bool> _favoriteOverrides = {};
   final ScrollController _lyricsScrollController = ScrollController();
   bool _isMediaCondensed = false;
 
@@ -120,16 +123,13 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
     // Initialize history service if needed
     await HistoryService.init();
 
-    // Track the hymn if we have a hymn or hymn number
+    // Track the hymn by its song ID, which names its book.
+    final version = _getVersion();
     if (widget.hymn != null) {
-      await HistoryService.addToHistory(
-        widget.hymn!.displayNumber,
-        version: _getVersion(),
-      );
+      await HistoryService.addToHistory(widget.hymn!.songIdIn(version));
     } else if (widget.hymnNumber != null) {
       await HistoryService.addToHistory(
-        widget.hymnNumber!,
-        version: _getVersion(),
+        HymnalVersions.songId(version, widget.hymnNumber!),
       );
     }
   }
@@ -262,9 +262,10 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
   Widget _buildDetailView(BuildContext context, Hymn hymn) {
     _syncDisplayedHymn(hymn);
     final settingsRepository = sl<SettingsRepository>();
-    final isFavorite = _favoriteOverrides[hymn.displayNumber] ??
-        settingsRepository.isFavorite(hymn.displayNumber);
     final version = _getVersion();
+    final songId = hymn.songIdIn(version);
+    final isFavorite =
+        _favoriteOverrides[songId] ?? settingsRepository.isFavoriteSong(songId);
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
@@ -293,33 +294,44 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         _isHorizontalDrag = false;
       },
       behavior: HitTestBehavior.translucent,
-      child: Stack(
-        children: [
-          _buildBackground(),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            extendBody: true,
-            appBar: _buildAppBar(hymn, isFavorite),
-            resizeToAvoidBottomInset: false,
-            bottomNavigationBar: _buildLyricsBottomNavigation(version),
-            body: BlocListener<HymnsBloc, HymnsState>(
-              listener: (context, state) {
-                // Update UI when favorite status changes
-                if (mounted) {
-                  setState(() {});
-                }
-              },
-              child: ListenableBuilder(
-                listenable: FontSizeService(),
-                builder: (context, _) {
-                  // Get font size reactively - updates in real-time
-                  final fontSize = FontSizeService().getFontSize();
-                  return _buildBody(hymn, fontSize);
+      child: Semantics(
+        customSemanticsActions: {
+          CustomSemanticsAction(
+            label: AppLocalizations.of(context)?.hymnNext ?? 'ቀጣይ መዝሙር',
+          ): () => _goToAdjacentHymn(hymn.displayNumber, forward: true),
+          if (hymn.displayNumber > 1)
+            CustomSemanticsAction(
+              label: AppLocalizations.of(context)?.hymnPrevious ?? 'ያለፈው መዝሙር',
+            ): () => _goToAdjacentHymn(hymn.displayNumber, forward: false),
+        },
+        child: Stack(
+          children: [
+            _buildBackground(),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBody: true,
+              appBar: _buildAppBar(hymn, isFavorite),
+              resizeToAvoidBottomInset: false,
+              bottomNavigationBar: _buildLyricsBottomNavigation(version),
+              body: BlocListener<HymnsBloc, HymnsState>(
+                listener: (context, state) {
+                  // Update UI when favorite status changes
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
+                child: ListenableBuilder(
+                  listenable: FontSizeService(),
+                  builder: (context, _) {
+                    // Get font size reactively - updates in real-time
+                    final fontSize = FontSizeService().getFontSize();
+                    return _buildBody(hymn, fontSize);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -417,11 +429,18 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
       return Future.value();
     }
 
-    final nextNumber = switch (details.primaryVelocity!) {
-      < 0 => currentNumber + 1,
-      > 0 when currentNumber > 1 => currentNumber - 1,
-      _ => null,
-    };
+    final velocity = details.primaryVelocity!;
+    if (velocity == 0) return Future.value();
+    return _goToAdjacentHymn(currentNumber, forward: velocity < 0);
+  }
+
+  /// Opens the hymn after (or before) [currentNumber]. Swiping does this,
+  /// and so do the screen reader's actions, for anyone who cannot swipe.
+  Future<void> _goToAdjacentHymn(int currentNumber, {required bool forward}) {
+    if (!mounted || _isLoadingAdjacentHymn) return Future.value();
+    final nextNumber = forward
+        ? currentNumber + 1
+        : (currentNumber > 1 ? currentNumber - 1 : null);
     if (nextNumber == null) return Future.value();
 
     _isLoadingAdjacentHymn = true;
@@ -560,10 +579,12 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
           : (AppLocalizations.of(context)?.hymnAddFavorite ?? 'ወደ ተወዳጅ ጨምር'),
       onPressed: () {
         setState(() {
-          _favoriteOverrides[hymn.displayNumber] = !isFavorite;
+          _favoriteOverrides[hymn.songIdIn(_getVersion())] = !isFavorite;
         });
         // Dispatch the toggle event - UI updates instantly via BLoC
-        context.read<HymnsBloc>().add(ToggleFavorite(hymn.displayNumber));
+        context
+            .read<HymnsBloc>()
+            .add(ToggleFavorite(hymn.songIdIn(_getVersion())));
       },
     );
   }

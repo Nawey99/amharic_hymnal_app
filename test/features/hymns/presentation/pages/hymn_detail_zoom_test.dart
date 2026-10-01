@@ -22,7 +22,7 @@ void main() {
   });
 
   setUp(() async {
-    await di.sl<SettingsRepository>().setFavoriteHymns([]);
+    await di.sl<SettingsRepository>().setFavoriteSongIds(const []);
     await FontSizeService().setFontSize(20);
     hymnsBloc = di.sl<HymnsBloc>();
   });

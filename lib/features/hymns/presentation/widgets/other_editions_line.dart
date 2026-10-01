@@ -40,7 +40,7 @@ class _OtherEditionsLineState extends State<OtherEditionsLine> {
   void _load() {
     final id = widget.hymn.id;
     // Only API songs (`am-sda-2004-0132`) have other editions to look up.
-    _links = id != null && id.startsWith('am-')
+    _links = id != null && id.startsWith('am-') && !widget.hymn.isBundled
         ? (widget.service ?? SongEditionsService.instance)
             .links(id)
             .catchError((Object _) => const SongEditionLinks())

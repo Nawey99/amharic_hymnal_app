@@ -98,6 +98,25 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     }
     if (widget.loadInitialData) {
       _loadInitialData();
+      // Downloads may have carried on, or finished, while the app was
+      // closed: put finished files away and follow the rest.
+      final settings = sl<SettingsRepository>();
+      unawaited(OfflineDownloadController.instance.resumeRunningDownloads(
+        unfinished: settings.getUnfinishedDownloads(),
+        // Only a synced copy describes the media; with just the bundled
+        // one, wait (the entry stays) rather than plan from nothing.
+        loadHymns: (version) async {
+          final hymns = await loadEditionHymns(version);
+          if (!hymnsAreFromServer(hymns, version)) {
+            throw StateError('$version has not been synced yet');
+          }
+          return hymns;
+        },
+        onEnded: (version, mediaType) =>
+            settings.setDownloadUnfinished(version, mediaType, false),
+        onStopped: (version, mediaType) =>
+            settings.setMediaKeptOffline(version, mediaType, false),
+      ));
     }
   }
 
@@ -125,6 +144,12 @@ class _MainNavigationPageState extends State<MainNavigationPage>
     unawaited(sl<HymnalVersionService>().refresh());
     final settingsRepository = sl<SettingsRepository>();
     final currentState = context.read<HymnsBloc>().state;
+    // Search results are on screen: refreshing would swap them for the
+    // whole list while the query is still in the box. The next ordinary
+    // load picks up whatever changed.
+    if (currentState is HymnsLoaded && currentState.sortType == 'search') {
+      return;
+    }
     final languageCode = currentState is HymnsLoaded
         ? currentState.languageCode
         : settingsRepository.getSelectedLanguage();

@@ -58,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
   double _fontSize = 20.0;
   bool _backgroundImageEnabled = true;
   bool _keepScreenOn = false;
+  bool _shareUsage = true;
   bool _scrolledUnderTitle = false;
   bool _contributionUnlocked =
       sl<SettingsRepository>().isContributionUnlocked();
@@ -121,6 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
         _backgroundImageEnabled =
             settingsRepository.getBackgroundImageEnabled();
         _keepScreenOn = settingsRepository.getKeepScreenOn();
+        _shareUsage = settingsRepository.isDataCollectionEnabled();
       });
     }
   }
@@ -413,6 +415,22 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SizedBox(height: itemGap),
                       ],
+                      SettingsSwitchTile(
+                        key: const ValueKey('share-usage-tile'),
+                        title: AppLocalizations.of(context)?.shareUsageLabel ??
+                            'ስም-አልባ የአጠቃቀም ቆጠራ ያጋሩ',
+                        description: AppLocalizations.of(context)
+                                ?.shareUsageDescription ??
+                            'የትኞቹ መዝሙሮችና ምድቦች እንደሚከፈቱ ብቻ፤ እርስዎን '
+                                'የሚለይ ምንም መረጃ የለውም',
+                        value: _shareUsage,
+                        onChanged: (value) async {
+                          await sl<SettingsRepository>()
+                              .setDataCollectionEnabled(value);
+                          if (mounted) setState(() => _shareUsage = value);
+                        },
+                      ),
+                      SizedBox(height: itemGap),
                       SettingsTile(
                         key: const ValueKey('privacy-tile'),
                         icon: Icons.privacy_tip_outlined,

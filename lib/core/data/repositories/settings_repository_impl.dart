@@ -80,29 +80,18 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
-  List<int> getFavoriteHymns() {
-    return SettingsService.getFavoriteHymns();
-  }
+  List<String> getFavoriteSongIds() => SettingsService.getFavoriteSongIds();
 
   @override
-  List<String> getFavoriteHymnKeys() {
-    return SettingsService.getFavoriteHymnKeys();
-  }
+  Future<bool> setFavoriteSongIds(Iterable<String> songIds) =>
+      SettingsService.setFavoriteSongIds(songIds);
 
   @override
-  Future<bool> setFavoriteHymns(List<int> hymnNumbers) async {
-    return await SettingsService.setFavoriteHymns(hymnNumbers);
-  }
+  Future<bool> toggleFavoriteSong(String songId) =>
+      SettingsService.toggleFavoriteSong(songId);
 
   @override
-  Future<bool> toggleFavorite(int hymnNumber, {String? version}) async {
-    return await SettingsService.toggleFavorite(hymnNumber, version: version);
-  }
-
-  @override
-  bool isFavorite(int hymnNumber, {String? version}) {
-    return SettingsService.isFavorite(hymnNumber, version: version);
-  }
+  bool isFavoriteSong(String songId) => SettingsService.isFavoriteSong(songId);
 
   @override
   bool isOnboardingCompleted() {
@@ -147,4 +136,23 @@ class SettingsRepositoryImpl implements SettingsRepository {
   ) async {
     return await SettingsService.setMediaKeptOffline(version, mediaType, value);
   }
+
+  @override
+  bool isDataCollectionEnabled() => SettingsService.isDataCollectionEnabled();
+
+  @override
+  Future<bool> setDataCollectionEnabled(bool value) =>
+      SettingsService.setDataCollectionEnabled(value);
+
+  @override
+  List<(String, String)> getUnfinishedDownloads() =>
+      SettingsService.getUnfinishedDownloads();
+
+  @override
+  Future<bool> setDownloadUnfinished(
+    String version,
+    String mediaType,
+    bool value,
+  ) =>
+      SettingsService.setDownloadUnfinished(version, mediaType, value);
 }

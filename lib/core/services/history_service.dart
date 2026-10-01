@@ -5,39 +5,50 @@ import 'package:flutter/foundation.dart';
 import 'package:amharic_hymnal_app/core/utils/constants.dart';
 import 'package:amharic_hymnal_app/core/models/hymnal_version.dart';
 
+/// One opened hymn, by song ID (`am-sda-2004-0132`). The ID names the
+/// edition and survives the hymn being renumbered.
 class HistoryEntry {
-  final String version;
-  final int hymnNumber;
+  final String songId;
 
-  const HistoryEntry({
-    required this.version,
-    required this.hymnNumber,
-  });
+  const HistoryEntry(this.songId);
 
-  String get storageValue => '$version:$hymnNumber';
+  String get storageValue => songId;
 
+  /// The number in the song ID, i.e. the hymn's number when it was created.
+  /// Screens should show the number of the hymn they find for [songId].
+  int get hymnNumber => int.tryParse(songId.split('-').last) ?? 0;
+
+  static final RegExp _songId = RegExp(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$');
+  static final RegExp _versioned = RegExp(r'^([a-z0-9_]+):(\d+)$');
+
+  /// Reads a stored value. Older versions stored `sda_new:132`, and before
+  /// that only the number, which belonged to the 2004 book; both are read as
+  /// the song IDs those numbers were created under.
   static HistoryEntry? parse(String value) {
-    final parts = value.split(':');
-    if (parts.length == 2) {
-      final number = int.tryParse(parts[1]);
-      if (number != null && number > 0) {
-        return HistoryEntry(
-          version: HymnalVersions.normalizeId(parts[0]),
-          hymnNumber: number,
-        );
-      }
+    final versioned = _versioned.firstMatch(value);
+    if (versioned != null) {
+      final number = int.tryParse(versioned.group(2)!);
+      if (number == null || number <= 0) return null;
+      return HistoryEntry(HymnalVersions.songId(versioned.group(1)!, number));
     }
 
     final legacyNumber = int.tryParse(value);
-    if (legacyNumber != null && legacyNumber > 0) {
-      return HistoryEntry(
-        version: HymnalVersions.sdaNew,
-        hymnNumber: legacyNumber,
-      );
+    if (legacyNumber != null) {
+      return legacyNumber > 0
+          ? HistoryEntry(
+              HymnalVersions.songId(HymnalVersions.sdaNew, legacyNumber))
+          : null;
     }
 
-    return null;
+    return _songId.hasMatch(value) ? HistoryEntry(value) : null;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is HistoryEntry && other.songId == songId;
+
+  @override
+  int get hashCode => songId.hashCode;
 }
 
 class HistoryService {
@@ -45,16 +56,23 @@ class HistoryService {
   static const int maxHistorySize = 20;
 
   static Future<void> init() async {
-    _prefs ??= await SharedPreferences.getInstance();
+    if (_prefs != null) return;
+    _prefs = await SharedPreferences.getInstance();
+    await _rewriteOlderEntries();
   }
 
-  /// Get list of recently viewed hymn numbers (most recent first)
-  static List<int> getHistory() {
-    return getHistoryEntries()
-        .map((entry) => entry.hymnNumber)
-        .toList(growable: false);
+  /// Stores entries written by an older version as song IDs, once.
+  static Future<void> _rewriteOlderEntries() async {
+    final stored = _prefs?.getStringList(AppConstants.keyHistory);
+    if (stored == null) return;
+    final entries = getHistoryEntries();
+    final values = entries.map((entry) => entry.storageValue).toList();
+    if (!listEquals(stored, values)) {
+      await _prefs?.setStringList(AppConstants.keyHistory, values);
+    }
   }
 
+  /// Recently opened hymns, most recent first.
   static List<HistoryEntry> getHistoryEntries() {
     final history = _prefs?.getStringList(AppConstants.keyHistory);
     if (history == null) return [];
@@ -63,42 +81,27 @@ class HistoryService {
     for (final item in history) {
       final entry = HistoryEntry.parse(item);
       if (entry == null) continue;
-      if (seen.add(entry.storageValue)) {
-        entries.add(entry);
-      }
+      if (seen.add(entry.songId)) entries.add(entry);
     }
     return entries;
   }
 
-  /// Add a hymn to history (most recent first)
-  static Future<bool> addToHistory(
-    int hymnNumber, {
-    String version = HymnalVersions.sdaNew,
-  }) async {
-    if (hymnNumber <= 0) return false;
+  /// Puts [songId] at the top of the history.
+  static Future<bool> addToHistory(String songId) async {
+    final entry = HistoryEntry.parse(songId);
+    if (entry == null) return false;
 
-    final entry = HistoryEntry(
-      version: HymnalVersions.normalizeId(version),
-      hymnNumber: hymnNumber,
-    );
-    final history = getHistoryEntries();
-
-    // Remove if already exists (to move to top)
-    history.removeWhere((item) => item.storageValue == entry.storageValue);
-
-    // Add to beginning
-    history.insert(0, entry);
-
-    // Limit to max size
+    final history = getHistoryEntries()
+      ..removeWhere((item) => item.songId == entry.songId)
+      ..insert(0, entry);
     if (history.length > maxHistorySize) {
       history.removeRange(maxHistorySize, history.length);
     }
 
-    // Save back to SharedPreferences
-    final List<String> historyStrings =
-        history.map((e) => e.storageValue).toList();
     return await _prefs?.setStringList(
-            AppConstants.keyHistory, historyStrings) ??
+          AppConstants.keyHistory,
+          history.map((e) => e.storageValue).toList(),
+        ) ??
         false;
   }
 
@@ -107,24 +110,14 @@ class HistoryService {
     return await _prefs?.remove(AppConstants.keyHistory) ?? false;
   }
 
-  /// Remove a specific hymn from history
-  static Future<bool> removeFromHistory(
-    int hymnNumber, {
-    String? version,
-  }) async {
-    final history = getHistoryEntries();
-    final normalizedVersion =
-        version == null ? null : HymnalVersions.normalizeId(version);
-    history.removeWhere(
-      (item) =>
-          item.hymnNumber == hymnNumber &&
-          (normalizedVersion == null || item.version == normalizedVersion),
-    );
-
-    final List<String> historyStrings =
-        history.map((e) => e.storageValue).toList();
+  /// Removes [songId] from the history.
+  static Future<bool> removeFromHistory(String songId) async {
+    final history = getHistoryEntries()
+      ..removeWhere((item) => item.songId == songId);
     return await _prefs?.setStringList(
-            AppConstants.keyHistory, historyStrings) ??
+          AppConstants.keyHistory,
+          history.map((e) => e.storageValue).toList(),
+        ) ??
         false;
   }
 

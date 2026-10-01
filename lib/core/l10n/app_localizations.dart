@@ -1437,6 +1437,78 @@ class AppLocalizations {
         'am': 'መዝሙር $number ($title)\n\n$description',
       });
 
+  // Why the hymns could not be shown.
+  String get errorHymnsLoadFailed => _localizedValue({
+        'en': 'Hymns could not be loaded. Please try again.',
+        'am': 'መዝሙሮቹን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
+      });
+
+  String get errorNeedsConnection => _localizedValue({
+        'en': 'This hymnal needs an internet connection the first time it is '
+            'opened. Please connect and try again.',
+        'am': 'ይህ የመዝሙር ስብስብ ለመጀመሪያ ጊዜ ሲከፈት የኢንተርኔት ግንኙነት '
+            'ያስፈልገዋል። እባክዎ ይገናኙና እንደገና ይሞክሩ።',
+      });
+
+  String get errorEditionUnavailable => _localizedValue({
+        'en': 'This hymnal is no longer available. Please choose another one '
+            'in Settings.',
+        'am': 'ይህ የመዝሙር ስብስብ ከአሁን በኋላ አይገኝም። እባክዎ በቅንብሮች ውስጥ '
+            'ሌላ ይምረጡ።',
+      });
+
+  String get errorSearchFailed => _localizedValue({
+        'en': 'Search failed. Please try again.',
+        'am': 'ፍለጋው አልተሳካም። እባክዎ እንደገና ይሞክሩ።',
+      });
+
+  String errorHymnLookupFailed(int number) => _localizedValue({
+        'en': 'Hymn $number could not be opened. Please try again.',
+        'am': 'መዝሙር ቁጥር $number መክፈት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
+      });
+
+  // Moving between hymns without swiping, for screen readers.
+  String get hymnNext => _localizedValue({
+        'en': 'Next hymn',
+        'am': 'ቀጣይ መዝሙር',
+      });
+
+  String get hymnPrevious => _localizedValue({
+        'en': 'Previous hymn',
+        'am': 'ያለፈው መዝሙር',
+      });
+
+  // Anonymous usage counts.
+  String get shareUsageLabel => _localizedValue({
+        'en': 'Share anonymous usage counts',
+        'am': 'ስም-አልባ የአጠቃቀም ቆጠራ ያጋሩ',
+      });
+
+  String get shareUsageDescription => _localizedValue({
+        'en': 'Which hymns and categories are opened, with nothing that '
+            'identifies you',
+        'am': 'የትኞቹ መዝሙሮችና ምድቦች እንደሚከፈቱ ብቻ፤ እርስዎን የሚለይ '
+            'ምንም መረጃ የለውም',
+      });
+
+  String downloadNotEnoughSpace(String needed, String free) => _localizedValue({
+        'en': 'Not enough free space: this needs $needed and the phone has '
+            '$free free.',
+        'am': 'በቂ ቦታ የለም፦ $needed ያስፈልጋል፤ ስልኩ ላይ ያለው ነጻ ቦታ $free '
+            'ብቻ ነው።',
+      });
+
+  // The audio notification's channel, as named in the phone's settings.
+  String get audioChannelName => _localizedValue({
+        'en': 'Hymn playback',
+        'am': 'የመዝሙር ማጫወቻ',
+      });
+
+  String get audioChannelDescription => _localizedValue({
+        'en': 'Controls for the hymn that is playing',
+        'am': 'እየተጫወተ ያለውን መዝሙር መቆጣጠሪያ',
+      });
+
   String _localizedValue(Map<String, String> values) {
     final langCode = locale.languageCode;
     return values[langCode] ?? values['en'] ?? '';

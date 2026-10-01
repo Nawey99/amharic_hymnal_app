@@ -16,6 +16,7 @@ import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
 import 'package:amharic_hymnal_app/features/hymns/domain/entities/hymn.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/hymn_open_callback.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/widgets/hymn_list_item.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/pages/hymn_detail_page.dart';
@@ -413,7 +414,7 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
           );
         }
         if (state is HymnsError) {
-          return _buildErrorMessage(state.message);
+          return _buildErrorMessage(hymnsErrorText(context, state));
         }
         if (state is HymnsLoaded) {
           if (state.hymns.isEmpty) {

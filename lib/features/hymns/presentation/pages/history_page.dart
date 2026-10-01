@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/widgets/app_background.dart';
 import 'package:amharic_hymnal_app/features/hymns/presentation/bloc/hymns_bloc.dart';
+import 'package:amharic_hymnal_app/features/hymns/presentation/hymns_error_text.dart';
 import 'package:amharic_hymnal_app/core/domain/repositories/settings_repository.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/history_service.dart';
@@ -59,9 +60,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   icon: const Icon(Icons.delete_outline),
                   color: context.appColors.primaryText,
                   onPressed: () => _showClearHistoryDialog(context),
-                  tooltip: AppLocalizations.of(context)?.historyClear ??
-                      AppLocalizations.of(context)?.historyClear ??
-                      'ታሪክን አጽዳ',
+                  tooltip:
+                      AppLocalizations.of(context)?.historyClear ?? 'ታሪክን አጽዳ',
                 ),
               ],
             ),
@@ -81,7 +81,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
                   if (state is HymnsError) {
                     return ErrorStateWidget(
-                      message: state.message,
+                      message: hymnsErrorText(context, state),
                     );
                   }
 
@@ -105,20 +105,18 @@ class _HistoryPageState extends State<HistoryPage> {
                     );
                   }
 
-                  // Get hymns from history (in order of most recent first)
-                  final historyHymns = <(Hymn, HistoryEntry)>[];
-                  for (final entry in history) {
-                    if (entry.version != state.version) continue;
-                    try {
-                      final hymn = state.hymns.firstWhere(
-                        (h) => h.displayNumber == entry.hymnNumber,
-                      );
-                      historyHymns.add((hymn, entry));
-                    } catch (e) {
-                      // Hymn not found in current list, skip it
-                      continue;
-                    }
-                  }
+                  // This book's hymns from history, most recent first. Song
+                  // IDs name their book, so other books' entries match
+                  // nothing here.
+                  final bySongId = {
+                    for (final hymn in state.hymns)
+                      hymn.songIdIn(state.version): hymn,
+                  };
+                  final historyHymns = <(Hymn, HistoryEntry)>[
+                    for (final entry in history)
+                      if (bySongId[entry.songId] case final hymn?)
+                        (hymn, entry),
+                  ];
 
                   if (historyHymns.isEmpty) {
                     return EmptyStateWidget(
@@ -145,7 +143,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       final (hymn, entry) = historyHymns[index];
                       return Dismissible(
                         key: ValueKey(
-                          'history_${entry.version}_${hymn.id}_${hymn.displayNumber}',
+                          'history_${entry.songId}',
                         ),
                         direction: DismissDirection.endToStart,
                         background: Container(
@@ -162,10 +160,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           ),
                         ),
                         onDismissed: (_) async {
-                          await HistoryService.removeFromHistory(
-                            entry.hymnNumber,
-                            version: entry.version,
-                          );
+                          await HistoryService.removeFromHistory(entry.songId);
                           if (mounted) setState(() {});
                         },
                         child: HymnListItem(

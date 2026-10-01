@@ -16,7 +16,8 @@ import 'package:amharic_hymnal_app/injection_container.dart' show sl;
 /// Loads every hymn of an edition, as stored on the device.
 typedef EditionHymnsLoader = Future<List<Hymn>> Function(String version);
 
-Future<List<Hymn>> _loadEditionHymns(String version) async {
+/// [version]'s hymns as the app has them (synced, stored or bundled).
+Future<List<Hymn>> loadEditionHymns(String version) async {
   final result = await sl<HymnRepository>().getHymns(
     sl<SettingsRepository>().getSelectedLanguage(),
     version,
@@ -28,7 +29,9 @@ Future<List<Hymn>> _loadEditionHymns(String version) async {
 /// sheet music and audio. Hymns bundled with the app have neither yet.
 bool hymnsAreFromServer(List<Hymn> hymns, String version) {
   final prefix = '${HymnalVersions.apiCode(version)}-';
-  return hymns.any((hymn) => hymn.id?.startsWith(prefix) ?? false);
+  // Bundled hymns share the API's IDs but carry no media details.
+  return hymns
+      .any((hymn) => !hymn.isBundled && (hymn.id?.startsWith(prefix) ?? false));
 }
 
 /// Changes to a kept edition are fetched without asking up to this size.
@@ -126,6 +129,29 @@ _Words _audioWords(AppLocalizations? l) => _Words(
 _Words _wordsFor(AppLocalizations? l, String mediaType) =>
     mediaType == MediaType.audio ? _audioWords(l) : _sheetMusicWords(l);
 
+/// Room kept free beyond a download, so the phone is not filled to the brim.
+const int _spareBytes = 50 * 1024 * 1024;
+
+/// Whether [bytes] more fit on the phone; says so when they do not. When the
+/// phone cannot report its free space, the download is let through.
+Future<bool> _hasRoomFor(
+  ScaffoldMessengerState messenger,
+  AppLocalizations? l,
+  OfflineDownloadController downloads,
+  int bytes,
+) async {
+  final free = await downloads.downloader.freeBytes();
+  if (free == null || bytes + _spareBytes <= free) return true;
+  final needed = formatMediaSize(bytes);
+  final available = formatMediaSize(free);
+  _say(
+    messenger,
+    l?.downloadNotEnoughSpace(needed, available) ??
+        'በቂ ቦታ የለም፦ $needed ያስፈልጋል፤ ስልኩ ላይ ያለው ነጻ ቦታ $available ብቻ ነው።',
+  );
+  return false;
+}
+
 void _say(ScaffoldMessengerState messenger, String message) {
   if (!messenger.mounted) return;
   messenger
@@ -158,8 +184,11 @@ void startOfflineDownload(
       plan,
       onProgress: onProgress,
       isCancelled: isCancelled,
+      version: version,
     ),
     onDone: (result) {
+      // Ended, however it ended: nothing to carry on at the next start-up.
+      preferences.setDownloadUnfinished(version, plan.mediaType, false);
       if (result.cancelled) {
         preferences.setMediaKeptOffline(version, plan.mediaType, false);
         _say(messenger, words.stopped(result.downloaded));
@@ -174,6 +203,8 @@ void startOfflineDownload(
   );
   if (!started) return;
   preferences.setMediaKeptOffline(version, plan.mediaType, true);
+  // Until it ends: if the app is closed first, start-up carries it on.
+  preferences.setDownloadUnfinished(version, plan.mediaType, true);
   if (!quiet) _say(messenger, words.started);
 }
 
@@ -196,7 +227,7 @@ Future<void> runEditionMediaDownload(
 
   final List<Hymn> hymns;
   try {
-    hymns = await (loadHymns ?? _loadEditionHymns)(version);
+    hymns = await (loadHymns ?? loadEditionHymns)(version);
   } catch (_) {
     _say(messenger, l?.downloadListUnavailable ?? 'የመዝሙሮቹን ዝርዝር ማግኘት አልተቻለም።');
     return;
@@ -219,6 +250,7 @@ Future<void> runEditionMediaDownload(
     _say(messenger, words.allPresent);
     return;
   }
+  if (!await _hasRoomFor(messenger, l, downloads, plan.missingBytes)) return;
   if (!context.mounted) return;
 
   final confirmed = await showDialog<bool>(
@@ -437,8 +469,16 @@ Future<void> maybeOfferOfflineDownloads(
   );
   await preferences.setOfflineDownloadOfferPending(false);
 
-  for (final plan in offered) {
-    if (!(chosen?.contains(plan.mediaType) ?? false)) continue;
+  final wanted = offered
+      .where((plan) => chosen?.contains(plan.mediaType) ?? false)
+      .toList();
+  final wantedBytes = wanted.fold(0, (sum, plan) => sum + plan.missingBytes);
+  if (wanted.isEmpty ||
+      !await _hasRoomFor(messenger, l, downloads, wantedBytes)) {
+    return;
+  }
+
+  for (final plan in wanted) {
     startOfflineDownload(
       messenger,
       l,

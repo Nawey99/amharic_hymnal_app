@@ -40,9 +40,9 @@ class HymnsLoaded extends HymnsState {
     } else if (sortType == 'number') {
       hymns.sort((a, b) => a.displayNumber.compareTo(b.displayNumber));
     } else if (sortType == 'name') {
-      // Use locale-aware comparison for Amharic text
-      // Set locale to Amharic for proper sorting
-      Intl.defaultLocale = 'am';
+      // Code-point order is Fidel order for the base letters, which is what
+      // the index groups by. (This used to set Intl.defaultLocale here, which
+      // String.compareTo ignores and which changed formatting app-wide.)
 
       // Step 4: Verify sorting doesn't remove hymns
       final originalCount = hymns.length;
@@ -56,9 +56,6 @@ class HymnsLoaded extends HymnsState {
         if (aTitle.isEmpty) return 1;
         if (bTitle.isEmpty) return -1;
 
-        // Use locale-aware comparison for Amharic text
-        // This ensures proper sorting according to Amharic alphabet order
-        // The compareTo method respects the current locale when Intl.defaultLocale is set
         return aTitle.compareTo(bTitle);
       });
 
@@ -85,11 +82,52 @@ class HymnsLoaded extends HymnsState {
       [hymns, sortType, languageCode, version, favoritesRevision];
 }
 
-class HymnsError extends HymnsState {
-  final String message;
+/// Why hymns could not be shown. Screens word it in the reader's language
+/// (`hymnsErrorText`); the bloc only says which case it is.
+enum HymnsErrorKind {
+  /// The edition could not be read, from the network or the device.
+  loadFailed,
 
-  HymnsError(this.message);
+  /// The edition has never been downloaded and there is no connection.
+  needsConnection,
+
+  /// The edition has been withdrawn from the hymnal API.
+  editionUnavailable,
+
+  /// A search could not be completed.
+  searchFailed,
+
+  /// The edition has no hymn with this number.
+  notFound,
+
+  /// Looking up a hymn by number failed for another reason.
+  lookupFailed,
+}
+
+class HymnsError extends HymnsState {
+  final HymnsErrorKind kind;
+
+  /// The hymn number, for [HymnsErrorKind.notFound] and
+  /// [HymnsErrorKind.lookupFailed].
+  final int? number;
+
+  HymnsError(this.kind, {this.number});
+
+  /// English, for logs and tests only. What the reader sees comes from
+  /// `hymnsErrorText`.
+  String get message => switch (kind) {
+        HymnsErrorKind.loadFailed =>
+          'Hymns could not be loaded. Please try again.',
+        HymnsErrorKind.needsConnection =>
+          'This hymnal needs an internet connection to load. '
+              'Please connect and try again.',
+        HymnsErrorKind.editionUnavailable =>
+          'This hymnal is no longer available.',
+        HymnsErrorKind.searchFailed => 'Failed to search hymns.',
+        HymnsErrorKind.notFound => 'Hymn #$number not found.',
+        HymnsErrorKind.lookupFailed => 'Hymn #$number could not be opened.',
+      };
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [kind, number ?? 0];
 }
