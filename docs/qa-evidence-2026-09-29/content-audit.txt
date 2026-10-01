@@ -1,0 +1,118 @@
+Content audit output — Wudase pre-release QA, 2026-09-29
+=========================================================
+
+Bundled JSON: assets/data/database/SDA_Hymnal.json (550,065 bytes)
+Bundled JSON: assets/data/database/HagerignaData.json (164,052 bytes)
+
+SDA_Hymnal.json section counts
+------------------------------
+new_title_forbookmark: 325
+new_title_en:          325
+new_song:              325
+old_title_forbookmark: 294
+old_title_en:          294
+old_song:              294
+
+SDA integrity per section (n, empty, dupes, whitespace)
+-------------------------------------------------------
+new_title_forbookmark: n=325 empty=0 dupes=0 whitespace=1  (index 1: "ቅዱስ ቅዱስ ቅዱስ " with trailing space)
+old_title_forbookmark: n=294 empty=0 dupes=0 whitespace=0
+new_song:              n=325 empty=0 dupes=0 whitespace=0
+old_song:              n=294 empty=0 dupes=0 whitespace=0
+new_title_en:          n=325 empty=0 dupes=3 whitespace=0
+  - "Holy Holy Holy" at indices 1, 2
+  - "Majestic Sweetness Sits Enthroned" at 6, 74
+  - "I Will Follow Thee" at 122, 268
+old_title_en:          n=294 empty=0 dupes=2 whitespace=0
+  - "We Thank Thee" at 12, 249
+  - "I Will Follow Thee" at 124, 268
+
+Cross-array alignment
+---------------------
+new_title / new_title_en / new_song: same length (True)
+old_title / old_title_en / old_song: same length (True)
+
+Cross-edition title overlap (2004 <-> 1975)
+-------------------------------------------
+Titles present in BOTH new & old (cross-refs relevant): 262/324
+Titles at DIFFERENT hymn numbers between editions:      160
+Sample:
+  'የወጣቶች አምላክ':     2004 #246 <-> 1975 #231
+  'ልረፍ በየሱስ ክንዶች': 2004 #85  <-> 1975 #85
+  'ፈተናን አሸንፍ':      2004 #107 <-> 1975 #79
+  'ሁላችን ሰማይ ስንደርስ': 2004 #223 <-> 1975 #218
+  'ጌታ አምላኬ':        2004 #41  <-> 1975 #41
+
+HagerignaData.json
+------------------
+song_author_text: n=121, empty=0, dupes=14 (many authors write multiple songs; "Unknown" appears at 3, 4, 9, 12, 16, ...)
+song_text:        n=121, empty=0, dupes=0, ws=1  (hymn #121)
+song_title_text:  n=121, empty=0, dupes=0, ws=0
+All arrays same length (True).
+
+Suspiciously short lyrics (<40 characters):
+  #121 "የመዝሙር ርዕስ": 28 chars
+
+BLOCKER: Hagerigna hymn #121
+----------------------------
+  Title:  "የመዝሙር ርዕስ"            (= "Song Title" - a literal placeholder)
+  Author: "ሙከራ መዝሙር"             (= "Test Song")
+  Lyrics: "መዝሙር 1 መዝሙር 2\nመዝሙር 3 መዝሙር 4\n"  (= "Song 1 Song 2\nSong 3 Song 4")
+
+This is bundled fallback JSON that the app serves before an edition has
+ever been synced from the API (per docs/architecture.md). On any device
+that installs the app and opens the Hagerigna book while offline (or
+before the first sync completes) the placeholder is user-visible.
+
+Category coverage — 2004 SDA book
+---------------------------------
+Total hymns in book:   325
+Sum of categorised:    249  (76.6% of book)
+Uncategorised hymns:   76   (23.4% of book)
+Uncategorised ranges:  85-118 (34), 123-128 (6), 198-206 (9),
+                       209-220 (12), 267-275 (9), 315-320 (6)
+
+Per lib/core/constants/hymn_categories.dart:
+  praise ምስጋና        1-24
+  worship ስግደት       25-42
+  awakening መነቃቃት    43-44
+  repentance ንሥሐ    45-58
+  prayer ጸሎት         59-84
+  work ሥራ           119-121   [gap 85-118]
+  people ሕዝብ        122-122
+  hope ተስፋ          129-134   [gap 123-128]
+  joy ደስታ           135-140
+  peace ሰላም         141-146
+  love ፍቅር           147-159
+  salvation መድህን    160-178
+  cross መስቀል        179-193
+  sabbath ሰንበት      194-197
+  judgment ፍርድ      207-208   [gap 198-206]
+  heaven የሰማይ ቤት    221-241   [gap 209-220]
+  youth ወጣቶች        242-264
+  nature ተፈጥሮ       265-266
+  marriage ጋብቻ      276-277   [gap 267-275]
+  birth ልደት         278-292
+  trust መታመን        293-310
+  offering ቁርባን     311-314
+  funeral መሰናበቻ    321-325   [gap 315-320]
+
+The last category ends at 325; the book count matches. Whether the
+gaps are deliberate (some hymns simply don't fit a category) or a bug
+is a maintainer question — either way, the Categories tab currently
+surfaces only 76.6% of the 2004 book.
+
+API code map (lib/core/models/hymnal_version.dart)
+--------------------------------------------------
+sdaNew       -> am-sda-2004
+sdaOld       -> am-sda-1975
+sda1961      -> am-sda-1961
+hagerigna    -> am-hagerigna
+
+Live backend probe
+------------------
+GET https://amharichymnalbackend.vercel.app/api/v1/manifest
+  200
+  contentVersion:     "2026.3"
+  minimumAppVersion:  "1.0.0"  (matches the app's current version - no forced update loop)
+  publishedAt:        2026-09-18T15:44:09.286Z
