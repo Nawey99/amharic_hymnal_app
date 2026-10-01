@@ -31,9 +31,10 @@ class BugReportQueueService {
   BugReportQueueService._();
 
   static const String _queueKey = 'bug_report_queue';
-  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  // Reports queued by earlier versions sit in Android's
+  // EncryptedSharedPreferences. The plugin finds them on first use and moves
+  // them to its own storage, so no option naming the old store is needed.
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   Future<void>? _initialization;
 
   /// Initialize the service
