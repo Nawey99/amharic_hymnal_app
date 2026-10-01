@@ -97,9 +97,8 @@ class SdaParser {
         // Each book carries its own English title so English-title search
         // works on both editions offline. `new_title_en` holds the 2004
         // English titles; `old_title_en` holds the 1975 English titles.
-        'english_title_old': isOld
-            ? at(oldEnglishTitleArray, i)
-            : at(newEnglishTitleArray, i),
+        'english_title_old':
+            isOld ? at(oldEnglishTitleArray, i) : at(newEnglishTitleArray, i),
         'created_at': now,
         'updated_at': now,
       });
