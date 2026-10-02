@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import 'package:amharic_hymnal_app/core/error/network_failure.dart';
 import 'package:amharic_hymnal_app/core/services/device_storage_service.dart';
 import 'package:amharic_hymnal_app/core/services/media_reference.dart';
 
@@ -136,18 +137,31 @@ class LocalMediaCacheService implements MediaCache {
   /// before this run starts its own.
   Future<void>? _partialsCleared;
 
+  /// How long to wait before the one retry of a request that could not
+  /// reach the server.
+  final Duration retryDelay;
+
+  /// Makes the client for that retry, so it does not reuse a connection the
+  /// first attempt found dead. Null when a client was supplied: the retry
+  /// then goes through the same one.
+  final http.Client Function()? _newClient;
+
   LocalMediaCacheService({
     http.Client? client,
     MediaCacheDirectoryProvider? directoryProvider,
     this.idleTimeout = const Duration(seconds: 30),
+    this.retryDelay = const Duration(seconds: 1),
   })  : _client = client ?? http.Client(),
+        _newClient = client == null ? http.Client.new : null,
         _directoryProvider =
             directoryProvider ?? getApplicationSupportDirectory;
 
   LocalMediaCacheService._()
       : _client = http.Client(),
+        _newClient = http.Client.new,
         _directoryProvider = getApplicationSupportDirectory,
-        idleTimeout = const Duration(seconds: 30);
+        idleTimeout = const Duration(seconds: 30),
+        retryDelay = const Duration(seconds: 1);
 
   @override
   Future<int?> freeBytes() async {
@@ -307,12 +321,26 @@ class LocalMediaCacheService implements MediaCache {
     );
 
     IOSink? sink;
+    http.Client? retryClient;
     try {
       // API download routes answer 302 to short-lived storage; the client
       // follows it. The redirect target is never stored.
-      final request = http.Request('GET', uri);
-      final response =
-          await _client.send(request).timeout(const Duration(seconds: 45));
+      http.StreamedResponse response;
+      try {
+        response = await _client
+            .send(http.Request('GET', uri))
+            .timeout(const Duration(seconds: 45));
+      } on Exception catch (error) {
+        if (!isNetworkFailure(error)) rethrow;
+        // Once more, on a new connection: a mobile signal drops for a moment,
+        // and a connection kept from before the app was put away may be dead.
+        // With no internet at all this fails again, and that is reported.
+        await Future<void>.delayed(retryDelay);
+        retryClient = _newClient?.call();
+        response = await (retryClient ?? _client)
+            .send(http.Request('GET', uri))
+            .timeout(const Duration(seconds: 45));
+      }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw HttpException('HTTP ${response.statusCode}', uri: uri);
       }
@@ -373,6 +401,8 @@ class LocalMediaCacheService implements MediaCache {
       if (sink != null) await sink.close();
       if (await temporary.exists()) await temporary.delete();
       rethrow;
+    } finally {
+      retryClient?.close();
     }
   }
 

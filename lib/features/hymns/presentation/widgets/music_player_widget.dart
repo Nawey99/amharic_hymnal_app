@@ -1,7 +1,9 @@
 // lib/features/hymns/presentation/widgets/music_player_widget.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:amharic_hymnal_app/core/error/network_failure.dart';
 import 'package:amharic_hymnal_app/core/l10n/app_localizations.dart';
+import 'package:amharic_hymnal_app/core/services/crash_reporting.dart';
 import 'package:amharic_hymnal_app/core/theme/app_colors_extension.dart';
 import 'package:amharic_hymnal_app/core/theme/app_fonts.dart';
 import 'package:amharic_hymnal_app/core/services/global_audio_service.dart';
@@ -208,28 +210,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     } on MediaIntegrityException {
       _showLoadError(
           l?.audioDownloadCorrupt ?? 'የወረደው ድምፅ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።');
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isError = true;
-          _errorMessage = e.toString();
-        });
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l?.audioOpenFailed(e.toString()) ??
-                    'ድምፅ መክፈት አልተቻለም: ${e.toString()}',
-              ),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+    } catch (error, stackTrace) {
+      // What went wrong is for whoever maintains the app, not for the person
+      // holding the phone: they are told what to do about it.
+      unawaited(CrashReporting.recordError(error, stackTrace));
+      _showLoadError(
+        isNetworkFailure(error)
+            ? (l?.noInternet ?? 'የኢንተርኔት ግንኙነት የለም። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።')
+            : (l?.audioOpenFailed ?? 'ድምፁን መክፈት አልተቻለም። እባክዎ እንደገና ይሞክሩ።'),
+      );
     }
   }
 
+  /// Shown once, on the player itself, beside the button that tries again.
   void _showLoadError(String message) {
     if (!mounted) return;
     setState(() {
@@ -237,9 +230,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
       _isError = true;
       _errorMessage = message;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
   }
 
   Future<void> _playCachedOrDownloadRemoteAudio(MediaSource source) async {
@@ -680,14 +670,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   Future<void> _togglePlayPause() async {
     try {
       await _audioService.togglePlayPause();
-    } catch (e) {
+    } catch (error, stackTrace) {
+      unawaited(CrashReporting.recordError(error, stackTrace));
       if (!mounted) return;
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.audioError(e.toString()) ??
-                  'የድምፅ ስህተት: ${e.toString()}',
+              AppLocalizations.of(context)?.audioError ??
+                  'ድምፁን ማጫወት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
             ),
             backgroundColor: Colors.red,
           ),
