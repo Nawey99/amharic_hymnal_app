@@ -796,8 +796,8 @@ class _HymnDetailPageState extends State<HymnDetailPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.shareFailed(e.toString()) ??
-                  'በማጋራት ላይ ስህተት ተከስቷል: $e',
+              AppLocalizations.of(context)?.shareFailed ??
+                  'መዝሙሩን ማጋራት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
             ),
             duration: const Duration(seconds: 2),
           ),

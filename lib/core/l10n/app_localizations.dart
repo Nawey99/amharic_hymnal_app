@@ -225,8 +225,8 @@ class AppLocalizations {
 
   // Onboarding
   String get errorOccurred => _localizedValue({
-        'en': 'Error:',
-        'am': 'ስህተት:',
+        'en': 'Something went wrong. Please try again.',
+        'am': 'ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።',
       });
 
   // The shell: navigation, settings and the chrome of the tabs.
@@ -490,9 +490,9 @@ class AppLocalizations {
         'am': 'መዝሙር ቁጥር $number አልተገኘም',
       });
 
-  String shareFailed(String error) => _localizedValue({
-        'en': 'Something went wrong while sharing: $error',
-        'am': 'በማጋራት ላይ ስህተት ተከስቷል: $error',
+  String get shareFailed => _localizedValue({
+        'en': 'The hymn could not be shared. Please try again.',
+        'am': 'መዝሙሩን ማጋራት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
       });
 
   // Other editions, under the hymn.
@@ -622,14 +622,21 @@ class AppLocalizations {
         'am': 'የወረደው ድምፅ ትክክል አልሆነም። እባክዎ እንደገና ይሞክሩ።',
       });
 
-  String audioOpenFailed(String error) => _localizedValue({
-        'en': 'The audio could not be opened: $error',
-        'am': 'ድምፅ መክፈት አልተቻለም: $error',
+  /// The server could not be reached. Also what a phone with a signal but
+  /// no working data gets.
+  String get noInternet => _localizedValue({
+        'en': 'No internet connection. Check your connection and try again.',
+        'am': 'የኢንተርኔት ግንኙነት የለም። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።',
       });
 
-  String audioError(String error) => _localizedValue({
-        'en': 'Audio error: $error',
-        'am': 'የድምፅ ስህተት: $error',
+  String get audioOpenFailed => _localizedValue({
+        'en': 'The audio could not be opened. Please try again.',
+        'am': 'ድምፁን መክፈት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
+      });
+
+  String get audioError => _localizedValue({
+        'en': 'The audio could not be played. Please try again.',
+        'am': 'ድምፁን ማጫወት አልተቻለም። እባክዎ እንደገና ይሞክሩ።',
       });
 
   // Shared words.

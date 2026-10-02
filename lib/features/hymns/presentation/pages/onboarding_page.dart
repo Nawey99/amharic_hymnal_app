@@ -47,7 +47,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${AppLocalizations.of(context)?.errorOccurred ?? 'ስህተት'} ${e.toString()}',
+            AppLocalizations.of(context)?.errorOccurred ??
+                'ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።',
           ),
           backgroundColor: Colors.red,
         ),
