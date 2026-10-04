@@ -108,6 +108,7 @@ class _HymnMediaControlsState extends State<HymnMediaControls> {
       audioInfo: hymn.audioInfo,
       version: widget.version,
       condensed: condensed,
+      audioIsKnown: !hymn.isBundled,
     );
   }
 
