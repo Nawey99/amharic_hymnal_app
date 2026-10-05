@@ -10,6 +10,7 @@ import 'package:amharic_hymnal_app/core/widgets/app_text_scope.dart';
 import 'package:amharic_hymnal_app/core/services/background_image_service.dart';
 import 'package:amharic_hymnal_app/core/services/search_state_controller.dart';
 import 'package:amharic_hymnal_app/core/widgets/search_text_field.dart';
+import 'package:amharic_hymnal_app/core/utils/responsive_layout.dart';
 import 'package:amharic_hymnal_app/core/utils/nav_bar_constants.dart';
 import 'package:amharic_hymnal_app/core/widgets/glass_container.dart';
 import 'package:amharic_hymnal_app/core/widgets/main_page_title_bar.dart';
@@ -291,54 +292,92 @@ class _NumberSearchPageState extends State<NumberSearchPage> {
     );
   }
 
+  /// The History pill: as wide as its icon and word, and drawn shorter than
+  /// the area that takes the tap.
+  ///
+  /// It used to fill the whole side of the title bar (a container told to
+  /// centre its child grows to all the room it is given) at the full 48 dp
+  /// of a touch target, which made it the heaviest thing on the page.
   Widget _buildHistoryButton(BuildContext context) {
+    final label = AppLocalizations.of(context)?.history ?? 'ታሪክ';
+    final pillHeight =
+        ResponsiveLayout.isCompactLandscape(context) ? 32.0 : 36.0;
+    const iconSize = 18.0;
+    const gap = 5.0;
+    const padding = 10.0;
+    final labelStyle = TextStyle(
+      color: context.appColors.primaryText,
+      fontSize: 13,
+      fontWeight: FontWeight.w800,
+    );
+
     return Tooltip(
-      message: AppLocalizations.of(context)?.history ?? 'ታሪክ',
-      child: InkWell(
-        onTap: () => _openHistory(context),
-        borderRadius: BorderRadius.circular(999),
-        // 48 dp is the smallest comfortable touch target.
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: context.appColors.accent.withValues(alpha: 0.18),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: context.appColors.accent.withValues(alpha: 0.5),
-              width: 1.2,
-            ),
+      message: label,
+      child: LayoutBuilder(builder: (context, constraints) {
+        // The word is dropped whole rather than cut to "Hist…": on a narrow
+        // phone, or at a large text size, the clock alone says it, and the
+        // tooltip still names it for a screen reader.
+        final labelWidth = (TextPainter(
+          text: TextSpan(
+            text: label,
+            style: DefaultTextStyle.of(context).style.merge(labelStyle),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.history,
-                color: context.appColors.accent,
-                size: 19,
-              ),
-              const SizedBox(width: 5),
-              // The title bar gives each side a fixed width so the title
-              // stays centred, so the label is what gives: "History" set in
-              // the serif face is wider than the Amharic it replaces, and
-              // ran over the end by a hair.
-              Flexible(
-                child: Text(
-                  AppLocalizations.of(context)?.history ?? 'ታሪክ',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: context.appColors.primaryText,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
+          maxLines: 1,
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+        )..layout())
+            .width;
+        final showLabel = padding + iconSize + gap + labelWidth + padding + 4 <=
+            constraints.maxWidth;
+
+        return InkWell(
+          key: const ValueKey('history-button'),
+          onTap: () => _openHistory(context),
+          borderRadius: BorderRadius.circular(999),
+          // 48 dp is the smallest comfortable touch target; the pill sits
+          // in the middle of it.
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+            child: Align(
+              widthFactor: 1,
+              heightFactor: 1,
+              child: Container(
+                key: const ValueKey('history-pill'),
+                constraints: BoxConstraints(
+                  minHeight: pillHeight,
+                  minWidth: pillHeight,
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: showLabel ? padding : 0,
+                ),
+                decoration: BoxDecoration(
+                  color: context.appColors.accent.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: context.appColors.accent.withValues(alpha: 0.5),
+                    width: 1.2,
                   ),
                 ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.history,
+                      color: context.appColors.accent,
+                      size: iconSize,
+                    ),
+                    if (showLabel) ...[
+                      const SizedBox(width: gap),
+                      Text(label, maxLines: 1, style: labelStyle),
+                    ],
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
