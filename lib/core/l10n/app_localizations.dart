@@ -595,6 +595,13 @@ class AppLocalizations {
         'am': 'አጫውት',
       });
 
+  /// For a hymn read from the copy bundled with the app: the server has
+  /// not been asked, so the app cannot say there is no audio.
+  String get audioNeedsInternet => _localizedValue({
+        'en': 'Connect to the internet to check for audio',
+        'am': 'ድምፅ መኖሩን ለማወቅ ከኢንተርኔት ጋር ይገናኙ',
+      });
+
   String get audioNotFound => _localizedValue({
         'en': 'No audio found',
         'am': 'ድምፅ አልተገኘም',
