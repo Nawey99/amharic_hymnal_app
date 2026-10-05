@@ -135,7 +135,9 @@ void main() {
     await _tearDownPage(tester);
   });
 
-  testWidgets('synthesized audio is labelled and credited', (tester) async {
+  testWidgets(
+      'synthesized audio is played without comment; a recording keeps '
+      'its credit', (tester) async {
     Widget player(HymnAudioInfo? info) => MaterialApp(
           home: Scaffold(
             body: MusicPlayerWidget(
@@ -148,21 +150,32 @@ void main() {
           ),
         );
 
-    await tester.pumpWidget(player(null));
-    expect(find.text('የሙዚቃ መሣሪያ ብቻ'), findsNothing);
+    Future<void> expand() async {
+      await tester.tap(find.text('Title'));
+      for (var frame = 0; frame < 14; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+    }
 
+    // A tune rendered from MIDI: no badge, no note about how it was made.
     await tester.pumpWidget(player(const HymnAudioInfo(
       file: HymnMediaFile(url: 'https://api.example.test/a/7'),
       isSynthesized: true,
       attribution: 'Rendered from MIDI.',
     )));
-    expect(find.text('የሙዚቃ መሣሪያ ብቻ'), findsOneWidget);
+    await expand();
+    expect(find.text('የሙዚቃ መሣሪያ ብቻ'), findsNothing);
+    expect(find.text('Instrumental only'), findsNothing);
+    expect(find.byIcon(Icons.piano), findsNothing);
+    expect(find.text('Rendered from MIDI.'), findsNothing);
 
-    await tester.tap(find.text('Title'));
-    for (var frame = 0; frame < 14; frame++) {
-      await tester.pump(const Duration(milliseconds: 16));
-    }
-    expect(find.text('Rendered from MIDI.'), findsOneWidget);
+    // A recording: whoever made it is still credited.
+    await tester.pumpWidget(player(const HymnAudioInfo(
+      file: HymnMediaFile(url: 'https://api.example.test/a/7'),
+      attribution: 'Sung by the church choir.',
+    )));
+    await tester.pump();
+    expect(find.text('Sung by the church choir.'), findsOneWidget);
   });
 
   testWidgets('the hymn page lists the same hymn in other books',

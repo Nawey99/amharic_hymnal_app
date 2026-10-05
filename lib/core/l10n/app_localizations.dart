@@ -607,11 +607,6 @@ class AppLocalizations {
         'am': 'ድምፅ አልተገኘም',
       });
 
-  String get audioInstrumentalOnly => _localizedValue({
-        'en': 'Instrumental only',
-        'am': 'የሙዚቃ መሣሪያ ብቻ',
-      });
-
   String get audioDownloadTitle => _localizedValue({
         'en': 'Download this hymn audio?',
         'am': 'የመዝሙሩ ድምፅ ይውረድ?',

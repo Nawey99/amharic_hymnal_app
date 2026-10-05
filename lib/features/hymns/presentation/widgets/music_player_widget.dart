@@ -390,10 +390,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                if (_isSynthesized) ...[
-                                  const SizedBox(width: 6),
-                                  _buildInstrumentalBadge(),
-                                ],
                               ],
                             ),
                           ],
@@ -511,40 +507,14 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     );
   }
 
-  bool get _isSynthesized => widget.audioInfo?.isSynthesized ?? false;
-
+  /// The credit for a recording, shown under the scrubber. A tune rendered
+  /// from MIDI is simply played: it carries a note about how it was made,
+  /// which is for the people who look after the content, not the listener.
   String? get _attribution {
-    final text = widget.audioInfo?.attribution?.trim();
+    final info = widget.audioInfo;
+    if (info == null || info.isSynthesized) return null;
+    final text = info.attribution?.trim();
     return text == null || text.isEmpty ? null : text;
-  }
-
-  /// Marks a tune rendered from MIDI, which sounds like an organ rather than
-  /// singers, so nobody mistakes it for a recording.
-  Widget _buildInstrumentalBadge({bool compact = false}) {
-    final label =
-        AppLocalizations.of(context)?.audioInstrumentalOnly ?? 'የሙዚቃ መሣሪያ ብቻ';
-    final badge = Container(
-      padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 6, vertical: 2),
-      decoration: BoxDecoration(
-        border: Border.all(color: context.appColors.accent),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: compact
-          ? Icon(Icons.piano, size: 14, color: context.appColors.accent)
-          : Text(
-              label,
-              style: TextStyle(
-                color: context.appColors.accent,
-                fontSize: 10,
-                height: 1.1,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-    );
-    return Tooltip(
-      message: _attribution ?? label,
-      child: Semantics(label: label, child: badge),
-    );
   }
 
   Widget _buildExpandableScrubber(bool isThisHymnActive) {
@@ -595,10 +565,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
             size: 32,
             iconSize: 21,
           ),
-          if (_isSynthesized) ...[
-            const SizedBox(width: 6),
-            _buildInstrumentalBadge(compact: true),
-          ],
           const SizedBox(width: 8),
           Expanded(
             child: Column(
